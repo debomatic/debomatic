@@ -1,0 +1,17 @@
+Source: debomatic
+Section: utils
+Priority: extra
+Maintainer: Luca Falavigna <dktrkranz@linuxdc.it>
+Build-Depends: cdbs (>= 0.4.43), debhelper (>= 5), python-central (>= 0.5), python-all-dev (>= 2.4)
+Standards-Version: 3.7.2
+XS-Python-Version: all
+
+Package: debomatic
+Section: utils
+Architecture: all
+Depends: ${python:Depends}, ${misc:Depends}, pbuilder
+XB-Python-Version: ${python:Versions}
+Description: automatic Debian package build machine
+ Simple build machine for Debian packages based on pbuilder
+ .
+ Homepage: https://launchpad.net/debomatic
