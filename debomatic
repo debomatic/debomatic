@@ -7,23 +7,22 @@ import os
 from re import findall
 from sys import exit
 
-def select_package(directory):
+def select_dsc(directory):
 	try:
 		filelist = os.listdir(directory)
 	except:
 		print 'Unable to access directory %s' % directory
 		exit(1)
 	for filename in filelist:
-		package = os.path.splitext(filename)
-		if package[1] == '.dsc':
-			return package[0]
+		if os.path.splitext(filename)[1] == '.dsc':
+			return filename
 	return None
 
-def parse_packages(package):
+def parse_packages(directory, package):
 	try:
-		fd = os.open(package, os.O_RDONLY)
+		fd = os.open(os.path.join(directory, package), os.O_RDONLY)
 	except:
-		print 'Unable to access file %s' % package
+		print 'Unable to open %s' % os.path.join(directory, package)
 		exit(1)
 	files =findall('\s\w+\s\d+\s(.*)', os.read(fd, os.fstat(fd).st_size))
 	files.insert(len(files), package)
