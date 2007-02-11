@@ -28,3 +28,20 @@ def parse_packages(directory, package):
 	files.insert(len(files), package)
 	os.close(fd)
 	return files
+
+def build_package(directory, packagelist, distribution):
+	dscfile = None
+	for package in packagelist:
+		if os.path.exists(os.path.join(directory, package)):
+			src = os.path.join(directory, package)
+			dst = os.path.join(directory, 'work', package)
+			os.renames(src, dst)
+			if not dscfile:
+				dscfile = findall('(.*\.dsc$)', dst)
+	os.system('pbuilder build ' \
+			'--basetgz /var/cache/pbuilder/%(distro)s.tgz ' \
+			'--distribution %(distro)s %(dsc)s' % \
+			{'distro': distribution, 'dsc': dscfile[0]})
+	for package in packagelist:
+		if os.path.exists(os.path.join(directory, 'work', package)):
+			os.remove(os.path.join(directory, 'work', package))
