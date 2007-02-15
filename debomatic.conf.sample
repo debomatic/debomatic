@@ -1,0 +1,10 @@
+# deb-o-matic configuration file
+# Default section
+[default]
+
+# Set this to the directory where you will upload your source packages
+packagedir: /incoming
+
+# Set this to the distribution you want to build your packages for.
+# It should be any of the ones managed by debootstrap package
+distribution: feisty
