@@ -45,6 +45,27 @@ def needs_update(url, directory, distribution):
 			return 'update'
 	return None
 
+def prepare_pbuilder(cmd, url, directory, distribution):
+	cmdline = 'pbuilder %(cmd)s --basetgz %(directory)s/%(distribution)s \
+		  --distribution %(distribution)s --override-config \
+		  --othermirror " deb %(url)s %(distribution)s main \
+		  restricted universe multiverse | deb %(url)s \
+		  %(distribution)s-backports main restricted universe \
+		  multiverse | deb %(url)s %(distribution)s-security main \
+		  restricted universe multiverse | deb %(url)s \
+		  %(distribution)s-updates main restricted universe \
+		  multiverse" --buildplace %(directory)s/build \
+		  --aptcache "%(directory)s/aptcache"' \
+		  % {'cmd': cmd, 'url': url, 'directory': directory, \
+		  'distribution': distribution}
+	if not os.path.exists(os.path.join(directory, 'build')):
+		os.mkdir(os.path.join(directory, 'build'))
+	if not os.path.exists(os.path.join(directory, 'aptcache')):
+		os.mkdir(os.path.join(directory, 'aptcache'))
+	if (os.system(cmdline)):
+		print 'pbuilder (%s) failed' % cmd
+		exit(1)
+
 def select_dsc(directory):
 	try:
 		filelist = os.listdir(directory)
