@@ -78,6 +78,12 @@ def get_gpgfiles(url, directory, distribution):
 		os.write(fd, remote)
 		os.close(fd)
 
+def setup_pbuilder(url, directory, distribution):
+	result = needs_update(url, directory, distribution)
+	if result:
+		prepare_pbuilder(result, url, directory, distribution)
+		get_gpgfiles(url, directory, distribution)
+
 def select_dsc(directory):
 	try:
 		filelist = os.listdir(directory)
