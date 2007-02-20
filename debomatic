@@ -66,6 +66,18 @@ def prepare_pbuilder(cmd, url, directory, distribution):
 		print 'pbuilder (%s) failed' % cmd
 		exit(1)
 
+def get_gpgfiles(url, directory, distribution):
+	for component in distribution, distribution + '-backports', \
+	distribution + '-security', distribution + '-updates':
+		remote = urlopen('%s/dists/%s/Release.gpg' \
+				 % (url, component)).read()
+		if not os.path.exists(os.path.join(directory, 'gpg')):
+			os.mkdir(os.path.join(directory, 'gpg'))
+		gpgfile = os.path.join(directory, 'gpg', component)
+		fd = os.open(gpgfile, os.O_WRONLY | os.O_CREAT, 0664)
+		os.write(fd, remote)
+		os.close(fd)
+
 def select_dsc(directory):
 	try:
 		filelist = os.listdir(directory)
