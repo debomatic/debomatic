@@ -4,9 +4,12 @@
 # (C) 2007, Luca Falavigna
 
 import os
+import sha
 from ConfigParser import ConfigParser
 from re import findall
+from sha import new
 from sys import exit
+from urllib import urlopen
 
 conffile = '/etc/debomatic.conf'
 defaultopts = ('packagedir', 'distribution')
@@ -20,6 +23,27 @@ def parse_options(conffile, defaultopts):
 		if not Options.has_option('default', opt) or \
 		not Options.get('default', opt):
 			print ('Please set "%s" in %s' % (opt, conffile))
+
+def needs_update(url, directory, distribution):
+	for component in distribution, distribution + '-backports', \
+	distribution + '-security', distribution + '-updates':
+		remote = urlopen('%s/dists/%s/Release.gpg' \
+				 % (url, component)).read()
+		if not os.path.exists(os.path.join(directory, 'gpg')):
+			os.mkdir(os.path.join(directory, 'gpg'))
+		gpgfile = os.path.join(directory, 'gpg', component)
+		if not os.path.exists(gpgfile):
+			return 'create'
+		try:		
+			fd = os.open(gpgfile, os.O_RDONLY)
+		except:
+			return 'create'
+		remote_sha = new(remote)
+		gpgfile_sha = new(os.read(fd, os.fstat(fd).st_size))
+		os.close(fd)
+		if remote_sha.digest() != gpgfile_sha.digest():
+			return 'update'
+	return None
 
 def select_dsc(directory):
 	try:
