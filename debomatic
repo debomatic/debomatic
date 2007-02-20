@@ -13,6 +13,7 @@ from urllib import urlopen
 
 conffile = '/etc/debomatic.conf'
 defaultopts = ('packagedir', 'distribution', 'url')
+Options = ConfigParser()
 
 def parse_options(conffile, defaultopts):
 	if not os.path.exists(conffile):
@@ -108,6 +109,8 @@ def parse_packages(directory, package):
 
 def build_package(directory, packagelist, distribution):
 	dscfile = None
+	if not os.path.exists(os.path.join(directory, 'result')):
+		os.mkdir(os.path.join(directory, 'result'))
 	for package in packagelist:
 		if os.path.exists(os.path.join(directory, package)):
 			src = os.path.join(directory, package)
@@ -115,10 +118,13 @@ def build_package(directory, packagelist, distribution):
 			os.renames(src, dst)
 			if not dscfile:
 				dscfile = findall('(.*\.dsc$)', dst)
-	os.system('pbuilder build ' \
-			'--basetgz /var/cache/pbuilder/%(distro)s.tgz ' \
-			'--distribution %(distro)s %(dsc)s' % \
-			{'distro': distribution, 'dsc': dscfile[0]})
+	os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
+		  --distribution %(distribution)s --override-config \
+		  --buildplace %(directory)s/build \
+		  --buildresult %(directory)s/result \
+		  --aptcache %(directory)s/aptcache %(dsc)s' % \
+		  {'distribution': distribution, \
+		  'directory': directory, 'dsc': dscfile[0]})
 	for package in packagelist:
 		if os.path.exists(os.path.join(directory, 'work', package)):
 			os.remove(os.path.join(directory, 'work', package))
