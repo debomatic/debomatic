@@ -12,7 +12,7 @@ from sys import exit
 from urllib import urlopen
 
 conffile = '/etc/debomatic.conf'
-defaultopts = ('packagedir', 'distribution')
+defaultopts = ('packagedir', 'distribution', 'url')
 
 def parse_options(conffile, defaultopts):
 	if not os.path.exists(conffile):

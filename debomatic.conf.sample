@@ -8,3 +8,6 @@ packagedir: /incoming
 # Set this to the distribution you want to build your packages for.
 # It should be any of the ones managed by debootstrap package
 distribution: feisty
+
+# Set this to the URL of package repository
+url: http://archive.ubuntu.com/ubuntu
