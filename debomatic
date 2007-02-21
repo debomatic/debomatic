@@ -18,12 +18,13 @@ Options = ConfigParser()
 def parse_options(conffile, defaultopts):
 	if not os.path.exists(conffile):
 		print ('Configuration file %s does not exist' % conffile)
-		sys.exit(0)
+		exit(-1)
 	Options.read(conffile)
 	for opt in defaultopts:
 		if not Options.has_option('default', opt) or \
 		not Options.get('default', opt):
 			print ('Please set "%s" in %s' % (opt, conffile))
+			exit(-1)
 
 def needs_update(url, directory, distribution):
 	for component in distribution, distribution + '-backports', \
@@ -65,7 +66,7 @@ def prepare_pbuilder(cmd, url, directory, distribution):
 		os.mkdir(os.path.join(directory, 'aptcache'))
 	if (os.system(cmdline)):
 		print 'pbuilder (%s) failed' % cmd
-		exit(1)
+		exit(-1)
 
 def get_gpgfiles(url, directory, distribution):
 	for component in distribution, distribution + '-backports', \
@@ -90,7 +91,7 @@ def select_dsc(directory):
 		filelist = os.listdir(directory)
 	except:
 		print 'Unable to access directory %s' % directory
-		exit(1)
+		exit(-1)
 	for filename in filelist:
 		if os.path.splitext(filename)[1] == '.dsc':
 			return filename
@@ -101,7 +102,7 @@ def parse_packages(directory, package):
 		fd = os.open(os.path.join(directory, package), os.O_RDONLY)
 	except:
 		print 'Unable to open %s' % os.path.join(directory, package)
-		exit(1)
+		exit(-1)
 	files =findall('\s\w+\s\d+\s(.*)', os.read(fd, os.fstat(fd).st_size))
 	files.insert(len(files), package)
 	os.close(fd)
