@@ -128,3 +128,14 @@ def build_package(directory, packagelist, distribution):
 	for package in packagelist:
 		if os.path.exists(os.path.join(directory, 'work', package)):
 			os.remove(os.path.join(directory, 'work', package))
+
+def build_process():
+	parse_options(conffile, defaultopts)
+	url = Options.get('default', 'url')
+	directory = Options.get('default', 'packagedir')
+	distribution = Options.get('default', 'distribution')
+	dscfile = select_dsc(directory)
+	if dscfile:
+		setup_pbuilder(url, directory, distribution)
+		files = parse_packages(directory, dscfile)
+		build_package(directory, files, distribution)
