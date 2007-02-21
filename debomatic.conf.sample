@@ -11,3 +11,6 @@ distribution: feisty
 
 # Set this to the URL of package repository
 url: http://archive.ubuntu.com/ubuntu
+
+# Set this to the number of seconds between two build processes
+sleep: 300
