@@ -131,7 +131,6 @@ def build_package(directory, packagelist, distribution):
 			os.remove(os.path.join(directory, 'work', package))
 
 def build_process():
-	parse_options(conffile, defaultopts)
 	url = Options.get('default', 'url')
 	directory = Options.get('default', 'packagedir')
 	distribution = Options.get('default', 'distribution')
@@ -140,3 +139,17 @@ def build_process():
 		setup_pbuilder(url, directory, distribution)
 		files = parse_packages(directory, dscfile)
 		build_package(directory, files, distribution)
+
+def main():
+	parse_options(conffile, defaultopts)
+	while(1):
+		pid = os.fork()
+		if pid:
+			os.waitpid(pid, 0)
+			sleep(Options.getint('default', 'sleep'))
+		else:
+			build_process()
+			exit(0)
+
+if __name__ == "__main__":
+    main()
