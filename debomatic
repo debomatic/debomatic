@@ -9,6 +9,7 @@ from ConfigParser import ConfigParser
 from re import findall
 from sha import new
 from sys import exit
+from time import sleep
 from urllib import urlopen
 
 conffile = '/etc/debomatic.conf'
