@@ -148,6 +148,9 @@ def build_process():
 		build_package(directory, files, distribution)
 
 def main():
+	if os.getuid():
+		print 'You must run deb-o-matic as root'
+		sys.exit(-1)
 	parse_options()
 	while(1):
 		pid = os.fork()
