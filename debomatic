@@ -9,7 +9,7 @@ from ConfigParser import ConfigParser
 from re import findall
 from sha import new
 from sys import exit, argv
-from time import sleep
+from time import sleep, strftime
 from urllib import urlopen
 
 Options = ConfigParser()
@@ -61,13 +61,16 @@ def prepare_pbuilder(cmd, url, directory, distribution):
 		  restricted universe multiverse | deb %(url)s \
 		  %(distribution)s-updates main restricted universe \
 		  multiverse" --buildplace %(directory)s/build \
-		  --aptcache "%(directory)s/aptcache"' \
+		  --aptcache "%(directory)s/aptcache" \
+		  --logfile %(directory)s/logs/%(cmd)s.%(now)s' \
 		  % {'cmd': cmd, 'url': url, 'directory': directory, \
-		  'distribution': distribution}
+		  'distribution': distribution, 'now': strftime('%Y%m%d_%H%M')}
 	if not os.path.exists(os.path.join(directory, 'build')):
 		os.mkdir(os.path.join(directory, 'build'))
 	if not os.path.exists(os.path.join(directory, 'aptcache')):
 		os.mkdir(os.path.join(directory, 'aptcache'))
+	if not os.path.exists(os.path.join(directory, 'logs')):
+		os.mkdir(os.path.join(directory, 'logs'))
 	if (os.system(cmdline)):
 		print 'pbuilder (%s) failed' % cmd
 		exit(-1)
@@ -126,7 +129,7 @@ def build_package(directory, packagelist, distribution):
 	os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
 		  --distribution %(distribution)s --override-config \
 		  --buildplace %(directory)s/build \
-		  --buildresult %(directory)s/result \
+		  --buildresult %(directory)s/result --pkgname-logfile \
 		  --aptcache %(directory)s/aptcache %(dsc)s' % \
 		  {'distribution': distribution, \
 		  'directory': directory, 'dsc': dscfile[0]})
