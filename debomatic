@@ -5,30 +5,39 @@
 
 import os
 import sha
+import sys
 from ConfigParser import ConfigParser
+from debomatic import daemon
 from re import findall
 from sha import new
-from sys import exit, argv
 from time import sleep, strftime
 from urllib import urlopen
 
 Options = ConfigParser()
 
+class Log:
+   def __init__(self, logfile):
+           self.logfile = logfile
+
+   def write(self, data):
+           self.logfile.write(data)
+           self.logfile.flush()
+
 def parse_options():
 	try:
-		conffile = argv[1]
+		conffile = sys.argv[1]
 	except:
 		print 'Please specify a configuration file'
-		exit(-1)
+		sys.exit(-1)
 	if not os.path.exists(conffile):
 		print 'Configuration file %s does not exist' % conffile
-		exit(-1)
+		sys.exit(-1)
 	Options.read(conffile)
-	for opt in ('packagedir', 'distribution', 'url', 'sleep'):
+	for opt in ('packagedir', 'distribution', 'url', 'logfile', 'sleep'):
 		if not Options.has_option('default', opt) or \
 		not Options.get('default', opt):
 			print 'Please set "%s" in %s' % (opt, conffile)
-			exit(-1)
+			sys.exit(-1)
 
 def needs_update(url, directory, distribution):
 	for component in distribution, distribution + '-backports', \
@@ -73,7 +82,7 @@ def prepare_pbuilder(cmd, url, directory, distribution):
 		os.mkdir(os.path.join(directory, 'logs'))
 	if (os.system(cmdline)):
 		print 'pbuilder (%s) failed' % cmd
-		exit(-1)
+		sys.exit(-1)
 
 def get_gpgfiles(url, directory, distribution):
 	for component in distribution, distribution + '-backports', \
@@ -98,7 +107,7 @@ def select_dsc(directory):
 		filelist = os.listdir(directory)
 	except:
 		print 'Unable to access directory %s' % directory
-		exit(-1)
+		sys.exit(-1)
 	for filename in filelist:
 		if os.path.splitext(filename)[1] == '.dsc':
 			return filename
@@ -109,7 +118,7 @@ def parse_packages(directory, package):
 		fd = os.open(os.path.join(directory, package), os.O_RDONLY)
 	except:
 		print 'Unable to open %s' % os.path.join(directory, package)
-		exit(-1)
+		sys.exit(-1)
 	files =findall('\s\w+\s\d+\s(.*)', os.read(fd, os.fstat(fd).st_size))
 	files.insert(len(files), package)
 	os.close(fd)
@@ -152,6 +161,10 @@ def main():
 		print 'You must run deb-o-matic as root'
 		sys.exit(-1)
 	parse_options()
+	daemon()
+	sys.stdin.close()
+	sys.stdout = sys.stderr = Log(open(Options.get('default', \
+						       'logfile'), 'a+'))
 	while(1):
 		pid = os.fork()
 		if pid:
@@ -159,7 +172,7 @@ def main():
 			sleep(Options.getint('default', 'sleep'))
 		else:
 			build_process()
-			exit(0)
+			sys.exit(0)
 
 if __name__ == "__main__":
     main()

@@ -12,5 +12,8 @@ distribution: feisty
 # Set this to the URL of package repository
 url: http://archive.ubuntu.com/ubuntu
 
+# Set this to the file wich will log debomatic messages
+logfile: /var/log/debomatic
+
 # Set this to the number of seconds between two build processes
 sleep: 300
