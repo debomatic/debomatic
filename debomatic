@@ -135,13 +135,16 @@ def build_package(directory, packagelist, distribution):
 			os.renames(src, dst)
 			if not dscfile:
 				dscfile = findall('(.*\.dsc$)', dst)
+	package = findall('.*/(.*).dsc$', dscfile[0])[0]
+	if not os.path.exists(os.path.join(directory, 'result', package)):
+		os.mkdir(os.path.join(directory, 'result', package))
 	os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
 		  --distribution %(distribution)s --override-config \
-		  --buildplace %(directory)s/build \
-		  --buildresult %(directory)s/result --pkgname-logfile \
+		  --pkgname-logfile --buildplace %(directory)s/build \
+		  --buildresult %(directory)s/result/%(package)s \
 		  --aptcache %(directory)s/aptcache %(dsc)s' % \
-		  {'distribution': distribution, \
-		  'directory': directory, 'dsc': dscfile[0]})
+		  {'distribution': distribution, 'directory': directory, \
+		  'package': package, 'dsc': dscfile[0]})
 	for package in packagelist:
 		if os.path.exists(os.path.join(directory, 'work', package)):
 			os.remove(os.path.join(directory, 'work', package))
