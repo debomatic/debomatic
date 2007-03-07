@@ -1,3 +1,43 @@
-README
 
-A simple build machine for Debian packages based on pbuilder
+deb-o-matic - automatic build machine for Debian packages
+
+This is deb-o-matic, an easy-to-use build machine for Debian-based source
+packages. It provides a simple tool to automate the building of source
+packages with limited user interaction.
+
+
+
+INSTALLATION
+
+Installation process is straightforward:
+
+python ./setup.py build
+su -c python ./setup.py install
+
+You only need python-dev (or equivalent) and pbuilder packages installed.
+
+
+
+CONFIGURATION AND PRELIMINARY SETUP
+
+In order to get deb-o-matic working, you have to prepare a configuration file
+(see debomatic.conf.sample for some hints on this phase) and create a package
+directory to store deb-o-matic files (packagedir option)
+
+
+
+RUNNING DEB-O-MATIC
+
+To start deb-o-matic, you have to launch "debomatic debomatic.conf" command
+(where debomatic.conf is configuration file you just created). You need root
+privileges to do so because of pbuilder infrastructure.
+Now you have to put source packages in the chosen package directory (identified
+by packagedir option) and deb-o-matic will take care of the building phase.
+Be sure to have internet access since pbuilder will download some packages in
+order to create a minimal build environment.
+
+
+
+BUGS AND FEEDBACKS:
+
+https://launchpad.net/debomatic
