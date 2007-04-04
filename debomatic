@@ -102,14 +102,14 @@ def setup_pbuilder(url, directory, distribution):
 		prepare_pbuilder(result, url, directory, distribution)
 		get_gpgfiles(url, directory, distribution)
 
-def select_dsc(directory):
+def select_package(directory):
 	try:
 		filelist = os.listdir(directory)
 	except:
 		print 'Unable to access directory %s' % directory
 		sys.exit(-1)
 	for filename in filelist:
-		if os.path.splitext(filename)[1] == '.dsc':
+		if os.path.splitext(filename)[1] == '.changes':
 			return filename
 	return None
 
@@ -119,7 +119,8 @@ def parse_packages(directory, package):
 	except:
 		print 'Unable to open %s' % os.path.join(directory, package)
 		sys.exit(-1)
-	files =findall('\s\w+\s\d+\s(.*)', os.read(fd, os.fstat(fd).st_size))
+	files =findall('\s\w{32}\s\d+\s\w+\s[\w|-]+\s(.*)',
+			os.read(fd, os.fstat(fd).st_size))
 	files.insert(len(files), package)
 	os.close(fd)
 	return files
@@ -135,7 +136,10 @@ def build_package(directory, packagelist, distribution):
 			os.renames(src, dst)
 			if not dscfile:
 				dscfile = findall('(.*\.dsc$)', dst)
-	package = findall('.*/(.*).dsc$', dscfile[0])[0]
+	try:
+		package = findall('.*/(.*).dsc$', dscfile[0])[0]
+	except:
+		package = None
 	if not os.path.exists(os.path.join(directory, 'result', package)):
 		os.mkdir(os.path.join(directory, 'result', package))
 	os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
@@ -153,10 +157,10 @@ def build_process():
 	url = Options.get('default', 'url')
 	directory = Options.get('default', 'packagedir')
 	distribution = Options.get('default', 'distribution')
-	dscfile = select_dsc(directory)
-	if dscfile:
+	package = select_package(directory)
+	if package:
 		setup_pbuilder(url, directory, distribution)
-		files = parse_packages(directory, dscfile)
+		files = parse_packages(directory, package)
 		build_package(directory, files, distribution)
 
 def main():
