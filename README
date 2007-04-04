@@ -33,6 +33,9 @@ To start deb-o-matic, you have to launch "debomatic debomatic.conf" command
 privileges to do so because of pbuilder infrastructure.
 Now you have to put source packages in the chosen package directory (identified
 by packagedir option) and deb-o-matic will take care of the building phase.
+Since deb-o-matic requires .changes files, be sure to generate a full Debian
+source package by using a command such as dpkg-buildpackage -S -sa. You have
+to upload .changes file and each file mentioned under its Files section.
 Be sure to have internet access since pbuilder will download some packages in
 order to create a minimal build environment.
 
