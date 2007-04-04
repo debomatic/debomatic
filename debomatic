@@ -102,16 +102,34 @@ def setup_pbuilder(url, directory, distribution):
 		prepare_pbuilder(result, url, directory, distribution)
 		get_gpgfiles(url, directory, distribution)
 
+def get_priority(changesfile):
+	priority = 0
+	priolist = {"low":1, "medium":2, "high":3}
+	try:
+		fd = os.open(changesfile, os.O_RDONLY)
+	except:
+		print 'Unable to open %s' % changesfile
+		return 0
+	urgency =findall('Urgency: (.*)', os.read(fd, os.fstat(fd).st_size))
+	priority = priolist[urgency[0]] * 10000000000
+	priority += 9999999999 - os.fstat(fd).st_mtime
+	os.close(fd)
+	return priority
+
 def select_package(directory):
+	package = None
+	priority = 0
 	try:
 		filelist = os.listdir(directory)
 	except:
 		print 'Unable to access directory %s' % directory
 		sys.exit(-1)
-	for filename in filelist:
 		if os.path.splitext(filename)[1] == '.changes':
-			return filename
-	return None
+			curprio = get_priority(os.path.join(directory,filename))
+			if curprio > priority:
+				priority = curprio
+				package = filename
+	return package
 
 def parse_packages(directory, package):
 	try:
