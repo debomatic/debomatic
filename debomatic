@@ -69,7 +69,7 @@ def prepare_pbuilder(cmd, url, directory, distribution):
                %(distribution)s-updates main restricted universe \
                multiverse" --buildplace %(directory)s/build \
                --aptcache "%(directory)s/aptcache" \
-               --logfile %(directory)s/logs/%(cmd)s.%(now)s'
+               --logfile %(directory)s/logs/%(cmd)s.%(now)s' \
                % {'cmd': cmd, 'url': url, 'directory': directory, \
                'distribution': distribution, 'now': strftime('%Y%m%d_%H%M')}
     if not os.path.exists(os.path.join(directory, 'build')):
@@ -121,11 +121,12 @@ def select_package(directory):
     except:
         print 'Unable to access directory %s' % directory
         sys.exit(-1)
-    if os.path.splitext(filename)[1] == '.changes':
-        curprio = get_priority(os.path.join(directory,filename))
-        if curprio > priority:
-            priority = curprio
-            package = filename
+    for filename in filelist:
+        if os.path.splitext(filename)[1] == '.changes':
+            curprio = get_priority(os.path.join(directory,filename))
+            if curprio > priority:
+                priority = curprio
+                package = filename
     return package
 
 def parse_packages(directory, package):
