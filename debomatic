@@ -160,7 +160,7 @@ def build_package(directory, packagelist, distribution):
         os.mkdir(os.path.join(directory, 'result', package))
     os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
               --distribution %(distribution)s --override-config \
-              --buildplace %(directory)s/build \
+              --pkgname-logfile --buildplace %(directory)s/build \
               --buildresult %(directory)s/result/%(package)s \
               --aptcache %(directory)s/aptcache %(dsc)s' % \
               {'distribution': distribution, 'directory': directory, \
