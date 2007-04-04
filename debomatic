@@ -16,188 +16,185 @@ from urllib import urlopen
 Options = ConfigParser()
 
 class Log:
-   def __init__(self, logfile):
-           self.logfile = logfile
+    def __init__(self, logfile):
+        self.logfile = logfile
 
-   def write(self, data):
-           self.logfile.write(data)
-           self.logfile.flush()
+    def write(self, data):
+        self.logfile.write(data)
+        self.logfile.flush()
 
 def parse_options():
-	try:
-		conffile = sys.argv[1]
-	except:
-		print 'Please specify a configuration file'
-		sys.exit(-1)
-	if not os.path.exists(conffile):
-		print 'Configuration file %s does not exist' % conffile
-		sys.exit(-1)
-	Options.read(conffile)
-	for opt in ('packagedir', 'distribution', 'url', 'logfile', 'sleep'):
-		if not Options.has_option('default', opt) or \
-		not Options.get('default', opt):
-			print 'Please set "%s" in %s' % (opt, conffile)
-			sys.exit(-1)
+    try:
+        conffile = sys.argv[1]
+    except:
+        print 'Please specify a configuration file'
+        sys.exit(-1)
+    if not os.path.exists(conffile):
+        print 'Configuration file %s does not exist' % conffile
+        sys.exit(-1)
+    Options.read(conffile)
+    for opt in ('packagedir', 'distribution', 'url', 'logfile', 'sleep'):
+        if not Options.has_option('default', opt) or \
+        not Options.get('default', opt):
+            print 'Please set "%s" in %s' % (opt, conffile)
+            sys.exit(-1)
 
 def needs_update(url, directory, distribution):
-	for component in distribution, distribution + '-backports', \
-	distribution + '-security', distribution + '-updates':
-		remote = urlopen('%s/dists/%s/Release.gpg' \
-				 % (url, component)).read()
-		if not os.path.exists(os.path.join(directory, 'gpg')):
-			os.mkdir(os.path.join(directory, 'gpg'))
-		gpgfile = os.path.join(directory, 'gpg', component)
-		if not os.path.exists(gpgfile):
-			return 'create'
-		try:		
-			fd = os.open(gpgfile, os.O_RDONLY)
-		except:
-			return 'create'
-		remote_sha = new(remote)
-		gpgfile_sha = new(os.read(fd, os.fstat(fd).st_size))
-		os.close(fd)
-		if remote_sha.digest() != gpgfile_sha.digest():
-			return 'update'
-	return None
+    for component in distribution, distribution + '-backports', \
+    distribution + '-security', distribution + '-updates':
+        remote = urlopen('%s/dists/%s/Release.gpg' % (url, component)).read()
+        if not os.path.exists(os.path.join(directory, 'gpg')):
+            os.mkdir(os.path.join(directory, 'gpg'))
+        gpgfile = os.path.join(directory, 'gpg', component)
+        if not os.path.exists(gpgfile):
+            return 'create'
+        try:		
+            fd = os.open(gpgfile, os.O_RDONLY)
+        except:
+            return 'create'
+        remote_sha = new(remote)
+        gpgfile_sha = new(os.read(fd, os.fstat(fd).st_size))
+        os.close(fd)
+        if remote_sha.digest() != gpgfile_sha.digest():
+            return 'update'
 
 def prepare_pbuilder(cmd, url, directory, distribution):
-	cmdline = 'pbuilder %(cmd)s --basetgz %(directory)s/%(distribution)s \
-		  --distribution %(distribution)s --override-config \
-		  --othermirror " deb %(url)s %(distribution)s main \
-		  restricted universe multiverse | deb %(url)s \
-		  %(distribution)s-backports main restricted universe \
-		  multiverse | deb %(url)s %(distribution)s-security main \
-		  restricted universe multiverse | deb %(url)s \
-		  %(distribution)s-updates main restricted universe \
-		  multiverse" --buildplace %(directory)s/build \
-		  --aptcache "%(directory)s/aptcache" \
-		  --logfile %(directory)s/logs/%(cmd)s.%(now)s' \
-		  % {'cmd': cmd, 'url': url, 'directory': directory, \
-		  'distribution': distribution, 'now': strftime('%Y%m%d_%H%M')}
-	if not os.path.exists(os.path.join(directory, 'build')):
-		os.mkdir(os.path.join(directory, 'build'))
-	if not os.path.exists(os.path.join(directory, 'aptcache')):
-		os.mkdir(os.path.join(directory, 'aptcache'))
-	if not os.path.exists(os.path.join(directory, 'logs')):
-		os.mkdir(os.path.join(directory, 'logs'))
-	if (os.system(cmdline)):
-		print 'pbuilder (%s) failed' % cmd
-		sys.exit(-1)
+    cmdline = 'pbuilder %(cmd)s --basetgz %(directory)s/%(distribution)s \
+               --distribution %(distribution)s --override-config \
+               --othermirror " deb %(url)s %(distribution)s main \
+               restricted universe multiverse | deb %(url)s \
+               %(distribution)s-backports main restricted universe \
+               multiverse | deb %(url)s %(distribution)s-security main \
+               restricted universe multiverse | deb %(url)s \
+               %(distribution)s-updates main restricted universe \
+               multiverse" --buildplace %(directory)s/build \
+               --aptcache "%(directory)s/aptcache" \
+               --logfile %(directory)s/logs/%(cmd)s.%(now)s'
+               % {'cmd': cmd, 'url': url, 'directory': directory, \
+               'distribution': distribution, 'now': strftime('%Y%m%d_%H%M')}
+    if not os.path.exists(os.path.join(directory, 'build')):
+        os.mkdir(os.path.join(directory, 'build'))
+    if not os.path.exists(os.path.join(directory, 'aptcache')):
+        os.mkdir(os.path.join(directory, 'aptcache'))
+    if not os.path.exists(os.path.join(directory, 'logs')):
+        os.mkdir(os.path.join(directory, 'logs'))
+    if (os.system(cmdline)):
+        print 'pbuilder (%s) failed' % cmd
+        sys.exit(-1)
 
 def get_gpgfiles(url, directory, distribution):
-	for component in distribution, distribution + '-backports', \
-	distribution + '-security', distribution + '-updates':
-		remote = urlopen('%s/dists/%s/Release.gpg' \
-				 % (url, component)).read()
-		if not os.path.exists(os.path.join(directory, 'gpg')):
-			os.mkdir(os.path.join(directory, 'gpg'))
-		gpgfile = os.path.join(directory, 'gpg', component)
-		fd = os.open(gpgfile, os.O_WRONLY | os.O_CREAT, 0664)
-		os.write(fd, remote)
-		os.close(fd)
+    for component in distribution, distribution + '-backports', \
+    distribution + '-security', distribution + '-updates':
+        remote = urlopen('%s/dists/%s/Release.gpg' % (url, component)).read()
+        if not os.path.exists(os.path.join(directory, 'gpg')):
+            os.mkdir(os.path.join(directory, 'gpg'))
+        gpgfile = os.path.join(directory, 'gpg', component)
+        fd = os.open(gpgfile, os.O_WRONLY | os.O_CREAT, 0664)
+        os.write(fd, remote)
+        os.close(fd)
 
 def setup_pbuilder(url, directory, distribution):
-	result = needs_update(url, directory, distribution)
-	if result:
-		prepare_pbuilder(result, url, directory, distribution)
-		get_gpgfiles(url, directory, distribution)
+    result = needs_update(url, directory, distribution)
+    if result:
+        prepare_pbuilder(result, url, directory, distribution)
+        get_gpgfiles(url, directory, distribution)
 
 def get_priority(changesfile):
-	priority = 0
-	priolist = {"low":1, "medium":2, "high":3}
-	try:
-		fd = os.open(changesfile, os.O_RDONLY)
-	except:
-		print 'Unable to open %s' % changesfile
-		return 0
-	urgency =findall('Urgency: (.*)', os.read(fd, os.fstat(fd).st_size))
-	priority = priolist[urgency[0]] * 10000000000
-	priority += 9999999999 - os.fstat(fd).st_mtime
-	os.close(fd)
-	return priority
+    priority = 0
+    priolist = {"low":1, "medium":2, "high":3}
+    try:
+        fd = os.open(changesfile, os.O_RDONLY)
+    except:
+        print 'Unable to open %s' % changesfile
+        return 0
+    urgency =findall('Urgency: (.*)', os.read(fd, os.fstat(fd).st_size))
+    priority = priolist[urgency[0]] * 10000000000
+    priority += 9999999999 - os.fstat(fd).st_mtime
+    os.close(fd)
+    return priority
 
 def select_package(directory):
-	package = None
-	priority = 0
-	try:
-		filelist = os.listdir(directory)
-	except:
-		print 'Unable to access directory %s' % directory
-		sys.exit(-1)
-		if os.path.splitext(filename)[1] == '.changes':
-			curprio = get_priority(os.path.join(directory,filename))
-			if curprio > priority:
-				priority = curprio
-				package = filename
-	return package
+    package = None
+    priority = 0
+    try:
+        filelist = os.listdir(directory)
+    except:
+        print 'Unable to access directory %s' % directory
+        sys.exit(-1)
+    if os.path.splitext(filename)[1] == '.changes':
+        curprio = get_priority(os.path.join(directory,filename))
+        if curprio > priority:
+            priority = curprio
+            package = filename
+    return package
 
 def parse_packages(directory, package):
-	try:
-		fd = os.open(os.path.join(directory, package), os.O_RDONLY)
-	except:
-		print 'Unable to open %s' % os.path.join(directory, package)
-		sys.exit(-1)
-	files =findall('\s\w{32}\s\d+\s\w+\s[\w|-]+\s(.*)',
-			os.read(fd, os.fstat(fd).st_size))
-	files.insert(len(files), package)
-	os.close(fd)
-	return files
+    try:
+        fd = os.open(os.path.join(directory, package), os.O_RDONLY)
+    except:
+        print 'Unable to open %s' % os.path.join(directory, package)
+        sys.exit(-1)
+    files =findall('\s\w{32}\s\d+\s\w+\s[\w|-]+\s(.*)',
+                   os.read(fd, os.fstat(fd).st_size))
+    files.insert(len(files), package)
+    os.close(fd)
+    return files
 
 def build_package(directory, packagelist, distribution):
-	dscfile = None
-	if not os.path.exists(os.path.join(directory, 'result')):
-		os.mkdir(os.path.join(directory, 'result'))
-	for package in packagelist:
-		if os.path.exists(os.path.join(directory, package)):
-			src = os.path.join(directory, package)
-			dst = os.path.join(directory, 'work', package)
-			os.renames(src, dst)
-			if not dscfile:
-				dscfile = findall('(.*\.dsc$)', dst)
-	try:
-		package = findall('.*/(.*).dsc$', dscfile[0])[0]
-	except:
-		package = None
-	if not os.path.exists(os.path.join(directory, 'result', package)):
-		os.mkdir(os.path.join(directory, 'result', package))
-	os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
-		  --distribution %(distribution)s --override-config \
-		  --pkgname-logfile --buildplace %(directory)s/build \
-		  --buildresult %(directory)s/result/%(package)s \
-		  --aptcache %(directory)s/aptcache %(dsc)s' % \
-		  {'distribution': distribution, 'directory': directory, \
-		  'package': package, 'dsc': dscfile[0]})
-	for package in packagelist:
-		if os.path.exists(os.path.join(directory, 'work', package)):
-			os.remove(os.path.join(directory, 'work', package))
+    dscfile = None
+    if not os.path.exists(os.path.join(directory, 'result')):
+        os.mkdir(os.path.join(directory, 'result'))
+    for package in packagelist:
+        if os.path.exists(os.path.join(directory, package)):
+            src = os.path.join(directory, package)
+            dst = os.path.join(directory, 'work', package)
+            os.renames(src, dst)
+            if not dscfile:
+                dscfile = findall('(.*\.dsc$)', dst)
+    try:
+        package = findall('.*/(.*).dsc$', dscfile[0])[0]
+    except:
+        package = None
+    if not os.path.exists(os.path.join(directory, 'result', package)):
+        os.mkdir(os.path.join(directory, 'result', package))
+    os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
+              --distribution %(distribution)s --override-config \
+              --buildplace %(directory)s/build \
+              --buildresult %(directory)s/result/%(package)s \
+              --aptcache %(directory)s/aptcache %(dsc)s' % \
+              {'distribution': distribution, 'directory': directory, \
+              'package': package, 'dsc': dscfile[0]})
+    for package in packagelist:
+        if os.path.exists(os.path.join(directory, 'work', package)):
+            os.remove(os.path.join(directory, 'work', package))
 
 def build_process():
-	url = Options.get('default', 'url')
-	directory = Options.get('default', 'packagedir')
-	distribution = Options.get('default', 'distribution')
-	package = select_package(directory)
-	if package:
-		setup_pbuilder(url, directory, distribution)
-		files = parse_packages(directory, package)
-		build_package(directory, files, distribution)
+    url = Options.get('default', 'url')
+    directory = Options.get('default', 'packagedir')
+    distribution = Options.get('default', 'distribution')
+    package = select_package(directory)
+    if package:
+        setup_pbuilder(url, directory, distribution)
+        files = parse_packages(directory, package)
+        build_package(directory, files, distribution)
 
 def main():
-	if os.getuid():
-		print 'You must run deb-o-matic as root'
-		sys.exit(-1)
-	parse_options()
-	daemon()
-	sys.stdin.close()
-	sys.stdout = sys.stderr = Log(open(Options.get('default', \
-						       'logfile'), 'a+'))
-	while(1):
-		pid = os.fork()
-		if pid:
-			os.waitpid(pid, 0)
-			sleep(Options.getint('default', 'sleep'))
-		else:
-			build_process()
-			sys.exit(0)
+    if os.getuid():
+        print 'You must run deb-o-matic as root'
+        sys.exit(-1)
+    parse_options()
+    daemon()
+    sys.stdin.close()
+    sys.stdout = sys.stderr = Log(open(Options.get('default', \
+                                  'logfile'), 'a+'))
+    while(1):
+        pid = os.fork()
+        if pid:
+            os.waitpid(pid, 0)
+            sleep(Options.getint('default', 'sleep'))
+        else:
+            build_process()
+            sys.exit(0)
 
 if __name__ == "__main__":
     main()
