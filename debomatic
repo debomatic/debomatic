@@ -181,9 +181,7 @@ def build_package(directory, distdir, packagelist, distopts):
             os.remove(os.path.join(distdir, 'work', package))
 
 def build_process():
-    url = Options.get('default', 'url')
     directory = Options.get('default', 'packagedir')
-    distribution = Options.get('default', 'distribution')
     package = select_package(directory)
     if package:
         distopts = parse_distribution_options(directory, package)
@@ -197,8 +195,8 @@ def build_process():
         files.insert(len(files), package)
         os.close(fd)
         distdir = os.path.join(directory, distopts['distribution'])
-        files = parse_packages(directory, package)
-        build_package(directory, files, distribution)
+        setup_pbuilder(distdir, distopts)
+        build_package(directory, distdir, files, distopts)
 
 def main():
     if os.getuid():
