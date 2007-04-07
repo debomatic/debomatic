@@ -151,14 +151,14 @@ def prepare_pbuilder(cmd, directory, distopts):
         print 'pbuilder (%s) failed' % cmd
         sys.exit(-1)
 
-def build_package(directory, packagelist, distribution):
+def build_package(directory, distdir, packagelist, distopts):
     dscfile = None
-    if not os.path.exists(os.path.join(directory, 'result')):
-        os.mkdir(os.path.join(directory, 'result'))
+    if not os.path.exists(os.path.join(distdir, 'result')):
+        os.mkdir(os.path.join(distdir, 'result'))
     for package in packagelist:
         if os.path.exists(os.path.join(directory, package)):
             src = os.path.join(directory, package)
-            dst = os.path.join(directory, 'work', package)
+            dst = os.path.join(distdir, 'work', package)
             os.renames(src, dst)
             if not dscfile:
                 dscfile = findall('(.*\.dsc$)', dst)
@@ -166,18 +166,19 @@ def build_package(directory, packagelist, distribution):
         package = findall('.*/(.*).dsc$', dscfile[0])[0]
     except:
         package = None
-    if not os.path.exists(os.path.join(directory, 'result', package)):
-        os.mkdir(os.path.join(directory, 'result', package))
+    if not os.path.exists(os.path.join(distdir, 'result', package)):
+        os.mkdir(os.path.join(distdir, 'result', package))
     os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
               --distribution %(distribution)s --override-config \
               --pkgname-logfile --buildplace %(directory)s/build \
               --buildresult %(directory)s/result/%(package)s \
-              --aptcache %(directory)s/aptcache %(dsc)s' % \
-              {'distribution': distribution, 'directory': directory, \
+              --mirror %(url)s --aptcache %(directory)s/aptcache %(dsc)s' % \
+              {'distribution': distopts['distribution'], \
+               'directory': distdir, 'url': distopts['url'], \
               'package': package, 'dsc': dscfile[0]})
     for package in packagelist:
-        if os.path.exists(os.path.join(directory, 'work', package)):
-            os.remove(os.path.join(directory, 'work', package))
+        if os.path.exists(os.path.join(distdir, 'work', package)):
+            os.remove(os.path.join(distdir, 'work', package))
 
 def build_process():
     url = Options.get('default', 'url')
