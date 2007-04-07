@@ -39,6 +39,50 @@ def parse_options():
             print 'Please set "%s" in %s' % (opt, conffile)
             sys.exit(-1)
 
+def select_package(directory):
+    package = None
+    priority = 0
+    try:
+        filelist = os.listdir(directory)
+    except:
+        print 'Unable to access directory %s' % directory
+        sys.exit(-1)
+    for filename in filelist:
+        if os.path.splitext(filename)[1] == '.changes':
+            curprio = get_priority(os.path.join(directory,filename))
+            if curprio > priority:
+                priority = curprio
+                package = filename
+    return package
+
+def get_priority(changesfile):
+    priority = 0
+    priolist = {"low":1, "medium":2, "high":3}
+    try:
+        fd = os.open(changesfile, os.O_RDONLY)
+    except:
+        print 'Unable to open %s' % changesfile
+        return 0
+    urgency =findall('Urgency: (.*)', os.read(fd, os.fstat(fd).st_size))
+    priority = priolist[urgency[0]] * 10000000000
+    priority += 9999999999 - os.fstat(fd).st_mtime
+    os.close(fd)
+    return priority
+
+def setup_pbuilder(url, directory, distribution):
+    result = needs_update(url, directory, distribution)
+    if result:
+        prepare_pbuilder(result, url, directory, distribution)
+        for section in distopts['sections']:
+            remote = urlopen('%s/dists/%s/Release.gpg' \
+                     % (distopts['url'], section)).read()
+            if not os.path.exists(os.path.join(directory, 'gpg')):
+                os.mkdir(os.path.join(directory, 'gpg'))
+            gpgfile = os.path.join(directory, 'gpg', section)
+            fd = os.open(gpgfile, os.O_WRONLY | os.O_CREAT, 0664)
+            os.write(fd, remote)
+            os.close(fd)
+
 def needs_update(url, directory, distribution):
     for component in distribution, distribution + '-backports', \
     distribution + '-security', distribution + '-updates':
@@ -82,65 +126,6 @@ def prepare_pbuilder(cmd, url, directory, distribution):
         print 'pbuilder (%s) failed' % cmd
         sys.exit(-1)
 
-def get_gpgfiles(url, directory, distribution):
-    for component in distribution, distribution + '-backports', \
-    distribution + '-security', distribution + '-updates':
-        remote = urlopen('%s/dists/%s/Release.gpg' % (url, component)).read()
-        if not os.path.exists(os.path.join(directory, 'gpg')):
-            os.mkdir(os.path.join(directory, 'gpg'))
-        gpgfile = os.path.join(directory, 'gpg', component)
-        fd = os.open(gpgfile, os.O_WRONLY | os.O_CREAT, 0664)
-        os.write(fd, remote)
-        os.close(fd)
-
-def setup_pbuilder(url, directory, distribution):
-    result = needs_update(url, directory, distribution)
-    if result:
-        prepare_pbuilder(result, url, directory, distribution)
-        get_gpgfiles(url, directory, distribution)
-
-def get_priority(changesfile):
-    priority = 0
-    priolist = {"low":1, "medium":2, "high":3}
-    try:
-        fd = os.open(changesfile, os.O_RDONLY)
-    except:
-        print 'Unable to open %s' % changesfile
-        return 0
-    urgency =findall('Urgency: (.*)', os.read(fd, os.fstat(fd).st_size))
-    priority = priolist[urgency[0]] * 10000000000
-    priority += 9999999999 - os.fstat(fd).st_mtime
-    os.close(fd)
-    return priority
-
-def select_package(directory):
-    package = None
-    priority = 0
-    try:
-        filelist = os.listdir(directory)
-    except:
-        print 'Unable to access directory %s' % directory
-        sys.exit(-1)
-    for filename in filelist:
-        if os.path.splitext(filename)[1] == '.changes':
-            curprio = get_priority(os.path.join(directory,filename))
-            if curprio > priority:
-                priority = curprio
-                package = filename
-    return package
-
-def parse_packages(directory, package):
-    try:
-        fd = os.open(os.path.join(directory, package), os.O_RDONLY)
-    except:
-        print 'Unable to open %s' % os.path.join(directory, package)
-        sys.exit(-1)
-    files =findall('\s\w{32}\s\d+\s\w+\s[\w|-]+\s(.*)',
-                   os.read(fd, os.fstat(fd).st_size))
-    files.insert(len(files), package)
-    os.close(fd)
-    return files
-
 def build_package(directory, packagelist, distribution):
     dscfile = None
     if not os.path.exists(os.path.join(directory, 'result')):
@@ -175,7 +160,17 @@ def build_process():
     distribution = Options.get('default', 'distribution')
     package = select_package(directory)
     if package:
-        setup_pbuilder(url, directory, distribution)
+        distopts = parse_distribution_options(directory, package)
+        try:
+            fd = os.open(os.path.join(directory, package), os.O_RDONLY)
+        except:
+            print 'Unable to open %s' % os.path.join(directory, package)
+            sys.exit(-1)
+        files =findall('\s\w{32}\s\d+\s\w+\s[\w|-]+\s(.*)',
+                       os.read(fd, os.fstat(fd).st_size))
+        files.insert(len(files), package)
+        os.close(fd)
+        distdir = os.path.join(directory, distopts['distribution'])
         files = parse_packages(directory, package)
         build_package(directory, files, distribution)
 
