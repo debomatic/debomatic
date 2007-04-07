@@ -108,13 +108,12 @@ def setup_pbuilder(directory, distopts):
             os.write(fd, remote)
             os.close(fd)
 
-def needs_update(url, directory, distribution):
-    for component in distribution, distribution + '-backports', \
-    distribution + '-security', distribution + '-updates':
-        remote = urlopen('%s/dists/%s/Release.gpg' % (url, component)).read()
+def needs_update(directory, url, sections):
+    for section in sections:
+        remote = urlopen('%s/dists/%s/Release.gpg' % (url, section)).read()
         if not os.path.exists(os.path.join(directory, 'gpg')):
             os.mkdir(os.path.join(directory, 'gpg'))
-        gpgfile = os.path.join(directory, 'gpg', component)
+        gpgfile = os.path.join(directory, 'gpg', section)
         if not os.path.exists(gpgfile):
             return 'create'
         try:		
