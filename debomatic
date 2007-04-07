@@ -92,10 +92,12 @@ def get_priority(changesfile):
     os.close(fd)
     return priority
 
-def setup_pbuilder(url, directory, distribution):
-    result = needs_update(url, directory, distribution)
+def setup_pbuilder(directory, distopts):
+    if not os.path.exists(os.path.join(directory)):
+        os.mkdir(os.path.join(directory))
+    result = needs_update(directory, distopts['url'], distopts['sections'])
     if result:
-        prepare_pbuilder(result, url, directory, distribution)
+        prepare_pbuilder(result, directory, distopts)
         for section in distopts['sections']:
             remote = urlopen('%s/dists/%s/Release.gpg' \
                      % (distopts['url'], section)).read()
