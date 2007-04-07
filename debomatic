@@ -8,7 +8,7 @@ import sha
 import sys
 from ConfigParser import ConfigParser
 from debomatic import daemon
-from re import findall
+from re import findall, split
 from sha import new
 from time import sleep, strftime
 from urllib import urlopen
@@ -38,6 +38,29 @@ def parse_default_options():
         not Options.get('default', opt):
             print 'Please set "%s" in %s' % (opt, conffile)
             sys.exit(-1)
+
+def parse_distribution_options(directory, package):
+    options = dict()
+    try:
+        fd = os.open(os.path.join(directory, package), os.O_RDONLY)
+    except:
+        print 'Unable to open %s' % os.path.join(directory, package)
+        sys.exit(-1)
+    distro =findall('Distribution:\s+(.*)', os.read(fd, os.fstat(fd).st_size))
+    os.close(fd)
+    try:
+        options['distribution'] = distro[0]
+    except:
+        print "Bad .changes file"
+        sys.exit(-1)
+    try:
+        for opt in ('url', 'sections', 'components'):
+            options[opt] = Options.get(options['distribution'], opt)
+    except:
+        print 'Not enabled for distribution %s' % options['distribution']
+        sys.exit(-1)
+    options['sections'] = split(',', options['sections'])
+    return options
 
 def select_package(directory):
     package = None
