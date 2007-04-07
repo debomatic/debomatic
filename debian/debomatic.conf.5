@@ -1,18 +1,19 @@
-.TH debomatic.conf 5 2007\-03\-07  
+.TH debomatic.conf 5 2007\-04\-07  
 .SH NAME
 debomatic.conf \- Configuration files for debomatic
-.SH FORMAT
-\fIpackagedir\fR: the directory where debomatic will search for 
-source packages to build
-.PP
-\fIdistribution\fR: distribution debomatic will prepare binary 
-packages for
-.PP
-\fIurl\fR: internet address of the package repository
+.SH "DEFAULT SECTION"
+\fIpackagedir\fR: the directory where debomatic will 
+search for source packages to build
 .PP
 \fIlogfile\fR: debomatic messages will be stored in this file
 .PP
 \fIsleep\fR: interval between two scans or builds
+.SH "DISTRIBUTION\-SPECIFIC SECTION"
+\fIurl\fR: internet address of the package repository
+.PP
+\fIsections\fR: comma\-separated list of package sections
+.PP
+\fIcomponent\fR: space delimited list of components
 .SH COPYRIGHT
 This manual page was written by Luca Falavigna 
 <dktrkranz@linuxdc.it>. Permission is granted to copy, distribute 

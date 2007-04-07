@@ -5,15 +5,37 @@
 # Set this to the directory where you will upload your source packages
 packagedir: /incoming
 
-# Set this to the distribution you want to build your packages for.
-# It should be any of the ones managed by debootstrap package
-distribution: feisty
-
-# Set this to the URL of package repository
-url: http://archive.ubuntu.com/ubuntu
-
 # Set this to the file wich will log debomatic messages
-logfile: /var/log/debomatic
+logfile: /var/log/debomatic.log
 
 # Set this to the number of seconds between two build processes
-sleep: 300
+sleep: 60
+
+
+
+# Distribution specific sections
+# Their names must be in debootstrap in order to work
+# Ubuntu
+[feisty]
+
+# Set this to the URL of package repository
+url: http://it.archive.ubuntu.com/ubuntu
+
+# Comma-separated list of package sections
+sections: feisty,feisty-updates,feisty-security,feisty-backports
+
+# Space delimited list of components
+components: main restricted universe multiverse
+
+
+# Debian
+[unstable]
+
+# Set this to the URL of package repository
+url: http://ftp.debian.org/debian
+
+# Comma-separated list of package sections
+sections: unstable
+
+# Space delimited list of components
+components: main contrib non-free
