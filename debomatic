@@ -114,23 +114,22 @@ def setup_pbuilder(directory, configdir, distopts):
         os.write(fd, remote)
         os.close(fd)
 
-def needs_update(directory, url, sections):
-    for section in sections:
-        remote = urlopen('%s/dists/%s/Release.gpg' % (url, section)).read()
-        if not os.path.exists(os.path.join(directory, 'gpg')):
-            os.mkdir(os.path.join(directory, 'gpg'))
-        gpgfile = os.path.join(directory, 'gpg', section)
-        if not os.path.exists(gpgfile):
-            return 'create'
-        try:		
-            fd = os.open(gpgfile, os.O_RDONLY)
-        except:
-            return 'create'
-        remote_sha = new(remote)
-        gpgfile_sha = new(os.read(fd, os.fstat(fd).st_size))
-        os.close(fd)
-        if remote_sha.digest() != gpgfile_sha.digest():
-            return 'update'
+def needs_update(directory, mirror, distribution):
+    remote = urlopen('%s/dists/%s/Release.gpg' % (mirror, distribution)).read()
+    if not os.path.exists(os.path.join(directory, 'gpg')):
+        os.mkdir(os.path.join(directory, 'gpg'))
+    gpgfile = os.path.join(directory, 'gpg', distribution)
+    if not os.path.exists(gpgfile):
+        return 'create'
+    try:		
+        fd = os.open(gpgfile, os.O_RDONLY)
+    except:
+        return 'create'
+    remote_sha = new(remote)
+    gpgfile_sha = new(os.read(fd, os.fstat(fd).st_size))
+    os.close(fd)
+    if remote_sha.digest() != gpgfile_sha.digest():
+        return 'update'
 
 def prepare_pbuilder(cmd, directory, distopts):
     repos = str()
