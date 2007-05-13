@@ -98,21 +98,21 @@ def get_priority(changesfile):
     os.close(fd)
     return priority
 
-def setup_pbuilder(directory, distopts):
+def setup_pbuilder(directory, configdir, distopts):
     if not os.path.exists(os.path.join(directory)):
         os.mkdir(os.path.join(directory))
-    result = needs_update(directory, distopts['url'], distopts['sections'])
+    result = needs_update(directory, distopts['mirror'], \
+                          distopts['distribution'])
     if result:
-        prepare_pbuilder(result, directory, distopts)
-        for section in distopts['sections']:
-            remote = urlopen('%s/dists/%s/Release.gpg' \
-                     % (distopts['url'], section)).read()
-            if not os.path.exists(os.path.join(directory, 'gpg')):
-                os.mkdir(os.path.join(directory, 'gpg'))
-            gpgfile = os.path.join(directory, 'gpg', section)
-            fd = os.open(gpgfile, os.O_WRONLY | os.O_CREAT, 0664)
-            os.write(fd, remote)
-            os.close(fd)
+        prepare_pbuilder(result, directory, configdir, distopts)
+        remote = urlopen('%s/dists/%s/Release.gpg' \
+                     % (distopts['mirror'], distopts['distribution'])).read()
+        if not os.path.exists(os.path.join(directory, 'gpg')):
+            os.mkdir(os.path.join(directory, 'gpg'))
+        gpgfile = os.path.join(directory, 'gpg', distopts['distribution'])
+        fd = os.open(gpgfile, os.O_WRONLY | os.O_CREAT, 0664)
+        os.write(fd, remote)
+        os.close(fd)
 
 def needs_update(directory, url, sections):
     for section in sections:
