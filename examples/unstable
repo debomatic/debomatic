@@ -1,0 +1,4 @@
+DISTRIBUTION=unstable
+MIRRORSITE=ftp://ftp.debian.org/debian
+COMPONENTS="main contrib non-free"
+
