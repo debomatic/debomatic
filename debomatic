@@ -131,10 +131,7 @@ def needs_update(directory, mirror, distribution):
     if remote_sha.digest() != gpgfile_sha.digest():
         return 'update'
 
-def prepare_pbuilder(cmd, directory, distopts):
-    repos = str()
-    for section in distopts['sections']:
-        repos += "deb %s %s %s | " % (distopts['url'], section, distopts['components'])
+def prepare_pbuilder(cmd, directory, configdir, distopts):
     if not os.path.exists(os.path.join(directory, 'build')):
         os.mkdir(os.path.join(directory, 'build'))
     if not os.path.exists(os.path.join(directory, 'aptcache')):
@@ -145,13 +142,12 @@ def prepare_pbuilder(cmd, directory, distopts):
         os.mkdir(os.path.join(directory, 'work'))
     if (os.system('pbuilder %(cmd)s --basetgz %(directory)s/%(distribution)s \
                   --distribution %(distribution)s --override-config \
-                  --mirror %(url)s --othermirror "%(repository)s" \
-                  --buildplace %(directory)s/build \
+                  --configfile %(cfg)s --buildplace %(directory)s/build \
                   --aptcache "%(directory)s/aptcache" \
                   --logfile %(directory)s/logs/%(cmd)s.%(now)s' \
                   % {'cmd': cmd, 'directory': directory, \
                   'distribution': distopts['distribution'], \
-                  'url': distopts['url'], 'repository': repos, \
+                  'cfg': os.path.join(configdir, distopts['distribution']), \
                   'now': strftime('%Y%m%d_%H%M')})):
         print 'pbuilder (%s) failed' % cmd
         sys.exit(-1)
