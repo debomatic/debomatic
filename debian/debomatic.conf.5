@@ -1,28 +1,15 @@
-.TH debomatic.conf 5 2007\-04\-07  
+.TH debomatic.conf 5 2007\-05\-13  
 .SH NAME
 debomatic.conf \- Configuration files for debomatic
 .SH "DEFAULT SECTION"
 \fIpackagedir\fR: the directory where debomatic will 
 search for source packages to build
 .PP
+\fIconfigdir\fR: the directory where debomatic will 
+search for configuration files
+.PP
 \fIlogfile\fR: debomatic messages will be stored in this file
 .PP
 \fIsleep\fR: interval between two scans or builds
-.SH "DISTRIBUTION\-SPECIFIC SECTION"
-\fIurl\fR: internet address of the package repository
-.PP
-\fIsections\fR: comma\-separated list of package sections
-.PP
-\fIcomponent\fR: space delimited list of components
-.SH COPYRIGHT
-This manual page was written by Luca Falavigna 
-<dktrkranz@linuxdc.it>. Permission is granted to copy, distribute 
-and/or modify this document under the terms of the 
-GNU General Public License, Version 2 or any later 
-version published by the Free Software Foundation.
-.PP
-On Debian systems (like Ubuntu), the complete text of the GNU General
-Public License can be found in
-\fB/usr/share/common\-licenses/GPL\fR.
 .SH "SEE ALSO"
-debomatic(1)
+debomatic(1), pbuilderrc(5)
