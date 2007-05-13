@@ -39,27 +39,33 @@ def parse_default_options():
             print 'Please set "%s" in %s' % (opt, conffile)
             sys.exit(-1)
 
-def parse_distribution_options(directory, package):
+def parse_distribution_options(packagedir, configdir, package):
     options = dict()
     try:
-        fd = os.open(os.path.join(directory, package), os.O_RDONLY)
+        fd = os.open(os.path.join(packagedir, package), os.O_RDONLY)
     except:
-        print 'Unable to open %s' % os.path.join(directory, package)
+        print 'Unable to open %s' % os.path.join(packagedir, package)
         sys.exit(-1)
-    distro =findall('Distribution:\s+(.*)', os.read(fd, os.fstat(fd).st_size))
+    try:
+        distro = findall('Distribution:\s+(.*)', \
+                         os.read(fd, os.fstat(fd).st_size))[0]
+        options['distribution'] = distro
+    except:
+        print 'Bad .changes file'
+        sys.exit(-1)
     os.close(fd)
     try:
-        options['distribution'] = distro[0]
+        fd = os.open(os.path.join(configdir, distro), os.O_RDONLY)
     except:
-        print "Bad .changes file"
+        print 'Unable to open %s' % os.path.join(configdir, distro)
         sys.exit(-1)
+    conf = os.read(fd, os.fstat(fd).st_size)
+    os.close(fd)
     try:
-        for opt in ('url', 'sections', 'components'):
-            options[opt] = Options.get(options['distribution'], opt)
+        options['mirror'] = findall('[^#]?MIRRORSITE="?(.*[^"])"?\n', conf)[0]
     except:
-        print 'Not enabled for distribution %s' % options['distribution']
+        print 'Please set MIRRORSITE in %s' % os.path.join(configdir, distro)
         sys.exit(-1)
-    options['sections'] = split(',', options['sections'])
     return options
 
 def select_package(directory):
