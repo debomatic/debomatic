@@ -184,9 +184,10 @@ def build_package(directory, configdir, distdir, packagelist, distopts):
 
 def build_process():
     directory = Options.get('default', 'packagedir')
+    configdir = Options.get('default', 'configdir')
     package = select_package(directory)
     if package:
-        distopts = parse_distribution_options(directory, package)
+        distopts = parse_distribution_options(directory, configdir, package)
         try:
             fd = os.open(os.path.join(directory, package), os.O_RDONLY)
         except:
@@ -197,8 +198,8 @@ def build_process():
         files.insert(len(files), package)
         os.close(fd)
         distdir = os.path.join(directory, distopts['distribution'])
-        setup_pbuilder(distdir, distopts)
-        build_package(directory, distdir, files, distopts)
+        setup_pbuilder(distdir, configdir, distopts)
+        build_package(directory, configdir, distdir, files, distopts)
 
 def main():
     if os.getuid():
