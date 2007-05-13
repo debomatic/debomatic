@@ -152,7 +152,7 @@ def prepare_pbuilder(cmd, directory, configdir, distopts):
         print 'pbuilder (%s) failed' % cmd
         sys.exit(-1)
 
-def build_package(directory, distdir, packagelist, distopts):
+def build_package(directory, configdir, distdir, packagelist, distopts):
     dscfile = None
     if not os.path.exists(os.path.join(distdir, 'result')):
         os.mkdir(os.path.join(distdir, 'result'))
@@ -171,12 +171,13 @@ def build_package(directory, distdir, packagelist, distopts):
         os.mkdir(os.path.join(distdir, 'result', package))
     os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
               --distribution %(distribution)s --override-config \
-              --pkgname-logfile --buildplace %(directory)s/build \
+              --pkgname-logfile --configfile %(cfg)s \
+              --buildplace %(directory)s/build \
               --buildresult %(directory)s/result/%(package)s \
-              --mirror %(url)s --aptcache %(directory)s/aptcache %(dsc)s' % \
-              {'distribution': distopts['distribution'], \
-               'directory': distdir, 'url': distopts['url'], \
-              'package': package, 'dsc': dscfile[0]})
+              --aptcache %(directory)s/aptcache %(dsc)s \
+              ' % { 'directory': distdir, 'package': package, \
+              'cfg': os.path.join(configdir, distopts['distribution']), \
+              'distribution': distopts['distribution'], 'dsc': dscfile[0]})
     for package in packagelist:
         if os.path.exists(os.path.join(distdir, 'work', package)):
             os.remove(os.path.join(distdir, 'work', package))
