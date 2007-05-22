@@ -193,7 +193,7 @@ def build_process():
         except:
             print 'Unable to open %s' % os.path.join(directory, package)
             sys.exit(-1)
-        files =findall('\s\w{32}\s\d+\s\w+\s[\w|-]+\s(.*)',
+        files =findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)',
                        os.read(fd, os.fstat(fd).st_size))
         files.insert(len(files), package)
         os.close(fd)
