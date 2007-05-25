@@ -182,6 +182,28 @@ def build_package(directory, configdir, distdir, packagelist, distopts):
         if os.path.exists(os.path.join(distdir, 'work', package)):
             os.remove(os.path.join(distdir, 'work', package))
 
+def check_package(directory, distribution, changes):
+    try:
+        packagename = findall('(.*_.*)_source.changes', changes)[0]
+    except:
+        print 'Bad .changes file'
+        sys.exit(-1)
+    resultdir = os.path.join(directory, distribution, 'result', packagename)
+    lintian = os.path.join(resultdir, packagename) + '.lintian'
+    linda = os.path.join(resultdir, packagename) + '.linda'
+    changesfile = None
+    for filename in os.listdir(resultdir):
+        result = findall('.*.changes', filename)
+        if len(result):
+            changesfile = os.path.join(resultdir, result[0])
+            break
+    if changesfile:
+        if Options.get('default', 'lintian') :
+            os.system('lintian --allow-root -i -I %s > %s' \
+                      % (changesfile, lintian))
+        if Options.get('default', 'linda'):
+            os.system('linda -q -i %s > %s' % (changesfile, linda))
+
 def build_process():
     directory = Options.get('default', 'packagedir')
     configdir = Options.get('default', 'configdir')
