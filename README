@@ -21,7 +21,7 @@ You only need python-dev (or equivalent) and pbuilder packages installed.
 CONFIGURATION AND PRELIMINARY SETUP
 
 In order to get deb-o-matic working, you have to prepare a configuration file
-(see debomatic.conf.sample for some hints on this phase) and create a package
+(see examples/debomatic.conf for some hints on this phase) and create a package
 directory to store deb-o-matic files (packagedir option)
 
 
