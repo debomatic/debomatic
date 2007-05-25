@@ -175,8 +175,8 @@ def build_package(directory, configdir, distdir, packagelist, distopts):
               --pkgname-logfile --configfile %(cfg)s \
               --buildplace %(directory)s/build \
               --buildresult %(directory)s/result/%(package)s \
-              --aptcache %(directory)s/aptcache %(dsc)s \
-              ' % { 'directory': distdir, 'package': package, \
+              --aptcache %(directory)s/aptcache %(dsc)s' \
+              % { 'directory': distdir, 'package': package, \
               'cfg': os.path.join(configdir, distopts['distribution']), \
               'distribution': distopts['distribution'], 'dsc': dscfile[0]})
     for package in packagelist:
