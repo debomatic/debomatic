@@ -33,7 +33,8 @@ def parse_default_options():
         print 'Configuration file %s does not exist' % conffile
         sys.exit(-1)
     Options.read(conffile)
-    for opt in ('packagedir', 'configdir', 'logfile', 'sleep'):
+    for opt in ('packagedir', 'configdir', 'logfile', 
+                'sleep', 'lintian', 'linda'):
         if not Options.has_option('default', opt) or \
         not Options.get('default', opt):
             print 'Please set "%s" in %s' % (opt, conffile)
@@ -222,6 +223,7 @@ def build_process():
         distdir = os.path.join(directory, distopts['distribution'])
         setup_pbuilder(distdir, configdir, distopts)
         build_package(directory, configdir, distdir, files, distopts)
+        check_package(directory, distopts['distribution'], package)
 
 def main():
     if os.getuid():
