@@ -1,6 +1,0 @@
-In order to generate a valid Debian Sid pbuilder, it is required to issue the
-following command using root privileges:
-
-ln -s /usr/lib/debootstrap/scripts/sid /usr/lib/debootstrap/scripts/unstable
-
-This way, debootstrap can handle Debian Unstable without errors
