@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+]>
+<refentry>
+  <refentryinfo>
+    <author>
+      <firstname>Luca</firstname>
+      <surname>Falavigna</surname>
+      <email>dktrkranz@ubuntu.com</email>
+    </author>
+    <copyright>
+      <year>2007</year>
+      <holder>Luca Falavigna</holder>
+    </copyright>
+    <!-- XXX IMPORTANT XXX -->
+    <!-- Keep this date up to date: -->
+    <date>2007-05-25</date>
+    <!--  ^^^^^^^^^^ -->
+  </refentryinfo>
+  <refmeta>
+    <refentrytitle>debomatic.conf</refentrytitle>
+    <manvolnum>5</manvolnum>
+  </refmeta>
+  <refnamediv>
+    <refname>debomatic.conf</refname>
+    <refpurpose>Configuration files for debomatic</refpurpose>
+  </refnamediv>
+  <refsect1>
+    <title>DEFAULT SECTION</title>
+    <para>
+      <emphasis>packagedir</emphasis>: the directory where debomatic will  
+      search for source packages to build
+    </para>
+    <para>
+      <emphasis>configdir</emphasis>: the directory where debomatic will  
+      search for configuration files
+    </para>
+    <para>
+      <emphasis>logfile</emphasis>: debomatic messages will be stored in this file
+    </para>
+    <para>
+      <emphasis>sleep</emphasis>: interval between two scans or builds
+    </para>
+    <para>
+      <emphasis>lintian</emphasis>: if enabled, run lintian after build process
+    </para>
+    <para>
+      <emphasis>linda</emphasis>: if enabled, run linda after build process
+    </para>
+   </refsect1>
+<refsect1>
+    <title>SEE ALSO</title>
+    <para>
+      debomatic(1), pbuilderrc(5)
+    </para>
+  </refsect1>
+</refentry>
