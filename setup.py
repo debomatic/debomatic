@@ -19,10 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-from distutils.core import setup, Extension
+from distutils.core import setup
    
-debomaticmodule = Extension('debomatic', sources = ['debomaticmodule.c'])
-
-setup(name='debomatic', version="0.1",
-      description = 'Automatic build machine for Debian packages',
-      scripts=['debomatic'], ext_modules = [debomaticmodule])
+setup(name='debomatic', version="0.2.1", scripts=['debomatic'],
+      description = 'Automatic build machine for Debian source packages')

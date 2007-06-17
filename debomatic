@@ -23,21 +23,12 @@ import os
 import sha
 import sys
 from ConfigParser import ConfigParser
-from debomatic import daemon
 from re import findall, split
 from sha import new
 from time import sleep, strftime
 from urllib import urlopen
 
 Options = ConfigParser()
-
-class Log:
-    def __init__(self, logfile):
-        self.logfile = logfile
-
-    def write(self, data):
-        self.logfile.write(data)
-        self.logfile.flush()
 
 def daemonize(logfile):
     try:
@@ -271,10 +262,7 @@ def main():
         print 'You must run deb-o-matic as root'
         sys.exit(-1)
     parse_default_options()
-    daemon()
-    sys.stdin.close()
-    sys.stdout = sys.stderr = Log(open(Options.get('default', \
-                                  'logfile'), 'a+'))
+    daemonize(Options.get('default', 'logfile'))
     while(1):
         pid = os.fork()
         if pid:
