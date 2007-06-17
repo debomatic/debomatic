@@ -39,6 +39,31 @@ class Log:
         self.logfile.write(data)
         self.logfile.flush()
 
+def daemonize(logfile):
+    try:
+        pid = os.fork()
+        if pid > 0:
+            sys.exit(0)
+    except OSError:
+        print 'Fork failed'
+        sys.exit(-1)
+    os.setsid()
+    os.chdir('/')
+    os.umask(0)
+    try:
+        pid = os.fork()
+        if pid > 0:
+            sys.exit(0)
+    except OSError:
+        print 'Fork failed'
+        sys.exit(-1)
+    fin = open('/dev/null', 'r')
+    fout = open(logfile, 'a+')
+    ferr = open(logfile, 'a+', 0)
+    os.dup2(fin.fileno(), sys.stdin.fileno())
+    os.dup2(fout.fileno(), sys.stdout.fileno())
+    os.dup2(ferr.fileno(), sys.stderr.fileno())
+
 def parse_default_options():
     try:
         conffile = sys.argv[1]
