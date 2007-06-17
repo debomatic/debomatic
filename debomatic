@@ -23,6 +23,7 @@ import os
 import sha
 import sys
 from ConfigParser import ConfigParser
+from getopt import getopt, GetoptError
 from re import findall, split
 from sha import new
 from time import sleep, strftime
@@ -55,10 +56,8 @@ def daemonize(logfile):
     os.dup2(fout.fileno(), sys.stdout.fileno())
     os.dup2(ferr.fileno(), sys.stderr.fileno())
 
-def parse_default_options():
-    try:
-        conffile = sys.argv[1]
-    except:
+def parse_default_options(conffile):
+    if not conffile:
         print 'Please specify a configuration file'
         sys.exit(-1)
     if not os.path.exists(conffile):
@@ -258,10 +257,22 @@ def build_process():
         check_package(directory, distopts['distribution'], package)
 
 def main():
+    conffile = None
+    daemon = False
     if os.getuid():
         print 'You must run deb-o-matic as root'
         sys.exit(-1)
-    parse_default_options()
+    try:
+        opts, args = getopt(sys.argv[1:], 'c:d', ['config=', 'daemon'])
+    except GetoptError, error:
+        print error.msg
+        sys.exit(-1)
+    for o, a in opts:
+        if o in ("-c", "--config"):
+            conffile = a
+        if o in ('-d', '--daemon'):
+            daemon = True
+    parse_default_options(conffile)
     daemonize(Options.get('default', 'logfile'))
     while(1):
         pid = os.fork()
