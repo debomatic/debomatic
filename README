@@ -11,10 +11,11 @@ INSTALLATION
 
 Installation process is straightforward:
 
-python ./setup.py build
-su -c python ./setup.py install
+make
+make install (with root privileges)
 
-You only need python-dev (or equivalent) and pbuilder packages installed.
+You will need python-dev (or equivalent), pbuilder, debootstrap and docbook2x 
+packages installed in order to complete the process.
 
 
 
@@ -28,7 +29,7 @@ directory to store deb-o-matic files (packagedir option)
 
 RUNNING DEB-O-MATIC
 
-To start deb-o-matic, you have to launch "debomatic debomatic.conf" command
+To start deb-o-matic, you have to launch "debomatic -c debomatic.conf" command
 (where debomatic.conf is configuration file you just created). You need root
 privileges to do so because of pbuilder infrastructure.
 Now you have to put source packages in the chosen package directory (identified
