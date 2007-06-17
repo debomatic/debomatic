@@ -273,7 +273,8 @@ def main():
         if o in ('-d', '--daemon'):
             daemon = True
     parse_default_options(conffile)
-    daemonize(Options.get('default', 'logfile'))
+    if daemon:
+        daemonize(Options.get('default', 'logfile'))
     while(1):
         pid = os.fork()
         if pid:
