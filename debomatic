@@ -22,6 +22,7 @@
 import os
 import sha
 import sys
+import threading
 from ConfigParser import ConfigParser
 from getopt import getopt, GetoptError
 from re import findall, split
@@ -29,7 +30,11 @@ from sha import new
 from time import sleep, strftime
 from urllib import urlopen
 
+class Semaphores:
+    pass
+
 Options = ConfigParser()
+sema = Semaphores()
 
 def daemonize(logfile):
     try:
@@ -65,7 +70,7 @@ def parse_default_options(conffile):
         sys.exit(-1)
     Options.read(conffile)
     for opt in ('packagedir', 'configdir', 'logfile', 
-                'sleep', 'lintian', 'linda'):
+                'maxbuilds', 'sleep', 'lintian', 'linda'):
         if not Options.has_option('default', opt) or \
         not Options.get('default', opt):
             print 'Please set "%s" in %s' % (opt, conffile)
@@ -135,7 +140,12 @@ def setup_pbuilder(directory, configdir, distopts):
         os.mkdir(os.path.join(directory))
     result = needs_update(directory, distopts['mirror'], \
                           distopts['distribution'])
+    if not sema.update.acquire(False):
+        sys.exit(-1)
     if result:
+        if threading.activeCount() > 2:
+            sema.update.release()
+            sys.exit(-1)
         prepare_pbuilder(result, directory, configdir, distopts)
         remote = urlopen('%s/dists/%s/Release.gpg' \
                      % (distopts['mirror'], distopts['distribution'])).read()
@@ -145,6 +155,7 @@ def setup_pbuilder(directory, configdir, distopts):
         fd = os.open(gpgfile, os.O_WRONLY | os.O_CREAT, 0664)
         os.write(fd, remote)
         os.close(fd)
+    sema.update.release()
 
 def needs_update(directory, mirror, distribution):
     remote = urlopen('%s/dists/%s/Release.gpg' % (mirror, distribution)).read()
@@ -182,9 +193,12 @@ def prepare_pbuilder(cmd, directory, configdir, distopts):
                   'cfg': os.path.join(configdir, distopts['distribution']), \
                   'now': strftime('%Y%m%d_%H%M')})):
         print 'pbuilder (%s) failed' % cmd
+        sema.update.release()
         sys.exit(-1)
 
 def build_package(directory, configdir, distdir, packagelist, distopts):
+    if not sema.build.acquire(False):
+        sys.exit(-1)
     dscfile = None
     if not os.path.exists(os.path.join(distdir, 'result')):
         os.mkdir(os.path.join(distdir, 'result'))
@@ -213,6 +227,7 @@ def build_package(directory, configdir, distdir, packagelist, distopts):
     for package in packagelist:
         if os.path.exists(os.path.join(distdir, 'work', package)):
             os.remove(os.path.join(distdir, 'work', package))
+    sema.build.release()
 
 def check_package(directory, distribution, changes):
     try:
@@ -275,14 +290,11 @@ def main():
     parse_default_options(conffile)
     if daemon:
         daemonize(Options.get('default', 'logfile'))
-    while(1):
-        pid = os.fork()
-        if pid:
-            os.waitpid(pid, 0)
-            sleep(Options.getint('default', 'sleep'))
-        else:
-            build_process()
-            sys.exit(0)
+    sema.build = threading.Semaphore(int(Options.get('default', 'maxbuilds')))
+    sema.update = threading.Semaphore()
+    while 1:
+        threading.Thread(None, build_process).start()
+        sleep(Options.getint('default', 'sleep'))
 
 if __name__ == "__main__":
     main()
