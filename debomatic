@@ -147,18 +147,17 @@ def setup_pbuilder(directory, configdir, distopts):
             sema.update.release()
             sys.exit(-1)
         prepare_pbuilder(result, directory, configdir, distopts)
-        remote = urlopen('%s/dists/%s/Release.gpg' \
-                     % (distopts['mirror'], distopts['distribution'])).read()
         if not os.path.exists(os.path.join(directory, 'gpg')):
             os.mkdir(os.path.join(directory, 'gpg'))
         gpgfile = os.path.join(directory, 'gpg', distopts['distribution'])
         fd = os.open(gpgfile, os.O_WRONLY | os.O_CREAT, 0664)
+        remote = urlopen('%s/dists/%s/Release.gpg' \
+                     % (distopts['mirror'], distopts['distribution'])).read()
         os.write(fd, remote)
         os.close(fd)
     sema.update.release()
 
 def needs_update(directory, mirror, distribution):
-    remote = urlopen('%s/dists/%s/Release.gpg' % (mirror, distribution)).read()
     if not os.path.exists(os.path.join(directory, 'gpg')):
         os.mkdir(os.path.join(directory, 'gpg'))
     gpgfile = os.path.join(directory, 'gpg', distribution)
@@ -168,6 +167,7 @@ def needs_update(directory, mirror, distribution):
         fd = os.open(gpgfile, os.O_RDONLY)
     except:
         return 'create'
+    remote = urlopen('%s/dists/%s/Release.gpg' % (mirror, distribution)).read()
     remote_sha = new(remote)
     gpgfile_sha = new(os.read(fd, os.fstat(fd).st_size))
     os.close(fd)
