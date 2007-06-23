@@ -273,20 +273,20 @@ def build_process():
 
 def main():
     conffile = None
-    daemon = False
+    daemon = True
     if os.getuid():
         print 'You must run deb-o-matic as root'
         sys.exit(-1)
     try:
-        opts, args = getopt(sys.argv[1:], 'c:d', ['config=', 'daemon'])
+        opts, args = getopt(sys.argv[1:], 'c:n', ['config=', 'nodaemon'])
     except GetoptError, error:
         print error.msg
         sys.exit(-1)
     for o, a in opts:
         if o in ("-c", "--config"):
             conffile = a
-        if o in ('-d', '--daemon'):
-            daemon = True
+        if o in ('-n', '--nodaemon'):
+            daemon = False
     parse_default_options(conffile)
     if daemon:
         daemonize(Options.get('default', 'logfile'))
