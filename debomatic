@@ -84,7 +84,7 @@ def parse_distribution_options(packagedir, configdir, package):
         print 'Unable to open %s' % os.path.join(packagedir, package)
         sys.exit(-1)
     try:
-        distro = findall('Distribution:\s+(.*)', \
+        distro = findall('Distribution:\s+(\w+)', \
                          os.read(fd, os.fstat(fd).st_size))[0]
         options['distribution'] = distro
     except:
