@@ -15,7 +15,7 @@
     </copyright>
     <!-- XXX IMPORTANT XXX -->
     <!-- Keep this date up to date: -->
-    <date>2007-05-25</date>
+    <date>2007-07-28</date>
     <!--  ^^^^^^^^^^ -->
   </refentryinfo>
   <refmeta>
@@ -24,29 +24,36 @@
   </refmeta>
   <refnamediv>
     <refname>debomatic.conf</refname>
-    <refpurpose>Configuration files for debomatic</refpurpose>
+    <refpurpose>Configuration file for debomatic</refpurpose>
   </refnamediv>
   <refsect1>
     <title>DEFAULT SECTION</title>
     <para>
-      <emphasis>packagedir</emphasis>: the directory where debomatic will  
-      search for source packages to build
+      <emphasis>packagedir</emphasis>: this directory is the base directory
+      where debomatic will scan for packages to build. It must exists before
+      launching debomatic or an error will be raised.
     </para>
     <para>
-      <emphasis>configdir</emphasis>: the directory where debomatic will  
-      search for configuration files
+      <emphasis>configdir</emphasis>: this directory contains pbuilder
+      configuration files used to pass build options to pbuilder. They must
+      contain pbuilder specific parameters (see pbuilderrc(5) for further
+      reference) and their names must match target releases (such as gutsy or
+      unstable).
     </para>
     <para>
       <emphasis>logfile</emphasis>: debomatic messages will be stored in this file
     </para>
     <para>
-      <emphasis>sleep</emphasis>: interval between two scans or builds
+      <emphasis>sleep</emphasis>: debomatic will build another source package 
+      when a number of seconds provided by this parameter have elapsed.
     </para>
     <para>
-      <emphasis>lintian</emphasis>: if enabled, run lintian after build process
+      <emphasis>lintian</emphasis>: if enabled, run lintian application after 
+      build process. lintian has to be installed in order to do so.
     </para>
     <para>
-      <emphasis>linda</emphasis>: if enabled, run linda after build process
+      <emphasis>linda</emphasis>: if enabled, run linda application after 
+      build process. linda has to be installed in order to do so.
     </para>
    </refsect1>
 <refsect1>
