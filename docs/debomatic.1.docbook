@@ -15,7 +15,7 @@
     </copyright>
     <!-- XXX IMPORTANT XXX -->
     <!-- Keep this date up to date: -->
-    <date>2007-06-17</date>
+    <date>2007-07-28</date>
     <!--  ^^^^^^^^^^ -->
   </refentryinfo>
   <refmeta>
@@ -24,14 +24,14 @@
   </refmeta>
   <refnamediv>
     <refname>debomatic</refname>
-    <refpurpose>Automatic build machine for Debian packages</refpurpose>
+    <refpurpose>Automatic build machine for Debian source packages</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
       <command>debomatic</command>
       <arg choice="plain">
         <option><replaceable>-c|--config conffile</replaceable></option>
-        <option><replaceable>[-d|--daemon]</replaceable></option>
+        <option><replaceable>[-n|--nodaemon]</replaceable></option>
       </arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -39,13 +39,33 @@
     <title>DESCRIPTION</title>
     <para>
       This tool provides a simple build machine for Debian source packages.
-      It is designed to be self-sufficient and requires just an initial setup.
-      It needs <application>pbuilder</application> and an active Internet 
-      connection in order to work properly.
+      It is designed to be very simple to use and self-sufficient during 
+      package build process and chroot updates. It support almost every
+      Debian-based distribution (such as Ubuntu), given its repositories
+      follow standard Debian repository structure.
+    </para>
+    <para>
+      <application>pbuilder</application> and an active Internet connection
+      (broadband is suggested) are required in order for debomatic to work 
+      properly.
     </para>
     <para>
       You have to run it using root privileges because of 
       <application>pbuilder</application> infrastructure.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+    <para>
+      <emphasis>-c|--config conffile</emphasis>: you have to specify a
+      configuration file for debomatic to work. See debomatic.conf(5) for 
+      further details.
+    </para>
+    <para>
+      <emphasis>-n|--nodaemon</emphasis>: by default, debomatic runs in full
+      daemon mode and it detaches itself from its parent. If you do not want
+      this, you can use this option and debomatic will not detach from parent
+      process.
     </para>
   </refsect1>
   <refsect1>
