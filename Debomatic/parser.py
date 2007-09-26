@@ -30,8 +30,7 @@ def parse_default_options(conffile):
         print 'Configuration file %s does not exist' % conffile
         sys.exit(-1)
     globals.Options.read(conffile)
-    for opt in ('packagedir', 'configdir', 'logfile', 
-                'maxbuilds', 'sleep', 'lintian', 'linda'):
+    for opt in ('packagedir', 'configdir', 'logfile', 'maxbuilds', 'inotify', 'sleep', 'lintian', 'linda'):
         if not globals.Options.has_option('default', opt) or not globals.Options.get('default', opt):
             print 'Please set "%s" in %s' % (opt, conffile)
             sys.exit(-1)

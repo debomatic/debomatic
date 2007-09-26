@@ -22,10 +22,9 @@ import os
 import sys
 import threading
 from getopt import getopt, GetoptError
-from time import sleep
 from Debomatic import globals
-from Debomatic import build
 from Debomatic import daemonize
+from Debomatic import launcher
 from Debomatic import parser
 
 def main():
@@ -49,9 +48,7 @@ def main():
         daemonize.daemonize(globals.Options.get('default', 'logfile'))
     globals.sema.build = threading.Semaphore(int(globals.Options.get('default', 'maxbuilds')))
     globals.sema.update = threading.Semaphore()
-    while 1:
-        threading.Thread(None, build.build_process).start()
-        sleep(globals.Options.getint('default', 'sleep'))
+    launcher.launcher()
 
 if __name__ == "__main__":
     main()
