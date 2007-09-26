@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Deb-o-Matic
 #
 # Copyright (C) 2007 Luca Falavigna
@@ -18,14 +17,31 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-from distutils.core import setup
-   
-setup(name='debomatic',
-      version="0.4",
-      author='Luca Falavigna',
-      author_email='dktrkranz@ubuntu.co,',
-      description='Automatic build machine for Debian source packages',
-      url = 'https://launchpad.net/debomatic/',
-      license='GNU GPL',
-      packages=['Debomatic'],
-      scripts=['debomatic'])
+import os
+import sys
+
+def daemonize(logfile):
+    try:
+        pid = os.fork()
+        if pid > 0:
+            sys.exit(0)
+    except OSError:
+        print 'Fork failed'
+        sys.exit(-1)
+    os.setsid()
+    os.chdir('/')
+    os.umask(0)
+    try:
+        pid = os.fork()
+        if pid > 0:
+            sys.exit(0)
+    except OSError:
+        print 'Fork failed'
+        sys.exit(-1)
+    fin = open('/dev/null', 'r')
+    fout = open(logfile, 'a+')
+    ferr = open(logfile, 'a+', 0)
+    os.dup2(fin.fileno(), sys.stdin.fileno())
+    os.dup2(fout.fileno(), sys.stdout.fileno())
+    os.dup2(ferr.fileno(), sys.stderr.fileno())
+

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 # Deb-o-Matic
 #
 # Copyright (C) 2007 Luca Falavigna
@@ -20,256 +19,14 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 import os
-import sha
 import sys
 import threading
-from ConfigParser import ConfigParser
 from getopt import getopt, GetoptError
-from re import findall, split
-from sha import new
-from time import sleep, strftime
-from urllib import urlopen
-
-class Semaphores:
-    pass
-
-Options = ConfigParser()
-sema = Semaphores()
-
-def daemonize(logfile):
-    try:
-        pid = os.fork()
-        if pid > 0:
-            sys.exit(0)
-    except OSError:
-        print 'Fork failed'
-        sys.exit(-1)
-    os.setsid()
-    os.chdir('/')
-    os.umask(0)
-    try:
-        pid = os.fork()
-        if pid > 0:
-            sys.exit(0)
-    except OSError:
-        print 'Fork failed'
-        sys.exit(-1)
-    fin = open('/dev/null', 'r')
-    fout = open(logfile, 'a+')
-    ferr = open(logfile, 'a+', 0)
-    os.dup2(fin.fileno(), sys.stdin.fileno())
-    os.dup2(fout.fileno(), sys.stdout.fileno())
-    os.dup2(ferr.fileno(), sys.stderr.fileno())
-
-def parse_default_options(conffile):
-    if not conffile:
-        print 'Please specify a configuration file'
-        sys.exit(-1)
-    if not os.path.exists(conffile):
-        print 'Configuration file %s does not exist' % conffile
-        sys.exit(-1)
-    Options.read(conffile)
-    for opt in ('packagedir', 'configdir', 'logfile', 
-                'maxbuilds', 'sleep', 'lintian', 'linda'):
-        if not Options.has_option('default', opt) or \
-        not Options.get('default', opt):
-            print 'Please set "%s" in %s' % (opt, conffile)
-            sys.exit(-1)
-
-def parse_distribution_options(packagedir, configdir, package):
-    options = dict()
-    try:
-        fd = os.open(os.path.join(packagedir, package), os.O_RDONLY)
-    except:
-        print 'Unable to open %s' % os.path.join(packagedir, package)
-        sys.exit(-1)
-    try:
-        distro = findall('Distribution:\s+(\w+)', \
-                         os.read(fd, os.fstat(fd).st_size))[0]
-        options['distribution'] = distro
-    except:
-        print 'Bad .changes file'
-        sys.exit(-1)
-    os.close(fd)
-    try:
-        fd = os.open(os.path.join(configdir, distro), os.O_RDONLY)
-    except:
-        print 'Unable to open %s' % os.path.join(configdir, distro)
-        sys.exit(-1)
-    conf = os.read(fd, os.fstat(fd).st_size)
-    os.close(fd)
-    try:
-        options['mirror'] = findall('[^#]?MIRRORSITE="?(.*[^"])"?\n', conf)[0]
-    except:
-        print 'Please set MIRRORSITE in %s' % os.path.join(configdir, distro)
-        sys.exit(-1)
-    return options
-
-def select_package(directory):
-    package = None
-    priority = 0
-    try:
-        filelist = os.listdir(directory)
-    except:
-        print 'Unable to access directory %s' % directory
-        sys.exit(-1)
-    for filename in filelist:
-        if os.path.splitext(filename)[1] == '.changes':
-            curprio = get_priority(os.path.join(directory,filename))
-            if curprio > priority:
-                priority = curprio
-                package = filename
-    return package
-
-def get_priority(changesfile):
-    priority = 0
-    priolist = {"low":1, "medium":2, "high":3}
-    try:
-        fd = os.open(changesfile, os.O_RDONLY)
-    except:
-        print 'Unable to open %s' % changesfile
-        return 0
-    urgency =findall('Urgency: (.*)', os.read(fd, os.fstat(fd).st_size))
-    priority = priolist[urgency[0]] * 10000000000
-    priority += 9999999999 - os.fstat(fd).st_mtime
-    os.close(fd)
-    return priority
-
-def setup_pbuilder(directory, configdir, distopts):
-    if not os.path.exists(os.path.join(directory)):
-        os.mkdir(os.path.join(directory))
-    result = needs_update(directory, distopts['mirror'], \
-                          distopts['distribution'])
-    if not sema.update.acquire(False):
-        sys.exit(-1)
-    if result:
-        if threading.activeCount() > 2:
-            sema.update.release()
-            sys.exit(-1)
-        prepare_pbuilder(result, directory, configdir, distopts)
-        if not os.path.exists(os.path.join(directory, 'gpg')):
-            os.mkdir(os.path.join(directory, 'gpg'))
-        gpgfile = os.path.join(directory, 'gpg', distopts['distribution'])
-        fd = os.open(gpgfile, os.O_WRONLY | os.O_CREAT, 0664)
-        remote = urlopen('%s/dists/%s/Release.gpg' \
-                     % (distopts['mirror'], distopts['distribution'])).read()
-        os.write(fd, remote)
-        os.close(fd)
-    sema.update.release()
-
-def needs_update(directory, mirror, distribution):
-    if not os.path.exists(os.path.join(directory, 'gpg')):
-        os.mkdir(os.path.join(directory, 'gpg'))
-    gpgfile = os.path.join(directory, 'gpg', distribution)
-    if not os.path.exists(gpgfile):
-        return 'create'
-    try:		
-        fd = os.open(gpgfile, os.O_RDONLY)
-    except:
-        return 'create'
-    remote = urlopen('%s/dists/%s/Release.gpg' % (mirror, distribution)).read()
-    remote_sha = new(remote)
-    gpgfile_sha = new(os.read(fd, os.fstat(fd).st_size))
-    os.close(fd)
-    if remote_sha.digest() != gpgfile_sha.digest():
-        return 'update'
-
-def prepare_pbuilder(cmd, directory, configdir, distopts):
-    if not os.path.exists(os.path.join(directory, 'build')):
-        os.mkdir(os.path.join(directory, 'build'))
-    if not os.path.exists(os.path.join(directory, 'aptcache')):
-        os.mkdir(os.path.join(directory, 'aptcache'))
-    if not os.path.exists(os.path.join(directory, 'logs')):
-        os.mkdir(os.path.join(directory, 'logs'))
-    if not os.path.exists(os.path.join(directory, 'work')):
-        os.mkdir(os.path.join(directory, 'work'))
-    if (os.system('pbuilder %(cmd)s --basetgz %(directory)s/%(distribution)s \
-                  --distribution %(distribution)s --override-config \
-                  --configfile %(cfg)s --buildplace %(directory)s/build \
-                  --aptcache "%(directory)s/aptcache" \
-                  --logfile %(directory)s/logs/%(cmd)s.%(now)s' \
-                  % {'cmd': cmd, 'directory': directory, \
-                  'distribution': distopts['distribution'], \
-                  'cfg': os.path.join(configdir, distopts['distribution']), \
-                  'now': strftime('%Y%m%d_%H%M')})):
-        print 'pbuilder (%s) failed' % cmd
-        sema.update.release()
-        sys.exit(-1)
-
-def build_package(directory, configdir, distdir, packagelist, distopts):
-    if not sema.build.acquire(False):
-        sys.exit(-1)
-    dscfile = None
-    if not os.path.exists(os.path.join(distdir, 'result')):
-        os.mkdir(os.path.join(distdir, 'result'))
-    for package in packagelist:
-        if os.path.exists(os.path.join(directory, package)):
-            src = os.path.join(directory, package)
-            dst = os.path.join(distdir, 'work', package)
-            os.renames(src, dst)
-            if not dscfile:
-                dscfile = findall('(.*\.dsc$)', dst)
-    try:
-        package = findall('.*/(.*).dsc$', dscfile[0])[0]
-    except:
-        package = None
-    if not os.path.exists(os.path.join(distdir, 'result', package)):
-        os.mkdir(os.path.join(distdir, 'result', package))
-    os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
-              --distribution %(distribution)s --override-config \
-              --pkgname-logfile --configfile %(cfg)s \
-              --buildplace %(directory)s/build \
-              --buildresult %(directory)s/result/%(package)s \
-              --aptcache %(directory)s/aptcache %(dsc)s' \
-              % { 'directory': distdir, 'package': package, \
-              'cfg': os.path.join(configdir, distopts['distribution']), \
-              'distribution': distopts['distribution'], 'dsc': dscfile[0]})
-    for package in packagelist:
-        if os.path.exists(os.path.join(distdir, 'work', package)):
-            os.remove(os.path.join(distdir, 'work', package))
-    sema.build.release()
-
-def check_package(directory, distribution, changes):
-    try:
-        packagename = findall('(.*_.*)_source.changes', changes)[0]
-    except:
-        print 'Bad .changes file'
-        sys.exit(-1)
-    resultdir = os.path.join(directory, distribution, 'result', packagename)
-    lintian = os.path.join(resultdir, packagename) + '.lintian'
-    linda = os.path.join(resultdir, packagename) + '.linda'
-    changesfile = None
-    for filename in os.listdir(resultdir):
-        result = findall('.*.changes', filename)
-        if len(result):
-            changesfile = os.path.join(resultdir, result[0])
-            break
-    if changesfile:
-        if Options.get('default', 'lintian') :
-            os.system('lintian --allow-root -i -I %s > %s' \
-                      % (changesfile, lintian))
-        if Options.get('default', 'linda'):
-            os.system('linda -q -i %s > %s' % (changesfile, linda))
-
-def build_process():
-    directory = Options.get('default', 'packagedir')
-    configdir = Options.get('default', 'configdir')
-    package = select_package(directory)
-    if package:
-        distopts = parse_distribution_options(directory, configdir, package)
-        try:
-            fd = os.open(os.path.join(directory, package), os.O_RDONLY)
-        except:
-            print 'Unable to open %s' % os.path.join(directory, package)
-            sys.exit(-1)
-        files =findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)',
-                       os.read(fd, os.fstat(fd).st_size))
-        files.insert(len(files), package)
-        os.close(fd)
-        distdir = os.path.join(directory, distopts['distribution'])
-        setup_pbuilder(distdir, configdir, distopts)
-        build_package(directory, configdir, distdir, files, distopts)
-        check_package(directory, distopts['distribution'], package)
+from time import sleep
+from Debomatic import globals
+from Debomatic import build
+from Debomatic import daemonize
+from Debomatic import parser
 
 def main():
     conffile = None
@@ -287,14 +44,14 @@ def main():
             conffile = a
         if o in ('-n', '--nodaemon'):
             daemon = False
-    parse_default_options(conffile)
+    parser.parse_default_options(conffile)
     if daemon:
-        daemonize(Options.get('default', 'logfile'))
-    sema.build = threading.Semaphore(int(Options.get('default', 'maxbuilds')))
-    sema.update = threading.Semaphore()
+        daemonize.daemonize(globals.Options.get('default', 'logfile'))
+    globals.sema.build = threading.Semaphore(int(globals.Options.get('default', 'maxbuilds')))
+    globals.sema.update = threading.Semaphore()
     while 1:
-        threading.Thread(None, build_process).start()
-        sleep(Options.getint('default', 'sleep'))
+        threading.Thread(None, build.build_process).start()
+        sleep(globals.Options.getint('default', 'sleep'))
 
 if __name__ == "__main__":
     main()

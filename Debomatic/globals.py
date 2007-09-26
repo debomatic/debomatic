@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Deb-o-Matic
 #
 # Copyright (C) 2007 Luca Falavigna
@@ -18,14 +17,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-from distutils.core import setup
-   
-setup(name='debomatic',
-      version="0.4",
-      author='Luca Falavigna',
-      author_email='dktrkranz@ubuntu.co,',
-      description='Automatic build machine for Debian source packages',
-      url = 'https://launchpad.net/debomatic/',
-      license='GNU GPL',
-      packages=['Debomatic'],
-      scripts=['debomatic'])
+import threading
+from ConfigParser import ConfigParser
+
+class Semaphores:
+    pass
+
+Options = ConfigParser()
+sema = Semaphores()
+
