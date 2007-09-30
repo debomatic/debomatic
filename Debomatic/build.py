@@ -22,7 +22,6 @@ import sys
 import threading
 from re import findall
 from sha import new
-from urllib import urlopen
 from Debomatic import pbuilder
 from Debomatic import globals
 from Debomatic import packages

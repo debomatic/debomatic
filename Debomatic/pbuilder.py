@@ -41,7 +41,11 @@ def setup_pbuilder(directory, configdir, distopts):
             os.mkdir(os.path.join(directory, 'gpg'))
         gpgfile = os.path.join(directory, 'gpg', distopts['distribution'])
         fd = os.open(gpgfile, os.O_WRONLY | os.O_CREAT, 0664)
-        remote = urlopen('%s/dists/%s/Release.gpg' % (distopts['mirror'], distopts['distribution'])).read()
+        try:
+            remote = urlopen('%s/dists/%s/Release.gpg' % (distopts['mirror'], distopts['distribution'])).read()
+        except:
+            print 'Unable to fetch %s/dists/%s/Release.gpg' % (distopts['mirror'], distopts['distribution'])
+            sys.exit(-1)
         os.write(fd, remote)
         os.close(fd)
     globals.sema.update.release()
@@ -56,7 +60,11 @@ def needs_update(directory, mirror, distribution):
         fd = os.open(gpgfile, os.O_RDONLY)
     except:
         return 'create'
-    remote = urlopen('%s/dists/%s/Release.gpg' % (mirror, distribution)).read()
+    try:
+        remote = urlopen('%s/dists/%s/Release.gpg' % (mirror, distribution)).read()
+    except:
+        print 'Unable to fetch %s/dists/%s/Release.gpg' % (mirror, distribution)
+        sys.exit(-1)
     remote_sha = new(remote)
     gpgfile_sha = new(os.read(fd, os.fstat(fd).st_size))
     os.close(fd)
