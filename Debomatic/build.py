@@ -22,13 +22,14 @@ import sys
 import threading
 from re import findall
 from sha import new
-from Debomatic import pbuilder
 from Debomatic import globals
+from Debomatic import locks
 from Debomatic import packages
 from Debomatic import parser
+from Debomatic import pbuilder
 
 def build_package(directory, configdir, distdir, packagelist, distopts):
-    if not globals.sema.build.acquire(False):
+    if not locks.buildlock_acquire():
         sys.exit(-1)
     dscfile = None
     if not os.path.exists(os.path.join(distdir, 'result')):
@@ -55,7 +56,7 @@ def build_package(directory, configdir, distdir, packagelist, distopts):
     for package in packagelist:
         if os.path.exists(os.path.join(distdir, 'work', package)):
             os.remove(os.path.join(distdir, 'work', package))
-    globals.sema.build.release()
+    locks.buildlock_release()
 
 def check_package(directory, distribution, changes):
     try:

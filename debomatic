@@ -20,7 +20,6 @@
 
 import os
 import sys
-import threading
 from getopt import getopt, GetoptError
 from Debomatic import globals
 from Debomatic import daemonize
@@ -46,8 +45,6 @@ def main():
     parser.parse_default_options(conffile)
     if daemon:
         daemonize.daemonize(globals.Options.get('default', 'logfile'))
-    globals.sema.build = threading.Semaphore(int(globals.Options.get('default', 'maxbuilds')))
-    globals.sema.update = threading.Semaphore()
     launcher.launcher()
 
 if __name__ == "__main__":
