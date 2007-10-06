@@ -64,3 +64,4 @@ def del_package(package):
         del globals.packagequeue[package]
     except:
         pass
+

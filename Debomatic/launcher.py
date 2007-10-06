@@ -22,14 +22,6 @@ from time import sleep
 from Debomatic import globals
 from Debomatic import build
 
-def launcher_sleep():
-    while True:
-        try:
-            threading.Thread(None, build.build_process).start()
-            sleep(globals.Options.getint('default', 'sleep'))
-        except KeyboardInterrupt:
-            break
-
 try:
     import os
     from re import findall
@@ -41,23 +33,28 @@ try:
                 threading.Thread(None, build.build_process).start()
 
     def launcher_inotify():
-        wm = WatchManager()
-        notifier = Notifier(wm, PE())
-        wm.add_watch(globals.Options.get('default', 'packagedir'), EventsCodes.IN_CLOSE_WRITE, rec=True)
-        while True:
-            try:
-                notifier.process_events()
-                if notifier.check_events():
-                    notifier.read_events()
-            except KeyboardInterrupt:
-                notifier.stop()
-                break 
-
-    def launcher():
         if globals.Options.getint('default', 'inotify'):
-            launcher_inotify()
-        else:
-            launcher_sleep()
+            wm = WatchManager()
+            notifier = Notifier(wm, PE())
+            wm.add_watch(globals.Options.get('default', 'packagedir'), EventsCodes.IN_CLOSE_WRITE, rec=True)
+            while True:
+                try:
+                    notifier.process_events()
+                    if notifier.check_events():
+                        notifier.read_events()
+                except KeyboardInterrupt:
+                    notifier.stop()
+                    break
 except:
-    def launcher():
-        launcher_sleep()
+    def launcher_inotify():
+        pass
+
+def launcher_timer():
+    while 1:
+        threading.Thread(None, build.build_process).start()
+        sleep(globals.Options.getint('default', 'sleep'))
+
+def launcher():
+    threading.Thread(None, launcher_inotify).start()
+    threading.Thread(None, launcher_timer).start()
+
