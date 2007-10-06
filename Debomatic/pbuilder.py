@@ -19,7 +19,6 @@
 
 import os
 import sys
-import threading
 from re import findall
 from sha import new
 from time import strftime
@@ -31,12 +30,10 @@ def setup_pbuilder(directory, configdir, distopts):
         os.mkdir(os.path.join(directory))
     result = needs_update(directory, distopts['mirror'], distopts['distribution'])
     if not locks.pbuilderlock_acquire(distopts['distribution']):
-        sys.exit(-1)
+        return False
     if result:
-        if threading.activeCount() > 2:
-            locks.pbuilderlock_release(distopts['distribution'])
-            sys.exit(-1)
-        prepare_pbuilder(result, directory, configdir, distopts)
+        if prepare_pbuilder(result, directory, configdir, distopts):
+            return False
         if not os.path.exists(os.path.join(directory, 'gpg')):
             os.mkdir(os.path.join(directory, 'gpg'))
         gpgfile = os.path.join(directory, 'gpg', distopts['distribution'])
@@ -46,7 +43,7 @@ def setup_pbuilder(directory, configdir, distopts):
         except:
             print 'Unable to fetch %s/dists/%s/Release.gpg' % (distopts['mirror'], distopts['distribution'])
             locks.pbuilderlock_release(distopts['distribution'])
-            sys.exit(-1)
+            return False
         os.write(fd, remote)
         os.close(fd)
     locks.pbuilderlock_release(distopts['distribution'])
@@ -65,7 +62,7 @@ def needs_update(directory, mirror, distribution):
         remote = urlopen('%s/dists/%s/Release.gpg' % (mirror, distribution)).read()
     except:
         print 'Unable to fetch %s/dists/%s/Release.gpg' % (mirror, distribution)
-        sys.exit(-1)
+        return 'update'
     remote_sha = new(remote)
     gpgfile_sha = new(os.read(fd, os.fstat(fd).st_size))
     os.close(fd)
@@ -79,8 +76,6 @@ def prepare_pbuilder(cmd, directory, configdir, distopts):
         os.mkdir(os.path.join(directory, 'aptcache'))
     if not os.path.exists(os.path.join(directory, 'logs')):
         os.mkdir(os.path.join(directory, 'logs'))
-    if not os.path.exists(os.path.join(directory, 'work')):
-        os.mkdir(os.path.join(directory, 'work'))
     if (os.system('pbuilder %(cmd)s --basetgz %(directory)s/%(distribution)s \
                   --distribution %(distribution)s --override-config \
                   --configfile %(cfg)s --buildplace %(directory)s/build \
@@ -89,5 +84,5 @@ def prepare_pbuilder(cmd, directory, configdir, distopts):
                   'cfg': os.path.join(configdir, distopts['distribution']), 'now': strftime('%Y%m%d_%H%M')})):
         print 'pbuilder (%s) failed' % cmd
         locks.pbuilderlock_release(distopts['distribution'])
-        sys.exit(-1)
+        return False
 

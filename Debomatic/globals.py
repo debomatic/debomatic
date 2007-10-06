@@ -25,4 +25,5 @@ class Semaphores:
 
 Options = ConfigParser()
 sema = Semaphores()
+packagequeue = dict()
 

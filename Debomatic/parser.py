@@ -22,6 +22,7 @@ import sys
 from re import findall
 from string import lower
 from Debomatic import globals
+from Debomatic import packages
 
 def parse_default_options(conffile):
     if not conffile:
@@ -42,18 +43,21 @@ def parse_distribution_options(packagedir, configdir, package):
         fd = os.open(os.path.join(packagedir, package), os.O_RDONLY)
     except:
         print 'Unable to open %s' % os.path.join(packagedir, package)
+        packages.del_package(package)
         sys.exit(-1)
     try:
         distro = findall('Distribution:\s+(\w+)', os.read(fd, os.fstat(fd).st_size))[0]
         options['distribution'] = lower(distro)
     except:
         print 'Bad .changes file'
+        packages.del_package(package)
         sys.exit(-1)
     os.close(fd)
     try:
         fd = os.open(os.path.join(configdir,options['distribution']), os.O_RDONLY)
     except:
         print 'Unable to open %s' % os.path.join(configdir, options['distribution'])
+        packages.del_package(package)
         sys.exit(-1)
     conf = os.read(fd, os.fstat(fd).st_size)
     os.close(fd)
@@ -61,6 +65,7 @@ def parse_distribution_options(packagedir, configdir, package):
         options['mirror'] = findall('[^#]?MIRRORSITE="?(.*[^"])"?\n', conf)[0]
     except:
         print 'Please set MIRRORSITE in %s' % os.path.join(configdir, options['distribution'])
+        packages.del_package(package)
         sys.exit(-1)
     return options
 

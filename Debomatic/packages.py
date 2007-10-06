@@ -20,6 +20,7 @@
 import os
 import sys
 from re import findall
+from Debomatic import globals
 
 def select_package(directory):
     package = None
@@ -31,6 +32,7 @@ def select_package(directory):
         sys.exit(-1)
     for filename in filelist:
         if os.path.splitext(filename)[1] == '.changes':
+            add_package(filename)
             curprio = get_priority(os.path.join(directory,filename))
             if curprio > priority:
                 priority = curprio
@@ -51,3 +53,14 @@ def get_priority(changesfile):
     os.close(fd)
     return priority
 
+def add_package(package):
+    if globals.packagequeue.has_key(package):
+        pass
+    else:
+        globals.packagequeue[package] = list()
+
+def del_package(package):
+    try:
+        del globals.packagequeue[package]
+    except:
+        pass

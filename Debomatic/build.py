@@ -28,34 +28,28 @@ from Debomatic import packages
 from Debomatic import parser
 from Debomatic import pbuilder
 
-def build_package(directory, configdir, distdir, packagelist, distopts):
+def build_package(directory, configfile, distdir, package, distopts):
     if not locks.buildlock_acquire():
+        packages.del_package(package)
         sys.exit(-1)
     dscfile = None
     if not os.path.exists(os.path.join(distdir, 'result')):
         os.mkdir(os.path.join(distdir, 'result'))
-    for package in packagelist:
-        if os.path.exists(os.path.join(directory, package)):
-            src = os.path.join(directory, package)
-            dst = os.path.join(distdir, 'work', package)
-            os.renames(src, dst)
+    for pkgfile in globals.packagequeue[package]:
             if not dscfile:
-                dscfile = findall('(.*\.dsc$)', dst)
+                dscfile = findall('(.*\.dsc$)', pkgfile)
     try:
-        package = findall('.*/(.*).dsc$', dscfile[0])[0]
+        packageversion = findall('.*/(.*).dsc$', dscfile[0])[0]
     except:
-        package = None
-    if not os.path.exists(os.path.join(distdir, 'result', package)):
-        os.mkdir(os.path.join(distdir, 'result', package))
+        packageversion = None
     os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
               --distribution %(distribution)s --override-config --pkgname-logfile --configfile %(cfg)s \
               --buildplace %(directory)s/build --buildresult %(directory)s/result/%(package)s \
-              --aptcache %(directory)s/aptcache %(dsc)s' % { 'directory': distdir, 'package': package, \
-              'cfg': os.path.join(configdir, distopts['distribution']), \
-              'distribution': distopts['distribution'], 'dsc': dscfile[0]})
-    for package in packagelist:
-        if os.path.exists(os.path.join(distdir, 'work', package)):
-            os.remove(os.path.join(distdir, 'work', package))
+              --aptcache %(directory)s/aptcache %(dsc)s' % { 'directory': distdir, 'package': packageversion, \
+              'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
+    for pkgfile in globals.packagequeue[package]:
+        if os.path.exists(pkgfile):
+            os.remove(pkgfile)
     locks.buildlock_release()
 
 def check_package(directory, distribution, changes):
@@ -63,7 +57,7 @@ def check_package(directory, distribution, changes):
         packagename = findall('(.*_.*)_source.changes', changes)[0]
     except:
         print 'Bad .changes file'
-        sys.exit(-1)
+        return
     resultdir = os.path.join(directory, distribution, 'result', packagename)
     lintian = os.path.join(resultdir, packagename) + '.lintian'
     linda = os.path.join(resultdir, packagename) + '.linda'
@@ -89,11 +83,17 @@ def build_process():
             fd = os.open(os.path.join(directory, package), os.O_RDONLY)
         except:
             print 'Unable to open %s' % os.path.join(directory, package)
+            packages.del_package(package)
             sys.exit(-1)
-        files =findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)', os.read(fd, os.fstat(fd).st_size))
-        files.insert(len(files), package)
+        for entry in findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)', os.read(fd, os.fstat(fd).st_size)):
+            globals.packagequeue[package].append(os.path.join(directory, entry))
+        globals.packagequeue[package].append(os.path.join(directory, package))
         os.close(fd)
         distdir = os.path.join(directory, distopts['distribution'])
-        pbuilder.setup_pbuilder(distdir, configdir, distopts)
-        build_package(directory, configdir, distdir, files, distopts)
+        if pbuilder.setup_pbuilder(distdir, configdir, distopts):
+            packages.del_package(package)
+            sys.exit(-1)
+        build_package(directory, os.path.join(configdir, distopts['distribution']), distdir, package, distopts)
         check_package(directory, distopts['distribution'], package)
+        packages.del_package(package)
+
