@@ -32,6 +32,8 @@ def select_package(directory):
         sys.exit(-1)
     for filename in filelist:
         if os.path.splitext(filename)[1] == '.changes':
+            if add_package(filename):
+                continue
             add_package(filename)
             curprio = get_priority(os.path.join(directory,filename))
             if curprio > priority:
@@ -55,7 +57,7 @@ def get_priority(changesfile):
 
 def add_package(package):
     if globals.packagequeue.has_key(package):
-        pass
+        return True
     else:
         globals.packagequeue[package] = list()
 
