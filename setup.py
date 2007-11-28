@@ -23,7 +23,7 @@ from distutils.core import setup
 setup(name='debomatic',
       version="0.4",
       author='Luca Falavigna',
-      author_email='dktrkranz@ubuntu.co,',
+      author_email='dktrkranz@ubuntu.com',
       description='Automatic build machine for Debian source packages',
       url = 'https://launchpad.net/debomatic/',
       license='GNU GPL',
