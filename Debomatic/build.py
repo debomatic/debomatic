@@ -42,6 +42,8 @@ def build_package(directory, configfile, distdir, package, distopts):
         packageversion = findall('.*/(.*).dsc$', dscfile[0])[0]
     except:
         packageversion = None
+    if not os.path.exists(os.path.join(distdir, 'result', packageversion)):
+        os.mkdir(os.path.join(distdir, 'result', packageversion))
     os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
               --distribution %(distribution)s --override-config --pkgname-logfile --configfile %(cfg)s \
               --buildplace %(directory)s/build --buildresult %(directory)s/result/%(package)s \
