@@ -36,6 +36,7 @@ install:
 uninstall:
 	rm /usr/bin/debomatic
 	rm /usr/lib/python*/site-packages/debomatic*
+	rm -fr /usr/lib/python*/site-packages/Debomatic
 	rm /usr/share/man/man1/debomatic.1.gz
 	rm /usr/share/man/man5/debomatic.conf.5.gz
 
