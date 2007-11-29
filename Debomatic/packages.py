@@ -34,7 +34,6 @@ def select_package(directory):
         if os.path.splitext(filename)[1] == '.changes':
             if add_package(filename):
                 continue
-            add_package(filename)
             curprio = get_priority(os.path.join(directory,filename))
             if curprio > priority:
                 priority = curprio
