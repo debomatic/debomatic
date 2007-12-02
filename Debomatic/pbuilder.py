@@ -28,9 +28,9 @@ from Debomatic import locks
 def setup_pbuilder(directory, configdir, distopts):
     if not os.path.exists(os.path.join(directory)):
         os.mkdir(os.path.join(directory))
-    result = needs_update(directory, distopts['mirror'], distopts['distribution'])
     if not locks.pbuilderlock_acquire(distopts['distribution']):
         return False
+    result = needs_update(directory, distopts['mirror'], distopts['distribution'])
     if result:
         if prepare_pbuilder(result, directory, configdir, distopts):
             return False
