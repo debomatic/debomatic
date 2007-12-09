@@ -45,7 +45,7 @@ def pbuilderlock_acquire(distribution):
 
 def pbuilderlock_release(distribution):
     try:
-        globals.sema.pbuilder[distribution].acquire(False)
+        globals.sema.pbuilder[distribution].release()
     except:
         pass
 
