@@ -19,7 +19,8 @@
 
 import os
 import sys
-from re import findall
+from re import findall, split
+from urllib2 import Request, urlopen
 from Debomatic import globals
 
 def select_package(directory):
@@ -65,4 +66,28 @@ def del_package(package):
         del globals.packagequeue[package]
     except:
         pass
+
+def fetch_missing_files(package, files, packagedir, distopts):
+    dscfile = None
+    packagename = split('_', package)[0]
+    for filename in files:
+        if not dscfile:
+            dscfile = findall('(.*\.dsc$)', filename)
+    fd = os.open(dscfile[0], os.O_RDONLY)
+    for entry in findall('\s\w{32}\s\d+\s(\S+)', os.read(fd, os.fstat(fd).st_size)):
+        if not os.path.exists(os.path.join(packagedir, entry)):
+            for component in split(' ', distopts['components']):
+                request = Request('%s/pool/%s/%s/%s/%s' % (distopts['mirror'], component, findall('^lib\S|^\S', packagename)[0], packagename, entry))
+                try:
+                    data = urlopen(request).read()
+                    break
+                except:
+                    data = None
+            if data:
+                entryfd = os.open(os.path.join(packagedir, entry), os.O_WRONLY | os.O_CREAT)
+                os.write(entryfd, data)
+                os.close(entryfd)
+                if not (os.path.join(packagedir, entry)) in files:
+                    globals.packagequeue[package].append(os.path.join(packagedir, entry))
+    os.close(fd)
 

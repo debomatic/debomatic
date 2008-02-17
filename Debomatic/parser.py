@@ -67,5 +67,11 @@ def parse_distribution_options(packagedir, configdir, package):
         print 'Please set MIRRORSITE in %s' % os.path.join(configdir, options['distribution'])
         packages.del_package(package)
         sys.exit(-1)
+    try:
+        options['components'] = findall('[^#]?COMPONENTS="?(.*[^"])"?\n', conf)[0]
+    except:
+        print 'Please set COMPONENTS in %s' % os.path.join(configdir, options['distribution'])
+        packages.del_package(package)
+        sys.exit(-1)
     return options
 

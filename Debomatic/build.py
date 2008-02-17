@@ -91,6 +91,7 @@ def build_process():
             globals.packagequeue[package].append(os.path.join(directory, entry))
         globals.packagequeue[package].append(os.path.join(directory, package))
         os.close(fd)
+	packages.fetch_missing_files(package, globals.packagequeue[package], directory, distopts)
         distdir = os.path.join(directory, distopts['distribution'])
         if pbuilder.setup_pbuilder(distdir, configdir, distopts):
             packages.del_package(package)
