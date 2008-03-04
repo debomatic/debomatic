@@ -32,7 +32,7 @@ def setup_pbuilder(directory, configdir, distopts):
         return False
     result = needs_update(directory, distopts['mirror'], distopts['distribution'])
     if result:
-        if prepare_pbuilder(result, directory, configdir, distopts):
+        if prepare_pbuilder(result, directory, configdir, distopts) == False:
             return False
         if not os.path.exists(os.path.join(directory, 'gpg')):
             os.mkdir(os.path.join(directory, 'gpg'))

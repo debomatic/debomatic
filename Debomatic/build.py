@@ -93,7 +93,7 @@ def build_process():
         os.close(fd)
 	packages.fetch_missing_files(package, globals.packagequeue[package], directory, distopts)
         distdir = os.path.join(directory, distopts['distribution'])
-        if pbuilder.setup_pbuilder(distdir, configdir, distopts):
+        if pbuilder.setup_pbuilder(distdir, configdir, distopts) == False:
             packages.del_package(package)
             sys.exit(-1)
         build_package(directory, os.path.join(configdir, distopts['distribution']), distdir, package, distopts)
