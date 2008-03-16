@@ -24,6 +24,8 @@ from string import lower
 from Debomatic import globals
 from Debomatic import packages
 
+defaultoptions = ('packagedir', 'configdir', 'maxbuilds', 'inotify', 'sleep', 'logfile')
+
 def parse_default_options(conffile):
     if not conffile:
         print 'Please specify a configuration file'
@@ -32,7 +34,7 @@ def parse_default_options(conffile):
         print 'Configuration file %s does not exist' % conffile
         sys.exit(-1)
     globals.Options.read(conffile)
-    for opt in ('packagedir', 'configdir', 'logfile', 'maxbuilds', 'inotify', 'sleep', 'lintian', 'linda'):
+    for opt in defaultoptions:
         if not globals.Options.has_option('default', opt) or not globals.Options.get('default', opt):
             print 'Please set "%s" in %s' % (opt, conffile)
             sys.exit(-1)
