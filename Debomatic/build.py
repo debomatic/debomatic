@@ -23,6 +23,7 @@ import threading
 from re import findall
 from sha import new
 from Debomatic import globals
+from Debomatic import gpg
 from Debomatic import locks
 from Debomatic import packages
 from Debomatic import parser
@@ -91,6 +92,9 @@ def build_process():
             globals.packagequeue[package].append(os.path.join(directory, entry))
         globals.packagequeue[package].append(os.path.join(directory, package))
         os.close(fd)
+        if gpg.check_signature(os.path.join(directory, package)) == False:
+            packages.del_package(package)
+            sys.exit(-1)
 	packages.fetch_missing_files(package, globals.packagequeue[package], directory, distopts)
         distdir = os.path.join(directory, distopts['distribution'])
         if pbuilder.setup_pbuilder(distdir, configdir, distopts) == False:
