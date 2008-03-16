@@ -67,6 +67,12 @@ def del_package(package):
     except:
         pass
 
+def rm_package(package):
+    for pkgfile in globals.packagequeue[package]:
+        if os.path.exists(pkgfile):
+            os.remove(pkgfile)
+    del_package(package)
+
 def fetch_missing_files(package, files, packagedir, distopts):
     dscfile = None
     packagename = split('_', package)[0]

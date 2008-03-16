@@ -50,9 +50,7 @@ def build_package(directory, configfile, distdir, package, distopts):
               --buildplace %(directory)s/build --buildresult %(directory)s/result/%(package)s \
               --aptcache %(directory)s/aptcache %(dsc)s' % { 'directory': distdir, 'package': packageversion, \
               'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
-    for pkgfile in globals.packagequeue[package]:
-        if os.path.exists(pkgfile):
-            os.remove(pkgfile)
+    packages.rm_package(package)
     locks.buildlock_release()
 
 def check_package(directory, distribution, changes):
@@ -93,7 +91,7 @@ def build_process():
         globals.packagequeue[package].append(os.path.join(directory, package))
         os.close(fd)
         if gpg.check_signature(os.path.join(directory, package)) == False:
-            packages.del_package(package)
+            packages.rm_package(package)
             sys.exit(-1)
 	packages.fetch_missing_files(package, globals.packagequeue[package], directory, distopts)
         distdir = os.path.join(directory, distopts['distribution'])
@@ -102,5 +100,4 @@ def build_process():
             sys.exit(-1)
         build_package(directory, os.path.join(configdir, distopts['distribution']), distdir, package, distopts)
         check_package(directory, distopts['distribution'], package)
-        packages.del_package(package)
 
