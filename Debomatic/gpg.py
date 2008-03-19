@@ -17,17 +17,23 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from os.path import exists
-from re import findall
+import os
+from re import findall, DOTALL
 from subprocess import Popen, PIPE
 from Debomatic import globals
 
 def check_signature(package):
     if globals.Options.getint('gpg', 'gpg'):
-        if not globals.Options.has_option('gpg', 'keyring') or not exists(globals.Options.get('gpg', 'keyring')):
+        if not globals.Options.has_option('gpg', 'keyring') or not os.path.exists(globals.Options.get('gpg', 'keyring')):
             return False
         gpgresult = Popen(['gpg', '--primary-keyring', globals.Options.get('gpg', 'keyring'), '--verify', package], stderr=PIPE).communicate()[1]
         ID = findall('Good signature from "(.*) <(.*)>"', gpgresult)
         if not len(ID):
             return False
+        fd = os.open(package, os.O_RDONLY)
+        data = os.read(fd, os.fstat(fd).st_size)
+        os.close(fd)
+        fd = os.open(package, os.O_WRONLY | os.O_TRUNC)
+        os.write(fd, findall('Hash: \S+\n\n(.*)\n\n\-\-\-\-\-BEGIN PGP SIGNATURE\-\-\-\-\-', data, DOTALL)[0])
+        os.close(fd)
 
