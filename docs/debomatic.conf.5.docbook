@@ -10,12 +10,12 @@
       <email>dktrkranz@ubuntu.com</email>
     </author>
     <copyright>
-      <year>2007</year>
+      <year>2007-2008</year>
       <holder>Luca Falavigna</holder>
     </copyright>
     <!-- XXX IMPORTANT XXX -->
     <!-- Keep this date up to date: -->
-    <date>2007-07-28</date>
+    <date>2008-04-26</date>
     <!--  ^^^^^^^^^^ -->
   </refentryinfo>
   <refmeta>
@@ -31,22 +31,45 @@
     <para>
       <emphasis>packagedir</emphasis>: this directory is the base directory
       where debomatic will scan for packages to build. It must exists before
-      launching debomatic or an error will be raised.
+      launching debomatic or an exception will be raised.
     </para>
     <para>
       <emphasis>configdir</emphasis>: this directory contains pbuilder
       configuration files used to pass build options to pbuilder. They must
       contain pbuilder specific parameters (see pbuilderrc(5) for further
-      reference) and their names must match target releases (such as gutsy or
-      unstable).
+      reference) and their names must match target releases (such as intrepid
+      or unstable).
     </para>
     <para>
-      <emphasis>logfile</emphasis>: debomatic messages will be stored in this file
+      <emphasis>maxbuilds</emphasis>: maximum number of parallel build threads
+      to be launched. More threads will require powerful hardware.
+    </para>
+    <para>
+      <emphasis>inotify</emphasis>: if enabled, new threads will be launched
+      immediately when .changes files are put in packagedir.
     </para>
     <para>
       <emphasis>sleep</emphasis>: debomatic will build another source package 
       when a number of seconds provided by this parameter have elapsed.
     </para>
+    <para>
+      <emphasis>logfile</emphasis>: debomatic messages will be stored in this file
+    </para>
+   </refsect1>
+  <refsect1>
+    <title>GPG SECTION</title>
+    <para>
+      <emphasis>gpg</emphasis>: if enabled, turn GPG support on to check for
+      signed packages before attempting to build them.
+    </para>
+    <para>
+      <emphasis>keyring</emphasis>: this file contains authorized GPG keys.
+      Source packages signed with one of the keys included are allowed to
+      build, other packages will be deleted from disk.
+    </para>
+   </refsect1>
+  <refsect1>
+    <title>CHECKS SECTION</title>
     <para>
       <emphasis>lintian</emphasis>: if enabled, run lintian application after 
       build process. lintian has to be installed in order to do so.
