@@ -1,6 +1,6 @@
-Deb-o-Matic - automatic build machine for Debian packages
+Deb-o-Matic - Automatic build machine for Debian source packages
 
-This is Deb-o-Matic, an easy-to-use build machine for Debian-based source
+This is Deb-o-Matic, a easy to use build machine for Debian-based source
 packages based on pbuilder. It provides a simple tool to automate the build of 
 source packages with limited user interaction and a simple configuration.
 It has some useful feature such as automatic update of pbuilder, automatic
@@ -9,60 +9,6 @@ It is meant to help developers to build their packages without worrying too
 much of compilation, since it will run in background and no user feedback
 is required during the whole process.
 
+See docs/guide.html or docs/guide.txt for further details.
 
 
-REQUISITES
-
-You will need python-dev (or equivalent), pbuilder, debootstrap and docbook2x 
-packages installed in order to build Deb-o-Matic and pbuilder and debootstrap
-to be able to run it. An Internet connection is also required, broadband access
-is suggested since debootstrap will fetch several packages from the net to
-prepare pbuilder chroot environment.
-
-
-
-INSTALLATION
-
-Installation process is straightforward:
-
-make
-make install (with root privileges)
-
-You will find debomatic executable in /usr/bin and related manpages in
-/usr/share/man/ directory.
-
-
-
-INITIAL SETUP
-
-In order to get Deb-o-Matic working, you have to prepare a configuration file
-which will contain the options needed to run debomatic. You can look at
-examples/debomatic.conf to see a working example.
-Now you must create the directory referenced by packagedir option in your
-configuration file in order to avoid to generate errors.
-In the end, create the directory referenced by configdir option and put some
-pbuilder configuration files in it. Their names must match target distribution
-you want to build packages for (e.g. if you want to build for Gutsy, pbuilder
-configuration file must be named gutsy). You can have as many configuration
-files as you want, given that you follow the rule above. See examples/ for
-working examples of them.
-
-
-
-RUNNING DEB-O-MATIC
-
-To start Deb-o-Matic, you have to launch "debomatic -c debomatic.conf" command
-(where debomatic.conf is configuration file you just created). You need root
-privileges to do so because of pbuilder infrastructure.
-Now you can put source packages in the chosen package directory (identified
-by packagedir option) and Deb-o-Matic will take care of the building phase.
-Since Deb-o-Matic requires .changes files, be sure to generate a full Debian
-source package by using a command such as dpkg-buildpackage -S -sa. You have
-to upload .changes file and each file mentioned under its Files section.
-
-
-
-BUGS AND FEEDBACKS:
-
-If you want to report a bug or a feature, please visit Deb-o-Matic homepage at
-https://launchpad.net/debomatic.
