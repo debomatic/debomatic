@@ -61,7 +61,6 @@ def check_package(directory, distribution, changes):
         return
     resultdir = os.path.join(directory, distribution, 'result', packagename)
     lintian = os.path.join(resultdir, packagename) + '.lintian'
-    linda = os.path.join(resultdir, packagename) + '.linda'
     changesfile = None
     for filename in os.listdir(resultdir):
         result = findall('.*.changes', filename)
@@ -71,8 +70,6 @@ def check_package(directory, distribution, changes):
     if changesfile:
         if globals.Options.has_option('checks', 'lintian') and globals.Options.getint('checks', 'lintian'):
             os.system('lintian --allow-root -i -I %s > %s' % (changesfile, lintian))
-        if globals.Options.has_option('checks', 'linda') and globals.Options.getint('checks', 'linda'):
-            os.system('linda -q -i %s > %s' % (changesfile, linda))
 
 def build_process():
     directory = globals.Options.get('default', 'packagedir')

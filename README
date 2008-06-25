@@ -4,7 +4,7 @@ This is Deb-o-Matic, a easy to use build machine for Debian-based source
 packages based on pbuilder. It provides a simple tool to automate the build of 
 source packages with limited user interaction and a simple configuration.
 It has some useful feature such as automatic update of pbuilder, automatic
-scan and selection of source packages to build and lintian/linda support.
+scan and selection of source packages to build and lintian support.
 It is meant to help developers to build their packages without worrying too
 much of compilation, since it will run in background and no user feedback
 is required during the whole process.

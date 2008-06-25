@@ -74,10 +74,6 @@
       <emphasis>lintian</emphasis>: if enabled, run lintian application after 
       build process. lintian has to be installed in order to do so.
     </para>
-    <para>
-      <emphasis>linda</emphasis>: if enabled, run linda application after 
-      build process. linda has to be installed in order to do so.
-    </para>
    </refsect1>
 <refsect1>
     <title>SEE ALSO</title>
