@@ -19,8 +19,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
+BUILD_BASE=${PWD}
+
 all: doc
-	python setup.py build
+	python setup.py build --build-base=${BUILD_BASE}
 
 doc:
 	docbook2x-man docs/debomatic.1.docbook
@@ -28,20 +30,18 @@ doc:
 
 install:
 	python setup.py install
-	gzip debomatic.1
-	gzip debomatic.conf.5
-	install -m 644 debomatic.1.gz /usr/share/man/man1/debomatic.1.gz
-	install -m 644 debomatic.conf.5.gz /usr/share/man/man5/debomatic.conf.5.gz
+	install -m 644 debomatic.1 /usr/share/man/man1/debomatic.1
+	install -m 644 debomatic.conf.5 /usr/share/man/man5/debomatic.conf.5
 
 uninstall:
 	rm /usr/bin/debomatic
 	rm /usr/lib/python*/site-packages/debomatic*
 	rm -fr /usr/lib/python*/site-packages/Debomatic
-	rm /usr/share/man/man1/debomatic.1.gz
-	rm /usr/share/man/man5/debomatic.conf.5.gz
+	rm /usr/share/man/man1/debomatic.1
+	rm /usr/share/man/man5/debomatic.conf.5
 
 clean:
-	python setup.py clean
+	python setup.py clean --build-base=${BUILD_BASE}
 	rm -fr build
-	rm -f *.1 *.5 *.gz
+	rm -f *.1 *.5
 
