@@ -21,7 +21,7 @@
 from distutils.core import setup
    
 setup(name='debomatic',
-      version="0.5",
+      version="0.6",
       author='Luca Falavigna',
       author_email='dktrkranz@ubuntu.com',
       description='Automatic build machine for Debian source packages',

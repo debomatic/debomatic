@@ -21,7 +21,7 @@ Requisites
 These packages are required to build and install Deb-o-Matic on your system:
 
     * python-dev
-    * docboock2x
+    * docbook2x
 
 These ones are required to execute Deb-o-Matic:
 
