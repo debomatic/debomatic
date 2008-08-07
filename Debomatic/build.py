@@ -23,15 +23,16 @@ import threading
 from re import findall
 from sha import new
 from string import lower
-from Debomatic import globals
 from Debomatic import gpg
 from Debomatic import locks
 from Debomatic import packages
 from Debomatic import pbuilder
+from Debomatic import Options
+from Debomatic import packagequeue
 
 def build_process():
-    directory = globals.Options.get('default', 'packagedir')
-    configdir = globals.Options.get('default', 'configdir')
+    directory = Options.get('default', 'packagedir')
+    configdir = Options.get('default', 'configdir')
     package = packages.select_package(directory)
     if package:
         distopts = parse_distribution_options(directory, configdir, package)
@@ -42,13 +43,13 @@ def build_process():
             packages.del_package(package)
             sys.exit(-1)
         for entry in findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)', os.read(fd, os.fstat(fd).st_size)):
-            globals.packagequeue[package].append(os.path.join(directory, entry))
-        globals.packagequeue[package].append(os.path.join(directory, package))
+            packagequeue[package].append(os.path.join(directory, entry))
+        packagequeue[package].append(os.path.join(directory, package))
         os.close(fd)
         if gpg.check_signature(os.path.join(directory, package)) == False:
             packages.rm_package(package)
             sys.exit(-1)
-	packages.fetch_missing_files(package, globals.packagequeue[package], directory, distopts)
+	packages.fetch_missing_files(package, packagequeue[package], directory, distopts)
         distdir = os.path.join(directory, distopts['distribution'])
         if pbuilder.setup_pbuilder(distdir, configdir, distopts) == False:
             packages.del_package(package)
@@ -101,7 +102,7 @@ def build_package(directory, configfile, distdir, package, distopts):
     dscfile = None
     if not os.path.exists(os.path.join(distdir, 'result')):
         os.mkdir(os.path.join(distdir, 'result'))
-    for pkgfile in globals.packagequeue[package]:
+    for pkgfile in packagequeue[package]:
             if not dscfile:
                 dscfile = findall('(.*\.dsc$)', pkgfile)
     try:
@@ -133,6 +134,6 @@ def check_package(directory, distribution, changes):
             changesfile = os.path.join(resultdir, result[0])
             break
     if changesfile:
-        if globals.Options.has_option('checks', 'lintian') and globals.Options.getint('checks', 'lintian'):
+        if Options.has_option('checks', 'lintian') and Options.getint('checks', 'lintian'):
             os.system('lintian --allow-root -i -I %s > %s' % (changesfile, lintian))
 

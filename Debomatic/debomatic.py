@@ -22,8 +22,8 @@ import sys
 import threading
 from getopt import getopt, GetoptError
 from time import sleep
-from Debomatic import globals
 from Debomatic import build
+from Debomatic import Options
 
 def main():
     conffile = None
@@ -63,8 +63,8 @@ def main():
             print 'Fork failed'
             sys.exit(-1)
         fin = open('/dev/null', 'r')
-        fout = open(globals.Options.get('default', 'logfile'), 'a+')
-        ferr = open(globals.Options.get('default', 'logfile'), 'a+', 0)
+        fout = open(Options.get('default', 'logfile'), 'a+')
+        ferr = open(Options.get('default', 'logfile'), 'a+', 0)
         os.dup2(fin.fileno(), sys.stdin.fileno())
         os.dup2(fout.fileno(), sys.stdout.fileno())
         os.dup2(ferr.fileno(), sys.stderr.fileno())
@@ -79,9 +79,9 @@ def parse_default_options(conffile):
     if not os.path.exists(conffile):
         print 'Configuration file %s does not exist' % conffile
         sys.exit(-1)
-    globals.Options.read(conffile)
+    Options.read(conffile)
     for opt in defaultoptions:
-        if not globals.Options.has_option('default', opt) or not globals.Options.get('default', opt):
+        if not Options.has_option('default', opt) or not Options.get('default', opt):
             print 'Please set "%s" in %s' % (opt, conffile)
             sys.exit(-1)
 
@@ -96,10 +96,10 @@ try:
                 threading.Thread(None, build.build_process).start()
 
     def launcher_inotify():
-        if globals.Options.getint('default', 'inotify'):
+        if Options.getint('default', 'inotify'):
             wm = WatchManager()
             notifier = Notifier(wm, PE())
-            wm.add_watch(globals.Options.get('default', 'packagedir'), EventsCodes.IN_CLOSE_WRITE, rec=True)
+            wm.add_watch(Options.get('default', 'packagedir'), EventsCodes.IN_CLOSE_WRITE, rec=True)
             while True:
                 try:
                     notifier.process_events()
@@ -115,7 +115,7 @@ except:
 def launcher_timer():
     while 1:
         threading.Thread(None, build.build_process).start()
-        sleep(globals.Options.getint('default', 'sleep'))
+        sleep(Options.getint('default', 'sleep'))
 
 def launcher():
     threading.Thread(None, launcher_inotify).start()

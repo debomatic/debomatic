@@ -20,13 +20,13 @@
 import os
 from re import findall, DOTALL
 from subprocess import Popen, PIPE
-from Debomatic import globals
+from Debomatic import Options
 
 def check_signature(package):
-    if globals.Options.getint('gpg', 'gpg'):
-        if not globals.Options.has_option('gpg', 'keyring') or not os.path.exists(globals.Options.get('gpg', 'keyring')):
+    if Options.getint('gpg', 'gpg'):
+        if not Options.has_option('gpg', 'keyring') or not os.path.exists(Options.get('gpg', 'keyring')):
             return False
-        gpgresult = Popen(['gpg', '--primary-keyring', globals.Options.get('gpg', 'keyring'), '--verify', package], stderr=PIPE).communicate()[1]
+        gpgresult = Popen(['gpg', '--primary-keyring', Options.get('gpg', 'keyring'), '--verify', package], stderr=PIPE).communicate()[1]
         ID = findall('Good signature from "(.*) <(.*)>"', gpgresult)
         if not len(ID):
             return False

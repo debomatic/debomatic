@@ -18,34 +18,35 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 from threading import Semaphore
-from Debomatic import globals
+from Debomatic import Options
+from Debomatic import sema
 
 def buildlock_acquire():
     try:
-        return globals.sema.build.acquire(False)
+        return sema.build.acquire(False)
     except:
-        globals.sema.build = Semaphore(globals.Options.getint('default', 'maxbuilds'))
+        sema.build = Semaphore(Options.getint('default', 'maxbuilds'))
         return buildlock_acquire()
 
 def buildlock_release():
     try:
-        globals.sema.build.release()
+        sema.build.release()
     except:
         pass
 
 def pbuilderlock_acquire(distribution):
     try:
-        return globals.sema.pbuilder[distribution].acquire(False)
+        return sema.pbuilder[distribution].acquire(False)
     except AttributeError:
-        globals.sema.pbuilder = dict()
+        sema.pbuilder = dict()
         return pbuilderlock_acquire(distribution)
     except KeyError:
-        globals.sema.pbuilder[distribution] = Semaphore()
+        sema.pbuilder[distribution] = Semaphore()
         return pbuilderlock_acquire(distribution)
 
 def pbuilderlock_release(distribution):
     try:
-        globals.sema.pbuilder[distribution].release()
+        sema.pbuilder[distribution].release()
     except:
         pass
 

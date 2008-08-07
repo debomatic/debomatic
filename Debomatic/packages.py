@@ -21,7 +21,7 @@ import os
 import sys
 from re import findall, split
 from urllib2 import Request, urlopen
-from Debomatic import globals
+from Debomatic import packagequeue
 
 def select_package(directory):
     package = None
@@ -56,19 +56,19 @@ def get_priority(changesfile):
     return priority
 
 def add_package(package):
-    if globals.packagequeue.has_key(package):
+    if packagequeue.has_key(package):
         return True
     else:
-        globals.packagequeue[package] = list()
+        packagequeue[package] = list()
 
 def del_package(package):
     try:
-        del globals.packagequeue[package]
+        del packagequeue[package]
     except:
         pass
 
 def rm_package(package):
-    for pkgfile in globals.packagequeue[package]:
+    for pkgfile in packagequeue[package]:
         if os.path.exists(pkgfile):
             os.remove(pkgfile)
     del_package(package)
@@ -94,6 +94,6 @@ def fetch_missing_files(package, files, packagedir, distopts):
                 os.write(entryfd, data)
                 os.close(entryfd)
                 if not (os.path.join(packagedir, entry)) in files:
-                    globals.packagequeue[package].append(os.path.join(packagedir, entry))
+                    packagequeue[package].append(os.path.join(packagedir, entry))
     os.close(fd)
 
