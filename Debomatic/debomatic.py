@@ -17,10 +17,73 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
+import os
+import sys
 import threading
+from getopt import getopt, GetoptError
 from time import sleep
 from Debomatic import globals
 from Debomatic import build
+
+def main():
+    conffile = None
+    daemon = True
+    if os.getuid():
+        print 'You must run deb-o-matic as root'
+        sys.exit(-1)
+    try:
+        opts, args = getopt(sys.argv[1:], 'c:n', ['config=', 'nodaemon'])
+    except GetoptError, error:
+        print error.msg
+        sys.exit(-1)
+    for o, a in opts:
+        if o in ("-c", "--config"):
+            conffile = a
+        if o in ('-n', '--nodaemon'):
+            daemon = False
+    parse_default_options(conffile)
+
+    # If daemon mode is set, detach from the terminal and run in background.
+    if daemon:
+        try:
+            pid = os.fork()
+            if pid > 0:
+                sys.exit(0)
+        except OSError:
+            print 'Fork failed'
+            sys.exit(-1)
+        os.setsid()
+        os.chdir('/')
+        os.umask(0)
+        try:
+            pid = os.fork()
+            if pid > 0:
+                sys.exit(0)
+        except OSError:
+            print 'Fork failed'
+            sys.exit(-1)
+        fin = open('/dev/null', 'r')
+        fout = open(globals.Options.get('default', 'logfile'), 'a+')
+        ferr = open(globals.Options.get('default', 'logfile'), 'a+', 0)
+        os.dup2(fin.fileno(), sys.stdin.fileno())
+        os.dup2(fout.fileno(), sys.stdout.fileno())
+        os.dup2(ferr.fileno(), sys.stderr.fileno())
+
+    launcher()
+
+def parse_default_options(conffile):
+    defaultoptions = ('packagedir', 'configdir', 'maxbuilds', 'inotify', 'sleep', 'logfile')
+    if not conffile:
+        print 'Please specify a configuration file'
+        sys.exit(-1)
+    if not os.path.exists(conffile):
+        print 'Configuration file %s does not exist' % conffile
+        sys.exit(-1)
+    globals.Options.read(conffile)
+    for opt in defaultoptions:
+        if not globals.Options.has_option('default', opt) or not globals.Options.get('default', opt):
+            print 'Please set "%s" in %s' % (opt, conffile)
+            sys.exit(-1)
 
 try:
     import os
