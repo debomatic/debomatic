@@ -93,6 +93,12 @@ def parse_distribution_options(packagedir, configdir, package):
         print 'Please set COMPONENTS in %s' % os.path.join(configdir, options['distribution'])
         packages.del_package(package)
         sys.exit(-1)
+    try:
+        options['debootstrap'] = findall('[^#]?DEBOOTSTRAP="?(.*[^"])"?\n', conf)[0]
+    except:
+        print 'Please set DEBOOTSTRAP in %s' % os.path.join(configdir, options['distribution'])
+        packages.del_package(package)
+        sys.exit(-1)
     return options
 
 def build_package(directory, configfile, distdir, package, distopts):

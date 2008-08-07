@@ -1,3 +1,6 @@
+  108 Luca Falavigna	2008-08-07
+      Add support for DEBOOTSTRAP pbuilder option
+
   107 Luca Falavigna	2008-08-07
       Move away from globals.py
 
