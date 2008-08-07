@@ -1,3 +1,6 @@
+  109 Luca Falavigna	2008-08-07
+      Build log is now saved with .buildlog extension
+
   108 Luca Falavigna	2008-08-07
       Add support for DEBOOTSTRAP pbuilder option
 

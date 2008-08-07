@@ -118,7 +118,8 @@ def build_package(directory, configfile, distdir, package, distopts):
     if not os.path.exists(os.path.join(distdir, 'result', packageversion)):
         os.mkdir(os.path.join(distdir, 'result', packageversion))
     os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
-              --distribution %(distribution)s --override-config --pkgname-logfile --configfile %(cfg)s \
+              --distribution %(distribution)s --override-config --configfile %(cfg)s \
+              --logfile %(directory)s/result/%(package)s/%(package)s.buildlog \
               --buildplace %(directory)s/build --buildresult %(directory)s/result/%(package)s \
               --aptcache %(directory)s/aptcache %(dsc)s' % { 'directory': distdir, 'package': packageversion, \
               'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
