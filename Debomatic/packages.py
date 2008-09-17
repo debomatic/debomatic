@@ -93,7 +93,7 @@ def fetch_missing_files(package, files, packagedir, distopts):
                 entryfd = os.open(os.path.join(packagedir, entry), os.O_WRONLY | os.O_CREAT)
                 os.write(entryfd, data)
                 os.close(entryfd)
-                if not (os.path.join(packagedir, entry)) in files:
-                    packagequeue[package].append(os.path.join(packagedir, entry))
+        if not (os.path.join(packagedir, entry)) in files:
+            packagequeue[package].append(os.path.join(packagedir, entry))
     os.close(fd)
 

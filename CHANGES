@@ -1,3 +1,7 @@
+  110 Luca Falavigna	2008-11-18
+      Add files to packagequeue even if they are
+      already available, so they can be removed
+
   109 Luca Falavigna	2008-08-07
       Build log is now saved with .buildlog extension
 
