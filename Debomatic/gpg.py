@@ -21,19 +21,23 @@ import os
 from re import findall, DOTALL
 from subprocess import Popen, PIPE
 from Debomatic import Options
+from Debomatic import acceptedqueue
 
 def check_signature(package):
     if Options.getint('gpg', 'gpg'):
         if not Options.has_option('gpg', 'keyring') or not os.path.exists(Options.get('gpg', 'keyring')):
             return False
-        gpgresult = Popen(['gpg', '--primary-keyring', Options.get('gpg', 'keyring'), '--verify', package], stderr=PIPE).communicate()[1]
-        ID = findall('Good signature from "(.*) <(.*)>"', gpgresult)
-        if not len(ID):
-            return False
-        fd = os.open(package, os.O_RDONLY)
-        data = os.read(fd, os.fstat(fd).st_size)
-        os.close(fd)
-        fd = os.open(package, os.O_WRONLY | os.O_TRUNC)
-        os.write(fd, findall('Hash: \S+\n\n(.*)\n\n\-\-\-\-\-BEGIN PGP SIGNATURE\-\-\-\-\-', data, DOTALL)[0])
-        os.close(fd)
+        if not package in acceptedqueue:
+            gpgresult = Popen(['gpg', '--primary-keyring', Options.get('gpg', 'keyring'), '--verify', package], stderr=PIPE).communicate()[1]
+            ID = findall('Good signature from "(.*) <(.*)>"', gpgresult)
+            if not len(ID):
+                return False
+            fd = os.open(package, os.O_RDONLY)
+            data = os.read(fd, os.fstat(fd).st_size)
+            os.close(fd)
+            fd = os.open(package, os.O_WRONLY | os.O_TRUNC)
+            os.write(fd, findall('Hash: \S+\n\n(.*)\n\n\-\-\-\-\-BEGIN PGP SIGNATURE\-\-\-\-\-', data, DOTALL)[0])
+            os.close(fd)
+            if not package in acceptedqueue:
+                acceptedqueue.append(package)
 

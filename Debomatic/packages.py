@@ -21,6 +21,7 @@ import os
 import sys
 from re import findall, split
 from urllib2 import Request, urlopen
+from Debomatic import acceptedqueue
 from Debomatic import packagequeue
 
 def select_package(directory):
@@ -72,6 +73,10 @@ def rm_package(package):
         if os.path.exists(pkgfile):
             os.remove(pkgfile)
     del_package(package)
+    try:
+        acceptedqueue.remove(package)
+    except:
+        pass
 
 def fetch_missing_files(package, files, packagedir, distopts):
     dscfile = None

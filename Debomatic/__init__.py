@@ -23,5 +23,6 @@ class Semaphores:
     pass
 
 Options = ConfigParser()
+acceptedqueue = list()
 packagequeue = dict()
 sema = Semaphores()

@@ -1,3 +1,7 @@
+  111 Luca Falavigna	2008-11-19
+      Add acceptedqueue to allow packages waiting for
+      a lock to be built if previously accepted.
+
   110 Luca Falavigna	2008-11-18
       Add files to packagequeue even if they are
       already available, so they can be removed
