@@ -1,3 +1,6 @@
+  112 Luca Falavigna	2008-12-01
+      Implement modules core components
+
   111 Luca Falavigna	2008-11-19
       Add acceptedqueue to allow packages waiting for
       a lock to be built if previously accepted.

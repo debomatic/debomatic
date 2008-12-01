@@ -24,6 +24,7 @@ from getopt import getopt, GetoptError
 from time import sleep
 from Debomatic import build
 from Debomatic import Options
+from Debomatic import modules
 
 def main():
     conffile = None
@@ -69,6 +70,8 @@ def main():
         os.dup2(fout.fileno(), sys.stdout.fileno())
         os.dup2(ferr.fileno(), sys.stderr.fileno())
 
+    mod_sys = modules.Module()
+    mod_sys.execute_hook("on_start", {})
     launcher()
 
 def parse_default_options(conffile):

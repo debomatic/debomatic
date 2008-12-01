@@ -29,6 +29,7 @@ from Debomatic import packages
 from Debomatic import pbuilder
 from Debomatic import Options
 from Debomatic import packagequeue
+from Debomatic import modules
 
 def build_process():
     directory = Options.get('default', 'packagedir')
@@ -102,6 +103,7 @@ def parse_distribution_options(packagedir, configdir, package):
     return options
 
 def build_package(directory, configfile, distdir, package, distopts):
+    mod_sys = modules.Module()
     if not locks.buildlock_acquire():
         packages.del_package(package)
         sys.exit(-1)
@@ -117,11 +119,15 @@ def build_package(directory, configfile, distdir, package, distopts):
         packageversion = None
     if not os.path.exists(os.path.join(distdir, 'result', packageversion)):
         os.mkdir(os.path.join(distdir, 'result', packageversion))
+    mod_sys.execute_hook('pre_build', { 'directory': distdir, 'package': packageversion, \
+              'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
     os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
               --distribution %(distribution)s --override-config --configfile %(cfg)s \
               --logfile %(directory)s/result/%(package)s/%(package)s.buildlog \
               --buildplace %(directory)s/build --buildresult %(directory)s/result/%(package)s \
               --aptcache %(directory)s/aptcache %(dsc)s' % { 'directory': distdir, 'package': packageversion, \
+              'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
+    mod_sys.execute_hook('post_build', { 'directory': distdir, 'package': packageversion, \
               'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
     packages.rm_package(package)
     locks.buildlock_release()
