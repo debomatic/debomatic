@@ -56,7 +56,6 @@ def build_process():
             packages.del_package(package)
             sys.exit(-1)
         build_package(directory, os.path.join(configdir, distopts['distribution']), distdir, package, distopts)
-        check_package(directory, distopts['distribution'], package)
 
 def parse_distribution_options(packagedir, configdir, package):
     options = dict()
@@ -131,22 +130,4 @@ def build_package(directory, configfile, distdir, package, distopts):
               'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
     packages.rm_package(package)
     locks.buildlock_release()
-
-def check_package(directory, distribution, changes):
-    try:
-        packagename = findall('(.*_.*)_source.changes', changes)[0]
-    except:
-        print 'Bad .changes file'
-        return
-    resultdir = os.path.join(directory, distribution, 'result', packagename)
-    lintian = os.path.join(resultdir, packagename) + '.lintian'
-    changesfile = None
-    for filename in os.listdir(resultdir):
-        result = findall('.*.changes', filename)
-        if len(result):
-            changesfile = os.path.join(resultdir, result[0])
-            break
-    if changesfile:
-        if Options.has_option('checks', 'lintian') and Options.getint('checks', 'lintian'):
-            os.system('lintian --allow-root -i -I %s > %s' % (changesfile, lintian))
 
