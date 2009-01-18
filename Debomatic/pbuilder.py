@@ -19,7 +19,6 @@
 
 import os
 import sys
-from re import findall
 from sha import new
 from time import strftime
 from urllib import urlopen

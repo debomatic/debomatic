@@ -43,8 +43,12 @@ def build_process():
             print 'Unable to open %s' % os.path.join(directory, package)
             packages.del_package(package)
             sys.exit(-1)
-        for entry in findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)', os.read(fd, os.fstat(fd).st_size)):
-            packagequeue[package].append(os.path.join(directory, entry))
+        try:
+            for entry in findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)', os.read(fd, os.fstat(fd).st_size)):
+                packagequeue[package].append(os.path.join(directory, entry))
+        except:
+            print 'Bad .changes file'
+            sys.exit(-1)
         packagequeue[package].append(os.path.join(directory, package))
         os.close(fd)
         if gpg.check_signature(os.path.join(directory, package)) == False:
