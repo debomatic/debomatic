@@ -28,4 +28,7 @@ setup(name='debomatic',
       url = 'https://launchpad.net/debomatic/',
       license='GNU GPL',
       packages=['Debomatic'],
-      scripts=['debomatic'])
+      scripts=['debomatic'],
+      data_files=[('share/debomatic/modules',
+                  ['modules/DateStamp.py', 'modules/Lintian.py'])])
+
