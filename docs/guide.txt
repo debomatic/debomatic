@@ -5,39 +5,38 @@ Automatic build machine for Debian source packages
 
 Introduction
 
-This is Deb-o-Matic, a easy to use build machine for Debian-based source
+This is Deb-o-Matic, an easy to use build machine for Debian-based source
 packages based on pbuilder. It provides a simple tool to automate the build of
 source packages with limited user interaction and a simple configuration.
 
-It has some useful feature such as automatic update of pbuilder, automatic scan
-and selection of source packages to build and lintian support. It is meant to
-help developers to build their packages without worrying too much of compilation,
-since it will run in background and no user feedback is required during the
-whole process.
+It has some useful feature such as automatic update of pbuilder and automatic
+scan and selection of source packages to build. It is meant to help developers
+to build their packages without worrying too much of compilation, since it will
+run in background and no user feedback is required during the whole process.
 
 
 Requisites
 
 These packages are required to build and install Deb-o-Matic on your system:
 
-    * python-dev
-    * docbook2x
+  * python-dev
+  * docbook2x
 
 These ones are required to execute Deb-o-Matic:
 
-    * python
-    * pbuilder
-    * debootstrap
+  * python
+  * pbuilder
+  * debootstrap
 
 To enable additional features, you may want to install these packages:
 
-    * python-pyinotify
-    * gnupg
-    * lintian
+  * python-pyinotify
+  * gnupg
+  * lintian
 
-A Internet connection is also required, broadband access is recommended since
-debootstrap will fetch several packages from internet to set up pbuilder chroot
-environment.
+A Internet connection is also required, broadband access is recommended because
+debootstrap will fetch several packages from the Internet to set up pbuilder
+chroot environment.
 
 
 Installation and removal
@@ -47,34 +46,36 @@ Installation process is straightforward, just execute these commands:
 make
 make install (with root privileges)
 
-You will find debomatic executable in /usr/bin, modules in
-/usr/lib/python*/site-packages/Debomatic (based on your Python version) and
-related manpages in /usr/share/man/ directory.
+You will find debomatic executable into /usr/bin, modules into
+/usr/lib/python*/site-packages/Debomatic (based on your Python version),
+modules in /usr/share/debomatic/modules and related manpages into
+/usr/share/man/ directory.
 
 In order to uninstall Deb-o-Matic, you need to launch make uninstall
-(with root privileges).
+(again, with root privileges).
 
 
 Configuration
 
-In order to get Deb-o-Matic working, you have to prepare a configuration file
+In order to have Deb-o-Matic working, you have to prepare a configuration file
 which will provide the options needed to run debomatic. You can look at
 examples/debomatic.conf to see a working example.
 
-The most important options are located under default section: here are some of them:
+The most important options are located under "default" section: here are some:
 
-    * packagedir: base directory where debomatic will scan for packages to build
-    * configdir: place where pbuilder configuration files used to pass build
-      options to pbuilder are stored
-    * maxbuilds: maximum number of parallel builds allowed 
+  * packagedir: base directory where debomatic will scan for packages to build
+  * configdir: directory where pbuilder configuration files used to pass build
+    options to pbuilder are stored
+  * maxbuilds: maximum number of parallel builds allowed 
 
 See debomatic.conf man page for a complete list of the available options.
 
 Once main configuration file is complete, you must create the directories
 referenced by packagedir and configdir, where you will put pbuilder
-configuration files. Working examples are located in examples directory. Names
-must match target distribution you want to build packages for (e.g. if you want
-to build a package for Intrepid, pbuilder configuration filename must be intrepid).
+configuration files. Working examples are located into examples directory.
+Names must match target distribution you want to build packages for (e.g. if
+you want to build a package for Jaunty, pbuilder configuration filename must be
+jaunty). They should be the same as the ones provided by debootstrap.
 
 See pbuilderrc man page for a complete list of the available options.
 
@@ -87,18 +88,20 @@ privileges to do so because of pbuilder infrastructure. This will start
 debomatic in daemon mode, use -n switch to avoid this.
 
 Now you can put source packages in the chosen package directory (identified by
-packagedir option) and Deb-o-Matic will take care of the building phase. Since
+packagedir option) and Deb-o-Matic will take care of the building phase.
 Deb-o-Matic requires .changes files, be sure to generate a full Debian source
 package by using a command such as dpkg-buildpackage -S -sa. You have to upload
 .changes file and each file mentioned under its Files section. You may want to
 use software like dput to automate the process.
+A source upload is required, other type of .changes files could not be parsed
+correctly leading to a ignored build.
 
 GPG support
 
 Deb-o-Matic support GPG-signed source packages to allow build for authorized
-people only. To enable GPG support, you need to set options in gpg section in
+people only. To enable GPG support, you need to set options in "gpg" section in
 main configuration file. Only packages signed with keys present in keyring
-pointed by the correspondant option will be processed, unknown packages will be
+pointed by the correspondent option will be processed, unknown packages will be
 deleted automatically.
 
 Advice on how to prepare source packages
@@ -107,6 +110,14 @@ Deb-o-Matic can fetch .orig.tar.gz files automatically if already available on
 main distribution archive (e.g. http://archive.ubuntu.com/ubuntu), so you can
 choose not to include .orig.tar.gz sometimes. You always need to include it in
 case of new upstream version or new packages.
+
+
+Modules
+
+Deb-o-Matic provides modules support. Modules are Python scripts pluggable at
+runtime which extend Deb-o-Matic features. Available modules are stored into
+modules directory. An example module can be found into examples directory,
+useful to write your own Deb-o-Matic module.
 
 
 Bugs and feedback

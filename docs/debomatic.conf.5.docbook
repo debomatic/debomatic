@@ -15,7 +15,7 @@
     </copyright>
     <!-- XXX IMPORTANT XXX -->
     <!-- Keep this date up to date: -->
-    <date>2008-04-26</date>
+    <date>2009-01-26</date>
     <!--  ^^^^^^^^^^ -->
   </refentryinfo>
   <refmeta>
@@ -69,10 +69,14 @@
     </para>
    </refsect1>
   <refsect1>
-    <title>CHECKS SECTION</title>
+    <title>MODULES</title>
     <para>
-      <emphasis>lintian</emphasis>: if enabled, run lintian application after 
-      build process. lintian has to be installed in order to do so.
+      <emphasis>modules</emphasis>: if enabled, allow modules to be plugged in
+      at runtime extending Deb-o-Matic features.
+    </para>
+    <para>
+      <emphasis>modulespath</emphasis>: this directory contains modules to be
+      plugged in at runtime when running Deb-o-Matic.
     </para>
    </refsect1>
 <refsect1>

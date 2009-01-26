@@ -1,3 +1,15 @@
+  117 Luca Falavigna	2009-01-26
+      Update documentation with new features
+
+  116 Luca Falavigna	2009-01-23
+      Instruct setup.py to install modules
+
+  115 Luca Falavigna	2009-01-18
+      Exit if .changes file does not provide mandatory fields
+
+  114 Luca Falavigna	2009-01-18
+      Add DateStamp module
+
   113 Luca Falavigna	2008-12-02
       Implement lintian support as a module
 
