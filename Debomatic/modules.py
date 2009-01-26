@@ -1,6 +1,6 @@
 # Deb-o-Matic
 #
-# Copyright (C) 2008 David Futcher
+# Copyright (C) 2008-2009 David Futcher
 #
 # Author: David Futcher <bobbo@ubuntu.com>
 #
