@@ -27,6 +27,7 @@ class Module:
     def __init__(self):
         # Default to having modules enabled
         self.use_modules = True
+        self.modules_list = list()
 
         # Check if the modules system is turned on
         if not Options.has_option('modules', 'modules'):
@@ -39,7 +40,10 @@ class Module:
         sys.path.append(self.mod_path)
 
         # Get a list of modules and remove any extra cruft that gets in the list
-        self.modules_list = os.listdir(self.mod_path)
+        try:
+            self.modules_list = os.listdir(self.mod_path)
+        except OSError:
+            self.use_modules = False
 
         # Check the user isnt on crack and have actually specified a directory with modules in it
         if len(self.modules_list) == 0:

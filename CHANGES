@@ -1,3 +1,6 @@
+  119 Luca Falavigna	2009-01-26
+      Do not enable modules if modulespath does not exist
+
   118 Luca Falavigna	2009-01-26
       Update copyright years
 
