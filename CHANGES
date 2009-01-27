@@ -1,3 +1,9 @@
+Tue 2009-01-27 20:36:31 +0100
+Stable release: 0.6
+
+  121 Luca Falavigna	2009-01-27
+      DateStamp.py module: remove unneeded dot in date string
+
   120 Luca Falavigna	2009-01-27
       Provide Jaunty configuration file, remove Intrepid one
 
