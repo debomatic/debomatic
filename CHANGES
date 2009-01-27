@@ -1,3 +1,6 @@
+  120 Luca Falavigna	2009-01-27
+      Provide Jaunty configuration file, remove Intrepid one
+
   119 Luca Falavigna	2009-01-26
       Do not enable modules if modulespath does not exist
 
