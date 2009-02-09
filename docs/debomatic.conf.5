@@ -1,0 +1,51 @@
+.TH debomatic.conf 5 2009-01-26 "debomatic"
+.SH NAME
+debomatic.conf \- Configuration file for debomatic
+.SH DEFAULT SECTION
+.TP
+.B packagedir
+This directory is the base directory where debomatic will scan for
+packages to build. It must exists before launching debomatic or an
+exception will be raised.
+.TP
+.B configdir
+This directory contains pbuilder configuration files used to pass build
+options to pbuilder. They must contain pbuilder specific parameters
+(see pbuilderrc(5) for further reference) and their names must match
+desired target releases.
+.TP
+.B maxbuilds
+Maximum number of parallel build threads to be launched. More threads will
+require powerful hardware.
+.TP
+.B inotify
+If enabled, new threads will be launched immediately when .changes files
+are put in packagedir.
+.TP
+.B sleep
+debomatic will build another source package when a number of seconds
+provided by this parameter have elapsed.
+.TP
+.B logfile
+debomatic messages will be stored in this file
+.SH GPG SECTION
+.B gpg
+If enabled, turn GPG support on to check for signed packages before
+attempting to build them.
+.TP
+.B keyring
+This file contains authorized GPG keys. Source packages signed with one of the
+keys included are allowed to build, other packages will be deleted from disk.
+.SH MODULES
+.B modules
+If enabled, allow modules to be plugged in at runtime.
+.TP
+.B modulespath
+This directory contains modules to be plugged in at runtime.
+.SH COPYRIGHT
+This manual page is Copyright 2007-2009 Luca Falavigna <dktrkranz@ubuntu.com>.
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License, Version 3 or any later
+version published by the Free Software Foundation.
+.SH SEE ALSO
+debomatic(1), pbuilderrc(5)
