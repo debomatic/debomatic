@@ -19,7 +19,7 @@ class DebomaticModule_ExampleModule:
 ## pre_build(), post_build():
 #
 # 'directory':    The distributions working directory. Binary build results 
-#                 are held in $directory/results
+#                 are held in $directory/pool
 # 'package':      The name and version of the package being built in the form
 #                 of "packagename-version.version.etc"
 # 'cfg':          Configfile

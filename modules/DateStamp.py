@@ -31,7 +31,7 @@ class DebomaticModule_DateStamp:
         self.date_file = ""
         
     def pre_build(self, args):    
-        self.date_file = "%(directory)s/result/%(package)s/%(package)s.datestamp" % args
+        self.date_file = "%(directory)s/pool/%(package)s/%(package)s.datestamp" % args
         fd = os.open(self.date_file, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
         os.write(fd, 'Build started at %s\n' % datetime.now().strftime("%A, %d %B %Y %H:%M"))
         os.close(fd)

@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# Stores litian output on top of the built package in the result directory.
+# Stores litian output on top of the built package in the pool directory.
 
 import os
 from re import findall
@@ -32,7 +32,7 @@ class DebomaticModule_Lintian:
 
     def post_build(self, args):
         changesfile = None
-        resultdir = os.path.join(args['directory'], 'result', args['package'])
+        resultdir = os.path.join(args['directory'], 'pool', args['package'])
         lintian = os.path.join(resultdir, args['package']) + '.lintian'
         for filename in os.listdir(resultdir):
             result = findall('.*.changes', filename)

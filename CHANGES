@@ -1,3 +1,6 @@
+  124 Luca Falavigna	2009-03-02
+      Built packages are now stored in "pool" directory
+
   123 Luca Falavigna	2009-03-02
       Exit if another instance is already running
 

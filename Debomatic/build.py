@@ -111,8 +111,8 @@ def build_package(directory, configfile, distdir, package, distopts):
         packages.del_package(package)
         sys.exit(-1)
     dscfile = None
-    if not os.path.exists(os.path.join(distdir, 'result')):
-        os.mkdir(os.path.join(distdir, 'result'))
+    if not os.path.exists(os.path.join(distdir, 'pool')):
+        os.mkdir(os.path.join(distdir, 'pool'))
     for pkgfile in packagequeue[package]:
             if not dscfile:
                 dscfile = findall('(.*\.dsc$)', pkgfile)
@@ -120,14 +120,14 @@ def build_package(directory, configfile, distdir, package, distopts):
         packageversion = findall('.*/(.*).dsc$', dscfile[0])[0]
     except:
         packageversion = None
-    if not os.path.exists(os.path.join(distdir, 'result', packageversion)):
-        os.mkdir(os.path.join(distdir, 'result', packageversion))
+    if not os.path.exists(os.path.join(distdir, 'pool', packageversion)):
+        os.mkdir(os.path.join(distdir, 'pool', packageversion))
     mod_sys.execute_hook('pre_build', { 'directory': distdir, 'package': packageversion, \
               'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
     os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
               --distribution %(distribution)s --override-config --configfile %(cfg)s \
-              --logfile %(directory)s/result/%(package)s/%(package)s.buildlog \
-              --buildplace %(directory)s/build --buildresult %(directory)s/result/%(package)s \
+              --logfile %(directory)s/pool/%(package)s/%(package)s.buildlog \
+              --buildplace %(directory)s/build --buildresult %(directory)s/pool/%(package)s \
               --aptcache %(directory)s/aptcache %(dsc)s' % { 'directory': distdir, 'package': packageversion, \
               'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
     mod_sys.execute_hook('post_build', { 'directory': distdir, 'package': packageversion, \
