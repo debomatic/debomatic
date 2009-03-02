@@ -20,6 +20,7 @@
 import os
 import sys
 import threading
+from fcntl import lockf, LOCK_EX, LOCK_NB
 from getopt import getopt, GetoptError
 from time import sleep
 from Debomatic import build
@@ -70,6 +71,12 @@ def main():
         os.dup2(fout.fileno(), sys.stdout.fileno())
         os.dup2(ferr.fileno(), sys.stderr.fileno())
 
+    fd = os.open('/var/run/debomatic.lock', os.O_WRONLY | os.O_CREAT | os.O_TRUNC)
+    try:
+        lockf(fd, LOCK_EX | LOCK_NB)
+    except IOError:
+        print 'Another instance is running. Aborting.'
+        sys.exit(-1)
     mod_sys = modules.Module()
     mod_sys.execute_hook("on_start", {})
     launcher()
