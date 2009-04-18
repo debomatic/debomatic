@@ -26,18 +26,27 @@ class DebomaticModule_Contents:
     def __init__(self):
         self.dpkg = "/usr/bin/dpkg"
 
+    def write_pkg_info(self, option, deblist, contents_file):
+        for deb in deblist:
+            os.system("echo '%s:' >> %s" % (deb, contents_file))
+            os.system('%s %s %s >> %s' % (self.dpkg, option, deb, contents_file))
+            os.system("echo >> %s" % contents_file)
+
     def post_build(self, args):
         resultdir = os.path.join(args['directory'], 'pool', args['package'])
-        contents = os.path.join(resultdir, args['package']) + '.contents'
+        contents_file = os.path.join(resultdir, args['package']) + '.contents'
         try:
-            os.stat(contents)
-            os.remove(contents)
+            os.stat(contents_file)
+            os.remove(contents_file)
         except OSError:
-            pass
-        for filename in os.listdir(resultdir):
-            if filename.endswith('.deb'):
-                pkg_name = os.path.join(resultdir, filename)
-                os.system("echo 'Running dpkg on %s:' >> %s" % (pkg_name, contents))
-                os.system('%s -I %s >> %s' % (self.dpkg, pkg_name, contents))
-                os.system('%s -c %s >> %s' % (self.dpkg, pkg_name, contents))
-                os.system("echo '------------------------------- END -------------------------------' >> %s" % contents)
+            pass # Nothing to do
+
+        deblist = \
+            map(
+                lambda filename: os.path.join(resultdir, filename),
+                filter(lambda filename: filename.endswith('.deb'), os.listdir(resultdir))
+                )
+
+        self.write_pkg_info('-I', deblist, contents_file)
+        self.write_pkg_info('-c', deblist, contents_file)
+
