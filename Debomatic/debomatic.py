@@ -97,19 +97,22 @@ def parse_default_options(conffile):
 
 try:
     import os
+    import pyinotify
     from re import findall
-    from pyinotify import WatchManager, Notifier, EventsCodes, ProcessEvent
 
-    class PE(ProcessEvent):
+    class PE(pyinotify.ProcessEvent):
         def process_IN_CLOSE_WRITE(self, event):
             if findall('source.changes$', event.name):
                 threading.Thread(None, build.build_process).start()
 
     def launcher_inotify():
         if Options.getint('default', 'inotify'):
-            wm = WatchManager()
-            notifier = Notifier(wm, PE())
-            wm.add_watch(Options.get('default', 'packagedir'), EventsCodes.IN_CLOSE_WRITE, rec=True)
+            wm = pyinotify.WatchManager()
+            notifier = pyinotify.Notifier(wm, PE())
+            try:
+                wm.add_watch(Options.get('default', 'packagedir'), pyinotify.IN_CLOSE_WRITE, rec=True)
+            except AttributeError:
+                wm.add_watch(Options.get('default', 'packagedir'), pyinotify.EventsCodes.IN_CLOSE_WRITE, rec=True)
             while True:
                 try:
                     notifier.process_events()
