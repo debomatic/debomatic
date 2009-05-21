@@ -40,5 +40,5 @@ class DebomaticModule_Lintian:
                 changesfile = os.path.join(resultdir, result[0])
                 break
         if changesfile:
-            os.system('%s --allow-root -i -I %s > %s' % (self.lintian, changesfile, lintian))
+            os.system('%s --allow-root -i -I -E --pedantic %s > %s' % (self.lintian, changesfile, lintian))
 
