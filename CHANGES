@@ -1,3 +1,6 @@
+  131 Luca Falavigna	2009-05-25
+      Add every supported releases for both Debian and Ubuntu
+
   130 Luca Falavigna	2009-05-25
       Do not pass --distribution option to pbuilder,
       configfile has all the necessary bits

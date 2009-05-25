@@ -1,0 +1,4 @@
+DISTRIBUTION=sid
+MIRRORSITE=ftp://ftp.debian.org/debian
+COMPONENTS="main contrib non-free"
+DEBOOTSTRAP=debootstrap

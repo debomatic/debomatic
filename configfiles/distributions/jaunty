@@ -1,4 +1,5 @@
-DISTRIBUTION=intrepid
+DISTRIBUTION=jaunty
 MIRRORSITE=http://archive.ubuntu.com/ubuntu
 COMPONENTS="main restricted universe multiverse"
 DEBOOTSTRAP=debootstrap
+EXTRAPACKAGES="pkgbinarymangler pkg-create-dbgsym"
