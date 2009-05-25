@@ -128,7 +128,7 @@ def build_package(directory, configfile, distdir, package, distopts):
               --distribution %(distribution)s --override-config --configfile %(cfg)s \
               --logfile %(directory)s/pool/%(package)s/%(package)s.buildlog \
               --buildplace %(directory)s/build --buildresult %(directory)s/pool/%(package)s \
-              --aptcache %(directory)s/aptcache %(dsc)s' % { 'directory': distdir, 'package': packageversion, \
+              --aptcache %(directory)s/aptcache %(dsc)s >/dev/null 2>&1' % { 'directory': distdir, 'package': packageversion, \
               'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
     mod_sys.execute_hook('post_build', { 'directory': distdir, 'package': packageversion, \
               'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})

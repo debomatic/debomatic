@@ -78,7 +78,7 @@ def prepare_pbuilder(cmd, directory, configdir, distopts):
     if (os.system('pbuilder %(cmd)s --basetgz %(directory)s/%(distribution)s \
                   --distribution %(distribution)s --override-config \
                   --configfile %(cfg)s --buildplace %(directory)s/build \
-                  --aptcache "%(directory)s/aptcache" --logfile %(directory)s/logs/%(cmd)s.%(now)s' \
+                  --aptcache "%(directory)s/aptcache" --logfile %(directory)s/logs/%(cmd)s.%(now)s >/dev/null 2>&1' \
                   % {'cmd': cmd, 'directory': directory, 'distribution': distopts['distribution'], \
                   'cfg': os.path.join(configdir, distopts['distribution']), 'now': strftime('%Y%m%d_%H%M')})):
         print 'pbuilder (%s) failed' % cmd

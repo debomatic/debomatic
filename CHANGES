@@ -1,3 +1,6 @@
+  129 Luca Falavigna	2009-05-25
+      Redirect stdin pbuilder output to /dev/null
+
   128 Luca Falavigna	2009-05-21
       Pass -E --pedantic options to lintian
 
