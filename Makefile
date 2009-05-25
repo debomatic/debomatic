@@ -21,20 +21,24 @@
 
 BUILD_BASE=${PWD}
 
-all:
-	python setup.py build --build-base=${BUILD_BASE}
+all: install
 
 install:
-	python setup.py install
-	install -m 644 docs/debomatic.1 /usr/share/man/man1/debomatic.1
-	install -m 644 docs/debomatic.conf.5 /usr/share/man/man5/debomatic.conf.5
+	python setup.py install --root=${PREFIX}
+	mkdir -p ${PREFIX}/etc/debomatic/distributions
+	install -Dm 644 configfiles/debomatic.conf ${PREFIX}/etc/debomatic
+	install -Dm 644 configfiles/distributions/* ${PREFIX}/etc/debomatic/distributions
+	install -Dm 644 docs/debomatic.1 ${PREFIX}/usr/share/man/man1/debomatic.1
+	install -Dm 644 docs/debomatic.conf.5 ${PREFIX}/usr/share/man/man5/debomatic.conf.5
 
 uninstall:
-	rm /usr/bin/debomatic
-	rm /usr/lib/python*/site-packages/debomatic*
-	rm -fr /usr/lib/python*/site-packages/Debomatic
-	rm /usr/share/man/man1/debomatic.1
-	rm /usr/share/man/man5/debomatic.conf.5
+	rm -f ${PREFIX}/usr/bin/debomatic
+	rm -fr ${PREFIX}/etc/debomatic
+	rm -fr ${PREFIX}/usr/lib/python*/*-packages/debomatic*
+	rm -fr ${PREFIX}/usr/lib/python*/*-packages/Debomatic
+	rm -fr ${PREFIX}/usr/share/debomatic/modules
+	rm -f ${PREFIX}/usr/share/man/man1/debomatic.1
+	rm -f ${PREFIX}/usr/share/man/man5/debomatic.conf.5
 
 clean:
 	python setup.py clean --build-base=${BUILD_BASE}
