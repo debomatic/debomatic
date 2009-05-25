@@ -1,3 +1,7 @@
+  130 Luca Falavigna	2009-05-25
+      Do not pass --distribution option to pbuilder,
+      configfile has all the necessary bits
+
   129 Luca Falavigna	2009-05-25
       Redirect stdin pbuilder output to /dev/null
 

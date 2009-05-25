@@ -76,8 +76,7 @@ def prepare_pbuilder(cmd, directory, configdir, distopts):
     if not os.path.exists(os.path.join(directory, 'logs')):
         os.mkdir(os.path.join(directory, 'logs'))
     if (os.system('pbuilder %(cmd)s --basetgz %(directory)s/%(distribution)s \
-                  --distribution %(distribution)s --override-config \
-                  --configfile %(cfg)s --buildplace %(directory)s/build \
+                  --override-config --configfile %(cfg)s --buildplace %(directory)s/build \
                   --aptcache "%(directory)s/aptcache" --logfile %(directory)s/logs/%(cmd)s.%(now)s >/dev/null 2>&1' \
                   % {'cmd': cmd, 'directory': directory, 'distribution': distopts['distribution'], \
                   'cfg': os.path.join(configdir, distopts['distribution']), 'now': strftime('%Y%m%d_%H%M')})):

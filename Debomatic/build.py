@@ -85,6 +85,10 @@ def parse_distribution_options(packagedir, configdir, package):
         sys.exit(-1)
     conf = os.read(fd, os.fstat(fd).st_size)
     os.close(fd)
+    if not len(findall('[^#]?MIRRORSITE="?(.*[^"])"?\n', conf)):
+        print 'Please set DISTRIBUTION in %s' % os.path.join(configdir, options['distribution'])
+        packages.del_package(package)
+        sys.exit(-1)
     try:
         options['mirror'] = findall('[^#]?MIRRORSITE="?(.*[^"])"?\n', conf)[0]
     except:
@@ -125,8 +129,7 @@ def build_package(directory, configfile, distdir, package, distopts):
     mod_sys.execute_hook('pre_build', { 'directory': distdir, 'package': packageversion, \
               'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
     os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
-              --distribution %(distribution)s --override-config --configfile %(cfg)s \
-              --logfile %(directory)s/pool/%(package)s/%(package)s.buildlog \
+              --override-config --configfile %(cfg)s --logfile %(directory)s/pool/%(package)s/%(package)s.buildlog \
               --buildplace %(directory)s/build --buildresult %(directory)s/pool/%(package)s \
               --aptcache %(directory)s/aptcache %(dsc)s >/dev/null 2>&1' % { 'directory': distdir, 'package': packageversion, \
               'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
