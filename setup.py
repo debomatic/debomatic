@@ -30,5 +30,5 @@ setup(name='debomatic',
       packages=['Debomatic'],
       scripts=['debomatic'],
       data_files=[('share/debomatic/modules',
-                  ['modules/DateStamp.py', 'modules/Lintian.py'])])
+                  ['modules/DateStamp.py', 'modules/Lintian.py', 'modules/Contents.py'])])
 
