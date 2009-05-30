@@ -21,7 +21,6 @@ import os
 import sys
 import threading
 from re import findall
-from sha import new
 from string import lower
 from Debomatic import gpg
 from Debomatic import locks

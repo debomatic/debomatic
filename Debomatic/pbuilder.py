@@ -19,7 +19,7 @@
 
 import os
 import sys
-from sha import new
+from hashlib import sha256
 from time import strftime
 from urllib import urlopen
 from Debomatic import locks
@@ -62,8 +62,10 @@ def needs_update(directory, mirror, distribution):
     except:
         print 'Unable to fetch %s/dists/%s/Release.gpg' % (mirror, distribution)
         return 'update'
-    remote_sha = new(remote)
-    gpgfile_sha = new(os.read(fd, os.fstat(fd).st_size))
+    remote_sha = sha256()
+    gpgfile_sha = sha256()
+    remote_sha.update(remote)
+    gpgfile_sha.update(os.read(fd, os.fstat(fd).st_size))
     os.close(fd)
     if remote_sha.digest() != gpgfile_sha.digest():
         return 'update'

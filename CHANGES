@@ -1,3 +1,6 @@
+  134 Luca Falavigna	2009-05-30
+      Replace obsolete sha module with hashlib one
+
   133 Luca Falavigna	2009-05-25
       Adjust Makefile to match latest modifications
 
