@@ -30,5 +30,7 @@ setup(name='debomatic',
       packages=['Debomatic'],
       scripts=['debomatic'],
       data_files=[('share/debomatic/modules',
-                  ['modules/DateStamp.py', 'modules/Lintian.py', 'modules/Contents.py'])])
+                  ['modules/DateStamp.py', 'modules/Lintian.py', 'modules/Contents.py']),
+                  ('/etc/init.d', ['etc/init.d/debomatic']),
+                  ('/etc/default', ['etc/default/debomatic'])])
 

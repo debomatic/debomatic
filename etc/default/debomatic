@@ -1,0 +1,9 @@
+# Start debomatic on boot?
+DEBOMATIC_AUTOSTART=0
+
+# Which file should be used as the configuration file for debomatic.
+DEBOMATIC_CONFIG_FILE='/etc/debomatic/debomatic.conf'
+
+# What extra options to give debomatic.
+# Use -n to prevent backgrounding
+DEBOMATIC_OPTS=''

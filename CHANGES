@@ -1,3 +1,6 @@
+  135 Luca Falavigna	2009-06-03
+      Add init.d script and related files  
+
   134 Luca Falavigna	2009-05-30
       Replace obsolete sha module with hashlib one
 
