@@ -25,15 +25,13 @@ all: install
 
 install:
 	python setup.py install --root=${PREFIX}
-	mkdir -p ${PREFIX}/etc/debomatic/distributions
-	install -Dm 644 configfiles/debomatic.conf ${PREFIX}/etc/debomatic
-	install -Dm 644 configfiles/distributions/* ${PREFIX}/etc/debomatic/distributions
+	cp -rp etc/* ${PREFIX}/etc
 	install -Dm 644 docs/debomatic.1 ${PREFIX}/usr/share/man/man1/debomatic.1
 	install -Dm 644 docs/debomatic.conf.5 ${PREFIX}/usr/share/man/man5/debomatic.conf.5
 
 uninstall:
 	rm -f ${PREFIX}/usr/bin/debomatic
-	rm -fr ${PREFIX}/etc/debomatic
+	rm -fr ${PREFIX}/etc/debomatic ${PREFIX}/etc/default/debomatic ${PREFIX}/etc/init.d/debomatic
 	rm -fr ${PREFIX}/usr/lib/python*/*-packages/debomatic*
 	rm -fr ${PREFIX}/usr/lib/python*/*-packages/Debomatic
 	rm -fr ${PREFIX}/usr/share/debomatic/modules
@@ -43,3 +41,4 @@ uninstall:
 clean:
 	python setup.py clean --build-base=${BUILD_BASE}
 	rm -fr build
+

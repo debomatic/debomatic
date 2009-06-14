@@ -1,3 +1,6 @@
+  139 Luca Falavigna	2009-06-14
+      Merge configfiles directory under etc
+
   138 Luca Falavigna	2009-06-14
       Exit properly when a KeyboardInterrupt
       exception is raised with --nodaemon
