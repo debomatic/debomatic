@@ -26,6 +26,7 @@ from time import sleep
 from Debomatic import build
 from Debomatic import Options
 from Debomatic import modules
+from Debomatic import running
 
 def main():
     conffile = None
@@ -110,17 +111,31 @@ try:
             wm = pyinotify.WatchManager()
             notifier = pyinotify.Notifier(wm, PE())
             wm.add_watch(Options.get('default', 'packagedir'), pyinotify.IN_CLOSE_WRITE, rec=True)
-            notifier.loop()
+            notifier.loop(callback=exit_routine)
 except:
     def launcher_inotify():
         pass
 
 def launcher_timer():
-    while 1:
+    while exit_routine():
         threading.Thread(None, build.build_process).start()
         sleep(Options.getint('default', 'sleep'))
 
 def launcher():
     threading.Thread(None, launcher_inotify).start()
     threading.Thread(None, launcher_timer).start()
+    try:
+        while exit_routine():
+            pass
+    except KeyboardInterrupt:
+        print '\nWaiting for threads to finish, it could take a while...'
+        exit_routine(exiting=True)
 
+def exit_routine(self=None, exiting=False):
+    global running
+    if exiting:
+        running = False
+        return
+    if not running:
+        sys.exit(0)
+    return running

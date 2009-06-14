@@ -26,3 +26,4 @@ Options = ConfigParser()
 acceptedqueue = list()
 packagequeue = dict()
 sema = Semaphores()
+running = True

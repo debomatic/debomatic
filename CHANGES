@@ -1,3 +1,7 @@
+  138 Luca Falavigna	2009-06-14
+      Exit properly when a KeyboardInterrupt
+      exception is raised with --nodaemon
+
   137 Luca Falavigna	2009-06-14
       More pyinotify 0.8.6 optimization
       Support for older versions removed
