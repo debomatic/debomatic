@@ -109,18 +109,8 @@ try:
         if Options.getint('default', 'inotify'):
             wm = pyinotify.WatchManager()
             notifier = pyinotify.Notifier(wm, PE())
-            try:
-                wm.add_watch(Options.get('default', 'packagedir'), pyinotify.IN_CLOSE_WRITE, rec=True)
-            except AttributeError:
-                wm.add_watch(Options.get('default', 'packagedir'), pyinotify.EventsCodes.IN_CLOSE_WRITE, rec=True)
-            while True:
-                try:
-                    notifier.process_events()
-                    if notifier.check_events():
-                        notifier.read_events()
-                except KeyboardInterrupt:
-                    notifier.stop()
-                    break
+            wm.add_watch(Options.get('default', 'packagedir'), pyinotify.IN_CLOSE_WRITE, rec=True)
+            notifier.loop()
 except:
     def launcher_inotify():
         pass

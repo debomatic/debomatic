@@ -1,3 +1,7 @@
+  137 Luca Falavigna	2009-06-14
+      More pyinotify 0.8.6 optimization
+      Support for older versions removed
+
   136 Luca Falavigna	2009-06-04
       Add init.d script disclaimer
 

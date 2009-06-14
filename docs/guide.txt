@@ -29,7 +29,7 @@ These ones are required to execute Deb-o-Matic:
 
 To enable additional features, you may want to install these packages:
 
-  * python-pyinotify
+  * python-pyinotify (>= 0.8.6)
   * gnupg
   * lintian
 
