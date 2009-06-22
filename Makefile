@@ -21,22 +21,26 @@
 
 BUILD_BASE=${PWD}
 
+ifeq ($(PREFIX),)
+PREFIX=/usr
+endif
+
 all: install
 
 install:
-	python setup.py install --root=${PREFIX}
-	cp -rp etc/* ${PREFIX}/etc
-	install -Dm 644 docs/debomatic.1 ${PREFIX}/usr/share/man/man1/debomatic.1
-	install -Dm 644 docs/debomatic.conf.5 ${PREFIX}/usr/share/man/man5/debomatic.conf.5
+	python setup.py install --prefix=${PREFIX}
+	cp -rp etc/* /etc
+	install -Dm 644 docs/debomatic.1 ${PREFIX}/share/man/man1/debomatic.1
+	install -Dm 644 docs/debomatic.conf.5 ${PREFIX}/share/man/man5/debomatic.conf.5
 
 uninstall:
-	rm -f ${PREFIX}/usr/bin/debomatic
-	rm -fr ${PREFIX}/etc/debomatic ${PREFIX}/etc/default/debomatic ${PREFIX}/etc/init.d/debomatic
-	rm -fr ${PREFIX}/usr/lib/python*/*-packages/debomatic*
-	rm -fr ${PREFIX}/usr/lib/python*/*-packages/Debomatic
-	rm -fr ${PREFIX}/usr/share/debomatic/modules
-	rm -f ${PREFIX}/usr/share/man/man1/debomatic.1
-	rm -f ${PREFIX}/usr/share/man/man5/debomatic.conf.5
+	rm -f ${PREFIX}/bin/debomatic
+	rm -fr /etc/debomatic /etc/default/debomatic /etc/init.d/debomatic
+	rm -fr ${PREFIX}/lib/python*/*-packages/debomatic*
+	rm -fr ${PREFIX}/lib/python*/*-packages/Debomatic
+	rm -fr ${PREFIX}/share/debomatic
+	rm -f ${PREFIX}/share/man/man1/debomatic.1
+	rm -f ${PREFIX}/share/man/man5/debomatic.conf.5
 
 clean:
 	python setup.py clean --build-base=${BUILD_BASE}

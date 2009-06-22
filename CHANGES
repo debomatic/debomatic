@@ -1,3 +1,6 @@
+  140 Luca Falavigna	2009-06-22
+      Adjust Makefile to install files to correct locations
+
   139 Luca Falavigna	2009-06-14
       Merge configfiles directory under etc
 
