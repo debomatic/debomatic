@@ -41,5 +41,6 @@ setup(name='debomatic',
       packages=['Debomatic'],
       scripts=['debomatic'],
       data_files=[('share/man/man1', ['docs/debomatic.1']),
-                  ('share/man/man5', ['docs/debomatic.conf.5'])] + \
+                  ('share/man/man5', ['docs/debomatic.conf.5']),
+                  ('share/doc/debomatic', ['docs/ExampleModule.py', 'docs/guide.html', 'docs/guide.txt'])] + \
                   install_files('etc', '/') + install_files('modules', 'share/debomatic'))
