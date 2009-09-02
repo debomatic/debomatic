@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2007-2009 Luca Falavigna
 #
-# Author: Luca Falavigna <dktrkranz@ubuntu.com>
+# Author: Luca Falavigna <dktrkranz@debian.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

@@ -3,7 +3,7 @@
 #
 # Copyright (C) 2007-2009 Luca Falavigna
 #
-# Author: Luca Falavigna <dktrkranz@ubuntu.com>
+# Author: Luca Falavigna <dktrkranz@debian.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ from distutils.core import setup
 setup(name='debomatic',
       version="0.7",
       author='Luca Falavigna',
-      author_email='dktrkranz@ubuntu.com',
+      author_email='dktrkranz@debian.org',
       description='Automatic build machine for Debian source packages',
       url = 'https://launchpad.net/debomatic/',
       license='GNU GPL',
