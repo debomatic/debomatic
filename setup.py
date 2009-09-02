@@ -18,7 +18,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
+import os
 from distutils.core import setup
+
+def install_files(rootdir, prefix=''):
+    filelist = list()
+    for root, subFolders, files in os.walk(rootdir):
+        dirlist = list()
+        for file in files:
+            dirlist.append(os.path.join(root, file))
+        if len(dirlist):
+            filelist.append((os.path.join(prefix, root),dirlist))
+    return filelist
    
 setup(name='debomatic',
       version="0.7",
@@ -29,6 +40,6 @@ setup(name='debomatic',
       license='GNU GPL',
       packages=['Debomatic'],
       scripts=['debomatic'],
-      data_files=[('share/debomatic/modules',
-                  ['modules/DateStamp.py', 'modules/Lintian.py', 'modules/Contents.py'])])
-
+      data_files=[('share/man/man1', ['docs/debomatic.1']),
+                  ('share/man/man5', ['docs/debomatic.conf.5'])] + \
+                  install_files('etc', '/') + install_files('modules', 'share/debomatic'))
