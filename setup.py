@@ -20,6 +20,13 @@
 
 import os
 from distutils.core import setup
+from distutils.command.install_data import install_data
+
+class InstallGuide(install_data):
+    def run(self):
+        os.system('rst2html docs/guide.rst build/guide.html')
+        self.data_files.extend([('share/doc/debomatic', ['build/guide.html'])])
+        install_data.run(self)
 
 def install_files(rootdir, prefix=''):
     filelist = list()
@@ -42,5 +49,6 @@ setup(name='debomatic',
       scripts=['debomatic'],
       data_files=[('share/man/man1', ['docs/debomatic.1']),
                   ('share/man/man5', ['docs/debomatic.conf.5']),
-                  ('share/doc/debomatic', ['docs/ExampleModule.py', 'docs/guide.html', 'docs/guide.txt'])] + \
-                  install_files('etc', '/') + install_files('modules', 'share/debomatic'))
+                  ('share/doc/debomatic', ['docs/ExampleModule.py'])] + \
+      install_files('etc', '/') + install_files('modules', 'share/debomatic'),
+      cmdclass={'install_data': InstallGuide})
