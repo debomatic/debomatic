@@ -34,12 +34,14 @@ def select_package(directory):
         sys.exit(-1)
     for filename in filelist:
         if os.path.splitext(filename)[1] == '.changes':
-            if add_package(filename) == True:
+            try:
+                add_package(filename)
+                curprio = get_priority(os.path.join(directory,filename))
+                if curprio > priority:
+                    priority = curprio
+                    package = filename
+            except RuntimeError:
                 continue
-            curprio = get_priority(os.path.join(directory,filename))
-            if curprio > priority:
-                priority = curprio
-                package = filename
     return package
 
 def get_priority(changesfile):
@@ -47,9 +49,8 @@ def get_priority(changesfile):
     priolist = {"low":1, "medium":2, "high":3}
     try:
         fd = os.open(changesfile, os.O_RDONLY)
-    except:
-        print 'Unable to open %s' % changesfile
-        return 0
+    except OSError:
+        raise RuntimeError('Unable to open %s' % changesfile)
     urgency =findall('Urgency: (.*)', os.read(fd, os.fstat(fd).st_size))
     priority = priolist[urgency[0]] * 10000000000
     priority += 9999999999 - os.fstat(fd).st_mtime
@@ -58,7 +59,7 @@ def get_priority(changesfile):
 
 def add_package(package):
     if packagequeue.has_key(package):
-        return True
+        raise RuntimeError
     else:
         packagequeue[package] = list()
 

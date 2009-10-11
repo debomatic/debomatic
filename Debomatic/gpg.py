@@ -26,12 +26,12 @@ from Debomatic import acceptedqueue
 def check_signature(package):
     if Options.getint('gpg', 'gpg'):
         if not Options.has_option('gpg', 'keyring') or not os.path.exists(Options.get('gpg', 'keyring')):
-            return False
+            raise RuntimeError('Keyring not found')
         if not package in acceptedqueue:
             gpgresult = Popen(['gpg', '--primary-keyring', Options.get('gpg', 'keyring'), '--verify', package], stderr=PIPE).communicate()[1]
             ID = findall('Good signature from "(.*) <(.*)>"', gpgresult)
             if not len(ID):
-                return False
+                raise RuntimeError('No valid signatures found')
             fd = os.open(package, os.O_RDONLY)
             data = os.read(fd, os.fstat(fd).st_size)
             os.close(fd)

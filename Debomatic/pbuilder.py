@@ -28,11 +28,14 @@ def setup_pbuilder(directory, configdir, distopts):
     if not os.path.exists(os.path.join(directory)):
         os.mkdir(os.path.join(directory))
     if not locks.pbuilderlock_acquire(distopts['distribution']):
-        return False
-    result = needs_update(directory, distopts['mirror'], distopts['distribution'])
-    if result:
-        if prepare_pbuilder(result, directory, configdir, distopts) == False:
-            return False
+        raise RuntimeError
+    try:
+        needs_update(directory, distopts['mirror'], distopts['distribution'])
+    except RuntimeError, result:
+        try:
+            prepare_pbuilder(result.args[0], directory, configdir, distopts)
+        except RuntimeError, error:
+            raise error
         if not os.path.exists(os.path.join(directory, 'gpg')):
             os.mkdir(os.path.join(directory, 'gpg'))
         gpgfile = os.path.join(directory, 'gpg', distopts['distribution'])
@@ -40,9 +43,8 @@ def setup_pbuilder(directory, configdir, distopts):
         try:
             remote = urlopen('%s/dists/%s/Release.gpg' % (distopts['mirror'], distopts['distribution'])).read()
         except:
-            print 'Unable to fetch %s/dists/%s/Release.gpg' % (distopts['mirror'], distopts['distribution'])
             locks.pbuilderlock_release(distopts['distribution'])
-            return False
+            raise RuntimeError('Unable to fetch %s/dists/%s/Release.gpg' % (distopts['mirror'], distopts['distribution']))
         os.write(fd, remote)
         os.close(fd)
     locks.pbuilderlock_release(distopts['distribution'])
@@ -52,23 +54,23 @@ def needs_update(directory, mirror, distribution):
         os.mkdir(os.path.join(directory, 'gpg'))
     gpgfile = os.path.join(directory, 'gpg', distribution)
     if not os.path.exists(gpgfile):
-        return 'create'
+        raise RuntimeError('create')
     try:		
         fd = os.open(gpgfile, os.O_RDONLY)
-    except:
-        return 'create'
+    except OSError:
+        raise RuntimeError('create')
     try:
         remote = urlopen('%s/dists/%s/Release.gpg' % (mirror, distribution)).read()
     except:
         print 'Unable to fetch %s/dists/%s/Release.gpg' % (mirror, distribution)
-        return 'update'
+        raise RuntimeError('update')
     remote_sha = sha256()
     gpgfile_sha = sha256()
     remote_sha.update(remote)
     gpgfile_sha.update(os.read(fd, os.fstat(fd).st_size))
     os.close(fd)
     if remote_sha.digest() != gpgfile_sha.digest():
-        return 'update'
+        raise RuntimeError('update')
 
 def prepare_pbuilder(cmd, directory, configdir, distopts):
     if not os.path.exists(os.path.join(directory, 'build')):
@@ -82,7 +84,6 @@ def prepare_pbuilder(cmd, directory, configdir, distopts):
                   --aptcache "%(directory)s/aptcache" --logfile %(directory)s/logs/%(cmd)s.%(now)s >/dev/null 2>&1' \
                   % {'cmd': cmd, 'directory': directory, 'distribution': distopts['distribution'], \
                   'cfg': os.path.join(configdir, distopts['distribution']), 'now': strftime('%Y%m%d_%H%M')})):
-        print 'pbuilder (%s) failed' % cmd
         locks.pbuilderlock_release(distopts['distribution'])
-        return False
+        raise RuntimeError('pbuilder (%s) failed' % cmd)
 

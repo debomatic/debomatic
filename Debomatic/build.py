@@ -50,13 +50,19 @@ def build_process():
             sys.exit(-1)
         packagequeue[package].append(os.path.join(directory, package))
         os.close(fd)
-        if gpg.check_signature(os.path.join(directory, package)) == False:
+        try:
+            gpg.check_signature(os.path.join(directory, package))
+        except RuntimeError, error:
             packages.rm_package(package)
+            print error
             sys.exit(-1)
 	packages.fetch_missing_files(package, packagequeue[package], directory, distopts)
         distdir = os.path.join(directory, distopts['distribution'])
-        if pbuilder.setup_pbuilder(distdir, configdir, distopts) == False:
+        try:
+            pbuilder.setup_pbuilder(distdir, configdir, distopts)
+        except RuntimeError, error:
             packages.del_package(package)
+            print error
             sys.exit(-1)
         build_package(directory, os.path.join(configdir, distopts['distribution']), distdir, package, distopts)
 
