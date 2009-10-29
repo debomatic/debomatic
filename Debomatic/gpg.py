@@ -28,7 +28,7 @@ def check_signature(package):
         if not Options.has_option('gpg', 'keyring') or not os.path.exists(Options.get('gpg', 'keyring')):
             raise RuntimeError('Keyring not found')
         if not package in acceptedqueue:
-            gpgresult = Popen(['gpg', '--primary-keyring', Options.get('gpg', 'keyring'), '--verify', package], stderr=PIPE).communicate()[1]
+            gpgresult = Popen(['gpg', '--no-default-keyring', '--keyring', Options.get('gpg', 'keyring'), '--verify', package], stderr=PIPE).communicate()[1]
             ID = findall('Good signature from "(.*) <(.*)>"', gpgresult)
             if not len(ID):
                 raise RuntimeError('No valid signatures found')
