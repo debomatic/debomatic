@@ -22,6 +22,7 @@ import sys
 import threading
 from fcntl import lockf, LOCK_EX, LOCK_NB
 from getopt import getopt, GetoptError
+from signal import pause
 from time import sleep
 from Debomatic import build
 from Debomatic import Options
@@ -125,8 +126,7 @@ def launcher():
     threading.Thread(None, launcher_inotify).start()
     threading.Thread(None, launcher_timer).start()
     try:
-        while exit_routine():
-            pass
+        pause()
     except KeyboardInterrupt:
         print '\nWaiting for threads to finish, it could take a while...'
         exit_routine(exiting=True)
