@@ -23,7 +23,7 @@ from subprocess import Popen, PIPE
 from Debomatic import Options
 from Debomatic import acceptedqueue
 
-def check_signature(package):
+def check_changes_signature(package):
     if Options.getint('gpg', 'gpg'):
         if not Options.has_option('gpg', 'keyring') or not os.path.exists(Options.get('gpg', 'keyring')):
             raise RuntimeError('Keyring not found')
@@ -40,4 +40,19 @@ def check_signature(package):
             os.close(fd)
             if not package in acceptedqueue:
                 acceptedqueue.append(package)
+
+def check_commands_signature(commands):
+    if Options.getint('gpg', 'gpg'):
+        if not Options.has_option('gpg', 'keyring') or not os.path.exists(Options.get('gpg', 'keyring')):
+            raise RuntimeError('Keyring not found')
+        gpgresult = Popen(['gpg', '--no-default-keyring', '--keyring', Options.get('gpg', 'keyring'), '--verify', commands], stderr=PIPE).communicate()[1]
+        ID = findall('Good signature from "(.*) <(.*)>"', gpgresult)
+        if not len(ID):
+            raise RuntimeError('No valid signatures found')
+        fd = os.open(commands, os.O_RDONLY)
+        data = os.read(fd, os.fstat(fd).st_size)
+        os.close(fd)
+        fd = os.open(commands, os.O_WRONLY | os.O_TRUNC)
+        os.write(fd, findall('Hash: \S+\n\n(.*)\n\n\-\-\-\-\-BEGIN PGP SIGNATURE\-\-\-\-\-', data, DOTALL)[0])
+        os.close(fd)
 

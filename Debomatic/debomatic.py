@@ -25,6 +25,7 @@ from getopt import getopt, GetoptError
 from signal import pause
 from time import sleep
 from Debomatic import build
+from Debomatic import commands
 from Debomatic import Options
 from Debomatic import modules
 from Debomatic import running
@@ -106,6 +107,8 @@ try:
         def process_IN_CLOSE_WRITE(self, event):
             if findall('source.changes$', event.name):
                 threading.Thread(None, build.build_process).start()
+            elif findall('commands$', event.name):
+                threading.Thread(None, commands.process_commands).start()
 
     def launcher_inotify():
         if Options.getint('default', 'inotify'):
@@ -119,6 +122,7 @@ except:
 
 def launcher_timer():
     while exit_routine():
+        threading.Thread(None, commands.process_commands).start()
         threading.Thread(None, build.build_process).start()
         sleep(Options.getint('default', 'sleep'))
 

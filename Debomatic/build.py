@@ -51,7 +51,7 @@ def build_process():
         packagequeue[package].append(os.path.join(directory, package))
         os.close(fd)
         try:
-            gpg.check_signature(os.path.join(directory, package))
+            gpg.check_changes_signature(os.path.join(directory, package))
         except RuntimeError, error:
             packages.rm_package(package)
             print error
