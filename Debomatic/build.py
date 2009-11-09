@@ -46,7 +46,7 @@ def build_process():
             for entry in findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)', os.read(fd, os.fstat(fd).st_size)):
                 packagequeue[package].append(os.path.join(directory, entry))
         except:
-            print 'Bad .changes file'
+            print 'Bad .changes file: %s' % os.path.join(directory, package)
             sys.exit(-1)
         packagequeue[package].append(os.path.join(directory, package))
         os.close(fd)
@@ -78,7 +78,7 @@ def parse_distribution_options(packagedir, configdir, package):
         distro = findall('Distribution:\s+(\w+)', os.read(fd, os.fstat(fd).st_size))[0]
         options['distribution'] = lower(distro)
     except:
-        print 'Bad .changes file'
+        print 'Bad .changes file: %s' % os.path.join(packagedir, package)
         packages.del_package(package)
         sys.exit(-1)
     os.close(fd)

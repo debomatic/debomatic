@@ -30,7 +30,7 @@ def select_package(directory):
     try:
         filelist = os.listdir(directory)
     except:
-        print 'Unable to access directory %s' % directory
+        print 'Unable to access %s directory' % directory
         sys.exit(-1)
     for filename in filelist:
         if os.path.splitext(filename)[1] == '.changes':

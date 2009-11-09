@@ -55,7 +55,7 @@ def main():
             if pid > 0:
                 sys.exit(0)
         except OSError:
-            print 'Fork failed'
+            print 'Unable to enter daemon mode'
             sys.exit(-1)
         os.setsid()
         os.chdir('/')
@@ -65,7 +65,7 @@ def main():
             if pid > 0:
                 sys.exit(0)
         except OSError:
-            print 'Fork failed'
+            print 'Unable to enter daemon mode'
             sys.exit(-1)
         fin = open('/dev/null', 'r')
         fout = open(Options.get('default', 'logfile'), 'a+')
@@ -78,7 +78,7 @@ def main():
     try:
         lockf(fd, LOCK_EX | LOCK_NB)
     except IOError:
-        print 'Another instance is running. Aborting.'
+        print 'Another instance is running. Aborting'
         sys.exit(-1)
     mod_sys = modules.Module()
     mod_sys.execute_hook("on_start", {})
