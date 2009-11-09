@@ -48,6 +48,6 @@ def process_commands():
                 for pattern in split(' ', files):
                     for absfile in glob(os.path.join(directory, os.path.basename(pattern))):
                         os.remove(absfile)
-            if.os.path.exists(cmdfile):
+            if os.path.exists(cmdfile):
                 os.remove(cmdfile)
 
