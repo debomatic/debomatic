@@ -47,7 +47,7 @@ def install_files(rootdir, prefix=''):
     return filelist
    
 setup(name='debomatic',
-      version="0.7",
+      version="0.8",
       author='Luca Falavigna',
       author_email='dktrkranz@debian.org',
       description='Automatic build machine for Debian source packages',
