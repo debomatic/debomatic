@@ -34,7 +34,7 @@ def main():
     conffile = None
     daemon = True
     if os.getuid():
-        print 'You must run deb-o-matic as root'
+        print _('You must run deb-o-matic as root')
         sys.exit(-1)
     try:
         opts, args = getopt(sys.argv[1:], 'c:n', ['config=', 'nodaemon'])
@@ -55,7 +55,7 @@ def main():
             if pid > 0:
                 sys.exit(0)
         except OSError:
-            print 'Unable to enter daemon mode'
+            print _('Unable to enter daemon mode')
             sys.exit(-1)
         os.setsid()
         os.chdir('/')
@@ -65,7 +65,7 @@ def main():
             if pid > 0:
                 sys.exit(0)
         except OSError:
-            print 'Unable to enter daemon mode'
+            print _('Unable to enter daemon mode')
             sys.exit(-1)
         fin = open('/dev/null', 'r')
         fout = open(Options.get('default', 'logfile'), 'a+')
@@ -78,7 +78,7 @@ def main():
     try:
         lockf(fd, LOCK_EX | LOCK_NB)
     except IOError:
-        print 'Another instance is running. Aborting'
+        print _('Another instance is running. Aborting')
         sys.exit(-1)
     mod_sys = modules.Module()
     mod_sys.execute_hook("on_start", {})
@@ -87,15 +87,15 @@ def main():
 def parse_default_options(conffile):
     defaultoptions = ('packagedir', 'configdir', 'maxbuilds', 'inotify', 'sleep', 'logfile')
     if not conffile:
-        print 'Please specify a configuration file'
+        print _('Please specify a configuration file')
         sys.exit(-1)
     if not os.path.exists(conffile):
-        print 'Configuration file %s does not exist' % conffile
+        print _('Configuration file %s does not exist') % conffile
         sys.exit(-1)
     Options.read(conffile)
     for opt in defaultoptions:
         if not Options.has_option('default', opt) or not Options.get('default', opt):
-            print 'Please set "%s" in %s' % (opt, conffile)
+            print _('Please set "%s" in %s') % (opt, conffile)
             sys.exit(-1)
 
 try:
@@ -132,7 +132,7 @@ def launcher():
     try:
         pause()
     except KeyboardInterrupt:
-        print '\nWaiting for threads to finish, it could take a while...'
+        print _('\nWaiting for threads to finish, it could take a while...')
         exit_routine(exiting=True)
 
 def exit_routine(self=None, exiting=False):

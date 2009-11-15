@@ -30,7 +30,7 @@ def select_package(directory):
     try:
         filelist = os.listdir(directory)
     except:
-        print 'Unable to access %s directory' % directory
+        print _('Unable to access %s directory') % directory
         sys.exit(-1)
     for filename in filelist:
         if os.path.splitext(filename)[1] == '.changes':
@@ -50,7 +50,7 @@ def get_priority(changesfile):
     try:
         fd = os.open(changesfile, os.O_RDONLY)
     except OSError:
-        raise RuntimeError('Unable to open %s' % changesfile)
+        raise RuntimeError(_('Unable to open %s') % changesfile)
     urgency =findall('Urgency: (.*)', os.read(fd, os.fstat(fd).st_size))
     priority = priolist[urgency[0]] * 10000000000
     priority += 9999999999 - os.fstat(fd).st_mtime

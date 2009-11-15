@@ -21,6 +21,14 @@
 import os
 from distutils.core import setup
 from distutils.command.install_data import install_data
+from glob import glob
+from subprocess import call
+
+for po in glob(os.path.join('po', '*.po')):
+    mo = os.path.join('locale', os.path.basename(po[:-3]), 'LC_MESSAGES/debomatic.mo')
+    if not os.path.isdir(os.path.dirname(mo)):
+        os.makedirs(os.path.dirname(mo))
+    call(['msgfmt', '-o', mo, po])
 
 class InstallGuide(install_data):
     def run(self):
@@ -50,5 +58,7 @@ setup(name='debomatic',
       data_files=[('share/man/man1', ['docs/debomatic.1']),
                   ('share/man/man5', ['docs/debomatic.conf.5']),
                   ('share/doc/debomatic', ['docs/ExampleModule.py'])] + \
-      install_files('etc', '/') + install_files('modules', 'share/debomatic'),
+      install_files('etc', '/') + \
+      install_files('modules', 'share/debomatic') + \
+      install_files('locale', 'share'),
       cmdclass={'install_data': InstallGuide})

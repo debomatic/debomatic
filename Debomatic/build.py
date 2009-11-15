@@ -39,14 +39,14 @@ def build_process():
         try:
             fd = os.open(os.path.join(directory, package), os.O_RDONLY)
         except:
-            print 'Unable to open %s' % os.path.join(directory, package)
+            print _('Unable to open %s') % os.path.join(directory, package)
             packages.del_package(package)
             sys.exit(-1)
         try:
             for entry in findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)', os.read(fd, os.fstat(fd).st_size)):
                 packagequeue[package].append(os.path.join(directory, entry))
         except:
-            print 'Bad .changes file: %s' % os.path.join(directory, package)
+            print _('Bad .changes file: %s') % os.path.join(directory, package)
             sys.exit(-1)
         packagequeue[package].append(os.path.join(directory, package))
         os.close(fd)
@@ -78,38 +78,38 @@ def parse_distribution_options(packagedir, configdir, package):
         distro = findall('Distribution:\s+(\w+)', os.read(fd, os.fstat(fd).st_size))[0]
         options['distribution'] = lower(distro)
     except:
-        print 'Bad .changes file: %s' % os.path.join(packagedir, package)
+        print _('Bad .changes file: %s') % os.path.join(packagedir, package)
         packages.del_package(package)
         sys.exit(-1)
     os.close(fd)
     try:
         fd = os.open(os.path.join(configdir,options['distribution']), os.O_RDONLY)
     except:
-        print 'Unable to open %s' % os.path.join(configdir, options['distribution'])
+        print _('Unable to open %s') % os.path.join(configdir, options['distribution'])
         packages.del_package(package)
         sys.exit(-1)
     conf = os.read(fd, os.fstat(fd).st_size)
     os.close(fd)
     if not len(findall('[^#]?MIRRORSITE="?(.*[^"])"?\n', conf)):
-        print 'Please set DISTRIBUTION in %s' % os.path.join(configdir, options['distribution'])
+        print _('Please set DISTRIBUTION in %s') % os.path.join(configdir, options['distribution'])
         packages.del_package(package)
         sys.exit(-1)
     try:
         options['mirror'] = findall('[^#]?MIRRORSITE="?(.*[^"])"?\n', conf)[0]
     except:
-        print 'Please set MIRRORSITE in %s' % os.path.join(configdir, options['distribution'])
+        print _('Please set MIRRORSITE in %s') % os.path.join(configdir, options['distribution'])
         packages.del_package(package)
         sys.exit(-1)
     try:
         options['components'] = findall('[^#]?COMPONENTS="?(.*[^"])"?\n', conf)[0]
     except:
-        print 'Please set COMPONENTS in %s' % os.path.join(configdir, options['distribution'])
+        print _('Please set COMPONENTS in %s') % os.path.join(configdir, options['distribution'])
         packages.del_package(package)
         sys.exit(-1)
     try:
         options['debootstrap'] = findall('[^#]?DEBOOTSTRAP="?(.*[^"])"?\n', conf)[0]
     except:
-        print 'Please set DEBOOTSTRAP in %s' % os.path.join(configdir, options['distribution'])
+        print _('Please set DEBOOTSTRAP in %s') % os.path.join(configdir, options['distribution'])
         packages.del_package(package)
         sys.exit(-1)
     return options
