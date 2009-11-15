@@ -21,7 +21,6 @@ import os
 import sys
 import threading
 from re import findall
-from string import lower
 from Debomatic import gpg
 from Debomatic import locks
 from Debomatic import packages
@@ -76,7 +75,7 @@ def parse_distribution_options(packagedir, configdir, package):
         sys.exit(-1)
     try:
         distro = findall('Distribution:\s+(\w+)', os.read(fd, os.fstat(fd).st_size))[0]
-        options['distribution'] = lower(distro)
+        options['distribution'] = distro.lower()
     except:
         print _('Bad .changes file: %s') % os.path.join(packagedir, package)
         packages.del_package(package)
