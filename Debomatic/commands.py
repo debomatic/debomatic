@@ -29,7 +29,7 @@ def process_commands():
     try:
         filelist = os.listdir(directory)
     except:
-        print _('Unable to access directory %s') % directory
+        print _('Unable to access %s directory') % directory
         exit(-1)
     for filename in filelist:
         cmdfile = os.path.join(directory, filename)

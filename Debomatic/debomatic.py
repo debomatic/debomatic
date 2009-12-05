@@ -95,7 +95,7 @@ def parse_default_options(conffile):
     Options.read(conffile)
     for opt in defaultoptions:
         if not Options.has_option('default', opt) or not Options.get('default', opt):
-            print _('Please set "%s" in %s') % (opt, conffile)
+            print _('Please set "%(opt)s" in %(conffile)s') % {'opt':opt, 'conffile':conffile}
             sys.exit(-1)
 
 try:
