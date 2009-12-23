@@ -1,0 +1,106 @@
+# Spanish translation for debomatic
+# Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
+# This file is distributed under the same license as the debomatic package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: debomatic\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2009-12-05 13:09+0100\n"
+"PO-Revision-Date: 2009-12-05 16:24+0000\n"
+"Last-Translator: DiegoJ <diegojromerolopez@gmail.com>\n"
+"Language-Team: Spanish <es@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2009-12-23 04:32+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+#: ../Debomatic/commands.py:32 ../Debomatic/packages.py:33
+#, python-format
+msgid "Unable to access %s directory"
+msgstr "No se puede acceder al directorio %s"
+
+#: ../Debomatic/gpg.py:29 ../Debomatic/gpg.py:47
+msgid "Keyring not found"
+msgstr "Anillo de claves no encontrado"
+
+#: ../Debomatic/gpg.py:34 ../Debomatic/gpg.py:51
+msgid "No valid signatures found"
+msgstr "No se encontraron firmas válidas"
+
+#: ../Debomatic/packages.py:53 ../Debomatic/build.py:41
+#: ../Debomatic/build.py:87
+#, python-format
+msgid "Unable to open %s"
+msgstr "No se pudo abrir %s"
+
+#: ../Debomatic/build.py:48 ../Debomatic/build.py:80
+#, python-format
+msgid "Bad .changes file: %s"
+msgstr "Archivo .changes incorrecto: %s"
+
+#: ../Debomatic/build.py:93
+#, python-format
+msgid "Please set DISTRIBUTION in %s"
+msgstr "Por favor, asigne DISTRIBUTION en %s"
+
+#: ../Debomatic/build.py:99
+#, python-format
+msgid "Please set MIRRORSITE in %s"
+msgstr "Por favor, asigne MIRRORSITE en %s"
+
+#: ../Debomatic/build.py:105
+#, python-format
+msgid "Please set COMPONENTS in %s"
+msgstr "Por favor, asigne COMPONENTS en %s"
+
+#: ../Debomatic/build.py:111
+#, python-format
+msgid "Please set DEBOOTSTRAP in %s"
+msgstr "Por favor, asigne DEBOOTSTRAP en %s"
+
+#: ../Debomatic/pbuilder.py:47 ../Debomatic/pbuilder.py:65
+#, python-format
+msgid "Unable to fetch %(mirror)s/dists/%(dist)s/Release.gpg"
+msgstr "No se pudo obtener %(mirror)s/dists/%(dist)s/Release.gpg"
+
+#: ../Debomatic/pbuilder.py:88
+#, python-format
+msgid "pbuilder %s failed"
+msgstr "Falló pbuilder %s"
+
+#: ../Debomatic/debomatic.py:37
+msgid "You must run deb-o-matic as root"
+msgstr "Debe ejecutar deb-o-matic como administrador (root)"
+
+#: ../Debomatic/debomatic.py:58 ../Debomatic/debomatic.py:68
+msgid "Unable to enter daemon mode"
+msgstr "No se ha podido dejar residente"
+
+#: ../Debomatic/debomatic.py:81
+msgid "Another instance is running. Aborting"
+msgstr "El programa ya está en ejecución. Abortando."
+
+#: ../Debomatic/debomatic.py:90
+msgid "Please specify a configuration file"
+msgstr "Por favor, especifique un archivo de configuración"
+
+#: ../Debomatic/debomatic.py:93
+#, python-format
+msgid "Configuration file %s does not exist"
+msgstr "El archivo de configuración %s no existe"
+
+#: ../Debomatic/debomatic.py:98
+#, python-format
+msgid "Please set \"%(opt)s\" in %(conffile)s"
+msgstr "Por favor, establezca \"%(opt)s\" en %(conffile)s"
+
+#: ../Debomatic/debomatic.py:135
+msgid ""
+"\n"
+"Waiting for threads to finish, it could take a while..."
+msgstr ""
+"\n"
+"Esperando que los procesos terminen, puede tardar un rato..."

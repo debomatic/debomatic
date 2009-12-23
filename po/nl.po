@@ -1,0 +1,106 @@
+# Dutch translation for debomatic
+# Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
+# This file is distributed under the same license as the debomatic package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: debomatic\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2009-12-05 13:09+0100\n"
+"PO-Revision-Date: 2009-12-08 12:29+0000\n"
+"Last-Translator: cumulus007 <cumulus0007@gmail.com>\n"
+"Language-Team: Dutch <nl@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2009-12-23 04:32+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+#: ../Debomatic/commands.py:32 ../Debomatic/packages.py:33
+#, python-format
+msgid "Unable to access %s directory"
+msgstr "Niet in staat locatie %s te openen"
+
+#: ../Debomatic/gpg.py:29 ../Debomatic/gpg.py:47
+msgid "Keyring not found"
+msgstr "Sleutelring niet gevonden"
+
+#: ../Debomatic/gpg.py:34 ../Debomatic/gpg.py:51
+msgid "No valid signatures found"
+msgstr "Geen geldige handtekening gevonden"
+
+#: ../Debomatic/packages.py:53 ../Debomatic/build.py:41
+#: ../Debomatic/build.py:87
+#, python-format
+msgid "Unable to open %s"
+msgstr "%s kan niet geopend worden"
+
+#: ../Debomatic/build.py:48 ../Debomatic/build.py:80
+#, python-format
+msgid "Bad .changes file: %s"
+msgstr "Fout .changes bestand: %s"
+
+#: ../Debomatic/build.py:93
+#, python-format
+msgid "Please set DISTRIBUTION in %s"
+msgstr "Stel DISTRIBUTION in in %s"
+
+#: ../Debomatic/build.py:99
+#, python-format
+msgid "Please set MIRRORSITE in %s"
+msgstr "Stel MIRRORSITE in in %s"
+
+#: ../Debomatic/build.py:105
+#, python-format
+msgid "Please set COMPONENTS in %s"
+msgstr "COMPONENTS in in %s"
+
+#: ../Debomatic/build.py:111
+#, python-format
+msgid "Please set DEBOOTSTRAP in %s"
+msgstr "Stel DEBOOTSTRAP in in %s"
+
+#: ../Debomatic/pbuilder.py:47 ../Debomatic/pbuilder.py:65
+#, python-format
+msgid "Unable to fetch %(mirror)s/dists/%(dist)s/Release.gpg"
+msgstr "Kon %(mirror)s/dists/%(dist)s/Release.gpg niet ophalen"
+
+#: ../Debomatic/pbuilder.py:88
+#, python-format
+msgid "pbuilder %s failed"
+msgstr "pbuilder %s mislukt"
+
+#: ../Debomatic/debomatic.py:37
+msgid "You must run deb-o-matic as root"
+msgstr "Deb-o-matic moet als root uitgevoerd worden"
+
+#: ../Debomatic/debomatic.py:58 ../Debomatic/debomatic.py:68
+msgid "Unable to enter daemon mode"
+msgstr "Niet in staat naar daemon mode over te gaan"
+
+#: ../Debomatic/debomatic.py:81
+msgid "Another instance is running. Aborting"
+msgstr "Een andere instantie is al actief. Bezig met stoppen"
+
+#: ../Debomatic/debomatic.py:90
+msgid "Please specify a configuration file"
+msgstr "Wijs een configuratiebestand aan"
+
+#: ../Debomatic/debomatic.py:93
+#, python-format
+msgid "Configuration file %s does not exist"
+msgstr "Configuratiebestand %s bestaat niet"
+
+#: ../Debomatic/debomatic.py:98
+#, python-format
+msgid "Please set \"%(opt)s\" in %(conffile)s"
+msgstr "Stel \"%(opt)s\" in in %(conffile)s"
+
+#: ../Debomatic/debomatic.py:135
+msgid ""
+"\n"
+"Waiting for threads to finish, it could take a while..."
+msgstr ""
+"\n"
+"Wachten op het voltooien van de threads, dit kan even duren..."

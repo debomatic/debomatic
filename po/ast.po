@@ -1,0 +1,106 @@
+# Asturian translation for debomatic
+# Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
+# This file is distributed under the same license as the debomatic package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: debomatic\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2009-12-05 13:09+0100\n"
+"PO-Revision-Date: 2009-12-08 18:28+0000\n"
+"Last-Translator: Xuacu Saturio <xuacusk8@gmail.com>\n"
+"Language-Team: Asturian <ast@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2009-12-23 04:32+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+#: ../Debomatic/commands.py:32 ../Debomatic/packages.py:33
+#, python-format
+msgid "Unable to access %s directory"
+msgstr "Nun se puede acceder al direutoriu %s"
+
+#: ../Debomatic/gpg.py:29 ../Debomatic/gpg.py:47
+msgid "Keyring not found"
+msgstr "Nun s'alcontró l'aniellu de claves"
+
+#: ../Debomatic/gpg.py:34 ../Debomatic/gpg.py:51
+msgid "No valid signatures found"
+msgstr "Nun s'atoparon robles válides"
+
+#: ../Debomatic/packages.py:53 ../Debomatic/build.py:41
+#: ../Debomatic/build.py:87
+#, python-format
+msgid "Unable to open %s"
+msgstr "Nun pudo abrise %s"
+
+#: ../Debomatic/build.py:48 ../Debomatic/build.py:80
+#, python-format
+msgid "Bad .changes file: %s"
+msgstr "Ficheru .changes incorreutu: %s"
+
+#: ../Debomatic/build.py:93
+#, python-format
+msgid "Please set DISTRIBUTION in %s"
+msgstr "Hai que conseñar DISTRIBUTION en %s"
+
+#: ../Debomatic/build.py:99
+#, python-format
+msgid "Please set MIRRORSITE in %s"
+msgstr "Hai que conseñar MIRRORSITE en %s"
+
+#: ../Debomatic/build.py:105
+#, python-format
+msgid "Please set COMPONENTS in %s"
+msgstr "Hai que conseñar COMPONENTS en %s"
+
+#: ../Debomatic/build.py:111
+#, python-format
+msgid "Please set DEBOOTSTRAP in %s"
+msgstr "Hai que conseñar DEBOOTSTRAP en %s"
+
+#: ../Debomatic/pbuilder.py:47 ../Debomatic/pbuilder.py:65
+#, python-format
+msgid "Unable to fetch %(mirror)s/dists/%(dist)s/Release.gpg"
+msgstr "Nun puede algamase %(mirror)s/dists/%(dist)s/Release.gpg"
+
+#: ../Debomatic/pbuilder.py:88
+#, python-format
+msgid "pbuilder %s failed"
+msgstr "falló pbuilder %s"
+
+#: ../Debomatic/debomatic.py:37
+msgid "You must run deb-o-matic as root"
+msgstr "deb-o-matic tien d'executase como alministrador"
+
+#: ../Debomatic/debomatic.py:58 ../Debomatic/debomatic.py:68
+msgid "Unable to enter daemon mode"
+msgstr "Nun se pudo entrar en mou daemon"
+
+#: ../Debomatic/debomatic.py:81
+msgid "Another instance is running. Aborting"
+msgstr "Ta n'execución otra instancia. Encaboxando"
+
+#: ../Debomatic/debomatic.py:90
+msgid "Please specify a configuration file"
+msgstr "Hai que conseñar un ficheru de configuración"
+
+#: ../Debomatic/debomatic.py:93
+#, python-format
+msgid "Configuration file %s does not exist"
+msgstr "El ficheru de configuración %s nun esiste"
+
+#: ../Debomatic/debomatic.py:98
+#, python-format
+msgid "Please set \"%(opt)s\" in %(conffile)s"
+msgstr "Afita \"%(opt)s\" en %(conffile)s"
+
+#: ../Debomatic/debomatic.py:135
+msgid ""
+"\n"
+"Waiting for threads to finish, it could take a while..."
+msgstr ""
+"\n"
+"Esperando a que finen los filos, seique tarde un ratu..."
