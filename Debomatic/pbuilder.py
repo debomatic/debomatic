@@ -23,6 +23,7 @@ from hashlib import sha256
 from time import strftime
 from urllib import urlopen
 from Debomatic import locks
+from Debomatic import Options
 
 def setup_pbuilder(directory, configdir, distopts):
     if not os.path.exists(os.path.join(directory)):
@@ -79,11 +80,13 @@ def prepare_pbuilder(cmd, directory, configdir, distopts):
         os.mkdir(os.path.join(directory, 'aptcache'))
     if not os.path.exists(os.path.join(directory, 'logs')):
         os.mkdir(os.path.join(directory, 'logs'))
-    if (os.system('pbuilder %(cmd)s --basetgz %(directory)s/%(distribution)s \
+    base = '--basepath' if Options.get('default', 'builder') == 'cowbuilder' else '--basetgz'
+    if (os.system('%(builder)s --%(cmd)s %(basetype)s %(directory)s/%(distribution)s \
                   --override-config --configfile %(cfg)s --buildplace %(directory)s/build \
                   --aptcache "%(directory)s/aptcache" --logfile %(directory)s/logs/%(cmd)s.%(now)s >/dev/null 2>&1' \
-                  % {'cmd': cmd, 'directory': directory, 'distribution': distopts['distribution'], \
-                  'cfg': os.path.join(configdir, distopts['distribution']), 'now': strftime('%Y%m%d_%H%M')})):
+                  % {'builder': Options.get('default', 'builder'), 'cmd': cmd, 'directory': directory, 'basetype': base, \
+                     'distribution': distopts['distribution'], 'cfg': os.path.join(configdir, distopts['distribution']), \
+                     'now': strftime('%Y%m%d_%H%M')})):
         locks.pbuilderlock_release(distopts['distribution'])
-        raise RuntimeError(_('pbuilder %s failed') % cmd)
+        raise RuntimeError(_('%s %s failed') % (Options.get('default', 'builder'), cmd))
 

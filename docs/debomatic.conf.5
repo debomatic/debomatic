@@ -3,6 +3,10 @@
 debomatic.conf \- Configuration file for debomatic
 .SH DEFAULT SECTION
 .TP
+.B builder
+This program will be executed to create a chroot and to build packages.
+debomatic currently supports pbuilder (default) and cowbuilder.
+.TP
 .B packagedir
 This directory is the base directory where debomatic will scan for
 packages to build. It must exists before launching debomatic or an

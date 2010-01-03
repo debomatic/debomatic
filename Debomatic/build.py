@@ -132,11 +132,13 @@ def build_package(directory, configfile, distdir, package, distopts):
         os.mkdir(os.path.join(distdir, 'pool', packageversion))
     mod_sys.execute_hook('pre_build', { 'directory': distdir, 'package': packageversion, \
               'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
-    os.system('pbuilder build --basetgz %(directory)s/%(distribution)s \
+    base = '--basepath' if Options.get('default', 'builder') == 'cowbuilder' else '--basetgz'
+    os.system('%(builder)s --build %(basetype)s %(directory)s/%(distribution)s \
               --override-config --configfile %(cfg)s --logfile %(directory)s/pool/%(package)s/%(package)s.buildlog \
               --buildplace %(directory)s/build --buildresult %(directory)s/pool/%(package)s \
-              --aptcache %(directory)s/aptcache %(dsc)s >/dev/null 2>&1' % { 'directory': distdir, 'package': packageversion, \
-              'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
+              --aptcache %(directory)s/aptcache %(dsc)s >/dev/null 2>&1' \
+              % { 'builder': Options.get('default', 'builder'), 'basetype': base, 'directory': distdir, \
+              'package': packageversion, 'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
     mod_sys.execute_hook('post_build', { 'directory': distdir, 'package': packageversion, \
               'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
     packages.rm_package(package)

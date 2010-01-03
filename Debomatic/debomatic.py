@@ -85,7 +85,7 @@ def main():
     launcher()
 
 def parse_default_options(conffile):
-    defaultoptions = ('packagedir', 'configdir', 'maxbuilds', 'inotify', 'sleep', 'logfile')
+    defaultoptions = ('builder', 'packagedir', 'configdir', 'maxbuilds', 'inotify', 'sleep', 'logfile')
     if not conffile:
         print _('Please specify a configuration file')
         sys.exit(-1)
