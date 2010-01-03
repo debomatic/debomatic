@@ -88,5 +88,5 @@ def prepare_pbuilder(cmd, directory, configdir, distopts):
                      'distribution': distopts['distribution'], 'cfg': os.path.join(configdir, distopts['distribution']), \
                      'now': strftime('%Y%m%d_%H%M')})):
         locks.pbuilderlock_release(distopts['distribution'])
-        raise RuntimeError(_('%s %s failed') % (Options.get('default', 'builder'), cmd))
+        raise RuntimeError(_('%(builder)s %(cmd)s failed') % {'builder':Options.get('default', 'builder'), 'cmd':cmd})
 
