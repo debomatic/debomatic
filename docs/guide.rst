@@ -7,7 +7,7 @@ Automatic build machine for Debian source packages
 --------------------------------------------------
 
 :Author: Luca Falavigna <dktrkranz@debian.org>
-:Date: October 11, 2009
+:Date: January 08, 2010
 :Homepage: http://launchpad.net/debomatic
 
 .. contents::
@@ -16,12 +16,12 @@ Introduction
 ============
 
 This is Deb-o-Matic, an easy to use build machine for Debian-based source
-packages based on pbuilder. It provides a simple tool to automate building of
-Debian source packages with limited user interaction and a simple configuration.
+packages. It provides a simple tool to automate building of Debian source
+packages with limited user interaction and a straightforward configuration.
 
-It has some useful feature such as automatic update of pbuilder and automatic
-scan and selection of source packages to build. It is meant to help developers
-to build their packages without worrying too much of compilation, since it will
+It has some useful feature such as automatic chroot update and automatic scan
+and selection of source packages to build. It is meant to help developers to
+build their packages without worrying too much of compilation, since it will
 run in background and no user feedback is required during the whole process.
 
 Requisites
@@ -31,11 +31,12 @@ These packages are required to build and install Deb-o-Matic on your system:
 
 * python (>= 2.5)
 * python-docutils
+* intltool
 
 These ones are required to execute Deb-o-Matic:
 
 * python (>= 2.5)
-* pbuilder
+* pbuilder or cowbuilder
 * debootstrap or cdebootstrap
 
 To enable additional features, you may want to install these packages:
@@ -45,8 +46,7 @@ To enable additional features, you may want to install these packages:
 * lintian
 
 An Internet connection is also required, broadband access is recommended because
-debootstrap will fetch several packages from the Internet to set up pbuilder
-chroot environment.
+debootstrap will fetch several packages from the Internet to set up chroots.
 
 Installation and removal
 ========================
@@ -79,8 +79,8 @@ When main configuration file is complete, you must create the directories
 referenced by packagedir and configdir, where you will put pbuilder
 configuration files. Working examples are located into examples directory.
 Names must match target distribution you want to build packages for (e.g. if
-you want to build a package for karmic, pbuilder configuration filename must be
-karmic). They should be the same as the ones provided by debootstrap.
+you want to build a package for unstable, pbuilder configuration filename must
+be unstable). They should be the same as the ones provided by debootstrap.
 
 See pbuilderrc man page for a complete list of the available options.
 
@@ -113,9 +113,9 @@ deleted automatically.
 How to prepare source packages
 ------------------------------
 
-Deb-o-Matic can fetch .orig.tar.gz files automatically if already available on
+Deb-o-Matic can automatically fetch upstream tarballs if already available on
 main distribution archive (e.g. http://archive.debian.com/debian), so you can
-choose not to include .orig.tar.gz sometimes. You always need to include it in
+choose not to include them in such cases. You always need to include them in
 case of new upstream version or new packages.
 
 Modules
