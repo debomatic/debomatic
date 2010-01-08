@@ -1,0 +1,49 @@
+0.8 "NO-NAME-YET" (UNRELEASED)
+* Cowbuilder support
+* Commands files support
+* More modules available
+* Internazionalization
+* Documentation converted to reStructuredText
+* Several bugfixes
+
+0.7 "Developer Domain" (2009-09-02)
+* More modules available
+* Compatibility with newer releases of related software
+* Several bugfixes
+
+0.6 "bobbo" (2009-01-27)
+* Modules support
+* Code reorganization
+* Several bugfixes
+
+0.5 "soyuzzo" (2008-06-26)
+* Tarballs are dowloaded automatically by mirror
+* GPG support for .changes file signatures
+* Improved documentation
+* Several bugfixes
+
+0.4 "alcor" (2007-11-29)
+* Modular design
+* inotify support
+* New locking management
+* Packagequeue
+* Several bugfixes
+
+0.3 "embrace" (2007-07-28)
+* Concurrent build processes
+* New daemonization routine
+* New documentation
+* Several bugfixes
+
+0.2.1 (2007-05-26)
+* Lintian/Linda support
+* Several bugfixes
+
+0.2 "TOTU" (2007-05-13)
+* Generic Debian-based distribution support
+* .changes file support
+* Simple priority mechanism to provide build order
+
+0.1 "march madness" (2007-03-14)
+* First stable release 
+* Basic features: automatic package building, chroot updates
