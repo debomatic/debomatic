@@ -109,6 +109,7 @@ def get_compression(package):
         if os.path.exists(pkgfile):
             if findall('(.*\.debian\..*)', pkgfile):
                 try:
-                    return "-Z%s" % ext[os.path.splitext(pkgfile)[1]]
+                    return "--debbuildopts -Z%s" % ext[os.path.splitext(pkgfile)[1]]
                 except:
-                    return ""
+                    pass
+    return ""

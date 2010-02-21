@@ -136,7 +136,7 @@ def build_package(directory, configfile, distdir, package, distopts):
     os.system('%(builder)s --build %(basetype)s %(directory)s/%(distribution)s \
               --override-config --configfile %(cfg)s --logfile %(directory)s/pool/%(package)s/%(package)s.buildlog \
               --buildplace %(directory)s/build --buildresult %(directory)s/pool/%(package)s \
-              --aptcache %(directory)s/aptcache --debbuildopts %(debopts)s %(dsc)s >/dev/null 2>&1' \
+              --aptcache %(directory)s/aptcache %(debopts)s %(dsc)s >/dev/null 2>&1' \
               % { 'builder': Options.get('default', 'builder'), 'basetype': base, 'directory': distdir, \
               'package': packageversion, 'cfg': configfile, 'distribution': distopts['distribution'], \
               'debopts': packages.get_compression(package), 'dsc': dscfile[0]})
