@@ -103,3 +103,12 @@ def fetch_missing_files(package, files, packagedir, distopts):
             packagequeue[package].append(os.path.join(packagedir, entry))
     os.close(fd)
 
+def get_compression(package):
+    ext = {'.gz': 'gzip', '.bz2': 'bzip2', '.lzma': 'lzma', '.xz': 'xz'}
+    for pkgfile in packagequeue[package]:
+        if os.path.exists(pkgfile):
+            if findall('(.*\.debian\..*)', pkgfile):
+                try:
+                    return "-Z%s" % ext[os.path.splitext(pkgfile)[1]]
+                except:
+                    return ""
