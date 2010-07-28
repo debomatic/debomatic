@@ -21,7 +21,7 @@ import os
 import sys
 from hashlib import sha256
 from time import strftime
-from urllib import urlopen
+from urllib2 import urlopen
 from Debomatic import locks
 from Debomatic import Options
 
