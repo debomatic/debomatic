@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2009-12-05 13:09+0100\n"
+"POT-Creation-Date: 2010-01-03 23:13+0100\n"
 "PO-Revision-Date: 2009-12-05 08:10+0000\n"
-"Last-Translator: dominiko <dominique.pelle@gmail.com>\n"
+"Last-Translator: Dominique Pellé <dominique.pelle@gmail.com>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2009-12-23 04:32+0000\n"
+"X-Launchpad-Export-Date: 2010-08-05 03:33+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: ../Debomatic/commands.py:32 ../Debomatic/packages.py:33
@@ -62,14 +62,10 @@ msgid "Please set DEBOOTSTRAP in %s"
 msgstr "Bonvolu agordi DEBOOTSTREAP en %s"
 
 #: ../Debomatic/pbuilder.py:47 ../Debomatic/pbuilder.py:65
+#: ../Debomatic/pbuilder.py:48 ../Debomatic/pbuilder.py:66
 #, python-format
 msgid "Unable to fetch %(mirror)s/dists/%(dist)s/Release.gpg"
 msgstr ""
-
-#: ../Debomatic/pbuilder.py:88
-#, python-format
-msgid "pbuilder %s failed"
-msgstr "pbuilder %s malsukcesis"
 
 #: ../Debomatic/debomatic.py:37
 msgid "You must run deb-o-matic as root"
@@ -101,4 +97,9 @@ msgstr ""
 msgid ""
 "\n"
 "Waiting for threads to finish, it could take a while..."
+msgstr ""
+
+#: ../Debomatic/pbuilder.py:91
+#, python-format
+msgid "%(builder)s %(cmd)s failed"
 msgstr ""
