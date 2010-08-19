@@ -3,4 +3,5 @@ MIRRORSITE=ftp://ftp.debian.org/debian
 OTHERMIRROR="deb ftp://ftp.debian.org/debian/ experimental main contrib non-free"
 COMPONENTS="main contrib non-free"
 DEBOOTSTRAP=debootstrap
+DEBOOTSTRAPOPTS='--variant=buildd'
 PBUILDERSATISFYDEPENDSCMD=/usr/lib/pbuilder/pbuilder-satisfydepends-experimental

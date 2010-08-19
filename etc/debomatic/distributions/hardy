@@ -2,4 +2,5 @@ DISTRIBUTION=hardy
 MIRRORSITE=http://archive.ubuntu.com/ubuntu
 COMPONENTS="main restricted universe multiverse"
 DEBOOTSTRAP=debootstrap
+DEBOOTSTRAPOPTS='--variant=buildd'
 EXTRAPACKAGES="pkgbinarymangler pkg-create-dbgsym"
