@@ -1,4 +1,4 @@
-# Deb-o-Matic - Contents module
+# Deb-o-Matic - Mailer module
 #
 # Copyright (C) 2010 Alessio Treglia
 #
@@ -21,7 +21,7 @@
 
 import os
 from subprocess import Popen, PIPE
-import smtplib
+from smtplib import SMTP
 from email.parser import Parser
 from Debomatic import Options
 
@@ -38,50 +38,6 @@ class DebomaticModule_Mailer:
         'fromaddr',
     )
 
-    def __init__(self):
-        # Disabled by default
-        self.active = False
-        if Options.has_section('mailer'):
-            try:
-                for opt in self.DEFAULT_OPTIONS:
-                    setattr(self, opt, Options.get('mailer', opt))
-                if self.authrequired:
-                    pass                            # TODO
-                else:
-                    # Check the connection
-                    self.smtp = smtplib.SMTP()
-                    self.smtp.connect(self.smtphost, self.smtpport)
-                    self.smtp.quit()                # Seems fine, closing for now
-                self.active = True                  # Well configured, activate the module
-            except:
-                pass                                # TODO: something was wrong
-
-    def post_build(self, args):
-        if self.active and args['uploader']:
-            template = None
-            changes_file = None
-            uploader = args['uploader']
-            for filename in os.listdir(resultdir):  # Choose the template
-                if filename.endswith('.changes'):   # Build was OK
-                    template = self.build_success_template
-                    break
-            if not template:                        # Failed to build
-                template = self.build_failure_template
-            try:
-                # Extract last lines from the buildlog
-                buildlog_path = '%(directory)s/pool/%(package)s/%(package)s.buildlog' % args
-                buildlog_exc = Popen(['tail', '-n20', buildlog_path], stdout=PIPE).communicate()[0]
-                # Prepare the reply...
-                msg = self._write_the_reply(template, buildlog_exc, args)
-                # ...and send it!
-                self.smtp.connect(self.smtphost, self.smtpport)
-                self.smtp.sendmail(self.fromaddr, uploader, msg)
-                self.smtp.quit()                    # Close the connection
-            except:
-                pass                                # TODO
-        else:
-            raise Exception("Something has gone wrong")
-
     def _write_the_reply(self, template, buildlog, args):
         fp = open(template, 'r')
         substdict = dict(args)
@@ -91,3 +47,36 @@ class DebomaticModule_Mailer:
         fp.close()
         msg = Parser().parsestr(reply)
         return msg.as_string()
+
+    def __init__(self):
+        if Options.has_section('mailer'):
+            for opt in self.DEFAULT_OPTIONS:
+                setattr(self, opt, Options.get('mailer', opt))
+
+    def post_build(self, args):
+        if args['uploader']:
+            template = None
+            changes_file = None
+            uploader = args['uploader']
+            resultdir = os.path.join(args['directory'], 'pool', args['package'])
+            for filename in os.listdir(resultdir):  # Choose the template
+                if filename.endswith('.changes'):   # Build was OK
+                    template = self.build_success_template
+                    break
+            if not template:                        # Failed to build
+                template = self.build_failure_template
+            try:
+                # Extract last lines from the buildlog
+                buildlog_path = '%(directory)s/pool/%(package)s/%(package)s.buildlog' % args
+                buildlog_exc = Popen(['tail', '--lines=20', buildlog_path], stdout=PIPE).communicate()[0]
+                fp = open(template, 'r')
+                # Prepare the reply...
+                msg = self._write_the_reply(template, buildlog_exc, args)
+                # ...and send it!
+                self.smtp = SMTP(self.smtphost, int(self.smtpport))
+                if int(self.authrequired):
+                    self.smtp.login(self.smtpuser, self.smtppass)
+                self.smtp.sendmail(self.fromaddr, uploader, msg)
+                self.smtp.quit()                    # Close the connection
+            except Exception, e:
+                raise e

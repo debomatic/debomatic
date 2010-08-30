@@ -6,4 +6,4 @@ The package %(package)s you have uploaded was built successfully.
 
 Here is an excerpt from the build log:
   --
-%(buildlog)
+%(buildlog)s

@@ -53,11 +53,12 @@ def get_uploader_email(directory, changesfile):
     except OSError:
         raise RuntimeError(_('Unable to open %s') % changesfile)
     # Check if the field is properly formed -> i.e. 'Signed-By: Nervous Nerd <email@address.com>'
-    signed_by_field = findall('Signed-By: ((?:.*)>)$', os.read(fd, os.fstat(fd).st_size))
+    signed_by_field = findall('Signed-By: (.*)', os.read(fd, os.fstat(fd).st_size))
     os.close(fd)
     if not signed_by_field:
         return '' # No field 'Signed-By:' was found
-    return findall(email_re, signed_by_field[0])[0]
+    signed_by_field = signed_by_field[0]
+    return findall(email_re, signed_by_field)[0]
 
 def get_priority(changesfile):
     priority = 0
