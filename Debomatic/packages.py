@@ -44,6 +44,20 @@ def select_package(directory):
                 continue
     return package
 
+def get_signer_email(changesfile):
+    # Simple email validator - Pay attention! This is *not* RFC2822 compliant
+    email_re = '<((?:[^@\\s]+)@(?:(?:[-a-z0-9]+\\.)+[a-z]{2,}))>$'
+    try:
+        fd = os.open(changesfile, os.O_RDONLY)
+    except OSError:
+        raise RuntimeError(_('Unable to open %s') % changesfile)
+    # Check if the field is properly formed -> i.e. 'Signed-By: Nervous Nerd <email@address.com>'
+    signed_by_field = findall('Signed-By: ((?:.*)>)$', os.read(fd, os.fstat(fd).st_size))
+    os.close(fd)
+    if not signed_by_field:
+        return '' # No field 'Signed-By:' was found
+    return findall(email_re, signed_by_field[0])[0]
+
 def get_priority(changesfile):
     priority = 0
     priolist = {"low":1, "medium":2, "high":3}
