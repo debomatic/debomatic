@@ -1,5 +1,6 @@
 # Deb-o-Matic
 #
+# Copyright (C) 2010 Alessio Treglia
 # Copyright (C) 2007-2009 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
@@ -130,8 +131,15 @@ def build_package(directory, configfile, distdir, package, distopts):
         packageversion = None
     if not os.path.exists(os.path.join(distdir, 'pool', packageversion)):
         os.mkdir(os.path.join(distdir, 'pool', packageversion))
-    mod_sys.execute_hook('pre_build', { 'directory': distdir, 'package': packageversion, \
-              'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
+    uploader_email = packages.get_uploader_email(package)
+    mod_sys.execute_hook('pre_build', {
+        'directory': distdir,
+        'package': packageversion,
+        'uploader' : uploader_email,
+        'cfg': configfile,
+        'distribution': distopts['distribution'],
+        'dsc': dscfile[0]
+    })
     base = '--basepath' if Options.get('default', 'builder') == 'cowbuilder' else '--basetgz'
     os.system('%(builder)s --build %(basetype)s %(directory)s/%(distribution)s \
               --override-config --configfile %(cfg)s --logfile %(directory)s/pool/%(package)s/%(package)s.buildlog \
@@ -140,8 +148,14 @@ def build_package(directory, configfile, distdir, package, distopts):
               % { 'builder': Options.get('default', 'builder'), 'basetype': base, 'directory': distdir, \
               'package': packageversion, 'cfg': configfile, 'distribution': distopts['distribution'], \
               'debopts': packages.get_compression(package), 'dsc': dscfile[0]})
-    mod_sys.execute_hook('post_build', { 'directory': distdir, 'package': packageversion, \
-              'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
+    mod_sys.execute_hook('post_build', {
+        'directory': distdir,
+        'package': packageversion,
+        'uploader' : uploader_email,
+        'cfg': configfile,
+        'distribution': distopts['distribution'],
+        'dsc': dscfile[0]
+    })
     packages.rm_package(package)
     locks.buildlock_release()
 
