@@ -67,17 +67,20 @@ class DebomaticModule_Mailer:
                     break
             if not template:                        # Failed to build
                 template = self.build_failure_template
-            # Extract last lines from the buildlog
-            buildlog_path = '%(directory)s/pool/%(package)s/%(package)s.buildlog' % args
-            buildlog_exc = Popen(['tail', '-n20', buildlog_path], stdout=PIPE).communicate()[0]
-            # Prepare the reply...
-            msg = self._write_the_reply(template, buildlog_exc, args)
-            try:                                    # ...and send it!
+            try:
+                # Extract last lines from the buildlog
+                buildlog_path = '%(directory)s/pool/%(package)s/%(package)s.buildlog' % args
+                buildlog_exc = Popen(['tail', '-n20', buildlog_path], stdout=PIPE).communicate()[0]
+                # Prepare the reply...
+                msg = self._write_the_reply(template, buildlog_exc, args)
+                # ...and send it!
                 self.smtp.connect(self.smtphost, self.smtpport)
                 self.smtp.sendmail(self.fromaddr, uploader, msg)
                 self.smtp.quit()                    # Close the connection
             except:
                 pass                                # TODO
+        else:
+            raise Exception("Something has gone wrong")
 
     def _write_the_reply(self, template, buildlog, args):
         fp = open(template, 'r')
