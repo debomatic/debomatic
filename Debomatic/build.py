@@ -131,7 +131,7 @@ def build_package(directory, configfile, distdir, package, distopts):
         packageversion = None
     if not os.path.exists(os.path.join(distdir, 'pool', packageversion)):
         os.mkdir(os.path.join(distdir, 'pool', packageversion))
-    uploader_email = packages.get_uploader_email(package)
+    uploader_email = packages.get_uploader_email(directory, package)
     mod_sys.execute_hook('pre_build', {
         'directory': distdir,
         'package': packageversion,

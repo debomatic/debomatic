@@ -45,11 +45,11 @@ def select_package(directory):
                 continue
     return package
 
-def get_uploader_email(changesfile):
+def get_uploader_email(directory, changesfile):
     # Simple email validator - Pay attention! This is *not* RFC2822 compliant
     email_re = '<((?:[^@\\s]+)@(?:(?:[-a-z0-9]+\\.)+[a-z]{2,}))>$'
     try:
-        fd = os.open(changesfile, os.O_RDONLY)
+        fd = os.open(os.path.join(directory, changesfile), os.O_RDONLY)
     except OSError:
         raise RuntimeError(_('Unable to open %s') % changesfile)
     # Check if the field is properly formed -> i.e. 'Signed-By: Nervous Nerd <email@address.com>'

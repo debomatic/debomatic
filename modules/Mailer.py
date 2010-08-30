@@ -57,10 +57,10 @@ class DebomaticModule_Mailer:
                 pass                                # TODO: something was wrong
 
     def post_build(self, args):
-        if self.active and args[uploader]:
+        if self.active and args['uploader']:
             template = None
             changes_file = None
-            uploader = args[uploader]
+            uploader = args['uploader']
             for filename in os.listdir(resultdir):  # Choose the template
                 if filename.endswith('.changes'):   # Build was OK
                     template = self.build_success_template
