@@ -24,6 +24,17 @@ from sys import exit
 from Debomatic import gpg
 from Debomatic import Options
 
+SUPPORTED_COMMANDS = ('rm|rebuild')
+
+def run_command_rm(args):
+    for files in args:
+        for pattern in split(' ', files):
+            for absfile in glob(os.path.join(directory, os.path.basename(pattern))):
+                os.remove(absfile)
+
+def run_command_rebuild(args):
+    pass
+
 def process_commands():
     directory = Options.get('default', 'packagedir')
     try:
@@ -43,11 +54,12 @@ def process_commands():
             fd = os.open(cmdfile, os.O_RDONLY)
             cmd = os.read(fd, os.fstat(fd).st_size)
             os.close(fd)
-            filesets = findall('\s?rm\s+(.*)', cmd)
-            for files in filesets:
-                for pattern in split(' ', files):
-                    for absfile in glob(os.path.join(directory, os.path.basename(pattern))):
-                        os.remove(absfile)
+            try:
+                cmdline = findall('\s?(%s)\s+(.*)' % SUPPORTED_COMMANDS, cmd)[0]
+            except IndexError:
+                raise Exception(_('Command not supported.'))
+            exec "run_command_%s(%s)" % (cmdline[0], cmdline[1])
+            # Purge command file
             if os.path.exists(cmdfile):
                 os.remove(cmdfile)
 
