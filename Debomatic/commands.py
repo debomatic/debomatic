@@ -18,6 +18,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
+import tempfile
 from glob import glob
 from re import findall, split
 from sys import exit
@@ -26,14 +27,34 @@ from Debomatic import Options
 
 SUPPORTED_COMMANDS = ('rm|rebuild')
 
-def run_command_rm(args):
+def run_command_rm(uploader, args):
     for files in args:
         for pattern in split(' ', files):
             for absfile in glob(os.path.join(directory, os.path.basename(pattern))):
                 os.remove(absfile)
 
-def run_command_rebuild(args):
-    pass
+def run_command_rebuild(uploader, args):
+    dscfileurl, distribution = args.split()
+    curdir_prev = os.path.abspath(os.path.curdir)
+    # Create a temporary directory
+    tmpdir = tempfile.mkdtemp()
+    os.chdir(tmpdir)
+    # Download the package
+    os.system('dget -ud %s' % dscfileurl)
+    # Check 
+    for dscfile in os.listdir('.'):
+        if dscfile.endswith('.dsc'):
+            break
+    # Extract the package
+    pkgsubdir = 'pkg'
+    os.system('dpkg-source -x %s %s' % (dscfile, pkgsubdir))
+    # Generate changes file
+    changesfile = dscfile[0:-4] + '_source.changes'
+    os.chdir(pkgsubdir)
+    os.system('dpkg-genchanges -S -sa -Ddistribution=%s -DSigned-By="%s" > ../%s' % (distribution, uploader, changesfile))
+    # TODO: append to the package queue
+    os.chdir(curdir_prev)
+    os.system('rm -rf %s' % tempdir)
 
 def process_commands():
     directory = Options.get('default', 'packagedir')
@@ -55,10 +76,17 @@ def process_commands():
             cmd = os.read(fd, os.fstat(fd).st_size)
             os.close(fd)
             try:
+                uploader = findall('Uploader: (.*)', cmd)[0]
+            except:
+                raise Exception(_("Missing Uploader: field."))
+            try:
                 cmdline = findall('\s?(%s)\s+(.*)' % SUPPORTED_COMMANDS, cmd)[0]
             except IndexError:
                 raise Exception(_('Command not supported.'))
-            exec "run_command_%s(%s)" % (cmdline[0], cmdline[1])
+            try:
+                exec "run_command_%s(%s, %s)" % (cmdline[0], uploader, cmdline[1])
+            except:
+                raise Exception # TODO
             # Purge command file
             if os.path.exists(cmdfile):
                 os.remove(cmdfile)
