@@ -1,5 +1,6 @@
 # Deb-o-Matic
 #
+# Copyright (C) 2010 Alessio Treglia
 # Copyright (C) 2007-2009 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
@@ -19,9 +20,11 @@
 
 import os
 import tempfile
+import stat
 from glob import glob
 from re import findall, split
 from sys import exit
+from subprocess import Popen, PIPE
 from Debomatic import gpg
 from Debomatic import Options
 
@@ -37,31 +40,46 @@ def run_command_rebuild(uploader, args):
     dscfileurl, distribution = args.split()
     curdir_prev = os.path.abspath(os.path.curdir)
     # Create a temporary directory
-    tmpdir = tempfile.mkdtemp()
+    tmpdir = tempfile.mkdtemp(prefix='debomatic.')
     os.chdir(tmpdir)
     # Download the package
-    os.system('dget -ud %s' % dscfileurl)
-    # Check 
+    retcode = Popen(['dget', '-ud', dscfileurl]).wait()
+    if retcode:
+        raise Exception("Unable to retrieve the package: dget -ud %s" % dscfileurl)
+    # Check
     for dscfile in os.listdir('.'):
         if dscfile.endswith('.dsc'):
             break
     # Extract the package
     pkgsubdir = 'pkg'
-    os.system('dpkg-source -x %s %s' % (dscfile, pkgsubdir))
+    retcode = Popen(['dpkg-source', '-x', dscfile, pkgsubdir]).wait()
+    if retcode:
+        raise Exception(_("Unable to extract the package: dpkg-source -x %s %s") % (dscfile, pkgsubdir))
     # Generate changes file
     changesfile = dscfile[0:-4] + '_source.changes'
     os.chdir(pkgsubdir)
-    os.system('dpkg-genchanges -S -sa -Ddistribution=%s -DSigned-By="%s" > ../%s' % (distribution, uploader, changesfile))
+    fd = os.open(changesfile, os.O_WRONLY | os.O_TRUNC | os.O_CREAT, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
+    changesfile_content = Popen([
+        'dpkg-genchanges',
+        '-S',
+        '-sa',
+        '-DDistribution=%s' % distribution,
+        '-DSigned-By=%s' % uploader,
+    ], stdout=PIPE).communicate()[0] # communicate() allows me to avoid use of wait()
+    os.write(fd, changesfile_content)
+    os.close(fd)
     # TODO: append to the package queue
     os.chdir(curdir_prev)
-    os.system('rm -rf %s' % tempdir)
+    retcode = os.system('rm -rf %s' % tempdir)
+    if retcode:
+        raise Exception(_("Failed to remove %s") % tempdir)
 
 def process_commands():
     directory = Options.get('default', 'packagedir')
     try:
         filelist = os.listdir(directory)
     except:
-        print _('Unable to access %s directory') % directory
+        print _("Unable to access %s directory") % directory
         exit(-1)
     for filename in filelist:
         cmdfile = os.path.join(directory, filename)
@@ -78,15 +96,15 @@ def process_commands():
             try:
                 uploader = findall('Uploader: (.*)', cmd)[0]
             except:
-                raise Exception(_("Missing Uploader: field."))
+                raise Exception(_("Missing 'Uploader:' field."))
             try:
                 cmdline = findall('\s?(%s)\s+(.*)' % SUPPORTED_COMMANDS, cmd)[0]
             except IndexError:
                 raise Exception(_('Command not supported.'))
             try:
                 exec "run_command_%s(%s, %s)" % (cmdline[0], uploader, cmdline[1])
-            except:
-                raise Exception # TODO
+            except Exception, e:
+                raise e # TODO
             # Purge command file
             if os.path.exists(cmdfile):
                 os.remove(cmdfile)
