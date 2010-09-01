@@ -24,6 +24,7 @@ from re import findall, split
 from urllib2 import Request, urlopen
 from Debomatic import acceptedqueue
 from Debomatic import packagequeue
+from Debomatic import gpg
 
 def select_package(directory):
     package = None
@@ -46,19 +47,10 @@ def select_package(directory):
     return package
 
 def get_uploader_email(directory, changesfile):
-    # Simple email validator - Pay attention! This is *not* RFC2822 compliant
-    email_re = '<((?:[^@\\s]+)@(?:(?:[-a-z0-9]+\\.)+[a-z]{2,}))>$'
-    try:
-        fd = os.open(os.path.join(directory, changesfile), os.O_RDONLY)
-    except OSError:
-        raise RuntimeError(_('Unable to open %s') % changesfile)
-    # Check if the field is properly formed -> i.e. 'Signed-By: Nervous Nerd <email@address.com>'
-    signed_by_field = findall('Signed-By: (.*)', os.read(fd, os.fstat(fd).st_size))
-    os.close(fd)
-    if not signed_by_field:
-        return '' # No field 'Signed-By:' was found
-    signed_by_field = signed_by_field[0]
-    return findall(email_re, signed_by_field)[0]
+    signature = gpg.verify_signature(changesfile)
+    if not len(signature) is 2:
+        return ''
+    return signature[1]
 
 def get_priority(changesfile):
     priority = 0

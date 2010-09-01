@@ -24,19 +24,19 @@ from subprocess import Popen, PIPE
 from Debomatic import Options
 from Debomatic import acceptedqueue
 
-def _verify_signature(pkg_or_cmd):
+def verify_signature(pkg_or_cmd):
     gpgresult = Popen(['gpg', '--no-default-keyring', '--keyring', Options.get('gpg', 'keyring'), '--verify', pkg_or_cmd], stderr=PIPE).communicate()[1]
     ID = findall('Good signature from "(.*) <(.*)>"', gpgresult)
     if not len(ID):
-        return False
-    return True
+        return None
+    return ID[0]
 
 def check_changes_signature(package):
     if Options.getint('gpg', 'gpg'):
         if not Options.has_option('gpg', 'keyring') or not os.path.exists(Options.get('gpg', 'keyring')):
             raise RuntimeError(_('Keyring not found'))
         if not package in acceptedqueue:
-            if not _verify_signature(package):
+            if not verify_signature(package):
                 raise RuntimeError(_('No valid signatures found'))
             fd = os.open(package, os.O_RDONLY)
             data = os.read(fd, os.fstat(fd).st_size)
@@ -51,7 +51,7 @@ def check_commands_signature(commands):
     if Options.getint('gpg', 'gpg'):
         if not Options.has_option('gpg', 'keyring') or not os.path.exists(Options.get('gpg', 'keyring')):
             raise RuntimeError(_('Keyring not found'))
-        if not _verify_signature(commands):
+        if not verify_signature(commands):
             raise RuntimeError(_('No valid signatures found'))
         fd = os.open(commands, os.O_RDONLY)
         data = os.read(fd, os.fstat(fd).st_size)
