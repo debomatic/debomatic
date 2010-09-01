@@ -1,5 +1,6 @@
 # Deb-o-Matic
 #
+# Copyright (C) 2010 Alessio Treglia
 # Copyright (C) 2007-2009 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
@@ -32,9 +33,20 @@ from Debomatic import modules
 def build_process():
     directory = Options.get('default', 'packagedir')
     configdir = Options.get('default', 'configdir')
+    distroblacklist_file = Options.get('default', 'distroblacklist')
+    distroblacklist = []
+    if self.buildblacklist_file:
+        fd = os.open(self.distroblacklist_file, os.O_RDONLY)
+        data = os.read(fd, os.fstat(fd).st_size)
+        os.close(fd)
+        distroblacklist = data.split()
     package = packages.select_package(directory)
     if package:
         distopts = parse_distribution_options(directory, configdir, package)
+        if distopts['distribution'] in distroblacklist:
+            print _('The distribution %s is disabled.' % distopts['distribution'])
+            packages.rm_package(package)
+            sys.exit(-1)
         try:
             fd = os.open(os.path.join(directory, package), os.O_RDONLY)
         except:
