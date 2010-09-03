@@ -51,7 +51,7 @@ def build_process():
         packagequeue[package].append(os.path.join(directory, package))
         os.close(fd)
         try:
-            gpg.check_changes_signature(os.path.join(directory, package))
+            uploader = gpg.check_changes_signature(os.path.join(directory, package))
         except RuntimeError, error:
             packages.rm_package(package)
             print error
@@ -64,7 +64,8 @@ def build_process():
             packages.del_package(package)
             print error
             sys.exit(-1)
-        build_package(directory, os.path.join(configdir, distopts['distribution']), distdir, package, distopts)
+        args = {'uploader':uploader}
+        build_package(directory, os.path.join(configdir, distopts['distribution']), distdir, package, distopts, args)
 
 def parse_distribution_options(packagedir, configdir, package):
     options = dict()
@@ -114,7 +115,7 @@ def parse_distribution_options(packagedir, configdir, package):
         sys.exit(-1)
     return options
 
-def build_package(directory, configfile, distdir, package, distopts):
+def build_package(directory, configfile, distdir, package, distopts, args):
     mod_sys = modules.Module()
     if not locks.buildlock_acquire():
         packages.del_package(package)
@@ -131,7 +132,9 @@ def build_package(directory, configfile, distdir, package, distopts):
         packageversion = None
     if not os.path.exists(os.path.join(distdir, 'pool', packageversion)):
         os.mkdir(os.path.join(distdir, 'pool', packageversion))
-    uploader_email = packages.get_uploader_email(directory, package)
+    uploader_email = ''
+    if len(args['uploader']) is 2:
+        uploader_email = args['uploader'][1]
     mod_sys.execute_hook('pre_build', {
         'directory': distdir,
         'package': packageversion,

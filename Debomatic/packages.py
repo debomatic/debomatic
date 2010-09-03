@@ -46,12 +46,6 @@ def select_package(directory):
                 continue
     return package
 
-def get_uploader_email(directory, changesfile):
-    signature = gpg.verify_signature(changesfile)
-    if not len(signature) is 2:
-        return ''
-    return signature[1]
-
 def get_priority(changesfile):
     priority = 0
     priolist = {"low":1, "medium":2, "high":3}
