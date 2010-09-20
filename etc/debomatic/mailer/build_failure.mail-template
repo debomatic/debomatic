@@ -1,0 +1,9 @@
+From: %(fromaddr)s
+To: %(uploader)s
+Subject: %(package)s failed to build
+
+The package %(package)s you have uploaded failed to build.
+
+Here is an excerpt from the build log:
+  --
+%(buildlog)s

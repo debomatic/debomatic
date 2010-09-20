@@ -40,12 +40,30 @@ attempting to build them.
 .B keyring
 This file contains authorized GPG keys. Source packages signed with one of the
 keys included are allowed to build, other packages will be deleted from disk.
-.SH MODULES
+.SH MODULES SECTION
 .B modules
 If enabled, allow modules to be plugged in at runtime.
 .TP
 .B modulespath
 This directory contains modules to be plugged in at runtime.
+.SH MAILER SECTION
+.B fromaddr
+This is the address outgoing mails will originate from.
+.TP
+.B smtphost
+This is the SMTP server address mails will be sent with.
+.TP
+.B smtpport
+THis is the port SMTP server listens on.
+.TP
+.B authrequired
+Turn this option on if SMTP server requires authentication.
+.TP
+.B smtpuser
+Set this to the username allowed to send mails with the SMTP server.
+.TP
+.B smtppass
+Set this to the password for the user described above.
 .SH COPYRIGHT
 This manual page is Copyright 2007-2009 Luca Falavigna <dktrkranz@debian.org>.
 Permission is granted to copy, distribute and/or modify this document

@@ -1,0 +1,9 @@
+From: %(fromaddr)s
+To: %(uploader)s
+Subject: %(package)s has been built succesfully
+
+The package %(package)s you have uploaded was built successfully.
+
+Here is an excerpt from the build log:
+  --
+%(buildlog)s

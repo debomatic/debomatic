@@ -1,6 +1,7 @@
 # Deb-o-Matic
 #
 # Copyright (C) 2007-2009 Luca Falavigna
+# Copyright (C) 2010 Alessio Treglia
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
 #
@@ -50,7 +51,7 @@ def build_process():
         packagequeue[package].append(os.path.join(directory, package))
         os.close(fd)
         try:
-            gpg.check_changes_signature(os.path.join(directory, package))
+            uploader = gpg.check_changes_signature(os.path.join(directory, package))
         except RuntimeError, error:
             packages.rm_package(package)
             print error
@@ -63,7 +64,7 @@ def build_process():
             packages.del_package(package)
             print error
             sys.exit(-1)
-        build_package(directory, os.path.join(configdir, distopts['distribution']), distdir, package, distopts)
+        build_package(directory, os.path.join(configdir, distopts['distribution']), distdir, package, uploader, distopts)
 
 def parse_distribution_options(packagedir, configdir, package):
     options = dict()
@@ -113,7 +114,7 @@ def parse_distribution_options(packagedir, configdir, package):
         sys.exit(-1)
     return options
 
-def build_package(directory, configfile, distdir, package, distopts):
+def build_package(directory, configfile, distdir, package, uploader, distopts):
     mod_sys = modules.Module()
     if not locks.buildlock_acquire():
         packages.del_package(package)
@@ -130,8 +131,12 @@ def build_package(directory, configfile, distdir, package, distopts):
         packageversion = None
     if not os.path.exists(os.path.join(distdir, 'pool', packageversion)):
         os.mkdir(os.path.join(distdir, 'pool', packageversion))
+    uploader_email = ''
+    if uploader:
+        uploader_email = uploader[1]
     mod_sys.execute_hook('pre_build', { 'directory': distdir, 'package': packageversion, \
-              'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
+                         'uploader' : uploader_email, 'cfg': configfile, \
+                         'distribution': distopts['distribution'], 'dsc': dscfile[0]})
     base = '--basepath' if Options.get('default', 'builder') == 'cowbuilder' else '--basetgz'
     os.system('%(builder)s --build %(basetype)s %(directory)s/%(distribution)s \
               --override-config --configfile %(cfg)s --logfile %(directory)s/pool/%(package)s/%(package)s.buildlog \
@@ -141,7 +146,8 @@ def build_package(directory, configfile, distdir, package, distopts):
               'package': packageversion, 'cfg': configfile, 'distribution': distopts['distribution'], \
               'debopts': packages.get_compression(package), 'dsc': dscfile[0]})
     mod_sys.execute_hook('post_build', { 'directory': distdir, 'package': packageversion, \
-              'cfg': configfile, 'distribution': distopts['distribution'], 'dsc': dscfile[0]})
+                         'uploader' : uploader_email, 'cfg': configfile, \
+                         'distribution': distopts['distribution'], 'dsc': dscfile[0]})
     packages.rm_package(package)
     locks.buildlock_release()
 
