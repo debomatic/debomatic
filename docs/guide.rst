@@ -138,6 +138,11 @@ runtime which extend Deb-o-Matic features. Available modules are stored into
 modules directory. An example module can be found into examples directory,
 useful to write your own Deb-o-Matic module.
 
+Modules can be blacklisted to avoid launching them during build process.
+A module.blacklist file needs to be defined in configuration file for this.
+In order to define a blacklist, it is sufficient to list desired module name,
+without trailing .py, separated by a space or a newline.
+
 Bugs and feedback
 =================
 

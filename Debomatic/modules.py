@@ -34,6 +34,11 @@ class Module:
             self.use_modules = False
         elif Options.get('modules', 'modules') == "0":
             self.use_modules = False
+        # Retrieve the path of the blacklist file
+        try:
+            self.blacklist = Options.get('modules', 'blacklist')
+        except:
+            self.blacklist = None
 
         # Add the modules directory to the python path
         self.mod_path = Options.get('modules', 'modulespath')
@@ -66,7 +71,13 @@ class Module:
     # Executes a hook (and all the plugin functions that implement it)
     def execute_hook(self, hook, args):
         if self.use_modules:
-            for module in self.instances:
+            blacklisted_mods = []
+            if self.blacklist:
+                fd = os.open(self.blacklist, os.O_RDONLY)
+                data = os.read(fd, os.fstat(fd).st_size)
+                os.close(fd)
+                blacklisted_mods = data.split()
+            for module in set(self.instances).difference(blacklisted_mods):
                 try:
                     exec "self.instances['%s'].%s(args)" % (module, hook)
                 except AttributeError:
