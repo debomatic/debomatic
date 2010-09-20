@@ -33,9 +33,23 @@ from Debomatic import modules
 def build_process():
     directory = Options.get('default', 'packagedir')
     configdir = Options.get('default', 'configdir')
+    try:
+        blfile = Options.get('default', 'distblacklist')
+    except NoOptionError:
+        blfile = None
+    distblacklist = []
+    if blfile:
+        fd = os.open(blfile, os.O_RDONLY)
+        data = os.read(fd, os.fstat(fd).st_size)
+        os.close(fd)
+        distblacklist = data.split()
     package = packages.select_package(directory)
     if package:
         distopts = parse_distribution_options(directory, configdir, package)
+        if distopts['distribution'] in distblacklist:
+            print _('Distribution %s is disabled' % distopts['distribution'])
+            packages.rm_package(package)
+            sys.exit(-1)
         try:
             fd = os.open(os.path.join(directory, package), os.O_RDONLY)
         except:

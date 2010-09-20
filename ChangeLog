@@ -1,5 +1,6 @@
 0.9
 * Mailer support
+* Distribution blacklist support
 * Module blacklist support
 * Improved support for 3.0 package format
 

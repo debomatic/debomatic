@@ -18,6 +18,10 @@ options to pbuilder. They must contain pbuilder specific parameters
 (see pbuilderrc(5) for further reference) and their names must match
 desired target releases.
 .TP
+.B distblacklist
+This file contains a space or newline separated list of distributions for
+which build process is temporarily disabled.
+.TP
 .B maxbuilds
 Maximum number of parallel build threads to be launched. More threads will
 require powerful hardware.
