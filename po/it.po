@@ -7,62 +7,68 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-01-03 23:13+0100\n"
-"PO-Revision-Date: 2010-01-03 22:31+0000\n"
+"POT-Creation-Date: 2010-09-20 22:22+0200\n"
+"PO-Revision-Date: 2010-09-20 20:35+0000\n"
 "Last-Translator: Luca Falavigna <dktrkranz@ubuntu.com>\n"
 "Language-Team: Italian <it@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-08-27 03:35+0000\n"
+"X-Launchpad-Export-Date: 2010-09-21 04:49+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: ../Debomatic/commands.py:32 ../Debomatic/packages.py:33
+#: ../Debomatic/packages.py:34
 #, python-format
 msgid "Unable to access %s directory"
 msgstr "Impossibile accedere alla directory %s"
 
-#: ../Debomatic/gpg.py:29 ../Debomatic/gpg.py:47
+#: ../Debomatic/gpg.py:29 ../Debomatic/gpg.py:47 ../Debomatic/gpg.py:39
+#: ../Debomatic/gpg.py:57
 msgid "Keyring not found"
 msgstr "Portachiavi non trovato"
 
-#: ../Debomatic/gpg.py:34 ../Debomatic/gpg.py:51
+#: ../Debomatic/gpg.py:34 ../Debomatic/gpg.py:51 ../Debomatic/gpg.py:43
+#: ../Debomatic/gpg.py:60
 msgid "No valid signatures found"
 msgstr "Nessuna firma valida trovata"
 
 #: ../Debomatic/packages.py:53 ../Debomatic/build.py:41
-#: ../Debomatic/build.py:87
+#: ../Debomatic/build.py:87 ../Debomatic/build.py:56 ../Debomatic/build.py:102
+#: ../Debomatic/packages.py:54
 #, python-format
 msgid "Unable to open %s"
 msgstr "Impossibile aprire %s"
 
-#: ../Debomatic/build.py:48 ../Debomatic/build.py:80
+#: ../Debomatic/build.py:48 ../Debomatic/build.py:80 ../Debomatic/build.py:63
+#: ../Debomatic/build.py:95
 #, python-format
 msgid "Bad .changes file: %s"
 msgstr "File .changes non valido: %s"
 
-#: ../Debomatic/build.py:93
+#: ../Debomatic/build.py:93 ../Debomatic/build.py:108
 #, python-format
 msgid "Please set DISTRIBUTION in %s"
 msgstr "Impostare DISTRIBUTION in %s"
 
-#: ../Debomatic/build.py:99
+#: ../Debomatic/build.py:99 ../Debomatic/build.py:114
 #, python-format
 msgid "Please set MIRRORSITE in %s"
 msgstr "Impostare MIRRORSITE in %s"
 
-#: ../Debomatic/build.py:105
+#: ../Debomatic/build.py:105 ../Debomatic/build.py:120
 #, python-format
 msgid "Please set COMPONENTS in %s"
 msgstr "Impostare COMPONENTS in %s"
 
-#: ../Debomatic/build.py:111
+#: ../Debomatic/build.py:111 ../Debomatic/build.py:126
 #, python-format
 msgid "Please set DEBOOTSTRAP in %s"
 msgstr "Impostare DEBOOTSTRAP in %s"
 
 #: ../Debomatic/pbuilder.py:47 ../Debomatic/pbuilder.py:65
 #: ../Debomatic/pbuilder.py:48 ../Debomatic/pbuilder.py:66
+#: ../Debomatic/pbuilder.py:68
 #, python-format
 msgid "Unable to fetch %(mirror)s/dists/%(dist)s/Release.gpg"
 msgstr "Impossibile scaricare %(mirror)s/dists/%(dist)s/Release.gpg"
@@ -101,7 +107,12 @@ msgstr ""
 "\n"
 "Attendere, il completamento dei processi potrebbe impiegare qualche minuto..."
 
-#: ../Debomatic/pbuilder.py:91
+#: ../Debomatic/pbuilder.py:91 ../Debomatic/pbuilder.py:93
 #, python-format
 msgid "%(builder)s %(cmd)s failed"
 msgstr "%(builder)s %(cmd)s non riuscito"
+
+#: ../Debomatic/build.py:50
+#, python-format
+msgid "Distribution %s is disabled"
+msgstr "La distribuzione %s è disabilitata"
