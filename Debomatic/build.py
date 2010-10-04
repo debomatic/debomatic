@@ -130,7 +130,9 @@ def parse_distribution_options(packagedir, configdir, package):
 
 def build_package(directory, configfile, distdir, package, uploader, distopts):
     mod_sys = modules.Module()
-    if not locks.buildlock_acquire():
+    try:
+        locks.buildlock_acquire()
+    except:
         packages.del_package(package)
         sys.exit(-1)
     dscfile = None

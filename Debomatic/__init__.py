@@ -22,11 +22,9 @@ from ConfigParser import ConfigParser
 
 gettext.install("debomatic")
 
-class Semaphores:
-    pass
-
 Options = ConfigParser()
 acceptedqueue = list()
 packagequeue = dict()
-sema = Semaphores()
+buildlock = None
+pbuilderlock = dict()
 running = True

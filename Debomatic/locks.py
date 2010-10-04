@@ -17,36 +17,39 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from threading import Semaphore
+import Queue
 from Debomatic import Options
-from Debomatic import sema
+from Debomatic import buildlock, pbuilderlock
 
 def buildlock_acquire():
+    global buildlock
+    if not buildlock:
+        buildlock = Queue.Queue(Options.getint('default', 'maxbuilds'))
     try:
-        return sema.build.acquire(False)
-    except:
-        sema.build = Semaphore(Options.getint('default', 'maxbuilds'))
-        return buildlock_acquire()
+        buildlock.put_nowait(None)
+    except Queue.Full:
+        raise RuntimeError
 
 def buildlock_release():
-    try:
-        sema.build.release()
-    except:
-        pass
+    global buildlock
+    if buildlock:
+        try:
+            buildlock.get_nowait()
+        except Queue.Empty:
+            pass
 
 def pbuilderlock_acquire(distribution):
+    if not pbuilderlock.has_key(distribution):
+        pbuilderlock[distribution] = Queue.Queue(1)
     try:
-        return sema.pbuilder[distribution].acquire(False)
-    except AttributeError:
-        sema.pbuilder = dict()
-        return pbuilderlock_acquire(distribution)
-    except KeyError:
-        sema.pbuilder[distribution] = Semaphore()
-        return pbuilderlock_acquire(distribution)
+        pbuilderlock[distribution].put_nowait(None)
+    except Queue.Full:
+        raise RuntimeError
 
 def pbuilderlock_release(distribution):
-    try:
-        sema.pbuilder[distribution].release()
-    except:
-        pass
+    if pbuilderlock.has_key(distribution):
+        try:
+            pbuilderlock[distribution].get_nowait()
+        except Queue.Empty:
+            pass
 

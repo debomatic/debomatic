@@ -28,7 +28,9 @@ from Debomatic import Options
 def setup_pbuilder(directory, configdir, distopts):
     if not os.path.exists(os.path.join(directory)):
         os.mkdir(os.path.join(directory))
-    if not locks.pbuilderlock_acquire(distopts['distribution']):
+    try:
+        locks.pbuilderlock_acquire(distopts['distribution'])
+    except RuntimeError:
         raise RuntimeError
     try:
         needs_update(directory, distopts['mirror'], distopts['distribution'])
@@ -36,6 +38,7 @@ def setup_pbuilder(directory, configdir, distopts):
         try:
             prepare_pbuilder(result.args[0], directory, configdir, distopts)
         except RuntimeError, error:
+            locks.pbuilderlock_release(distopts['distribution'])
             raise error
         if not os.path.exists(os.path.join(directory, 'gpg')):
             os.mkdir(os.path.join(directory, 'gpg'))
@@ -89,6 +92,5 @@ def prepare_pbuilder(cmd, directory, configdir, distopts):
                   % {'builder': Options.get('default', 'builder'), 'cmd': cmd, 'directory': directory, 'basetype': base, \
                      'distribution': distopts['distribution'], 'cfg': os.path.join(configdir, distopts['distribution']), \
                      'now': strftime('%Y%m%d_%H%M')})):
-        locks.pbuilderlock_release(distopts['distribution'])
         raise RuntimeError(_('%(builder)s %(cmd)s failed') % {'builder':Options.get('default', 'builder'), 'cmd':cmd})
 
