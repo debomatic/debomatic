@@ -38,7 +38,7 @@ def build_process():
     except NoOptionError:
         blfile = None
     distblacklist = []
-    if blfile:
+    if blfile and os.path.exists(blfile):
         fd = os.open(blfile, os.O_RDONLY)
         data = os.read(fd, os.fstat(fd).st_size)
         os.close(fd)
