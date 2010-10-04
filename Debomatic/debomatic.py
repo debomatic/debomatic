@@ -108,9 +108,13 @@ try:
     def launcher_inotify():
         if Options.getint('default', 'inotify'):
             wm = pyinotify.WatchManager()
-            notifier = pyinotify.Notifier(wm, PE())
+            notifier = pyinotify.Notifier(wm, PE(), timeout=1000)
             wm.add_watch(Options.get('default', 'packagedir'), pyinotify.IN_CLOSE_WRITE, rec=True)
-            notifier.loop(callback=exit_routine)
+            while exit_routine():
+                notifier.process_events()
+                if notifier.check_events():
+                    notifier.read_events()
+            notifier.stop()
 except:
     def launcher_inotify():
         pass
@@ -130,11 +134,8 @@ def launcher():
         print _('\nWaiting for threads to finish, it could take a while...')
         exit_routine(exiting=True)
 
-def exit_routine(self=None, exiting=False):
+def exit_routine(exiting=False):
     global running
     if exiting:
         running = False
-        return
-    if not running:
-        sys.exit(0)
     return running
