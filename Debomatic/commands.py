@@ -21,8 +21,7 @@ import os
 from glob import glob
 from re import findall, split
 from sys import exit
-from Debomatic import gpg
-from Debomatic import Options
+from Debomatic import gpg, Options
 
 def process_commands():
     directory = Options.get('default', 'packagedir')

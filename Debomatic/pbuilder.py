@@ -22,8 +22,7 @@ import sys
 from hashlib import sha256
 from time import strftime
 from urllib2 import urlopen
-from Debomatic import locks
-from Debomatic import Options
+from Debomatic import locks, Options
 
 def setup_pbuilder(directory, configdir, distopts):
     if not os.path.exists(os.path.join(directory)):

@@ -22,7 +22,6 @@
 # Stores litian output on top of the built package in the pool directory.
 
 import os
-from re import findall
 from Debomatic import Options
 
 class DebomaticModule_Lintian:
@@ -35,9 +34,8 @@ class DebomaticModule_Lintian:
         resultdir = os.path.join(args['directory'], 'pool', args['package'])
         lintian = os.path.join(resultdir, args['package']) + '.lintian'
         for filename in os.listdir(resultdir):
-            result = findall('.*.changes', filename)
-            if len(result):
-                changesfile = os.path.join(resultdir, result[0])
+            if filename.endswith('.changes'):
+                changesfile = os.path.join(resultdir, filename)
                 break
         if changesfile:
             os.system('%s -V > %s' % (self.lintian, lintian))

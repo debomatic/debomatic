@@ -24,11 +24,7 @@ from fcntl import lockf, LOCK_EX, LOCK_NB
 from getopt import getopt, GetoptError
 from signal import pause
 from time import sleep
-from Debomatic import build
-from Debomatic import commands
-from Debomatic import Options
-from Debomatic import modules
-from Debomatic import running
+from Debomatic import build, commands, Options, modules, running
 
 def main():
     conffile = None
@@ -101,13 +97,12 @@ def parse_default_options(conffile):
 try:
     import os
     import pyinotify
-    from re import findall
 
     class PE(pyinotify.ProcessEvent):
         def process_IN_CLOSE_WRITE(self, event):
-            if findall('source.changes$', event.name):
+            if event.name.endswith('source.changes'):
                 threading.Thread(None, build.build_process).start()
-            elif findall('commands$', event.name):
+            elif event.name.endswith('commands'):
                 threading.Thread(None, commands.process_commands).start()
 
     def launcher_inotify():

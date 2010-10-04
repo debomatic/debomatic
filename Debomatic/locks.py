@@ -18,8 +18,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import Queue
-from Debomatic import Options
-from Debomatic import buildlock, pbuilderlock
+from Debomatic import Options, buildlock, pbuilderlock
 
 def buildlock_acquire():
     global buildlock

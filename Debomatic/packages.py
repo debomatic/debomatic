@@ -22,8 +22,7 @@ import os
 import sys
 from re import findall, split
 from urllib2 import Request, urlopen
-from Debomatic import acceptedqueue
-from Debomatic import packagequeue
+from Debomatic import acceptedqueue, packagequeue
 
 def select_package(directory):
     package = None

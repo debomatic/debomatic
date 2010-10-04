@@ -22,13 +22,7 @@ import os
 import sys
 import threading
 from re import findall
-from Debomatic import gpg
-from Debomatic import locks
-from Debomatic import packages
-from Debomatic import pbuilder
-from Debomatic import Options
-from Debomatic import packagequeue
-from Debomatic import modules
+from Debomatic import gpg, locks, packages, pbuilder, Options, packagequeue, modules
 
 def build_process():
     directory = Options.get('default', 'packagedir')

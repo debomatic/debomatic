@@ -21,8 +21,7 @@
 import os
 from re import findall, DOTALL
 from subprocess import Popen, PIPE
-from Debomatic import Options
-from Debomatic import acceptedqueue
+from Debomatic import Options, acceptedqueue
 
 def verify_signature(pkg_or_cmd):
     gpgresult = Popen(['gpg', '--no-default-keyring', '--keyring', \
