@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-20 22:22+0200\n"
+"POT-Creation-Date: 2010-10-04 22:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,99 +18,104 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../Debomatic/commands.py:32 ../Debomatic/packages.py:33
-#: ../Debomatic/packages.py:34
+#: ../Debomatic/packages.py:34 Debomatic/commands.py:32
+#: Debomatic/packages.py:34
 #, python-format
 msgid "Unable to access %s directory"
 msgstr ""
 
 #: ../Debomatic/gpg.py:29 ../Debomatic/gpg.py:47 ../Debomatic/gpg.py:39
-#: ../Debomatic/gpg.py:57
+#: ../Debomatic/gpg.py:57 Debomatic/gpg.py:39 Debomatic/gpg.py:57
 msgid "Keyring not found"
 msgstr ""
 
 #: ../Debomatic/gpg.py:34 ../Debomatic/gpg.py:51 ../Debomatic/gpg.py:43
-#: ../Debomatic/gpg.py:60
+#: ../Debomatic/gpg.py:60 Debomatic/gpg.py:43 Debomatic/gpg.py:60
 msgid "No valid signatures found"
 msgstr ""
 
 #: ../Debomatic/packages.py:53 ../Debomatic/build.py:41
 #: ../Debomatic/build.py:87 ../Debomatic/build.py:56 ../Debomatic/build.py:102
-#: ../Debomatic/packages.py:54
+#: ../Debomatic/packages.py:54 Debomatic/build.py:56 Debomatic/build.py:88
+#: Debomatic/build.py:102 Debomatic/packages.py:54
 #, python-format
 msgid "Unable to open %s"
 msgstr ""
 
 #: ../Debomatic/build.py:48 ../Debomatic/build.py:80 ../Debomatic/build.py:63
-#: ../Debomatic/build.py:95
+#: ../Debomatic/build.py:95 Debomatic/build.py:63 Debomatic/build.py:95
 #, python-format
 msgid "Bad .changes file: %s"
 msgstr ""
 
-#: ../Debomatic/build.py:93 ../Debomatic/build.py:108
+#: ../Debomatic/build.py:93 ../Debomatic/build.py:108 Debomatic/build.py:108
 #, python-format
 msgid "Please set DISTRIBUTION in %s"
 msgstr ""
 
-#: ../Debomatic/build.py:99 ../Debomatic/build.py:114
+#: ../Debomatic/build.py:99 ../Debomatic/build.py:114 Debomatic/build.py:114
 #, python-format
 msgid "Please set MIRRORSITE in %s"
 msgstr ""
 
-#: ../Debomatic/build.py:105 ../Debomatic/build.py:120
+#: ../Debomatic/build.py:105 ../Debomatic/build.py:120 Debomatic/build.py:120
 #, python-format
 msgid "Please set COMPONENTS in %s"
 msgstr ""
 
-#: ../Debomatic/build.py:111 ../Debomatic/build.py:126
+#: ../Debomatic/build.py:111 ../Debomatic/build.py:126 Debomatic/build.py:126
 #, python-format
 msgid "Please set DEBOOTSTRAP in %s"
 msgstr ""
 
 #: ../Debomatic/pbuilder.py:47 ../Debomatic/pbuilder.py:65
 #: ../Debomatic/pbuilder.py:48 ../Debomatic/pbuilder.py:66
-#: ../Debomatic/pbuilder.py:68
+#: ../Debomatic/pbuilder.py:68 Debomatic/pbuilder.py:51
+#: Debomatic/pbuilder.py:71
 #, python-format
 msgid "Unable to fetch %(mirror)s/dists/%(dist)s/Release.gpg"
 msgstr ""
 
-#: ../Debomatic/debomatic.py:37
+#: ../Debomatic/debomatic.py:37 Debomatic/debomatic.py:37
 msgid "You must run deb-o-matic as root"
 msgstr ""
 
 #: ../Debomatic/debomatic.py:58 ../Debomatic/debomatic.py:68
+#: Debomatic/debomatic.py:58 Debomatic/debomatic.py:68
 msgid "Unable to enter daemon mode"
 msgstr ""
 
-#: ../Debomatic/debomatic.py:81
+#: ../Debomatic/debomatic.py:81 Debomatic/debomatic.py:81
 msgid "Another instance is running. Aborting"
 msgstr ""
 
-#: ../Debomatic/debomatic.py:90
+#: ../Debomatic/debomatic.py:90 Debomatic/debomatic.py:90
 msgid "Please specify a configuration file"
 msgstr ""
 
-#: ../Debomatic/debomatic.py:93
+#: ../Debomatic/debomatic.py:93 Debomatic/debomatic.py:93
 #, python-format
 msgid "Configuration file %s does not exist"
 msgstr ""
 
-#: ../Debomatic/debomatic.py:98
+#: ../Debomatic/debomatic.py:98 Debomatic/debomatic.py:98
 #, python-format
 msgid "Please set \"%(opt)s\" in %(conffile)s"
 msgstr ""
 
-#: ../Debomatic/debomatic.py:135
+#: ../Debomatic/debomatic.py:135 Debomatic/debomatic.py:135
 msgid ""
 "\n"
 "Waiting for threads to finish, it could take a while..."
 msgstr ""
 
 #: ../Debomatic/pbuilder.py:91 ../Debomatic/pbuilder.py:93
+#: Debomatic/pbuilder.py:95
 #, python-format
 msgid "%(builder)s %(cmd)s failed"
 msgstr ""
 
-#: ../Debomatic/build.py:50
+#: ../Debomatic/build.py:50 Debomatic/build.py:50
 #, python-format
 msgid "Distribution %s is disabled"
 msgstr ""

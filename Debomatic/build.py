@@ -85,7 +85,7 @@ def parse_distribution_options(packagedir, configdir, package):
     try:
         fd = os.open(os.path.join(packagedir, package), os.O_RDONLY)
     except:
-        print 'Unable to open %s' % os.path.join(packagedir, package)
+        print _('Unable to open %s') % os.path.join(packagedir, package)
         packages.del_package(package)
         sys.exit(-1)
     try:
