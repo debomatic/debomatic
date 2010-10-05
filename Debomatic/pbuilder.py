@@ -86,8 +86,8 @@ def prepare_pbuilder(cmd, directory, configdir, distopts):
         os.mkdir(os.path.join(directory, 'logs'))
     base = '--basepath' if Options.get('default', 'builder') == 'cowbuilder' else '--basetgz'
     if (os.system('%(builder)s --%(cmd)s %(basetype)s %(directory)s/%(distribution)s \
-                  --override-config --configfile %(cfg)s --buildplace %(directory)s/build \
-                  --aptcache "%(directory)s/aptcache" --logfile %(directory)s/logs/%(cmd)s.%(now)s >/dev/null 2>&1' \
+                  --override-config --buildplace %(directory)s/build --aptcache "%(directory)s/aptcache" \
+                  --logfile %(directory)s/logs/%(cmd)s.%(now)s --configfile %(cfg)s >/dev/null 2>&1' \
                   % {'builder': Options.get('default', 'builder'), 'cmd': cmd, 'directory': directory, 'basetype': base, \
                      'distribution': distopts['distribution'], 'cfg': os.path.join(configdir, distopts['distribution']), \
                      'now': strftime('%Y%m%d_%H%M')})):
