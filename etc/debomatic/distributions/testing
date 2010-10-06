@@ -1,5 +1,5 @@
 DISTRIBUTION=squeeze
 MIRRORSITE=ftp://ftp.debian.org/debian
 COMPONENTS="main contrib non-free"
-DEBOOTSTRAPOPTS='--variant=buildd'
 DEBOOTSTRAP=debootstrap
+DEBOOTSTRAPOPTS=('--variant=buildd' '--keyring' '/usr/share/keyrings/debian-archive-keyring.gpg')

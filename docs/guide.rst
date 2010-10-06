@@ -44,6 +44,7 @@ To enable additional features, you may want to install these packages:
 * python-pyinotify (>= 0.8.6)
 * gnupg
 * lintian
+* debian-archive-keyring and/or ubuntu-keyring
 
 An Internet connection is also required, broadband access is recommended because
 debootstrap will fetch several packages from the Internet to set up chroots.
