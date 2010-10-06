@@ -79,7 +79,9 @@ def process_rebuild(cmd, packagedir):
             cwd = os.getcwd()
             os.chdir(pdir)
             fd = os.open(os.path.join(packagedir, p), os.O_WRONLY | os.O_CREAT | os.O_TRUNC)
-            changes = call(['dpkg-genchanges', '-S'], stdout=fd, stderr=PIPE)
+            changes = call(['dpkg-genchanges', '-S', \
+                           '-Ddistribution=%s' % package[2]], \
+                           stdout=fd, stderr=PIPE)
             os.close(fd)
             os.chdir(cwd)
             rmtree(pdir)
