@@ -29,7 +29,7 @@ def build_process():
     configdir = Options.get('default', 'configdir')
     try:
         blfile = Options.get('default', 'distblacklist')
-    except NoOptionError:
+    except:
         blfile = None
     distblacklist = []
     if blfile and os.path.exists(blfile):
