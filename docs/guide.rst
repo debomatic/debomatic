@@ -7,7 +7,7 @@ Automatic build machine for Debian source packages
 --------------------------------------------------
 
 :Author: Luca Falavigna <dktrkranz@debian.org>
-:Date: January 08, 2010
+:Date: October 06, 2010
 :Homepage: http://launchpad.net/debomatic
 
 .. contents::
@@ -121,6 +121,27 @@ people only. To enable GPG support, you need to set options in "gpg" section in
 main configuration file. Only packages signed with keys present in keyring
 pointed by the correspondent option will be processed, unknown packages will be
 deleted automatically.
+
+Commands support
+----------------
+
+Deb-o-Matic can parse commands file to perform actions on queued builds, or to
+schedule new ones. It actually implements rm and rebuild, the former is used
+to remove files in packagedir, while the latter is used to instruct Deb-o-Matic
+to fetch packages from the chosen mirror and rebuild them using current chroot.
+
+To remove a file, rm must be followed by a word, with or without wildcards,
+Deb-o-Matic will try to remove files matching the pattern. Example follows:
+
+* rm unwantedfile
+
+To schedule a rebuild, rebuild must be followed by package name, an underscore,
+package version, a space, and target distribution. Example follows:
+
+* rebuild package_version target
+
+It is possible to include multiple commands into a single file, they must be
+separated by a newline.
 
 How to prepare source packages
 ------------------------------

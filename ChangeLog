@@ -1,8 +1,11 @@
 0.9
 * Mailer support
+* Package rebuild support
 * Distribution blacklist support
 * Module blacklist support
 * Improved support for 3.0 package format
+* Improved locking mechanism
+* Several bugfixes
 
 0.8 "daking" (2010-02-04)
 * Cowbuilder support

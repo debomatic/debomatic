@@ -44,7 +44,10 @@ def check_changes_signature(package):
             data = os.read(fd, os.fstat(fd).st_size)
             os.close(fd)
             fd = os.open(package, os.O_WRONLY | os.O_TRUNC)
-            os.write(fd, findall('Hash: \S+\n\n(.*)\n\n\-\-\-\-\-BEGIN PGP SIGNATURE\-\-\-\-\-', data, DOTALL)[0])
+            try:
+                os.write(fd, findall('Hash: \S+\n\n(.*)\n\n\-\-\-\-\-BEGIN PGP SIGNATURE\-\-\-\-\-', data, DOTALL)[0])
+            except IndexError:
+                raise RuntimeError(_('No valid signatures found'))
             os.close(fd)
             if not package in acceptedqueue:
                 acceptedqueue.append(package)
@@ -61,6 +64,9 @@ def check_commands_signature(commands):
         data = os.read(fd, os.fstat(fd).st_size)
         os.close(fd)
         fd = os.open(commands, os.O_WRONLY | os.O_TRUNC)
-        os.write(fd, findall('Hash: \S+\n\n(.*)\n\n\-\-\-\-\-BEGIN PGP SIGNATURE\-\-\-\-\-', data, DOTALL)[0])
+        try:
+            os.write(fd, findall('Hash: \S+\n\n(.*)\n+\-\-\-\-\-BEGIN PGP SIGNATURE\-\-\-\-\-', data, DOTALL)[0])
+        except IndexError:
+            raise RuntimeError(_('No valid signatures found'))
         os.close(fd)
 
