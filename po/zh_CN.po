@@ -7,93 +7,120 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-01-03 23:13+0100\n"
+"POT-Creation-Date: 2010-10-06 11:53+0200\n"
 "PO-Revision-Date: 2009-12-06 06:18+0000\n"
 "Last-Translator: desk <Unknown>\n"
 "Language-Team: Chinese (Simplified) <zh_CN@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-08-27 03:35+0000\n"
+"X-Launchpad-Export-Date: 2010-10-23 04:46+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: ../Debomatic/commands.py:32 ../Debomatic/packages.py:33
+#: ../Debomatic/packages.py:34 Debomatic/commands.py:32
+#: Debomatic/packages.py:34 Debomatic/commands.py:92 Debomatic/packages.py:33
 #, python-format
 msgid "Unable to access %s directory"
 msgstr "无法进入 %s 目录"
 
-#: ../Debomatic/gpg.py:29 ../Debomatic/gpg.py:47
+#: ../Debomatic/gpg.py:29 ../Debomatic/gpg.py:47 ../Debomatic/gpg.py:39
+#: ../Debomatic/gpg.py:57 Debomatic/gpg.py:39 Debomatic/gpg.py:57
+#: Debomatic/gpg.py:38 Debomatic/gpg.py:59
 msgid "Keyring not found"
 msgstr "未找到密钥环"
 
-#: ../Debomatic/gpg.py:34 ../Debomatic/gpg.py:51
+#: ../Debomatic/gpg.py:34 ../Debomatic/gpg.py:51 ../Debomatic/gpg.py:43
+#: ../Debomatic/gpg.py:60 Debomatic/gpg.py:43 Debomatic/gpg.py:60
+#: Debomatic/gpg.py:42 Debomatic/gpg.py:50 Debomatic/gpg.py:62
+#: Debomatic/gpg.py:70
 msgid "No valid signatures found"
 msgstr "未找到有效的签名"
 
 #: ../Debomatic/packages.py:53 ../Debomatic/build.py:41
-#: ../Debomatic/build.py:87
+#: ../Debomatic/build.py:87 ../Debomatic/build.py:56 ../Debomatic/build.py:102
+#: ../Debomatic/packages.py:54 Debomatic/build.py:56 Debomatic/build.py:88
+#: Debomatic/build.py:102 Debomatic/packages.py:54 Debomatic/commands.py:45
+#: Debomatic/build.py:50 Debomatic/build.py:82 Debomatic/build.py:96
+#: Debomatic/packages.py:53
 #, python-format
 msgid "Unable to open %s"
 msgstr "无法打开 %s"
 
-#: ../Debomatic/build.py:48 ../Debomatic/build.py:80
+#: ../Debomatic/build.py:48 ../Debomatic/build.py:80 ../Debomatic/build.py:63
+#: ../Debomatic/build.py:95 Debomatic/build.py:63 Debomatic/build.py:95
+#: Debomatic/build.py:57 Debomatic/build.py:89
 #, python-format
 msgid "Bad .changes file: %s"
 msgstr ".changes文件有错: %s"
 
-#: ../Debomatic/build.py:93
+#: ../Debomatic/build.py:93 ../Debomatic/build.py:108 Debomatic/build.py:108
+#: Debomatic/build.py:102
 #, python-format
 msgid "Please set DISTRIBUTION in %s"
 msgstr "请在 %s 建立 DISTRIBUTION"
 
-#: ../Debomatic/build.py:99
+#: ../Debomatic/build.py:99 ../Debomatic/build.py:114 Debomatic/build.py:114
+#: Debomatic/build.py:108
 #, python-format
 msgid "Please set MIRRORSITE in %s"
 msgstr "请在 %s 建立 MIRRORSITE"
 
-#: ../Debomatic/build.py:105
+#: ../Debomatic/build.py:105 ../Debomatic/build.py:120 Debomatic/build.py:120
+#: Debomatic/build.py:114
 #, python-format
 msgid "Please set COMPONENTS in %s"
 msgstr "请在 %s 建立 COMPONENTS"
 
-#: ../Debomatic/build.py:111
+#: ../Debomatic/build.py:111 ../Debomatic/build.py:126 Debomatic/build.py:126
+#: Debomatic/build.py:120
 #, python-format
 msgid "Please set DEBOOTSTRAP in %s"
 msgstr "请在 %s 建立 DEBOOTSTRAP"
 
 #: ../Debomatic/pbuilder.py:47 ../Debomatic/pbuilder.py:65
 #: ../Debomatic/pbuilder.py:48 ../Debomatic/pbuilder.py:66
+#: ../Debomatic/pbuilder.py:68 Debomatic/pbuilder.py:51
+#: Debomatic/pbuilder.py:71 Debomatic/pbuilder.py:50 Debomatic/pbuilder.py:70
 #, python-format
 msgid "Unable to fetch %(mirror)s/dists/%(dist)s/Release.gpg"
 msgstr "无法获取 %(mirror)s/dists/%(dist)s/Release.gpg"
 
-#: ../Debomatic/debomatic.py:37
+#: ../Debomatic/debomatic.py:37 Debomatic/debomatic.py:37
+#: Debomatic/debomatic.py:33
 msgid "You must run deb-o-matic as root"
 msgstr "你要以超级用户身份运行deb-o-matic"
 
 #: ../Debomatic/debomatic.py:58 ../Debomatic/debomatic.py:68
+#: Debomatic/debomatic.py:58 Debomatic/debomatic.py:68
+#: Debomatic/debomatic.py:54 Debomatic/debomatic.py:64
 msgid "Unable to enter daemon mode"
 msgstr "无法进入daemon模式"
 
-#: ../Debomatic/debomatic.py:81
+#: ../Debomatic/debomatic.py:81 Debomatic/debomatic.py:81
+#: Debomatic/debomatic.py:77
 msgid "Another instance is running. Aborting"
 msgstr "另一个实例正在运行。终止。"
 
-#: ../Debomatic/debomatic.py:90
+#: ../Debomatic/debomatic.py:90 Debomatic/debomatic.py:90
+#: Debomatic/debomatic.py:86
 msgid "Please specify a configuration file"
 msgstr "请指定一个配置文件"
 
-#: ../Debomatic/debomatic.py:93
+#: ../Debomatic/debomatic.py:93 Debomatic/debomatic.py:93
+#: Debomatic/debomatic.py:89
 #, python-format
 msgid "Configuration file %s does not exist"
 msgstr "配置文件 %s 不存在"
 
-#: ../Debomatic/debomatic.py:98
+#: ../Debomatic/debomatic.py:98 Debomatic/debomatic.py:98
+#: Debomatic/debomatic.py:94
 #, python-format
 msgid "Please set \"%(opt)s\" in %(conffile)s"
 msgstr "请设置 %(conffile)s 中的 \"%(opt)s\"。"
 
-#: ../Debomatic/debomatic.py:135
+#: ../Debomatic/debomatic.py:135 Debomatic/debomatic.py:135
+#: Debomatic/debomatic.py:134
 msgid ""
 "\n"
 "Waiting for threads to finish, it could take a while..."
@@ -101,7 +128,13 @@ msgstr ""
 "\n"
 "正在等待线程完成，请稍等……"
 
-#: ../Debomatic/pbuilder.py:91
+#: ../Debomatic/pbuilder.py:91 ../Debomatic/pbuilder.py:93
+#: Debomatic/pbuilder.py:95 Debomatic/pbuilder.py:94
 #, python-format
 msgid "%(builder)s %(cmd)s failed"
+msgstr ""
+
+#: ../Debomatic/build.py:50 Debomatic/build.py:50 Debomatic/build.py:44
+#, python-format
+msgid "Distribution %s is disabled"
 msgstr ""
