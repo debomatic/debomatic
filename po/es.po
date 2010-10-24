@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-10-06 11:53+0200\n"
-"PO-Revision-Date: 2009-12-05 16:24+0000\n"
+"PO-Revision-Date: 2010-10-23 11:31+0000\n"
 "Last-Translator: DiegoJ <diegojromerolopez@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-10-23 04:46+0000\n"
+"X-Launchpad-Export-Date: 2010-10-24 04:52+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: ../Debomatic/commands.py:32 ../Debomatic/packages.py:33
@@ -132,9 +132,9 @@ msgstr ""
 #: Debomatic/pbuilder.py:95 Debomatic/pbuilder.py:94
 #, python-format
 msgid "%(builder)s %(cmd)s failed"
-msgstr ""
+msgstr "%(builder)s %(cmd)s ha fallado"
 
 #: ../Debomatic/build.py:50 Debomatic/build.py:50 Debomatic/build.py:44
 #, python-format
 msgid "Distribution %s is disabled"
-msgstr ""
+msgstr "La distribución %s está desactivada"
