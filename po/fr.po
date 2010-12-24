@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-10-06 11:53+0200\n"
-"PO-Revision-Date: 2010-09-17 13:40+0000\n"
-"Last-Translator: Ptitphysik <amalpeyre@gmail.com>\n"
+"PO-Revision-Date: 2010-12-23 14:20+0000\n"
+"Last-Translator: Thibault Févry <Unknown>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-12-16 04:31+0000\n"
+"X-Launchpad-Export-Date: 2010-12-24 04:38+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: ../Debomatic/commands.py:32 ../Debomatic/packages.py:33
@@ -137,4 +137,20 @@ msgstr "%(builder)s %(cmd)s a échoué"
 #: ../Debomatic/build.py:50 Debomatic/build.py:50 Debomatic/build.py:44
 #, python-format
 msgid "Distribution %s is disabled"
-msgstr ""
+msgstr "La distribution %s est désactivée"
+
+#, python-format
+#~ msgid "Unable to access directory %s"
+#~ msgstr "Incapable d'accéder au dossier %s"
+
+#, python-format
+#~ msgid "pbuilder %s failed"
+#~ msgstr "pbuilder %s a échoué"
+
+#, python-format
+#~ msgid "Unable to fetch %s/dists/%s/Release.gpg"
+#~ msgstr "Incapable de télécharger %s/dists/%s/Release.gpg"
+
+#, python-format
+#~ msgid "Please set \"%s\" in %s"
+#~ msgstr "Prière de renseigner \"%s\" dans %s"
