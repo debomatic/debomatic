@@ -56,7 +56,6 @@ class DebomaticModule_Mailer:
     def post_build(self, args):
         if args['uploader']:
             template = None
-            changes_file = None
             uploader = args['uploader']
             resultdir = os.path.join(args['directory'], 'pool', args['package'])
             for filename in os.listdir(resultdir):
@@ -68,7 +67,6 @@ class DebomaticModule_Mailer:
             try:
                 buildlog_path = '%(directory)s/pool/%(package)s/%(package)s.buildlog' % args
                 buildlog_exc = Popen(['tail', '--lines=20', buildlog_path], stdout=PIPE).communicate()[0]
-                fp = open(template, 'r')
                 msg = self.write_reply(template, buildlog_exc, args)
                 self.smtp = SMTP(self.smtphost, int(self.smtpport))
                 if int(self.authrequired):

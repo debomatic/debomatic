@@ -95,7 +95,6 @@ def parse_default_options(conffile):
             sys.exit(-1)
 
 try:
-    import os
     import pyinotify
 
     class PE(pyinotify.ProcessEvent):

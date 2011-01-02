@@ -22,7 +22,6 @@
 # Stores litian output on top of the built package in the pool directory.
 
 import os
-from Debomatic import Options
 
 class DebomaticModule_Lintian:
 

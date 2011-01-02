@@ -20,7 +20,6 @@
 
 import os
 import sys
-import threading
 from re import findall
 from Debomatic import gpg, locks, packages, pbuilder, Options, packagequeue, modules
 
