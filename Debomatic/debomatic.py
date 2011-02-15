@@ -108,7 +108,7 @@ try:
         if Options.getint('default', 'inotify'):
             wm = pyinotify.WatchManager()
             notifier = pyinotify.Notifier(wm, PE(), timeout=1000)
-            wm.add_watch(Options.get('default', 'packagedir'), pyinotify.IN_CLOSE_WRITE, rec=True)
+            wm.add_watch(Options.get('default', 'packagedir'), pyinotify.IN_CLOSE_WRITE)
             while exit_routine():
                 notifier.process_events()
                 if notifier.check_events():
