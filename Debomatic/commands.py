@@ -21,11 +21,10 @@ import os
 from glob import glob
 from re import findall, split
 from shutil import rmtree
-from sys import exit
 from subprocess import call, PIPE
 from urllib2 import Request, urlopen, HTTPError
 
-from Debomatic import acceptedqueue, gpg, Options, packagequeue, packages
+from Debomatic import acceptedqueue, gpg, log, Options, packagequeue, packages
 
 
 def process_rm(cmd, packagedir):
@@ -47,7 +46,7 @@ def process_rebuild(cmd, packagedir):
             with open(os.path.join(configdir, package[2]), 'r') as fd:
                 data = fd.read()
         except IOError:
-            print _('Unable to open %s') % os.path.join(configdir, package[2])
+            log.w(_('Unable to open %s') % os.path.join(configdir, package[2]))
             return
         try:
             opts['mirror'] = findall('[^#]?MIRRORSITE="?(.*[^"])"?\n', data)[0]
@@ -96,8 +95,7 @@ def process_commands():
     try:
         filelist = os.listdir(directory)
     except OSError:
-        print _('Unable to access %s directory') % directory
-        exit(-1)
+        log.e(_('Unable to access %s directory') % directory)
     for filename in filelist:
         cmdfile = os.path.join(directory, filename)
         if os.path.splitext(cmdfile)[1] == '.commands':
@@ -105,7 +103,7 @@ def process_commands():
                 gpg.check_commands_signature(cmdfile)
             except RuntimeError as error:
                 os.remove(cmdfile)
-                print error
+                log.w(error)
                 continue
             with open(cmdfile, 'r') as fd:
                 cmd = fd.read()

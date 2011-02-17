@@ -22,7 +22,7 @@ import os
 from re import findall, DOTALL
 from subprocess import Popen, PIPE
 
-from Debomatic import Options, acceptedqueue
+from Debomatic import acceptedqueue, Options
 
 
 command_sig = 'Hash: \S+\n\n(.*)\n\n\-\-\-\-\-BEGIN PGP SIGNATURE\-\-\-\-\-'

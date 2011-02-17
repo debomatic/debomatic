@@ -19,7 +19,7 @@
 
 import Queue
 
-from Debomatic import Options, buildlock, pbuilderlock
+from Debomatic import buildlock, Options, pbuilderlock
 
 
 def buildlock_acquire():

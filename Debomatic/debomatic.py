@@ -25,20 +25,18 @@ from getopt import getopt, GetoptError
 from signal import pause
 from time import sleep
 
-from Debomatic import build, commands, Options, modules, running
+from Debomatic import build, commands, log, modules, Options, running
 
 
 def main():
     conffile = None
     daemon = True
     if os.getuid():
-        print _('You must run deb-o-matic as root')
-        sys.exit(-1)
+        log.e(_('You must run deb-o-matic as root'))
     try:
         opts, args = getopt(sys.argv[1:], 'c:n', ['config=', 'nodaemon'])
     except GetoptError as error:
-        print error.msg
-        sys.exit(-1)
+        log.e(error.msg)
     for o, a in opts:
         if o in ('-c', '--config'):
             conffile = a
@@ -51,20 +49,18 @@ def main():
         try:
             pid = os.fork()
             if pid > 0:
-                sys.exit(0)
+                exit()
         except OSError:
-            print _('Unable to enter daemon mode')
-            sys.exit(-1)
+            log.e(_('Unable to enter daemon mode'))
         os.setsid()
         os.chdir('/')
         os.umask(0)
         try:
             pid = os.fork()
             if pid > 0:
-                sys.exit(0)
+                exit()
         except OSError:
-            print _('Unable to enter daemon mode')
-            sys.exit(-1)
+            log.e(_('Unable to enter daemon mode'))
         fin = open('/dev/null', 'r')
         fout = open(Options.get('default', 'logfile'), 'a+')
         ferr = open(Options.get('default', 'logfile'), 'a+', 0)
@@ -76,8 +72,7 @@ def main():
         try:
             lockf(fd, LOCK_EX | LOCK_NB)
         except IOError:
-            print _('Another instance is running. Aborting')
-            sys.exit(-1)
+            log.e(_('Another instance is running. Aborting'))
     mod_sys = modules.Module()
     mod_sys.execute_hook('on_start', {})
     launcher()
@@ -87,18 +82,15 @@ def parse_default_options(conffile):
     defaultoptions = ('builder', 'packagedir', 'configdir', 'maxbuilds',
                       'inotify', 'sleep', 'logfile')
     if not conffile:
-        print _('Please specify a configuration file')
-        sys.exit(-1)
+        log.e(_('Please specify a configuration file'))
     if not os.path.exists(conffile):
-        print _('Configuration file %s does not exist') % conffile
-        sys.exit(-1)
+        log.e(_('Configuration file %s does not exist') % conffile)
     Options.read(conffile)
     for opt in defaultoptions:
         if not Options.has_option('default', opt) or not \
                Options.get('default', opt):
-            print _('Please set "%(opt)s" in %(conffile)s') % \
-                    {'opt': opt, 'conffile': conffile}
-            sys.exit(-1)
+            log.e(_('Please set "%(opt)s" in %(conffile)s') % \
+                        {'opt': opt, 'conffile': conffile})
 
 
 try:
@@ -142,7 +134,7 @@ def launcher():
     try:
         pause()
     except KeyboardInterrupt:
-        print _('\nWaiting for threads to finish, it could take a while...')
+        log.w(_('\nWaiting for threads to finish, it could take a while...'))
         exit_routine(exiting=True)
 
 

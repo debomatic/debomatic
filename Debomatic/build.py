@@ -19,12 +19,11 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
-import sys
 from ConfigParser import NoSectionError
 from re import findall
 
-from Debomatic import (gpg, locks, packages, pbuilder,
-                       Options, packagequeue, modules)
+from Debomatic import (gpg, locks, log, modules, Options,
+                       packagequeue, packages, pbuilder)
 
 
 def build_process():
@@ -43,30 +42,26 @@ def build_process():
     if package:
         distopts = parse_distribution_options(directory, configdir, package)
         if distopts['distribution'] in distblacklist:
-            print _('Distribution %s is disabled' % distopts['distribution'])
             packages.rm_package(package)
-            sys.exit(-1)
+            log.e(_('Distribution %s is disabled' % distopts['distribution']))
         pack = os.path.join(directory, package)
         try:
             with open(pack, 'r') as fd:
                 data = fd.read()
         except IOError:
-            print _('Unable to open %s') % pack
             packages.del_package(package)
-            sys.exit(-1)
+            log.e(_('Unable to open %s') % pack)
         try:
             for entry in findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)', data):
                 packagequeue[package].append(os.path.join(directory, entry))
         except IndexError:
-            print _('Bad .changes file: %s') % pack
-            sys.exit(-1)
+            log.e(_('Bad .changes file: %s') % pack)
         packagequeue[package].append(pack)
         try:
             uploader = gpg.check_changes_signature(pack)
         except RuntimeError as error:
             packages.rm_package(package)
-            print error
-            sys.exit(-1)
+            log.e(error)
         packages.fetch_missing_files(package, packagequeue[package],
                                      directory, distopts)
         distdir = os.path.join(directory, distopts['distribution'])
@@ -74,8 +69,7 @@ def build_process():
             pbuilder.setup_pbuilder(distdir, configdir, distopts)
         except RuntimeError as error:
             packages.del_package(package)
-            print error
-            sys.exit(-1)
+            log.e(error)
         build_package(directory,
                       os.path.join(configdir, distopts['distribution']),
                       distdir, package, uploader, distopts)
@@ -90,37 +84,32 @@ def parse_distribution_options(packagedir, configdir, package):
         with open(os.path.join(packagedir, package), 'r') as fd:
             data = fd.read()
     except IOError:
-        print _('Unable to open %s') % os.path.join(packagedir, package)
         packages.del_package(package)
-        sys.exit(-1)
+        log.e(_('Unable to open %s') % os.path.join(packagedir, package))
     try:
         distro = findall('Distribution:\s+(\w+)', data)[0]
         options['distribution'] = distro.lower()
     except IndexError:
-        print _('Bad .changes file: %s') % os.path.join(packagedir, package)
         packages.del_package(package)
-        sys.exit(-1)
+        log.e(_('Bad .changes file: %s') % os.path.join(packagedir, package))
     try:
         with open(os.path.join(configdir, options['distribution'])) as fd:
             conf = fd.read()
     except IOError:
-        print _('Unable to open %s') % \
-                os.path.join(configdir, options['distribution'])
         packages.del_package(package)
-        sys.exit(-1)
+        log.e(_('Unable to open %s') % \
+                os.path.join(configdir, options['distribution']))
     if not findall('[^#]?DISTRIBUTION="?(.*[^"])"?\n', conf):
-        print _('Please set DISTRIBUTION in %s') % \
-                os.path.join(configdir, options['distribution'])
         packages.del_package(package)
-        sys.exit(-1)
+        log.e(_('Please set DISTRIBUTION in %s') % \
+                os.path.join(configdir, options['distribution']))
     for elm in fld.keys():
         try:
             options[elm] = findall(fld[elm][0], conf)[0]
         except IndexError:
-            print _('Please set %s in %s') % (fld[elm][0],
-                    os.path.join(configdir, options['distribution']))
             packages.del_package(package)
-            sys.exit(-1)
+            log.e(_('Please set %s in %s') % (fld[elm][0],
+                    os.path.join(configdir, options['distribution'])))
     return options
 
 
@@ -130,7 +119,7 @@ def build_package(directory, configfile, distdir, package, uploader, distopts):
         locks.buildlock_acquire()
     except RuntimeError:
         packages.del_package(package)
-        sys.exit(-1)
+        exit()
     dscfile = None
     if not os.path.exists(os.path.join(distdir, 'pool')):
         os.mkdir(os.path.join(distdir, 'pool'))

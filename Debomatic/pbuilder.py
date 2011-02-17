@@ -22,7 +22,7 @@ from hashlib import sha256
 from time import strftime
 from urllib2 import urlopen, HTTPError
 
-from Debomatic import locks, Options
+from Debomatic import locks, Options, log
 
 
 def setup_pbuilder(directory, configdir, distopts):
@@ -67,7 +67,7 @@ def needs_update(directory, mirror, distribution):
     try:
         remote = urlopen(uri).read()
     except HTTPError:
-        print _('Unable to fetch %s') % uri
+        log.w(_('Unable to fetch %s') % uri)
         raise RuntimeError('update')
     remote_sha = sha256()
     gpgfile_sha = sha256()

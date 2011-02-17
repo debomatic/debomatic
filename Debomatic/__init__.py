@@ -19,6 +19,17 @@
 
 import gettext
 from ConfigParser import ConfigParser
+from sys import stderr
+
+
+class Output:
+
+    def w(self, msg):
+        stderr.write(msg + '\n')
+
+    def e(self, msg):
+        self.w(msg)
+        exit()
 
 
 gettext.install("debomatic")
@@ -28,3 +39,4 @@ packagequeue = {}
 buildlock = None
 pbuilderlock = {}
 running = True
+log = Output()

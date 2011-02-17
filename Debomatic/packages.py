@@ -19,11 +19,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
-import sys
 from re import findall, split
 from urllib2 import Request, urlopen, HTTPError
 
-from Debomatic import acceptedqueue, packagequeue
+from Debomatic import acceptedqueue, log, packagequeue
 
 
 def select_package(directory):
@@ -32,8 +31,7 @@ def select_package(directory):
     try:
         filelist = os.listdir(directory)
     except OSError:
-        print _('Unable to access %s directory') % directory
-        sys.exit(-1)
+        log.e(_('Unable to access %s directory') % directory)
     for filename in filelist:
         if os.path.splitext(filename)[1] == '.changes':
             try:
