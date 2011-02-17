@@ -19,7 +19,10 @@
 
 import sys
 import os
+from ConfigParser import NoSectionError
+
 from Debomatic import Options
+
 
 class Module:
 
@@ -27,7 +30,7 @@ class Module:
     def __init__(self):
         # Default to having modules enabled
         self.use_modules = True
-        self.modules_list = list()
+        self.modules_list = []
 
         # Check if the modules system is turned on
         if not Options.has_option('modules', 'modules'):
@@ -37,20 +40,21 @@ class Module:
         # Retrieve the path of the blacklist file
         try:
             self.blacklist = Options.get('modules', 'blacklist')
-        except:
+        except NoSectionError:
             self.blacklist = None
 
         # Add the modules directory to the python path
         self.mod_path = Options.get('modules', 'modulespath')
         sys.path.append(self.mod_path)
 
-        # Get a list of modules and remove any extra cruft that gets in the list
+        # Get a list of modules and remove any extra cruft that gets in
         try:
             self.modules_list = os.listdir(self.mod_path)
         except OSError:
             self.use_modules = False
 
-        # Check the user isnt on crack and have actually specified a directory with modules in it
+        # Check the user isnt on crack and have actually specified
+        # a directory with modules in it
         if len(self.modules_list) == 0:
             self.use_modules = False
 
@@ -63,23 +67,23 @@ class Module:
                 for i in module_split:
                     module += i
                 try:
-                    exec "from %s import DebomaticModule_%s" % (module, module)
-                    exec "self.instances['%s'] = DebomaticModule_%s()" % (module, module)
-                except:
-                    pass    
+                    exec 'from %s import DebomaticModule_%s' % \
+                         (module, module)
+                    exec 'self.instances["%s"] = DebomaticModule_%s()' % \
+                         (module, module)
+                except NameError:
+                    pass
 
     # Executes a hook (and all the plugin functions that implement it)
     def execute_hook(self, hook, args):
         if self.use_modules:
             blacklisted_mods = []
             if self.blacklist:
-                fd = os.open(self.blacklist, os.O_RDONLY)
-                data = os.read(fd, os.fstat(fd).st_size)
-                os.close(fd)
+                with open(self.blacklist, 'r') as fd:
+                    data = fd.read()
                 blacklisted_mods = data.split()
             for module in set(self.instances).difference(blacklisted_mods):
                 try:
-                    exec "self.instances['%s'].%s(args)" % (module, hook)
+                    exec 'self.instances["%s"].%s(args)' % (module, hook)
                 except AttributeError:
                     pass
-

@@ -1,6 +1,6 @@
 # Deb-o-Matic
 #
-# Copyright (C) 2007-2010 Luca Falavigna
+# Copyright (C) 2007-2011 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
 #
@@ -23,74 +23,79 @@ from re import findall, split
 from shutil import rmtree
 from sys import exit
 from subprocess import call, PIPE
-from urllib2 import Request, urlopen
+from urllib2 import Request, urlopen, HTTPError
+
 from Debomatic import acceptedqueue, gpg, Options, packagequeue, packages
+
 
 def process_rm(cmd, packagedir):
     filesets = findall('\s?rm\s+(.*)', cmd)
     for files in filesets:
         for pattern in split(' ', files):
-            for absfile in glob(os.path.join(packagedir, os.path.basename(pattern))):
+            for absfile in glob(os.path.join(packagedir,
+                                             os.path.basename(pattern))):
                 os.remove(absfile)
 
+
 def process_rebuild(cmd, packagedir):
-    opts = dict()
+    opts = {}
     packs = findall('\s?rebuild\s+(\S+)_(\S+) (\S+)', cmd)
+    configdir = Options.get('default', 'configdir')
     for package in packs:
         dscname = '%s_%s.dsc' % (package[0], package[1])
         try:
-            fd = os.open(os.path.join(Options.get('default', 'configdir'), \
-                         package[2]), os.O_RDONLY)
-        except:
-            print _('Unable to open %s') \
-                % os.path.join(Options.get('default', 'configdir'), package[2])
+            with open(os.path.join(configdir, package[2]), 'r') as fd:
+                data = fd.read()
+        except IOError:
+            print _('Unable to open %s') % os.path.join(configdir, package[2])
             return
-        data = os.read(fd, os.fstat(fd).st_size)
         try:
             opts['mirror'] = findall('[^#]?MIRRORSITE="?(.*[^"])"?\n', data)[0]
-            opts['components'] = findall('[^#]?COMPONENTS="?(.*[^"])"?\n', data)[0]
-        except:
-             return
-        os.close(fd)
+            opts['components'] = findall('[^#]?COMPONENTS="?(.*[^"])"?\n',
+                                         data)[0]
+        except IndexError:
+            return
         for component in split(' ', opts['components']):
-            request = Request('%s/pool/%s/%s/%s/%s' % (opts['mirror'], component, \
-                findall('^lib\S|^\S', package[0])[0], package[0], dscname))
+            request = Request('%s/pool/%s/%s/%s/%s' % \
+                              (opts['mirror'], component,
+                               findall('^lib\S|^\S', package[0])[0],
+                               package[0], dscname))
             try:
                 data = urlopen(request).read()
                 break
-            except:
+            except HTTPError:
                 data = None
         if data:
-            entryfd = os.open(os.path.join(packagedir, dscname), os.O_WRONLY | os.O_CREAT)
-            os.write(entryfd, data)
-            os.close(entryfd)
+            dsc = os.path.join(packagedir, dscname)
+            with open(dsc, 'w') as entryfd:
+                entryfd.write(data)
             try:
                 p = '%s_%s_source.changes' % (package[0], package[1])
                 packages.add_package(p)
-                packagequeue[p].append(os.path.join(packagedir, dscname))
+                packagequeue[p].append(dsc)
             except RuntimeError:
                 continue
-            packages.fetch_missing_files(p, [os.path.join(packagedir, dscname)], packagedir, opts)
+            packages.fetch_missing_files(p, [dsc], packagedir, opts)
             packages.del_package(p)
             acceptedqueue.append(os.path.join(packagedir, p))
-            pdir = os.path.join(packagedir, '.%s_%s' % (package[0], package[1]))
-            call(['dpkg-source', '-x', os.path.join(packagedir, dscname), pdir], \
-                  stdout=PIPE, stderr=PIPE)
+            pdir = os.path.join(packagedir, '.%s_%s' % (package[0],
+                                                        package[1]))
+            call(['dpkg-source', '-x', dsc, pdir], stdout=PIPE, stderr=PIPE)
             cwd = os.getcwd()
             os.chdir(pdir)
-            fd = os.open(os.path.join(packagedir, p), os.O_WRONLY | os.O_CREAT | os.O_TRUNC)
-            changes = call(['dpkg-genchanges', '-S', \
-                           '-Ddistribution=%s' % package[2]], \
-                           stdout=fd, stderr=PIPE)
-            os.close(fd)
+            with open(os.path.join(packagedir, p), 'w') as fd:
+                changes = call(['dpkg-genchanges', '-S',
+                               '-Ddistribution=%s' % package[2]],
+                               stdout=fd, stderr=PIPE)
             os.chdir(cwd)
             rmtree(pdir)
+
 
 def process_commands():
     directory = Options.get('default', 'packagedir')
     try:
         filelist = os.listdir(directory)
-    except:
+    except OSError:
         print _('Unable to access %s directory') % directory
         exit(-1)
     for filename in filelist:
@@ -98,14 +103,12 @@ def process_commands():
         if os.path.splitext(cmdfile)[1] == '.commands':
             try:
                 gpg.check_commands_signature(cmdfile)
-            except RuntimeError, error:
+            except RuntimeError as error:
                 os.remove(cmdfile)
                 print error
                 continue
-            fd = os.open(cmdfile, os.O_RDONLY)
-            cmd = os.read(fd, os.fstat(fd).st_size)
-            os.close(fd)
+            with open(cmdfile, 'r') as fd:
+                cmd = fd.read()
             os.remove(cmdfile)
             process_rm(cmd, directory)
             process_rebuild(cmd, directory)
-

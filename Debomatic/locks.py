@@ -1,6 +1,6 @@
 # Deb-o-Matic
 #
-# Copyright (C) 2007-2010 Luca Falavigna
+# Copyright (C) 2007-2011 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
 #
@@ -18,7 +18,9 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import Queue
+
 from Debomatic import Options, buildlock, pbuilderlock
+
 
 def buildlock_acquire():
     global buildlock
@@ -29,6 +31,7 @@ def buildlock_acquire():
     except Queue.Full:
         raise RuntimeError
 
+
 def buildlock_release():
     global buildlock
     if buildlock:
@@ -37,18 +40,19 @@ def buildlock_release():
         except Queue.Empty:
             pass
 
+
 def pbuilderlock_acquire(distribution):
-    if not pbuilderlock.has_key(distribution):
+    if not distribution in pbuilderlock:
         pbuilderlock[distribution] = Queue.Queue(1)
     try:
         pbuilderlock[distribution].put_nowait(None)
     except Queue.Full:
         raise RuntimeError
 
+
 def pbuilderlock_release(distribution):
-    if pbuilderlock.has_key(distribution):
+    if distribution in pbuilderlock:
         try:
             pbuilderlock[distribution].get_nowait()
         except Queue.Empty:
             pass
-

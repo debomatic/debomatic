@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # Deb-o-Matic
 #
-# Copyright (C) 2007-2010 Luca Falavigna
+# Copyright (C) 2007-2011 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
 #
@@ -24,41 +24,47 @@ from distutils.command.install_data import install_data
 from glob import glob
 from subprocess import call
 
+
 for po in glob(os.path.join('po', '*.po')):
-    mo = os.path.join('locale', os.path.basename(po[:-3]), 'LC_MESSAGES/debomatic.mo')
+    mo = os.path.join('locale', os.path.splitext(os.path.basename(po))[0],
+                      'LC_MESSAGES/debomatic.mo')
     if not os.path.isdir(os.path.dirname(mo)):
         os.makedirs(os.path.dirname(mo))
     call(['msgfmt', '-o', mo, po])
 
+
 class InstallGuide(install_data):
+
     def run(self):
         os.system('rst2html docs/guide.rst build/guide.html')
         self.data_files.extend([('share/doc/debomatic', ['build/guide.html'])])
         install_data.run(self)
 
+
 def install_files(rootdir, prefix=''):
-    filelist = list()
+    filelist = []
     for root, subFolders, files in os.walk(rootdir):
-        dirlist = list()
+        dirlist = []
         for file in files:
             dirlist.append(os.path.join(root, file))
-        if len(dirlist):
-            filelist.append((os.path.join(prefix, root),dirlist))
+        if dirlist:
+            filelist.append((os.path.join(prefix, root), dirlist))
     return filelist
-   
+
+
 setup(name='debomatic',
-      version='0.9',
-      author='Luca Falavigna',
-      author_email='dktrkranz@debian.org',
-      description='Automatic build machine for Debian source packages',
+      version = '0.9',
+      author = 'Luca Falavigna',
+      author_email = 'dktrkranz@debian.org',
+      description = 'Automatic build machine for Debian source packages',
       url = 'https://launchpad.net/debomatic/',
-      license='GNU GPL',
-      packages=['Debomatic'],
-      scripts=['debomatic'],
-      data_files=[('share/man/man1', ['docs/debomatic.1']),
-                  ('share/man/man5', ['docs/debomatic.conf.5']),
-                  ('share/doc/debomatic', ['docs/ExampleModule.py'])] + \
-      install_files('etc', '/') + \
-      install_files('modules', 'share/debomatic') + \
-      install_files('locale', 'share'),
-      cmdclass={'install_data': InstallGuide})
+      license = 'GNU GPL',
+      packages = ['Debomatic'],
+      scripts = ['debomatic'],
+      data_files = [('share/man/man1', ['docs/debomatic.1']),
+                   ('share/man/man5', ['docs/debomatic.conf.5']),
+                   ('share/doc/debomatic', ['docs/ExampleModule.py'])] +
+                   install_files('etc', '/') +
+                   install_files('modules', 'share/debomatic') +
+                   install_files('locale', 'share'),
+      cmdclass = {'install_data': InstallGuide})

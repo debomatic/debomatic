@@ -1,7 +1,7 @@
 # Deb-o-Matic - Lintian module
 #
 # Copyright (C) 2008-2009 David Futcher
-# Copyright (C) 2008-2010 Luca Falavigna
+# Copyright (C) 2008-2011 Luca Falavigna
 #
 # Authors: David Futcher <bobbo@ubuntu.com>
 #          Luca Falavigna <dktrkranz@debian.org>
@@ -21,28 +21,29 @@
 #
 # Prints build start and finish times into a file in the build directory
 
-import os
-import stat
 from datetime import datetime
 from time import gmtime, mktime, strftime, time
+
 
 class DebomaticModule_DateStamp:
 
     def __init__(self):
-        self.date_file = ""
-        self.begin = ""
-        self.end = ""
-        
-    def pre_build(self, args):    
-        self.date_file = "%(directory)s/pool/%(package)s/%(package)s.datestamp" % args
-        fd = os.open(self.date_file, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
-	self.begin = gmtime(time())
-        os.write(fd, 'Build started at %s\n' % datetime.now().strftime("%A, %d %B %Y %H:%M"))
-        os.close(fd)
-                
-    def post_build(self, args):    
-        fd = os.open(self.date_file, os.O_WRONLY | os.O_APPEND)
-        self.end = gmtime(time())
-        os.write(fd, 'Build finished at %s\n' % datetime.now().strftime("%A, %d %B %Y %H:%M"))
-        os.write(fd, 'Elapsed time: %s\n' % strftime("%H:%M:%S", gmtime(mktime(self.end) - mktime(self.begin))))
-        os.close(fd)
+        self.ts = ''
+        self.begin = ''
+        self.end = ''
+
+    def pre_build(self, args):
+        self.ts = '%(directory)s/pool/%(package)s/%(package)s.datestamp' % args
+        with open(self.ts, 'w') as fd:
+            self.begin = gmtime(time())
+            now = datetime.now().strftime('%A, %d %B %Y %H:%M')
+            fd.write('Build started at %s\n' % now)
+
+    def post_build(self, args):
+        with open(self.ts, 'a') as fd:
+            self.end = gmtime(time())
+            now = datetime.now().strftime('%A, %d %B %Y %H:%M')
+            elapsed = strftime('%H:%M:%S',
+                               gmtime(mktime(self.end) - mktime(self.begin)))
+            fd.write('Build finished at %s\n' % now)
+            fd.write('Elapsed time: %s' % elapsed)

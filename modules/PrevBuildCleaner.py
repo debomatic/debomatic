@@ -21,23 +21,14 @@
 
 import os
 
+
 class DebomaticModule_PrevBuildCleaner:
 
     def pre_build(self, args):
-        pkg_build_path = "%(directory)s/pool/%(package)s" % args
-        exts_to_clean = ['.deb',
-                        '.ddeb',
-                        '.gz',
-                        '.bz2',
-                        '.lzma',
-                        '.xz',
-                        '.dsc',
-                        '.contents',
-                        '.lintian',
-                        '.changes']
-
+        exts_to_clean = ['.deb', '.ddeb', '.gz', '.bz2', '.lzma', '.xz',
+                        '.dsc', '.contents', '.lintian', '.changes']
+        pkg_build_path = '%(directory)s/pool/%(package)s' % args
         for filename in os.listdir(pkg_build_path):
             name, ext = os.path.splitext(filename)
             if ext in exts_to_clean:
                 os.remove(os.path.join(pkg_build_path, filename))
-

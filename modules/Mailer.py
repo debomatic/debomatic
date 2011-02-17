@@ -23,7 +23,9 @@ import os
 from subprocess import Popen, PIPE
 from smtplib import SMTP
 from email.parser import Parser
+
 from Debomatic import Options
+
 
 class DebomaticModule_Mailer:
 
@@ -39,12 +41,11 @@ class DebomaticModule_Mailer:
     )
 
     def write_reply(self, template, buildlog, args):
-        fp = open(template, 'r')
-        substdict = dict(args)
-        substdict['buildlog'] = buildlog
-        substdict['fromaddr'] = self.fromaddr
-        reply = fp.read() % substdict
-        fp.close()
+        with open(template, 'r') as fd:
+            substdict = dict(args)
+            substdict['buildlog'] = buildlog
+            substdict['fromaddr'] = self.fromaddr
+            reply = fd.read() % substdict
         msg = Parser().parsestr(reply)
         return msg.as_string()
 
@@ -54,24 +55,26 @@ class DebomaticModule_Mailer:
                 setattr(self, opt, Options.get('mailer', opt))
 
     def post_build(self, args):
-        if args['uploader']:
-            template = None
-            uploader = args['uploader']
-            resultdir = os.path.join(args['directory'], 'pool', args['package'])
-            for filename in os.listdir(resultdir):
-                if filename.endswith('.changes'):
-                    template = self.build_success_template
-                    break
-            if not template:
-                template = self.build_failure_template
-            try:
-                buildlog_path = '%(directory)s/pool/%(package)s/%(package)s.buildlog' % args
-                buildlog_exc = Popen(['tail', '--lines=20', buildlog_path], stdout=PIPE).communicate()[0]
-                msg = self.write_reply(template, buildlog_exc, args)
-                self.smtp = SMTP(self.smtphost, int(self.smtpport))
-                if int(self.authrequired):
-                    self.smtp.login(self.smtpuser, self.smtppass)
-                self.smtp.sendmail(self.fromaddr, uploader, msg)
-                self.smtp.quit()
-            except Exception, e:
-                raise e
+        if not args['uploader']:
+            return
+        template = None
+        uploader = args['uploader']
+        resultdir = os.path.join(args['directory'], 'pool', args['package'])
+        for filename in os.listdir(resultdir):
+            if filename.endswith('.changes'):
+                template = self.build_success_template
+                break
+        if not template:
+            template = self.build_failure_template
+        try:
+            bp = '%(directory)s/pool/%(package)s/%(package)s.buildlog' % args
+            buildlog_exc = Popen(['tail', '--lines=20', bp],
+                                 stdout=PIPE).communicate()[0]
+            msg = self.write_reply(template, buildlog_exc, args)
+            self.smtp = SMTP(self.smtphost, int(self.smtpport))
+            if int(self.authrequired):
+                self.smtp.login(self.smtpuser, self.smtppass)
+            self.smtp.sendmail(self.fromaddr, uploader, msg)
+            self.smtp.quit()
+        except Exception as e:
+            raise e

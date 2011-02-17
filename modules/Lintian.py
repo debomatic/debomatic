@@ -1,7 +1,7 @@
 # Deb-o-Matic - Lintian module
 #
 # Copyright (C) 2008-2009 David Futcher
-# Copyright (C) 2008-2010 Luca Falavigna
+# Copyright (C) 2008-2011 Luca Falavigna
 #
 # Authors: David Futcher <bobbo@ubuntu.com>
 #          Luca Falavigna <dktrkranz@debian.org>
@@ -23,10 +23,11 @@
 
 import os
 
+
 class DebomaticModule_Lintian:
 
     def __init__(self):
-        self.lintian = "/usr/bin/lintian"
+        self.lintian = '/usr/bin/lintian'
 
     def post_build(self, args):
         changesfile = None
@@ -38,5 +39,5 @@ class DebomaticModule_Lintian:
                 break
         if changesfile:
             os.system('%s -V > %s' % (self.lintian, lintian))
-            os.system('%s --allow-root -i -I -E --pedantic %s >> %s' % (self.lintian, changesfile, lintian))
-
+            os.system(('%s --allow-root -i -I -E --pedantic %s >> %s' %
+                       (self.lintian, changesfile, lintian)))

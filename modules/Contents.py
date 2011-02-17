@@ -1,7 +1,7 @@
 # Deb-o-Matic - Contents module
 #
 # Copyright (C) 2009 Alessio Treglia
-# Copyright (C) 2010 Luca Falavigna
+# Copyright (C) 2010-2011 Luca Falavigna
 #
 # Authors: Alessio Treglia <quadrispro@ubuntu.com>
 #          Luca Falavigna <dktrkranz@debian.org>
@@ -23,6 +23,7 @@
 
 import os
 
+
 class DebomaticModule_Contents:
 
     def __init__(self):
@@ -38,4 +39,3 @@ class DebomaticModule_Contents:
                 break
         if changes_file:
             os.system('%s %s > %s' % (self.debc, changes_file, contents_file))
-

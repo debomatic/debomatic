@@ -1,6 +1,6 @@
 # Deb-o-Matic
 #
-# Copyright (C) 2007-2010 Luca Falavigna
+# Copyright (C) 2007-2011 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
 #
@@ -20,8 +20,10 @@
 import os
 from hashlib import sha256
 from time import strftime
-from urllib2 import urlopen
+from urllib2 import urlopen, HTTPError
+
 from Debomatic import locks, Options
+
 
 def setup_pbuilder(directory, configdir, distopts):
     if not os.path.exists(os.path.join(directory)):
@@ -32,24 +34,26 @@ def setup_pbuilder(directory, configdir, distopts):
         raise RuntimeError
     try:
         needs_update(directory, distopts['mirror'], distopts['distribution'])
-    except RuntimeError, result:
+    except RuntimeError as result:
         try:
             prepare_pbuilder(result.args[0], directory, configdir, distopts)
-        except RuntimeError, error:
+        except RuntimeError as error:
             locks.pbuilderlock_release(distopts['distribution'])
             raise error
         if not os.path.exists(os.path.join(directory, 'gpg')):
             os.mkdir(os.path.join(directory, 'gpg'))
         gpgfile = os.path.join(directory, 'gpg', distopts['distribution'])
-        fd = os.open(gpgfile, os.O_WRONLY | os.O_CREAT, 0664)
+        uri = '%s/dists/%s/Release.gpg' % (distopts['mirror'],
+                                           distopts['distribution'])
         try:
-            remote = urlopen('%s/dists/%s/Release.gpg' % (distopts['mirror'], distopts['distribution'])).read()
-        except:
+            remote = urlopen(uri).read()
+        except HTTPError:
             locks.pbuilderlock_release(distopts['distribution'])
-            raise RuntimeError(_('Unable to fetch %(mirror)s/dists/%(dist)s/Release.gpg') % {'mirror':distopts['mirror'], 'dist':distopts['distribution']})
-        os.write(fd, remote)
-        os.close(fd)
+            raise RuntimeError(_('Unable to fetch %s') % uri)
+        with open(gpgfile, 'w') as fd:
+            fd.write(remote)
     locks.pbuilderlock_release(distopts['distribution'])
+
 
 def needs_update(directory, mirror, distribution):
     if not os.path.exists(os.path.join(directory, 'gpg')):
@@ -57,24 +61,25 @@ def needs_update(directory, mirror, distribution):
     gpgfile = os.path.join(directory, 'gpg', distribution)
     if not os.path.exists(gpgfile):
         raise RuntimeError('create')
-    try:		
-        fd = os.open(gpgfile, os.O_RDONLY)
-    except OSError:
-        raise RuntimeError('create')
     if os.path.exists(os.path.join(directory, 'gpg', 'alwaysupdate')):
         raise RuntimeError('update')
+    uri = '%s/dists/%s/Release.gpg' % (mirror, distribution)
     try:
-        remote = urlopen('%s/dists/%s/Release.gpg' % (mirror, distribution)).read()
-    except:
-        print _('Unable to fetch %(mirror)s/dists/%(dist)s/Release.gpg') % {'mirror':mirror, 'dist':distribution}
+        remote = urlopen(uri).read()
+    except HTTPError:
+        print _('Unable to fetch %s') % uri
         raise RuntimeError('update')
     remote_sha = sha256()
     gpgfile_sha = sha256()
     remote_sha.update(remote)
-    gpgfile_sha.update(os.read(fd, os.fstat(fd).st_size))
-    os.close(fd)
+    try:
+        with open(gpgfile, 'r') as fd:
+            gpgfile_sha.update(fd.read())
+    except OSError:
+        raise RuntimeError('create')
     if remote_sha.digest() != gpgfile_sha.digest():
         raise RuntimeError('update')
+
 
 def prepare_pbuilder(cmd, directory, configdir, distopts):
     if not os.path.exists(os.path.join(directory, 'build')):
@@ -83,12 +88,21 @@ def prepare_pbuilder(cmd, directory, configdir, distopts):
         os.mkdir(os.path.join(directory, 'aptcache'))
     if not os.path.exists(os.path.join(directory, 'logs')):
         os.mkdir(os.path.join(directory, 'logs'))
-    base = '--basepath' if Options.get('default', 'builder') == 'cowbuilder' else '--basetgz'
-    if (os.system('%(builder)s --%(cmd)s %(basetype)s %(directory)s/%(distribution)s \
-                  --override-config --buildplace %(directory)s/build --aptcache "%(directory)s/aptcache" \
-                  --logfile %(directory)s/logs/%(cmd)s.%(now)s --configfile %(cfg)s >/dev/null 2>&1' \
-                  % {'builder': Options.get('default', 'builder'), 'cmd': cmd, 'directory': directory, 'basetype': base, \
-                     'distribution': distopts['distribution'], 'cfg': os.path.join(configdir, distopts['distribution']), \
-                     'now': strftime('%Y%m%d_%H%M')})):
-        raise RuntimeError(_('%(builder)s %(cmd)s failed') % {'builder':Options.get('default', 'builder'), 'cmd':cmd})
-
+    if Options.get('default', 'builder') == 'cowbuilder':
+        base = '--basepath'
+    else:
+        base = '--basetgz'
+    if (os.system('%(builder)s --%(cmd)s %(basetype)s'
+                  ' %(directory)s/%(distribution)s --override-config'
+                  ' --buildplace %(directory)s/build'
+                  ' --aptcache "%(directory)s/aptcache"'
+                  ' --logfile %(directory)s/logs/%(cmd)s.%(now)s'
+                  ' --configfile %(cfg)s >/dev/null 2>&1' % \
+                  {'builder': Options.get('default', 'builder'), 'cmd': cmd,
+                   'directory': directory, 'basetype': base,
+                   'distribution': distopts['distribution'],
+                   'cfg': os.path.join(configdir, distopts['distribution']),
+                   'now': strftime('%Y%m%d_%H%M')})):
+        raise RuntimeError(_('%(builder)s %(cmd)s failed') % \
+                             {'builder': Options.get('default', 'builder'),
+                              'cmd': cmd})

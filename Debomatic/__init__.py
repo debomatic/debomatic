@@ -1,6 +1,6 @@
 # Deb-o-Matic
 #
-# Copyright (C) 2007-2010 Luca Falavigna
+# Copyright (C) 2007-2011 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
 #
@@ -20,11 +20,11 @@
 import gettext
 from ConfigParser import ConfigParser
 
-gettext.install("debomatic")
 
+gettext.install("debomatic")
 Options = ConfigParser()
-acceptedqueue = list()
-packagequeue = dict()
+acceptedqueue = []
+packagequeue = {}
 buildlock = None
-pbuilderlock = dict()
+pbuilderlock = {}
 running = True

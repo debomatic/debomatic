@@ -1,6 +1,6 @@
 # Deb-o-Matic
 #
-# Copyright (C) 2007-2010 Luca Falavigna
+# Copyright (C) 2007-2011 Luca Falavigna
 # Copyright (C) 2010 Alessio Treglia
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
@@ -21,22 +21,24 @@
 import os
 import sys
 from re import findall, split
-from urllib2 import Request, urlopen
+from urllib2 import Request, urlopen, HTTPError
+
 from Debomatic import acceptedqueue, packagequeue
+
 
 def select_package(directory):
     package = None
     priority = 0
     try:
         filelist = os.listdir(directory)
-    except:
+    except OSError:
         print _('Unable to access %s directory') % directory
         sys.exit(-1)
     for filename in filelist:
         if os.path.splitext(filename)[1] == '.changes':
             try:
                 add_package(filename)
-                curprio = get_priority(os.path.join(directory,filename))
+                curprio = get_priority(os.path.join(directory, filename))
                 if curprio > priority:
                     priority = curprio
                     package = filename
@@ -44,30 +46,33 @@ def select_package(directory):
                 continue
     return package
 
+
 def get_priority(changesfile):
     priority = 0
-    priolist = {"low":1, "medium":2, "high":3}
+    priolist = {'low': 1, 'medium': 2, 'high': 3, 'critical': 4}
     try:
-        fd = os.open(changesfile, os.O_RDONLY)
+        with open(changesfile, 'r') as fd:
+            urgency = findall('Urgency: (.*)', fd.read())
+            priority = priolist[urgency[0]] * 10000000000
+            priority += 9999999999 - os.stat(changesfile).st_mtime
     except OSError:
         raise RuntimeError(_('Unable to open %s') % changesfile)
-    urgency =findall('Urgency: (.*)', os.read(fd, os.fstat(fd).st_size))
-    priority = priolist[urgency[0]] * 10000000000
-    priority += 9999999999 - os.fstat(fd).st_mtime
-    os.close(fd)
     return priority
 
+
 def add_package(package):
-    if packagequeue.has_key(package):
+    if package in packagequeue:
         raise RuntimeError
     else:
-        packagequeue[package] = list()
+        packagequeue[package] = []
+
 
 def del_package(package):
     try:
         del packagequeue[package]
-    except:
+    except KeyError:
         pass
+
 
 def rm_package(package):
     for pkgfile in packagequeue[package]:
@@ -76,8 +81,9 @@ def rm_package(package):
     del_package(package)
     try:
         acceptedqueue.remove(package)
-    except:
+    except ValueError:
         pass
+
 
 def fetch_missing_files(package, files, packagedir, distopts):
     dscfile = None
@@ -85,23 +91,26 @@ def fetch_missing_files(package, files, packagedir, distopts):
     for filename in files:
         if not dscfile:
             dscfile = findall('(.*\.dsc$)', filename)
-    fd = os.open(dscfile[0], os.O_RDONLY)
-    for entry in findall('\s\w{32}\s\d+\s(\S+)', os.read(fd, os.fstat(fd).st_size)):
+    with open(dscfile[0], 'r') as fd:
+        data = fd.read()
+    for entry in findall('\s\w{32}\s\d+\s(\S+)', data):
         if not os.path.exists(os.path.join(packagedir, entry)):
             for component in split(' ', distopts['components']):
-                request = Request('%s/pool/%s/%s/%s/%s' % (distopts['mirror'], component, findall('^lib\S|^\S', packagename)[0], packagename, entry))
+                request = Request('%s/pool/%s/%s/%s/%s' % \
+                                  (distopts['mirror'], component,
+                                   findall('^lib\S|^\S', packagename)[0],
+                                   packagename, entry))
                 try:
                     data = urlopen(request).read()
                     break
-                except:
+                except HTTPError:
                     data = None
             if data:
-                entryfd = os.open(os.path.join(packagedir, entry), os.O_WRONLY | os.O_CREAT)
-                os.write(entryfd, data)
-                os.close(entryfd)
+                with open(os.path.join(packagedir, entry), 'w') as entryfd:
+                    entryfd.write(data)
         if not (os.path.join(packagedir, entry)) in files:
             packagequeue[package].append(os.path.join(packagedir, entry))
-    os.close(fd)
+
 
 def get_compression(package):
     ext = {'.gz': 'gzip', '.bz2': 'bzip2', '.lzma': 'lzma', '.xz': 'xz'}
@@ -109,7 +118,8 @@ def get_compression(package):
         if os.path.exists(pkgfile):
             if findall('(.*\.debian\..*)', pkgfile):
                 try:
-                    return "--debbuildopts -Z%s" % ext[os.path.splitext(pkgfile)[1]]
-                except:
+                    return '--debbuildopts -Z%s' % \
+                            ext[os.path.splitext(pkgfile)[1]]
+                except IndexError:
                     pass
-    return ""
+    return ''

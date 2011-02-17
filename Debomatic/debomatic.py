@@ -1,6 +1,6 @@
 # Deb-o-Matic
 #
-# Copyright (C) 2007-2010 Luca Falavigna
+# Copyright (C) 2007-2011 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
 #
@@ -24,7 +24,9 @@ from fcntl import lockf, LOCK_EX, LOCK_NB
 from getopt import getopt, GetoptError
 from signal import pause
 from time import sleep
+
 from Debomatic import build, commands, Options, modules, running
+
 
 def main():
     conffile = None
@@ -34,11 +36,11 @@ def main():
         sys.exit(-1)
     try:
         opts, args = getopt(sys.argv[1:], 'c:n', ['config=', 'nodaemon'])
-    except GetoptError, error:
+    except GetoptError as error:
         print error.msg
         sys.exit(-1)
     for o, a in opts:
-        if o in ("-c", "--config"):
+        if o in ('-c', '--config'):
             conffile = a
         if o in ('-n', '--nodaemon'):
             daemon = False
@@ -70,18 +72,20 @@ def main():
         os.dup2(fout.fileno(), sys.stdout.fileno())
         os.dup2(ferr.fileno(), sys.stderr.fileno())
 
-    fd = os.open('/var/run/debomatic.lock', os.O_WRONLY | os.O_CREAT | os.O_TRUNC)
-    try:
-        lockf(fd, LOCK_EX | LOCK_NB)
-    except IOError:
-        print _('Another instance is running. Aborting')
-        sys.exit(-1)
+    with open('/var/run/debomatic.lock', 'w') as fd:
+        try:
+            lockf(fd, LOCK_EX | LOCK_NB)
+        except IOError:
+            print _('Another instance is running. Aborting')
+            sys.exit(-1)
     mod_sys = modules.Module()
-    mod_sys.execute_hook("on_start", {})
+    mod_sys.execute_hook('on_start', {})
     launcher()
 
+
 def parse_default_options(conffile):
-    defaultoptions = ('builder', 'packagedir', 'configdir', 'maxbuilds', 'inotify', 'sleep', 'logfile')
+    defaultoptions = ('builder', 'packagedir', 'configdir', 'maxbuilds',
+                      'inotify', 'sleep', 'logfile')
     if not conffile:
         print _('Please specify a configuration file')
         sys.exit(-1)
@@ -90,14 +94,18 @@ def parse_default_options(conffile):
         sys.exit(-1)
     Options.read(conffile)
     for opt in defaultoptions:
-        if not Options.has_option('default', opt) or not Options.get('default', opt):
-            print _('Please set "%(opt)s" in %(conffile)s') % {'opt':opt, 'conffile':conffile}
+        if not Options.has_option('default', opt) or not \
+               Options.get('default', opt):
+            print _('Please set "%(opt)s" in %(conffile)s') % \
+                    {'opt': opt, 'conffile': conffile}
             sys.exit(-1)
+
 
 try:
     import pyinotify
 
     class PE(pyinotify.ProcessEvent):
+
         def process_IN_CLOSE_WRITE(self, event):
             if event.name.endswith('source.changes'):
                 threading.Thread(None, build.build_process).start()
@@ -108,21 +116,25 @@ try:
         if Options.getint('default', 'inotify'):
             wm = pyinotify.WatchManager()
             notifier = pyinotify.Notifier(wm, PE(), timeout=1000)
-            wm.add_watch(Options.get('default', 'packagedir'), pyinotify.IN_CLOSE_WRITE)
+            wm.add_watch(Options.get('default', 'packagedir'),
+                         pyinotify.IN_CLOSE_WRITE)
             while exit_routine():
                 notifier.process_events()
                 if notifier.check_events():
                     notifier.read_events()
             notifier.stop()
-except:
+except ImportError:
+
     def launcher_inotify():
         pass
+
 
 def launcher_timer():
     while exit_routine():
         threading.Thread(None, commands.process_commands).start()
         threading.Thread(None, build.build_process).start()
         sleep(Options.getint('default', 'sleep'))
+
 
 def launcher():
     threading.Thread(None, launcher_inotify).start()
@@ -132,6 +144,7 @@ def launcher():
     except KeyboardInterrupt:
         print _('\nWaiting for threads to finish, it could take a while...')
         exit_routine(exiting=True)
+
 
 def exit_routine(exiting=False):
     global running
