@@ -80,6 +80,7 @@ def parse_distribution_options(packagedir, configdir, package):
     fld = {'mirror': ('[^#]?MIRRORSITE="?(.*[^"])"?\n', 'MIRRORSITE'),
            'components': ('[^#]?COMPONENTS="?(.*[^"])"?\n', 'COMPONENTS'),
            'debootstrap': ('[^#]?DEBOOTSTRAP="?(.*[^"])"?\n', 'DEBOOTSTRAP')}
+    configfile = os.path.join(configdir, options['distribution'])
     try:
         with open(os.path.join(packagedir, package), 'r') as fd:
             data = fd.read()
@@ -93,23 +94,21 @@ def parse_distribution_options(packagedir, configdir, package):
         packages.del_package(package)
         log.e(_('Bad .changes file: %s') % os.path.join(packagedir, package))
     try:
-        with open(os.path.join(configdir, options['distribution'])) as fd:
+        with open(configfile) as fd:
             conf = fd.read()
     except IOError:
         packages.del_package(package)
-        log.e(_('Unable to open %s') % \
-                os.path.join(configdir, options['distribution']))
+        log.e(_('Unable to open %s') % configfile)
     if not findall('[^#]?DISTRIBUTION="?(.*[^"])"?\n', conf):
         packages.del_package(package)
-        log.e(_('Please set DISTRIBUTION in %s') % \
-                os.path.join(configdir, options['distribution']))
+        log.e(_('Please set DISTRIBUTION in %s') % configfile)
     for elm in fld.keys():
         try:
             options[elm] = findall(fld[elm][0], conf)[0]
         except IndexError:
             packages.del_package(package)
-            log.e(_('Please set %s in %s') % (fld[elm][0],
-                    os.path.join(configdir, options['distribution'])))
+            log.e(_('Please set %(parm)s in %s(conf)s') % \
+                  {'parm': fld[elm][0], 'config': configfile})
     return options
 
 
