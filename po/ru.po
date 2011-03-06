@@ -7,120 +7,73 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-10-06 11:53+0200\n"
+"POT-Creation-Date: 2011-03-05 09:19+0100\n"
 "PO-Revision-Date: 2010-10-14 15:14+0000\n"
 "Last-Translator: Ivan Y <Unknown>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-02-23 04:34+0000\n"
+"X-Launchpad-Export-Date: 2011-03-06 04:46+0000\n"
 "X-Generator: Launchpad (build 12351)\n"
 
-#: ../Debomatic/commands.py:32 ../Debomatic/packages.py:33
-#: ../Debomatic/packages.py:34 Debomatic/commands.py:32
-#: Debomatic/packages.py:34 Debomatic/commands.py:92 Debomatic/packages.py:33
-#, python-format
-msgid "Unable to access %s directory"
-msgstr "Нет доступа к каталогу %s"
-
-#: ../Debomatic/gpg.py:29 ../Debomatic/gpg.py:47 ../Debomatic/gpg.py:39
-#: ../Debomatic/gpg.py:57 Debomatic/gpg.py:39 Debomatic/gpg.py:57
-#: Debomatic/gpg.py:38 Debomatic/gpg.py:59
-msgid "Keyring not found"
-msgstr "Брелок не найден"
-
-#: ../Debomatic/gpg.py:34 ../Debomatic/gpg.py:51 ../Debomatic/gpg.py:43
-#: ../Debomatic/gpg.py:60 Debomatic/gpg.py:43 Debomatic/gpg.py:60
-#: Debomatic/gpg.py:42 Debomatic/gpg.py:50 Debomatic/gpg.py:62
-#: Debomatic/gpg.py:70
-msgid "No valid signatures found"
-msgstr "Не найдены допустимые подписи"
-
-#: ../Debomatic/packages.py:53 ../Debomatic/build.py:41
-#: ../Debomatic/build.py:87 ../Debomatic/build.py:56 ../Debomatic/build.py:102
-#: ../Debomatic/packages.py:54 Debomatic/build.py:56 Debomatic/build.py:88
-#: Debomatic/build.py:102 Debomatic/packages.py:54 Debomatic/commands.py:45
-#: Debomatic/build.py:50 Debomatic/build.py:82 Debomatic/build.py:96
-#: Debomatic/packages.py:53
+#: Debomatic/commands.py:49 Debomatic/build.py:53 Debomatic/build.py:89
+#: Debomatic/build.py:101 Debomatic/packages.py:57
 #, python-format
 msgid "Unable to open %s"
 msgstr "Не удалось открыть %s"
 
-#: ../Debomatic/build.py:48 ../Debomatic/build.py:80 ../Debomatic/build.py:63
-#: ../Debomatic/build.py:95 Debomatic/build.py:63 Debomatic/build.py:95
-#: Debomatic/build.py:57 Debomatic/build.py:89
+#: Debomatic/commands.py:98 Debomatic/packages.py:34
+#, python-format
+msgid "Unable to access %s directory"
+msgstr "Нет доступа к каталогу %s"
+
+#: Debomatic/build.py:46
+#, python-format
+msgid "Distribution %s is disabled"
+msgstr "Распределение %s отключено"
+
+#: Debomatic/build.py:58 Debomatic/build.py:95
 #, python-format
 msgid "Bad .changes file: %s"
 msgstr "Плохой файл .changes: %s"
 
-#: ../Debomatic/build.py:93 ../Debomatic/build.py:108 Debomatic/build.py:108
-#: Debomatic/build.py:102
+#: Debomatic/build.py:104
 #, python-format
 msgid "Please set DISTRIBUTION in %s"
 msgstr "Пожалуйста, установите DISTRIBUTION в %s"
 
-#: ../Debomatic/build.py:99 ../Debomatic/build.py:114 Debomatic/build.py:114
-#: Debomatic/build.py:108
-#, python-format
-msgid "Please set MIRRORSITE in %s"
-msgstr "Пожалуйста, установите MIRRORSITE в %s"
+#: Debomatic/build.py:110
+msgid "Please set %(parm)s in %s(conf)s"
+msgstr ""
 
-#: ../Debomatic/build.py:105 ../Debomatic/build.py:120 Debomatic/build.py:120
-#: Debomatic/build.py:114
-#, python-format
-msgid "Please set COMPONENTS in %s"
-msgstr "Пожалуйста, установите COMPONENTS в %s"
-
-#: ../Debomatic/build.py:111 ../Debomatic/build.py:126 Debomatic/build.py:126
-#: Debomatic/build.py:120
-#, python-format
-msgid "Please set DEBOOTSTRAP in %s"
-msgstr "Пожалуйста, установите DEBOOTSTRAP в %s"
-
-#: ../Debomatic/pbuilder.py:47 ../Debomatic/pbuilder.py:65
-#: ../Debomatic/pbuilder.py:48 ../Debomatic/pbuilder.py:66
-#: ../Debomatic/pbuilder.py:68 Debomatic/pbuilder.py:51
-#: Debomatic/pbuilder.py:71 Debomatic/pbuilder.py:50 Debomatic/pbuilder.py:70
-#, python-format
-msgid "Unable to fetch %(mirror)s/dists/%(dist)s/Release.gpg"
-msgstr "Не удалось получить %(mirror)s/dists/%(dist)s/Release.gpg"
-
-#: ../Debomatic/debomatic.py:37 Debomatic/debomatic.py:37
-#: Debomatic/debomatic.py:33
+#: Debomatic/debomatic.py:35
 msgid "You must run deb-o-matic as root"
 msgstr "deb-o-matic нужно запускать от имени root"
 
-#: ../Debomatic/debomatic.py:58 ../Debomatic/debomatic.py:68
-#: Debomatic/debomatic.py:58 Debomatic/debomatic.py:68
-#: Debomatic/debomatic.py:54 Debomatic/debomatic.py:64
+#: Debomatic/debomatic.py:54 Debomatic/debomatic.py:63
 msgid "Unable to enter daemon mode"
 msgstr "Не могу войти в режим демона"
 
-#: ../Debomatic/debomatic.py:81 Debomatic/debomatic.py:81
-#: Debomatic/debomatic.py:77
+#: Debomatic/debomatic.py:75
 msgid "Another instance is running. Aborting"
 msgstr "Другой экземпляр уже выполняется. Останов"
 
-#: ../Debomatic/debomatic.py:90 Debomatic/debomatic.py:90
-#: Debomatic/debomatic.py:86
+#: Debomatic/debomatic.py:85
 msgid "Please specify a configuration file"
 msgstr "Пожалуйста, укажите файл настроек"
 
-#: ../Debomatic/debomatic.py:93 Debomatic/debomatic.py:93
-#: Debomatic/debomatic.py:89
+#: Debomatic/debomatic.py:87
 #, python-format
 msgid "Configuration file %s does not exist"
 msgstr "Файл настроек %s не существует"
 
-#: ../Debomatic/debomatic.py:98 Debomatic/debomatic.py:98
-#: Debomatic/debomatic.py:94
+#: Debomatic/debomatic.py:92
 #, python-format
 msgid "Please set \"%(opt)s\" in %(conffile)s"
 msgstr "Пожалуйста установите \"%(opt)s\" в %(conffile)s"
 
-#: ../Debomatic/debomatic.py:135 Debomatic/debomatic.py:135
-#: Debomatic/debomatic.py:134
+#: Debomatic/debomatic.py:137
 msgid ""
 "\n"
 "Waiting for threads to finish, it could take a while..."
@@ -128,16 +81,36 @@ msgstr ""
 "\n"
 "Ждем завершения потоков, это может занять некоторое время..."
 
-#: ../Debomatic/pbuilder.py:91 ../Debomatic/pbuilder.py:93
-#: Debomatic/pbuilder.py:95 Debomatic/pbuilder.py:94
+#: Debomatic/pbuilder.py:52 Debomatic/pbuilder.py:70
+#, python-format
+msgid "Unable to fetch %s"
+msgstr ""
+
+#: Debomatic/pbuilder.py:106
 #, python-format
 msgid "%(builder)s %(cmd)s failed"
 msgstr "%(builder)s %(cmd)s не удалось"
 
-#: ../Debomatic/build.py:50 Debomatic/build.py:50 Debomatic/build.py:44
+#: Debomatic/gpg.py:46 Debomatic/gpg.py:67
+msgid "Keyring not found"
+msgstr "Брелок не найден"
+
+#: Debomatic/gpg.py:50 Debomatic/gpg.py:57 Debomatic/gpg.py:70
+#: Debomatic/gpg.py:77
+msgid "No valid signatures found"
+msgstr "Не найдены допустимые подписи"
+
 #, python-format
-msgid "Distribution %s is disabled"
-msgstr "Распределение %s отключено"
+#~ msgid "Please set DEBOOTSTRAP in %s"
+#~ msgstr "Пожалуйста, установите DEBOOTSTRAP в %s"
+
+#, python-format
+#~ msgid "Please set COMPONENTS in %s"
+#~ msgstr "Пожалуйста, установите COMPONENTS в %s"
+
+#, python-format
+#~ msgid "Please set MIRRORSITE in %s"
+#~ msgstr "Пожалуйста, установите MIRRORSITE в %s"
 
 #, python-format
 #~ msgid "Please set \"%s\" in %s"
@@ -154,3 +127,7 @@ msgstr "Распределение %s отключено"
 #, python-format
 #~ msgid "Unable to fetch %s/dists/%s/Release.gpg"
 #~ msgstr "Не могу получить %s/dists/%s/Release.gpg"
+
+#, python-format
+#~ msgid "Unable to fetch %(mirror)s/dists/%(dist)s/Release.gpg"
+#~ msgstr "Не удалось получить %(mirror)s/dists/%(dist)s/Release.gpg"
