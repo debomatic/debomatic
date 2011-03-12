@@ -120,8 +120,6 @@ def build_package(directory, configfile, distdir, package, uploader, distopts):
         packages.del_package(package)
         exit()
     dscfile = None
-    if not os.path.exists(os.path.join(distdir, 'pool')):
-        os.mkdir(os.path.join(distdir, 'pool'))
     for pkgfile in packagequeue[package]:
         if not dscfile:
             dscfile = findall('(.*\.dsc$)', pkgfile)

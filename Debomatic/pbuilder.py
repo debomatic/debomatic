@@ -82,12 +82,14 @@ def needs_update(directory, mirror, distribution):
 
 
 def prepare_pbuilder(cmd, directory, configdir, distopts):
-    if not os.path.exists(os.path.join(directory, 'build')):
-        os.mkdir(os.path.join(directory, 'build'))
-    if not os.path.exists(os.path.join(directory, 'aptcache')):
-        os.mkdir(os.path.join(directory, 'aptcache'))
-    if not os.path.exists(os.path.join(directory, 'logs')):
-        os.mkdir(os.path.join(directory, 'logs'))
+    for d in ('aptcache', 'build', 'logs', 'pool'):
+        if not os.path.exists(os.path.join(directory, d)):
+            os.mkdir(os.path.join(directory, d))
+    for f in ('Packages', 'Release'):
+        repo_file = os.path.join(directory, 'pool', f)
+        if not os.path.exists(repo_file):
+            with open(repo_file, 'w') as fd:
+                pass
     if Options.get('default', 'builder') == 'cowbuilder':
         base = '--basepath'
     else:
