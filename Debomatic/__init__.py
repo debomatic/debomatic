@@ -25,7 +25,7 @@ from sys import stderr
 class Output:
 
     def w(self, msg):
-        stderr.write(msg + '\n')
+        stderr.write('%s\n' % msg)
 
     def e(self, msg):
         self.w(msg)

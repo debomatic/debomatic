@@ -80,7 +80,6 @@ def parse_distribution_options(packagedir, configdir, package):
     fld = {'mirror': ('[^#]?MIRRORSITE="?(.*[^"])"?\n', 'MIRRORSITE'),
            'components': ('[^#]?COMPONENTS="?(.*[^"])"?\n', 'COMPONENTS'),
            'debootstrap': ('[^#]?DEBOOTSTRAP="?(.*[^"])"?\n', 'DEBOOTSTRAP')}
-    configfile = os.path.join(configdir, options['distribution'])
     try:
         with open(os.path.join(packagedir, package), 'r') as fd:
             data = fd.read()
@@ -93,6 +92,7 @@ def parse_distribution_options(packagedir, configdir, package):
     except IndexError:
         packages.del_package(package)
         log.e(_('Bad .changes file: %s') % os.path.join(packagedir, package))
+    configfile = os.path.join(configdir, options['distribution'])
     try:
         with open(configfile) as fd:
             conf = fd.read()
