@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2011-03-05 09:19+0100\n"
-"PO-Revision-Date: 2009-12-05 08:10+0000\n"
-"Last-Translator: Dominique Pellé <dominique.pelle@gmail.com>\n"
+"PO-Revision-Date: 2011-03-16 17:19+0000\n"
+"Last-Translator: Michael Moroni <michael.moroni@mailoo.org>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-03-06 04:46+0000\n"
-"X-Generator: Launchpad (build 12351)\n"
+"X-Launchpad-Export-Date: 2011-03-17 04:32+0000\n"
+"X-Generator: Launchpad (build 12559)\n"
 
 #: Debomatic/commands.py:49 Debomatic/build.py:53 Debomatic/build.py:89
 #: Debomatic/build.py:101 Debomatic/packages.py:57
@@ -26,12 +26,12 @@ msgstr "Ne povas malfermi %s"
 #: Debomatic/commands.py:98 Debomatic/packages.py:34
 #, python-format
 msgid "Unable to access %s directory"
-msgstr ""
+msgstr "Ne povas akiri dosierujon %s"
 
 #: Debomatic/build.py:46
 #, python-format
 msgid "Distribution %s is disabled"
-msgstr ""
+msgstr "Distribuaĵo %s estas malŝaltita"
 
 #: Debomatic/build.py:58 Debomatic/build.py:95
 #, python-format
@@ -45,49 +45,51 @@ msgstr "Bonvolu agordi DISTRIBUTION en %s"
 
 #: Debomatic/build.py:110
 msgid "Please set %(parm)s in %s(conf)s"
-msgstr ""
+msgstr "Bonvolu agordi %(parm)s en %s(conf)s"
 
 #: Debomatic/debomatic.py:35
 msgid "You must run deb-o-matic as root"
-msgstr "Vi devas ruli deb-o-matic kiel la uzanto root"
+msgstr "Vi devas ruli deb-o-matic kiel ĉefuzanto"
 
 #: Debomatic/debomatic.py:54 Debomatic/debomatic.py:63
 msgid "Unable to enter daemon mode"
-msgstr ""
+msgstr "Ne povas ruli demonan reĝimon"
 
 #: Debomatic/debomatic.py:75
 msgid "Another instance is running. Aborting"
-msgstr ""
+msgstr "Alia peto rulas. Nuliganta"
 
 #: Debomatic/debomatic.py:85
 msgid "Please specify a configuration file"
-msgstr ""
+msgstr "Bonvolu specifi agorddosieron"
 
 #: Debomatic/debomatic.py:87
 #, python-format
 msgid "Configuration file %s does not exist"
-msgstr "Agorda dosiero %s ne ekzistas"
+msgstr "Agordfosiero %s ne ekzistas"
 
 #: Debomatic/debomatic.py:92
 #, python-format
 msgid "Please set \"%(opt)s\" in %(conffile)s"
-msgstr ""
+msgstr "Bonvolu agordi \"%(opt)s\" en %(conffile)s"
 
 #: Debomatic/debomatic.py:137
 msgid ""
 "\n"
 "Waiting for threads to finish, it could take a while..."
 msgstr ""
+"\n"
+"Atendanta por fadenoj por termini. Povas daŭri malmulte..."
 
 #: Debomatic/pbuilder.py:52 Debomatic/pbuilder.py:70
 #, python-format
 msgid "Unable to fetch %s"
-msgstr ""
+msgstr "Ne povas obteni %s"
 
 #: Debomatic/pbuilder.py:106
 #, python-format
 msgid "%(builder)s %(cmd)s failed"
-msgstr ""
+msgstr "%(builder)s %(cmd)s fiaskis"
 
 #: Debomatic/gpg.py:46 Debomatic/gpg.py:67
 msgid "Keyring not found"
