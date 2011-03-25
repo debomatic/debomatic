@@ -137,9 +137,10 @@ Deb-o-Matic will try to remove files matching the pattern. Example follows:
 * rm unwantedfile
 
 To schedule a rebuild, rebuild must be followed by package name, an underscore,
-package version, a space, and target distribution. Example follows:
+package version, a space, and target distribution, optionally followed by a
+different distribution of origin. Example follows:
 
-* rebuild package_version target
+* rebuild package_version target origin
 
 It is possible to include multiple commands into a single file, they must be
 separated by a newline.

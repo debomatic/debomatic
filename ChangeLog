@@ -1,6 +1,7 @@
 0.10
 * Local package repository support
 * PEP-8 syntax
+* Support rebuilding packages available in other distributions
 
 0.9 "bafana" (2011-02-06)
 * Mailer support

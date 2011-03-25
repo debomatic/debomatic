@@ -38,15 +38,16 @@ def process_rm(cmd, packagedir):
 
 def process_rebuild(cmd, packagedir):
     opts = {}
-    packs = findall('\s?rebuild\s+(\S+)_(\S+) (\S+)', cmd)
+    packs = findall('\s?rebuild\s+(\S+)_(\S+) (\S+) ?(\S*)', cmd)
     configdir = Options.get('default', 'configdir')
     for package in packs:
         dscname = '%s_%s.dsc' % (package[0], package[1])
         try:
-            with open(os.path.join(configdir, package[2]), 'r') as fd:
+            target = package[3] if package[3] else package[2]
+            with open(os.path.join(configdir, target), 'r') as fd:
                 data = fd.read()
         except IOError:
-            log.w(_('Unable to open %s') % os.path.join(configdir, package[2]))
+            log.w(_('Unable to open %s') % os.path.join(configdir, target))
             return
         try:
             opts['mirror'] = findall('[^#]?MIRRORSITE="?(.*[^"])"?\n', data)[0]
