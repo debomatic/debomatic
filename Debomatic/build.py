@@ -148,11 +148,13 @@ def build_package(directory, configfile, distdir, package, uploader, distopts):
               ' --buildplace %(directory)s/build'
               ' --buildresult %(directory)s/pool/%(package)s'
               ' --aptcache %(directory)s/aptcache %(debopts)s'
+              ' --hookdir %(pbuilderhooks)s'
               ' --configfile %(cfg)s %(dsc)s >/dev/null 2>&1'
               % {'builder': Options.get('default', 'builder'),
                  'basetype': base, 'directory': distdir,
                  'package': packageversion, 'cfg': configfile,
                  'distribution': distopts['distribution'],
+                 'pbuilderhooks': Options.get('default', 'pbuilderhooks'),
                  'debopts': packages.get_compression(package),
                  'dsc': dscfile[0]})
     mod.execute_hook('post_build', {'directory': distdir,

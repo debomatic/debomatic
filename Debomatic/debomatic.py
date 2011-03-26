@@ -80,7 +80,7 @@ def main():
 
 def parse_default_options(conffile):
     defaultoptions = ('builder', 'packagedir', 'configdir', 'maxbuilds',
-                      'inotify', 'sleep', 'logfile')
+                      'pbuilderhooks', 'inotify', 'sleep', 'logfile')
     if not conffile:
         log.e(_('Please specify a configuration file'))
     if not os.path.exists(conffile):

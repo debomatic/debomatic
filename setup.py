@@ -53,7 +53,7 @@ def install_files(rootdir, prefix=''):
 
 
 setup(name='debomatic',
-      version = '0.9',
+      version = '0.10',
       author = 'Luca Falavigna',
       author_email = 'dktrkranz@debian.org',
       description = 'Automatic build machine for Debian source packages',
@@ -66,5 +66,6 @@ setup(name='debomatic',
                    ('share/doc/debomatic', ['docs/ExampleModule.py'])] +
                    install_files('etc', '/') +
                    install_files('modules', 'share/debomatic') +
+                   install_files('pbuilderhooks', 'share/debomatic') +
                    install_files('locale', 'share'),
       cmdclass = {'install_data': InstallGuide})

@@ -1,4 +1,4 @@
-.TH debomatic.conf 5 2009-01-26 "debomatic"
+.TH debomatic.conf 5 2011-03-26 "debomatic"
 .SH NAME
 debomatic.conf \- Configuration file for debomatic
 .SH DEFAULT SECTION
@@ -17,6 +17,10 @@ This directory contains pbuilder configuration files used to pass build
 options to pbuilder. They must contain pbuilder specific parameters
 (see pbuilderrc(5) for further reference) and their names must match
 desired target releases.
+.TP
+.B pbuilderhooks
+This directory contains pbuilder hooks to enhance pbuilder/cowbuilder to
+closely emulate buildd behaviour.
 .TP
 .B distblacklist
 This file contains a space or newline separated list of distributions for
