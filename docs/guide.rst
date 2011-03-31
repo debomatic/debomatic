@@ -102,18 +102,6 @@ use software like dput to automate the process.
 A source upload is required, other type of .changes files could not be parsed
 correctly leading to an ignored build.
 
-Force pbuilder update
----------------------
-
-Normally, Deb-o-Matic tries to update chroot only if there is a valid reason to
-do so (e.g. if Release file on the preferred mirror changed, that means some
-packages have been added or removed).
-
-If your configuration has a local package repository, populated by packages
-just built by Deb-o-Matic, you may always want to update pbuilder chroot. To do
-so, simply put a file called "alwaysupdate" into gpg folder of the targets you
-want to enable this feature for.
-
 GPG support
 -----------
 

@@ -26,6 +26,10 @@ closely emulate buildd behaviour.
 This file contains a space or newline separated list of distributions for
 which build process is temporarily disabled.
 .TP
+.B alwaysupdate
+This file contains a newline separated list of distributions for which chroot
+must always be updated, no matter if there have been changes or not.
+.TP
 .B maxbuilds
 Maximum number of parallel build threads to be launched. More threads will
 require powerful hardware.

@@ -61,8 +61,12 @@ def needs_update(directory, mirror, distribution):
     gpgfile = os.path.join(directory, 'gpg', distribution)
     if not os.path.exists(gpgfile):
         raise RuntimeError('create')
-    if os.path.exists(os.path.join(directory, 'gpg', 'alwaysupdate')):
-        raise RuntimeError('update')
+    if Options.get('default', 'alwaysupdate'):
+        if os.path.isfile(Options.get('default', 'alwaysupdate')):
+            with open(Options.get('default', 'alwaysupdate'), 'r') as fd:
+                for line in fd:
+                    if line.rstrip() == distribution:
+                        raise RuntimeError('update')
     uri = '%s/dists/%s/Release.gpg' % (mirror, distribution)
     try:
         remote = urlopen(uri).read()
