@@ -25,10 +25,6 @@ from subprocess import Popen, PIPE
 from Debomatic import acceptedqueue, Options
 
 
-command_sig = 'Hash: \S+\n\n(.*)\n\n\-\-\-\-\-BEGIN PGP SIGNATURE\-\-\-\-\-'
-changes_sig = 'Hash: \S+\n\n(.*)\n+\-\-\-\-\-BEGIN PGP SIGNATURE\-\-\-\-\-'
-
-
 def verify_signature(pkg_or_cmd):
     gpgresult = Popen(['gpg', '--no-default-keyring', '--keyring',
                       Options.get('gpg', 'keyring'), '--verify', pkg_or_cmd],
@@ -52,7 +48,7 @@ def check_changes_signature(package):
                 data = fd.read()
             with open(package, 'w') as fd:
                 try:
-                    fd.write(findall(command_sig, data, DOTALL)[0])
+                    fd.write(findall('\n\n(.*?)\n\n?-', data, DOTALL)[0])
                 except IndexError:
                     raise RuntimeError(_('No valid signatures found'))
             if not package in acceptedqueue:
@@ -72,6 +68,6 @@ def check_commands_signature(commands):
             data = fd.read()
         with open(commands, 'w') as fd:
             try:
-                fd.write(findall(changes_sig, data, DOTALL)[0])
+                fd.write(findall('\n\n(.*?)\n\n?-', data, DOTALL)[0])
             except IndexError:
                 raise RuntimeError(_('No valid signatures found'))
