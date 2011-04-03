@@ -22,7 +22,7 @@ from glob import glob
 from re import findall, split
 from shutil import rmtree
 from subprocess import call, PIPE
-from urllib2 import Request, urlopen, HTTPError
+from urllib2 import Request, urlopen, HTTPError, URLError
 
 from Debomatic import acceptedqueue, gpg, log, Options, packagequeue, packages
 
@@ -63,7 +63,7 @@ def process_rebuild(cmd, packagedir):
             try:
                 data = urlopen(request).read()
                 break
-            except HTTPError:
+            except (HTTPError, URLError):
                 data = None
         if data:
             dsc = os.path.join(packagedir, dscname)

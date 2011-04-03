@@ -20,7 +20,7 @@
 
 import os
 from re import findall, split
-from urllib2 import Request, urlopen, HTTPError
+from urllib2 import Request, urlopen, HTTPError, URLError
 
 from Debomatic import acceptedqueue, log, packagequeue
 
@@ -101,7 +101,7 @@ def fetch_missing_files(package, files, packagedir, distopts):
                 try:
                     data = urlopen(request).read()
                     break
-                except HTTPError:
+                except (HTTPError, URLError):
                     data = None
             if data:
                 with open(os.path.join(packagedir, entry), 'w') as entryfd:
