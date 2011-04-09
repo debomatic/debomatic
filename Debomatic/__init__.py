@@ -19,13 +19,14 @@
 
 import gettext
 from ConfigParser import ConfigParser
+from datetime import datetime
 from sys import stderr
 
 
 class Output:
 
     def w(self, msg):
-        stderr.write('%s\n' % msg)
+        stderr.write('%s: %s\n' % (datetime.now().ctime(), msg))
 
     def e(self, msg):
         self.w(msg)
