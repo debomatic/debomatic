@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-04-11 04:33+0000\n"
-"X-Generator: Launchpad (build 12735)\n"
+"X-Launchpad-Export-Date: 2011-10-22 04:34+0000\n"
+"X-Generator: Launchpad (build 14170)\n"
 
 #: Debomatic/commands.py:49 Debomatic/build.py:53 Debomatic/build.py:89
 #: Debomatic/build.py:101 Debomatic/packages.py:57
@@ -99,19 +99,3 @@ msgstr "צרור המפתחות לא נמצא"
 #: Debomatic/gpg.py:77
 msgid "No valid signatures found"
 msgstr "לא נמצאו חתימות תקניות"
-
-#, python-format
-#~ msgid "Please set DEBOOTSTRAP in %s"
-#~ msgstr "נא להגדיר את DEBOOTSTRAP תחת %s"
-
-#, python-format
-#~ msgid "Please set COMPONENTS in %s"
-#~ msgstr "נא להגדיר את COMPONENTS תחת %s"
-
-#, python-format
-#~ msgid "Please set MIRRORSITE in %s"
-#~ msgstr "נא להגדיר את MIRRORSITE תחת %s"
-
-#, python-format
-#~ msgid "Unable to fetch %(mirror)s/dists/%(dist)s/Release.gpg"
-#~ msgstr "לא ניתן לאחזר את %(mirror)s/dists/%(dist)s/Release.gpg"

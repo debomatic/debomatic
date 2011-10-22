@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-04-11 04:33+0000\n"
-"X-Generator: Launchpad (build 12735)\n"
+"X-Launchpad-Export-Date: 2011-10-22 04:34+0000\n"
+"X-Generator: Launchpad (build 14170)\n"
 
 #: Debomatic/commands.py:49 Debomatic/build.py:53 Debomatic/build.py:89
 #: Debomatic/build.py:101 Debomatic/packages.py:57
@@ -99,35 +99,3 @@ msgstr "Portachiavi non trovato"
 #: Debomatic/gpg.py:77
 msgid "No valid signatures found"
 msgstr "Nessuna firma valida trovata"
-
-#, python-format
-#~ msgid "Please set DEBOOTSTRAP in %s"
-#~ msgstr "Impostare DEBOOTSTRAP in %s"
-
-#, python-format
-#~ msgid "Please set COMPONENTS in %s"
-#~ msgstr "Impostare COMPONENTS in %s"
-
-#, python-format
-#~ msgid "Please set MIRRORSITE in %s"
-#~ msgstr "Impostare MIRRORSITE in %s"
-
-#, python-format
-#~ msgid "Please set \"%s\" in %s"
-#~ msgstr "Impostare \"%s\" in %s"
-
-#, python-format
-#~ msgid "Unable to access directory %s"
-#~ msgstr "Impossibile accedere alla directory %s"
-
-#, python-format
-#~ msgid "pbuilder %s failed"
-#~ msgstr "pbuilder %s non riuscito"
-
-#, python-format
-#~ msgid "Unable to fetch %s/dists/%s/Release.gpg"
-#~ msgstr "Impossibile scaricare %s/dists/%s/Release.gpg"
-
-#, python-format
-#~ msgid "Unable to fetch %(mirror)s/dists/%(dist)s/Release.gpg"
-#~ msgstr "Impossibile scaricare %(mirror)s/dists/%(dist)s/Release.gpg"
