@@ -116,8 +116,18 @@ def get_compression(package):
         if os.path.exists(pkgfile):
             if findall('(.*\.debian\..*)', pkgfile):
                 try:
-                    return '--debbuildopts -Z%s' % \
+                    return ' -Z%s' % \
                             ext[os.path.splitext(pkgfile)[1]]
                 except IndexError:
                     pass
     return ''
+
+def get_changelog_versions(package, packagedir):
+    with open(os.path.join(packagedir, package), 'r') as fd:
+        data = fd.read()
+    try:
+        version = ' -v'
+        version += findall(' \S+ \((\S+)\) \S+; urgency=', data)[-1] + '~'
+    except IndexError:
+        version = ''
+    return version

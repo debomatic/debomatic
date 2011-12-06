@@ -142,6 +142,10 @@ def build_package(directory, configfile, distdir, package, uploader, distopts):
         base = '--basepath'
     else:
         base = '--basetgz'
+    debopts = '--debbuildopts "'
+    debopts += packages.get_compression(package)
+    debopts += packages.get_changelog_versions(package, directory)
+    debopts += '"'
     os.system('%(builder)s --build %(basetype)s %(directory)s/%(distribution)s'
               ' --override-config  '
               ' --logfile %(directory)s/pool/%(package)s/%(package)s.buildlog'
@@ -155,8 +159,7 @@ def build_package(directory, configfile, distdir, package, uploader, distopts):
                  'package': packageversion, 'cfg': configfile,
                  'distribution': distopts['distribution'],
                  'pbuilderhooks': Options.get('default', 'pbuilderhooks'),
-                 'debopts': packages.get_compression(package),
-                 'dsc': dscfile[0]})
+                 'debopts': debopts, 'dsc': dscfile[0]})
     mod.execute_hook('post_build', {'directory': distdir,
                                     'package': packageversion,
                                     'uploader': uploader_email,
