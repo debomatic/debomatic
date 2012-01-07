@@ -17,27 +17,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
-import gettext
-from ConfigParser import ConfigParser
-from datetime import datetime
-from sys import stderr
+from gettext import install
 
-
-class Output:
-
-    def w(self, msg):
-        stderr.write('%s: %s\n' % (datetime.now().ctime(), msg))
-
-    def e(self, msg):
-        self.w(msg)
-        exit()
-
-
-gettext.install("debomatic")
-Options = ConfigParser()
-acceptedqueue = []
-packagequeue = {}
-buildlock = None
-pbuilderlock = {}
-running = True
-log = Output()
+install("debomatic")

@@ -22,6 +22,7 @@
 # Stores litian output on top of the built package in the pool directory.
 
 import os
+from subprocess import call
 
 
 class DebomaticModule_Lintian:
@@ -38,6 +39,7 @@ class DebomaticModule_Lintian:
                 changesfile = os.path.join(resultdir, filename)
                 break
         if changesfile:
-            os.system('%s -V > %s' % (self.lintian, lintian))
-            os.system(('%s --allow-root -i -I -E --pedantic %s >> %s' %
-                       (self.lintian, changesfile, lintian)))
+            with open(lintian, 'w') as fd:
+                call([self.lintian, '-V'], stdout=fd)
+                call([self.lintian, '--allow-root', '-i', '-I', '-E',
+                      '--pedantic', changesfile], stdout=fd)

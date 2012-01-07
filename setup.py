@@ -36,7 +36,7 @@ for po in glob(os.path.join('po', '*.po')):
 class InstallGuide(install_data):
 
     def run(self):
-        os.system('rst2html docs/guide.rst build/guide.html')
+        call(['rst2html', 'docs/guide.rst', 'build/guide.html'])
         self.data_files.extend([('share/doc/debomatic', ['build/guide.html'])])
         install_data.run(self)
 

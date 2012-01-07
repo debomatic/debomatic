@@ -17,35 +17,34 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
-import sys
 import os
 from ConfigParser import NoSectionError
+from sys import path
 
-from Debomatic import Options
 
-
-class Module:
+class Module():
 
     # Set up the modules system
-    def __init__(self):
+    def __init__(self, opts):
+        self.opts = opts
         # Default to having modules enabled
         self.use_modules = True
         self.modules_list = []
 
         # Check if the modules system is turned on
-        if not Options.has_option('modules', 'modules'):
+        if not self.opts.has_option('modules', 'modules'):
             self.use_modules = False
-        elif Options.get('modules', 'modules') == "0":
+        elif self.opts.get('modules', 'modules') == "0":
             self.use_modules = False
         # Retrieve the path of the blacklist file
         try:
-            self.blacklist = Options.get('modules', 'blacklist')
+            self.blacklist = self.opts.get('modules', 'blacklist')
         except NoSectionError:
             self.blacklist = None
 
         # Add the modules directory to the python path
-        self.mod_path = Options.get('modules', 'modulespath')
-        sys.path.append(self.mod_path)
+        self.mod_path = self.opts.get('modules', 'modulespath')
+        path.append(self.mod_path)
 
         # Get a list of modules and remove any extra cruft that gets in
         try:

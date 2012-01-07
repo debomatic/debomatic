@@ -20,151 +20,322 @@
 
 import os
 from ConfigParser import NoSectionError
-from re import findall
+from hashlib import sha256
+from lockfile import FileLock
+from re import findall, split
+from subprocess import call, PIPE
+from time import strftime
+from urllib2 import Request, urlopen, HTTPError, URLError
 
-from Debomatic import (gpg, locks, log, modules, Options,
-                       packagequeue, packages, pbuilder)
+from gpg import GPG
+from modules import Module
 
 
-def build_process():
-    directory = Options.get('default', 'packagedir')
-    configdir = Options.get('default', 'configdir')
-    try:
-        blfile = Options.get('default', 'distblacklist')
-    except NoSectionError:
-        blfile = ''
-    distblacklist = []
-    if os.path.exists(blfile):
-        with open(blfile, 'r') as fd:
+class Build:
+
+    def __init__(self, opts, log, package=None, dsc=None,
+                 distribution=None, origin=None):
+        self.log = log
+        self.e = self.log.t
+        self.w = self.log.w
+        self.opts = opts
+        self.package = package
+        self.dscfile = dsc
+        self.distribution = distribution
+        self.origin = origin
+        self.cmd = None
+        self.distopts = {}
+        self.files = set()
+        self.packagedir = self.opts.get('default', 'packagedir')
+        self.full = False
+        self.uploader = None
+
+    def acquire_lock(self):
+        self.lockfile = FileLock('/var/run/debomatic.%s' %
+                                 (os.path.basename(self.configfile)))
+        self.lockfile.acquire()
+
+    def build(self):
+        if self.dscfile:
+            self.files.add(self.dscfile)
+        self.parse_distribution_options()
+        if self.is_blacklisted():
+            self.remove_files()
+            self.e(_('Distribution %s is disabled' % self.distribution))
+        self.fetch_missing_files()
+        self.setup_pbuilder()
+        self.build_package()
+
+    def build_package(self):
+        mod = Module(self.opts)
+        uploader_email = ''
+        packageversion = os.path.splitext(os.path.basename(self.dscfile))[0]
+        builddir = os.path.join(self.buildpath, 'pool', packageversion)
+        if not os.path.exists(builddir):
+            os.mkdir(builddir)
+        if self.uploader:
+            uploader_email = self.uploader[1]
+        mod.execute_hook('pre_build', {'cfg': self.configfile,
+                                       'directory': self.buildpath,
+                                       'distribution': self.distribution,
+                                       'dsc': self.dscfile,
+                                       'opts': self.opts,
+                                       'package': packageversion,
+                                       'uploader': uploader_email})
+        builder = self.opts.get('default', 'builder')
+        if builder == 'cowbuilder':
+            base = '--basepath'
+        else:
+            base = '--basetgz'
+        debopts = ' '.join((self.get_compression(),
+                            self.get_changelog_versions()))
+        call([builder, '--build', '--override-config',
+             base, '%s/%s' % (self.buildpath, self.distribution),
+             '--logfile', '%s/pool/%s/%s.buildlog' %
+             (self.buildpath, packageversion, packageversion),
+             '--buildplace', '%s/build' % self.buildpath,
+             '--buildresult', '%s/pool/%s' % (self.buildpath, packageversion),
+             '--aptcache', '%s/aptcache' % self.buildpath,
+             '--debbuildopts', '%s' % debopts,
+             '--hookdir', self.opts.get('default', 'pbuilderhooks'),
+             '--configfile', self.configfile, self.dscfile],
+             stdout=PIPE, stderr=PIPE)
+        mod.execute_hook('post_build', {'cfg': self.configfile,
+                                        'directory': self.buildpath,
+                                        'distribution': self.distribution,
+                                        'dsc': self.dscfile,
+                                        'opts': self.opts,
+                                        'package': packageversion,
+                                        'uploader': uploader_email})
+        self.remove_files()
+
+    def fetch_missing_files(self):
+        filename = self.dscfile if self.dscfile else self.package
+        packagename = os.path.basename(filename).split('_')[0]
+        for filename in self.files:
+            if not self.dscfile:
+                if filename.endswith('.dsc'):
+                    self.dscfile = filename
+                    break
+        with open(self.dscfile, 'r') as fd:
             data = fd.read()
-        distblacklist = data.split()
-    package = packages.select_package(directory)
-    if package:
-        distopts = parse_distribution_options(directory, configdir, package)
-        if distopts['distribution'] in distblacklist:
-            packages.rm_package(package)
-            log.e(_('Distribution %s is disabled' % distopts['distribution']))
-        pack = os.path.join(directory, package)
+        for entry in findall('\s\w{32}\s\d+\s(\S+)', data):
+            if not os.path.exists(os.path.join(self.packagedir, entry)):
+                for component in self.distopts['ocomponents'].split():
+                    request = Request('%s/pool/%s/%s/%s/%s' %
+                                      (self.distopts['origin'], component,
+                                       findall('^lib\S|^\S', packagename)[0],
+                                       packagename, entry))
+                    try:
+                        data = urlopen(request).read()
+                        break
+                    except (HTTPError, URLError):
+                        data = None
+                if data:
+                    with open(os.path.join(self.packagedir, entry), 'w') as e:
+                        e.write(data)
+            if not (os.path.join(self.packagedir, entry)) in self.files:
+                self.files.add(os.path.join(self.packagedir, entry))
+
+    def get_changelog_versions(self):
+        version = ''
+        if self.full:
+            with open(os.path.join(self.packagedir, self.package), 'r') as fd:
+                data = fd.read()
+            try:
+                version = '-v%s~' % findall(' \S+ \((\S+)\) \S+; ', data)[-1]
+            except IndexError:
+                pass
+        return version
+
+    def get_compression(self):
+        compression = ''
+        ext = {'.gz': 'gzip', '.bz2': 'bzip2', '.xz': 'xz'}
+        for pkgfile in self.files:
+            if os.path.exists(pkgfile):
+                if findall('(.*\.debian\..*)', pkgfile):
+                    try:
+                        compression = '-Z%s' % \
+                                       ext[os.path.splitext(pkgfile)[1]]
+                    except IndexError:
+                        pass
+        return compression
+
+    def is_blacklisted(self):
         try:
-            with open(pack, 'r') as fd:
+            blfile = self.opts.get('default', 'distblacklist')
+        except NoSectionError:
+            blfile = ''
+        if os.path.isfile(blfile):
+            with open(blfile, 'r') as fd:
+                blacklist = fd.read()
+        if self.distribution in blacklist.split():
+            return True
+
+    def needs_update(self):
+        if not os.path.exists(os.path.join(self.buildpath, 'gpg')):
+            os.mkdir(os.path.join(self.buildpath, 'gpg'))
+        gpgfile = os.path.join(self.buildpath, 'gpg', self.distribution)
+        if not os.path.exists(gpgfile):
+            self.cmd = 'create'
+            return
+        alwaysupdate = self.opts.get('default', 'alwaysupdate')
+        if alwaysupdate:
+            if os.path.isfile(alwaysupdate):
+                with open(alwaysupdate, 'r') as fd:
+                    for line in fd:
+                        if line.rstrip() == self.distribution:
+                            self.cmd = 'update'
+                            return
+        uri = '%s/dists/%s/Release.gpg' % (self.distopts['mirror'],
+                                           self.distribution)
+        try:
+            remote = urlopen(uri).read()
+        except HTTPError:
+            self.w(_('Unable to fetch %s') % uri)
+            self.cmd = update
+            return
+        remote_sha = sha256()
+        gpgfile_sha = sha256()
+        remote_sha.update(remote)
+        try:
+            with open(gpgfile, 'r') as fd:
+                gpgfile_sha.update(fd.read())
+        except OSError:
+            self.cmd = 'create'
+            return
+        if remote_sha.digest() != gpgfile_sha.digest():
+            self.cmd = 'update'
+
+    def parse_distribution_options(self):
+        conf = {'components': ('[^#]?COMPONENTS="?(.*[^"])"?\n', 'COMPONENTS'),
+                'debootstrap': ('[^#]?DEBOOTSTRAP="?(.*[^"])"?\n',
+                                'DEBOOTSTRAP'),
+                'distribution': ('[^#]?DISTRIBUTION="?(.*[^"])"?\n',
+                                 'DISTRIBUTION'),
+                'mirror': ('[^#]?MIRRORSITE="?(.*[^"])"?\n', 'MIRRORSITE'),
+                'origin': ('[^#]?MIRRORSITE="?(.*[^"])"?\n', 'MIRRORSITE'),
+                'ocomponents': ('[^#]?COMPONENTS="?(.*[^"])"?\n',
+                                'COMPONENTS')}
+        if self.full:
+            try:
+                with open(self.packagepath, 'r') as fd:
+                    data = fd.read()
+            except IOError:
+                self.e(_('Unable to open %s') % self.packagepath)
+            try:
+                distro = findall('Distribution:\s+(\w+)', data)[0]
+            except IndexError:
+                self.e(_('Bad .changes file: %s') % self.packagepath)
+            self.distopts['distribution'] = distro.lower()
+            self.distribution = self.distopts['distribution']
+        self.buildpath = os.path.join(self.packagedir, self.distribution)
+        self.configfile = os.path.join(self.opts.get('default', 'configdir'),
+                                       self.distribution)
+        try:
+            with open(self.configfile) as fd:
                 data = fd.read()
         except IOError:
-            packages.del_package(package)
-            log.e(_('Unable to open %s') % pack)
+            self.log.e(_('Unable to open %s') % self.configfile)
+        for elem in conf.keys():
+            try:
+                if not elem in self.distopts or not self.distopts[elem]:
+                    self.distopts[elem] = findall(conf[elem][0], data)[0]
+            except IndexError:
+                self.e(_('Please set %(parm)s in %s(conf)s') %
+                       {'parm': conf[elem][0], 'conf': conf})
+        if self.origin:
+            originconfig = os.path.join(self.opts.get('default', 'configdir'),
+                                        self.origin)
+            try:
+                with open(originconfig) as fd:
+                    data = fd.read()
+            except IOError:
+                self.log.e(_('Unable to open %s') % originconfig)
+            for elem in ('origin', 'ocomponents'):
+                try:
+                    self.distopts[elem] = findall(conf[elem][0], data)[0]
+                except IndexError:
+                    self.e(_('Please set %(parm)s in %s(conf)s') %
+                           {'parm': conf[elem][0], 'conf': conf})
+        else:
+            self.origin = self.distribution
+
+    def prepare_pbuilder(self):
+        for d in ('aptcache', 'build', 'logs', 'pool'):
+            if not os.path.exists(os.path.join(self.buildpath, d)):
+                os.mkdir(os.path.join(self.buildpath, d))
+        for f in ('Packages', 'Release'):
+            repo_file = os.path.join(self.buildpath, 'pool', f)
+            if not os.path.exists(repo_file):
+                with open(repo_file, 'w') as fd:
+                    pass
+        builder = self.opts.get('default', 'builder')
+        if builder == 'cowbuilder':
+            base = '--basepath'
+        else:
+            base = '--basetgz'
+        if call([builder, '--%s' % self.cmd, '--override-config',
+                base, '%s/%s' % (self.buildpath, self.distribution),
+                '--buildplace', '%s/build' % self.buildpath,
+                '--aptcache', '%s/aptcache' % self.buildpath,
+                '--logfile', '%s/logs/%s.%s' %
+                (self.buildpath, self.cmd, strftime('%Y%m%d_%H%M')),
+                '--configfile', '%s' % self.configfile],
+                stdout=PIPE, stderr=PIPE):
+            self.e(_('%(builder)s %(cmd)s failed') %
+                   {'builder': builder, 'cmd': self.cmd})
+
+    def release_lock(self):
+        self.lockfile.release()
+
+    def remove_files(self):
+        for pkgfile in self.files:
+            if os.path.exists(pkgfile):
+                os.remove(pkgfile)
+
+    def setup_pbuilder(self):
+        if not os.path.exists(os.path.join(self.buildpath)):
+            os.mkdir(os.path.join(self.buildpath))
+        self.acquire_lock()
+        self.needs_update()
+        if self.cmd:
+            self.prepare_pbuilder()
+            gpgfile = os.path.join(self.buildpath, 'gpg',
+                                   self.distopts['distribution'])
+            uri = '%s/dists/%s/Release.gpg' % (self.distopts['mirror'],
+                                               self.distopts['distribution'])
+            try:
+                remote = urlopen(uri).read()
+            except HTTPError:
+                self.release_lock()
+                self.e(_('Unable to fetch %s') % uri)
+            with open(gpgfile, 'w') as fd:
+                fd.write(remote)
+        self.release_lock()
+
+
+class FullBuild(Build):
+
+    def run(self):
+        self.full = True
+        self.packagepath = os.path.join(self.packagedir, self.package)
+        self.files.add(self.packagepath)
+        try:
+            with open(self.packagepath, 'r') as fd:
+                data = fd.read()
+        except IOError:
+            self.e(_('Unable to open %s') % self.packagepath)
         try:
             for entry in findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)', data):
-                packagequeue[package].append(os.path.join(directory, entry))
+                self.files.add(os.path.join(self.packagedir, entry))
         except IndexError:
-            log.e(_('Bad .changes file: %s') % pack)
-        packagequeue[package].append(pack)
-        try:
-            uploader = gpg.check_changes_signature(pack)
-        except RuntimeError as error:
-            packages.rm_package(package)
-            log.e(error)
-        packages.fetch_missing_files(package, packagequeue[package],
-                                     directory, distopts)
-        distdir = os.path.join(directory, distopts['distribution'])
-        try:
-            pbuilder.setup_pbuilder(distdir, configdir, distopts)
-        except RuntimeError as error:
-            packages.del_package(package)
-            log.e(error)
-        build_package(directory,
-                      os.path.join(configdir, distopts['distribution']),
-                      distdir, package, uploader, distopts)
-
-
-def parse_distribution_options(packagedir, configdir, package):
-    options = {}
-    fld = {'mirror': ('[^#]?MIRRORSITE="?(.*[^"])"?\n', 'MIRRORSITE'),
-           'components': ('[^#]?COMPONENTS="?(.*[^"])"?\n', 'COMPONENTS'),
-           'debootstrap': ('[^#]?DEBOOTSTRAP="?(.*[^"])"?\n', 'DEBOOTSTRAP')}
-    try:
-        with open(os.path.join(packagedir, package), 'r') as fd:
-            data = fd.read()
-    except IOError:
-        packages.del_package(package)
-        log.e(_('Unable to open %s') % os.path.join(packagedir, package))
-    try:
-        distro = findall('Distribution:\s+(\w+)', data)[0]
-        options['distribution'] = distro.lower()
-    except IndexError:
-        packages.del_package(package)
-        log.e(_('Bad .changes file: %s') % os.path.join(packagedir, package))
-    configfile = os.path.join(configdir, options['distribution'])
-    try:
-        with open(configfile) as fd:
-            conf = fd.read()
-    except IOError:
-        packages.del_package(package)
-        log.e(_('Unable to open %s') % configfile)
-    if not findall('[^#]?DISTRIBUTION="?(.*[^"])"?\n', conf):
-        packages.del_package(package)
-        log.e(_('Please set DISTRIBUTION in %s') % configfile)
-    for elm in fld.keys():
-        try:
-            options[elm] = findall(fld[elm][0], conf)[0]
-        except IndexError:
-            packages.del_package(package)
-            log.e(_('Please set %(parm)s in %s(conf)s') % \
-                  {'parm': fld[elm][0], 'config': configfile})
-    return options
-
-
-def build_package(directory, configfile, distdir, package, uploader, distopts):
-    mod = modules.Module()
-    try:
-        locks.buildlock_acquire()
-    except RuntimeError:
-        packages.del_package(package)
-        exit()
-    dscfile = None
-    for pkgfile in packagequeue[package]:
-        if not dscfile:
-            dscfile = findall('(.*\.dsc$)', pkgfile)
-    try:
-        packageversion = findall('.*/(.*).dsc$', dscfile[0])[0]
-    except IndexError:
-        packageversion = None
-    if not os.path.exists(os.path.join(distdir, 'pool', packageversion)):
-        os.mkdir(os.path.join(distdir, 'pool', packageversion))
-    uploader_email = ''
-    if uploader:
-        uploader_email = uploader[1]
-    mod.execute_hook('pre_build', {'directory': distdir,
-                                   'package': packageversion,
-                                   'uploader': uploader_email,
-                                   'cfg': configfile,
-                                   'distribution': distopts['distribution'],
-                                   'dsc': dscfile[0]})
-    if Options.get('default', 'builder') == 'cowbuilder':
-        base = '--basepath'
-    else:
-        base = '--basetgz'
-    debopts = '--debbuildopts "'
-    debopts += packages.get_compression(package)
-    debopts += packages.get_changelog_versions(package, directory)
-    debopts += '"'
-    os.system('%(builder)s --build %(basetype)s %(directory)s/%(distribution)s'
-              ' --override-config  '
-              ' --logfile %(directory)s/pool/%(package)s/%(package)s.buildlog'
-              ' --buildplace %(directory)s/build'
-              ' --buildresult %(directory)s/pool/%(package)s'
-              ' --aptcache %(directory)s/aptcache %(debopts)s'
-              ' --hookdir %(pbuilderhooks)s'
-              ' --configfile %(cfg)s %(dsc)s >/dev/null 2>&1'
-              % {'builder': Options.get('default', 'builder'),
-                 'basetype': base, 'directory': distdir,
-                 'package': packageversion, 'cfg': configfile,
-                 'distribution': distopts['distribution'],
-                 'pbuilderhooks': Options.get('default', 'pbuilderhooks'),
-                 'debopts': debopts, 'dsc': dscfile[0]})
-    mod.execute_hook('post_build', {'directory': distdir,
-                                    'package': packageversion,
-                                    'uploader': uploader_email,
-                                    'cfg': configfile,
-                                    'distribution': distopts['distribution'],
-                                    'dsc': dscfile[0]})
-    packages.rm_package(package)
-    locks.buildlock_release()
+            self.e(_('Bad .changes file: %s') % self.packagepath)
+        gpg = GPG(self.opts, self.packagepath)
+        if gpg.gpg:
+            if gpg.sig:
+                self.uploader = gpg.sig
+            else:
+                self.remove_files()
+                self.e(gpg.error)
+        self.build()

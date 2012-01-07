@@ -1,4 +1,5 @@
 0.10
+* Massive code refactorization
 * Local package repository support
 * PEP-8 syntax
 * Support rebuilding packages available in other distributions

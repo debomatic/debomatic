@@ -22,4 +22,4 @@ from Debomatic import debomatic
 
 
 if __name__ == "__main__":
-    debomatic.main()
+    debomatic.Debomatic()

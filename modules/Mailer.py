@@ -24,8 +24,6 @@ from subprocess import Popen, PIPE
 from smtplib import SMTP
 from email.parser import Parser
 
-from Debomatic import Options
-
 
 class DebomaticModule_Mailer:
 
@@ -50,9 +48,9 @@ class DebomaticModule_Mailer:
         return msg.as_string()
 
     def __init__(self):
-        if Options.has_section('mailer'):
+        if args[opts].has_section('mailer'):
             for opt in self.DEFAULT_OPTIONS:
-                setattr(self, opt, Options.get('mailer', opt))
+                setattr(self, opt, args[opts].get('mailer', opt))
 
     def post_build(self, args):
         if not args['uploader']:

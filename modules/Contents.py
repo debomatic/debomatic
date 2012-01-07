@@ -22,6 +22,7 @@
 # Store debc output in the pool directory.
 
 import os
+from subprocess import call
 
 
 class DebomaticModule_Contents:
@@ -38,4 +39,5 @@ class DebomaticModule_Contents:
                 changes_file = os.path.join(resultdir, filename)
                 break
         if changes_file:
-            os.system('%s %s > %s' % (self.debc, changes_file, contents_file))
+            with open(contents_file, 'w') as fd:
+                call([self.debc, changes_file], stdout=fd)

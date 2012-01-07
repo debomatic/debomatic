@@ -19,95 +19,87 @@
 
 import os
 from glob import glob
-from re import findall, split
-from shutil import rmtree
-from subprocess import call, PIPE
+from re import findall
 from urllib2 import Request, urlopen, HTTPError, URLError
 
-from Debomatic import acceptedqueue, gpg, log, Options, packagequeue, packages
+from build import Build
+from gpg import GPG
 
 
-def process_rm(cmd, packagedir):
-    filesets = findall('\s?rm\s+(.*)', cmd)
-    for files in filesets:
-        for pattern in split(' ', files):
-            for absfile in glob(os.path.join(packagedir,
-                                             os.path.basename(pattern))):
-                os.remove(absfile)
+class Command():
 
+    def __init__(self, opts, log, pool, commandfile):
+        self.log = log
+        self.w = self.log.w
+        self.opts = opts
+        self.pool = pool
+        self.configdir = opts.get('default', 'configdir')
+        self.packagedir = opts.get('default', 'packagedir')
+        self.cmdfile = os.path.join(self.packagedir, commandfile)
 
-def process_rebuild(cmd, packagedir):
-    opts = {}
-    packs = findall('\s?rebuild\s+(\S+)_(\S+) (\S+) ?(\S*)', cmd)
-    configdir = Options.get('default', 'configdir')
-    for package in packs:
-        dscname = '%s_%s.dsc' % (package[0], package[1])
-        try:
-            target = package[3] if package[3] else package[2]
-            with open(os.path.join(configdir, target), 'r') as fd:
-                data = fd.read()
-        except IOError:
-            log.w(_('Unable to open %s') % os.path.join(configdir, target))
-            return
-        try:
-            opts['mirror'] = findall('[^#]?MIRRORSITE="?(.*[^"])"?\n', data)[0]
-            opts['components'] = findall('[^#]?COMPONENTS="?(.*[^"])"?\n',
-                                         data)[0]
-        except IndexError:
-            return
-        for component in split(' ', opts['components']):
-            request = Request('%s/pool/%s/%s/%s/%s' % \
-                              (opts['mirror'], component,
-                               findall('^lib\S|^\S', package[0])[0],
-                               package[0], dscname))
+    def process_command(self):
+        gpg = GPG(self.opts, self.cmdfile)
+        if gpg.gpg:
+            if not gpg.sig:
+                os.remove(self.cmdfile)
+                self.w(gpg.error)
+                return
+        with open(self.cmdfile, 'r') as fd:
+            cmd = fd.read()
+        os.remove(self.cmdfile)
+        cmd_rm = findall('\s?rm\s+(.*)', cmd)
+        cmd_rebuild = findall('\s?rebuild\s+(\S+)_(\S+) (\S+) ?(\S*)', cmd)
+        if cmd_rm:
+            self.process_rm(cmd_rm)
+        if cmd_rebuild:
+            self.process_rebuild(cmd_rebuild)
+
+    def process_rm(self, filesets):
+        for files in filesets:
+            for pattern in files.split():
+                pattern = os.path.basename(pattern)
+                for absfile in glob(os.path.join(self.packagedir, pattern)):
+                    os.remove(absfile)
+
+    def process_rebuild(self, packages):
+        parms = {}
+        conf = {'mirror': ('[^#]?MIRRORSITE="?(.*[^"])"?\n', 'MIRRORSITE'),
+                'components': ('[^#]?COMPONENTS="?(.*[^"])"?\n', 'COMPONENTS')}
+        for package in packages:
+            dscname = '%s_%s.dsc' % (package[0], package[1])
+            target = package[2]
+            origin = package[3] if package[3] else package[2]
+            originconf = os.path.join(self.configdir, origin)
             try:
-                data = urlopen(request).read()
-                break
-            except (HTTPError, URLError):
-                data = None
-        if data:
-            dsc = os.path.join(packagedir, dscname)
-            with open(dsc, 'w') as entryfd:
-                entryfd.write(data)
-            try:
-                p = '%s_%s_source.changes' % (package[0], package[1])
-                packages.add_package(p)
-                packagequeue[p].append(dsc)
-            except RuntimeError:
-                continue
-            packages.fetch_missing_files(p, [dsc], packagedir, opts)
-            packages.del_package(p)
-            acceptedqueue.append(os.path.join(packagedir, p))
-            pdir = os.path.join(packagedir, '.%s_%s' % (package[0],
-                                                        package[1]))
-            call(['dpkg-source', '-x', dsc, pdir], stdout=PIPE, stderr=PIPE)
-            cwd = os.getcwd()
-            os.chdir(pdir)
-            with open(os.path.join(packagedir, p), 'w') as fd:
-                changes = call(['dpkg-genchanges', '-S',
-                               '-Ddistribution=%s' % package[2]],
-                               stdout=fd, stderr=PIPE)
-            os.chdir(cwd)
-            rmtree(pdir)
-
-
-def process_commands():
-    directory = Options.get('default', 'packagedir')
-    try:
-        filelist = os.listdir(directory)
-    except OSError:
-        log.e(_('Unable to access %s directory') % directory)
-    for filename in filelist:
-        cmdfile = os.path.join(directory, filename)
-        if os.path.splitext(cmdfile)[1] == '.commands':
-            try:
-                gpg.check_commands_signature(cmdfile)
-            except RuntimeError as error:
-                os.remove(cmdfile)
-                log.w(error)
-                continue
-            with open(cmdfile, 'r') as fd:
-                cmd = fd.read()
-            os.remove(cmdfile)
-            process_rm(cmd, directory)
-            process_rebuild(cmd, directory)
+                with open(originconf, 'r') as fd:
+                    data = fd.read()
+            except IOError:
+                self.w(_('Unable to open %s') % originconf)
+                return
+            for elem in conf.keys():
+                try:
+                    parms[elem] = findall(conf[elem][0], data)[0]
+                except IndexError:
+                    self.w(_('Please set %(parm)s in %s(conf)s') % \
+                           {'parm': conf[elem][0], 'conf': originconf})
+                    return
+            for component in parms['components'].split():
+                request = Request('%s/pool/%s/%s/%s/%s' %
+                                  (parms['mirror'], component,
+                                   findall('^lib\S|^\S', package[0])[0],
+                                           package[0], dscname))
+                try:
+                    data = urlopen(request).read()
+                    break
+                except (HTTPError, URLError):
+                    data = None
+            if data:
+                dsc = os.path.join(self.packagedir, dscname)
+                with open(dsc, 'w') as fd:
+                    fd.write(data)
+                b = Build(self.opts, self.log, dsc=dsc,
+                          distribution=target, origin=origin)
+                self.pool.add_task(b.build)
+            else:
+                self.w(_('Unable to fetch %s') % \
+                       '_'.join((package[0], package[1])))
