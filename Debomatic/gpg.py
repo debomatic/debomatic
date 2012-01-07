@@ -38,12 +38,13 @@ class GPG:
     def check_signature(self):
         if self.opts.has_option('gpg', 'keyring'):
             self.keyring = self.opts.get('gpg', 'keyring')
-            if not os.path.exists(self.keyring):
+            if not os.path.isfile(self.keyring):
                 self.keyring = None
                 self.error = _('Keyring not found')
                 return
-        gpgresult = Popen(['gpg', '--no-default-keyring', '--keyring',
-                          self.keyring, '--verify', self.filename],
+        gpgresult = Popen(['gpg', '--homedir', os.path.dirname(self.keyring),
+                           '--no-default-keyring', '--keyring',
+                           self.keyring, '--verify', self.filename],
                           stderr=PIPE).communicate()[1]
         signature = findall('Good signature from "(.*) <(.*)>"', gpgresult)
         if signature:
