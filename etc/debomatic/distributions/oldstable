@@ -1,4 +1,4 @@
-DISTRIBUTION=lenny
+DISTRIBUTION=oldstable
 MIRRORSITE=ftp://ftp.debian.org/debian
 COMPONENTS="main contrib non-free"
 DEBOOTSTRAP=debootstrap
