@@ -51,7 +51,8 @@ class GPG:
                            '--no-default-keyring', '--keyring',
                            self.keyring, '--verify', self.filename],
                           stderr=PIPE).communicate()[1]
-        os.unlink(trustdb)
+        if os.path.isfile(trustdb):
+            os.unlink(trustdb)
         signature = findall('Good signature from "(.*) <(.*)>"', gpgresult)
         if signature:
             self.sig = signature[0]
