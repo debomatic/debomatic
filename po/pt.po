@@ -7,95 +7,85 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2011-03-05 09:19+0100\n"
+"POT-Creation-Date: 2012-01-07 12:49+0100\n"
 "PO-Revision-Date: 2009-12-17 22:44+0000\n"
 "Last-Translator: José Borges Ferreira (underspell) <Unknown>\n"
 "Language-Team: Portuguese <pt@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-12-14 04:39+0000\n"
-"X-Generator: Launchpad (build 14487)\n"
+"X-Launchpad-Export-Date: 2012-01-08 04:41+0000\n"
+"X-Generator: Launchpad (build 14640)\n"
 
-#: Debomatic/commands.py:49 Debomatic/build.py:53 Debomatic/build.py:89
-#: Debomatic/build.py:101 Debomatic/packages.py:57
+#: Debomatic/commands.py:77 Debomatic/build.py:225 Debomatic/build.py:239
+#: Debomatic/build.py:254 Debomatic/build.py:328
 #, python-format
 msgid "Unable to open %s"
 msgstr "Não foi possível abrir %s"
 
-#: Debomatic/commands.py:98 Debomatic/packages.py:34
-#, python-format
-msgid "Unable to access %s directory"
-msgstr "Impossível aceder o directório %s"
-
-#: Debomatic/build.py:46
-#, python-format
-msgid "Distribution %s is disabled"
-msgstr ""
-
-#: Debomatic/build.py:58 Debomatic/build.py:95
-#, python-format
-msgid "Bad .changes file: %s"
-msgstr "Ficheiro .changes inválido: %s"
-
-#: Debomatic/build.py:104
-#, python-format
-msgid "Please set DISTRIBUTION in %s"
-msgstr "Por favor seleccione DISTRIBUTION em %s"
-
-#: Debomatic/build.py:110
+#: Debomatic/commands.py:83 Debomatic/build.py:245 Debomatic/build.py:259
 msgid "Please set %(parm)s in %s(conf)s"
 msgstr ""
 
-#: Debomatic/debomatic.py:35
-msgid "You must run deb-o-matic as root"
-msgstr "O deb-o-matic tem que ser lanaçado com acesso root"
-
-#: Debomatic/debomatic.py:54 Debomatic/debomatic.py:63
-msgid "Unable to enter daemon mode"
-msgstr "Impossível entrar em modo daemon"
-
-#: Debomatic/debomatic.py:75
-msgid "Another instance is running. Aborting"
-msgstr "Outra instância da aplicação já em execução"
-
-#: Debomatic/debomatic.py:85
-msgid "Please specify a configuration file"
-msgstr "Por favor especifique qual o ficheiro de configuração"
-
-#: Debomatic/debomatic.py:87
-#, python-format
-msgid "Configuration file %s does not exist"
-msgstr "Ficheiro de configuração %s não existente"
-
-#: Debomatic/debomatic.py:92
-#, python-format
-msgid "Please set \"%(opt)s\" in %(conffile)s"
-msgstr "Queira configurar \"%(opt)s\" no %(conffile)s"
-
-#: Debomatic/debomatic.py:137
-msgid ""
-"\n"
-"Waiting for threads to finish, it could take a while..."
-msgstr ""
-"\n"
-"A aguardar a finalização dos processos. Pode demorar ..."
-
-#: Debomatic/pbuilder.py:52 Debomatic/pbuilder.py:70
+#: Debomatic/commands.py:104 Debomatic/build.py:195 Debomatic/build.py:312
 #, python-format
 msgid "Unable to fetch %s"
 msgstr ""
 
-#: Debomatic/pbuilder.py:106
+#: Debomatic/build.py:64
+#, python-format
+msgid "Distribution %s is disabled"
+msgstr ""
+
+#: Debomatic/build.py:229 Debomatic/build.py:333
+#, python-format
+msgid "Bad .changes file: %s"
+msgstr "Ficheiro .changes inválido: %s"
+
+#: Debomatic/build.py:286
 #, python-format
 msgid "%(builder)s %(cmd)s failed"
 msgstr ""
 
-#: Debomatic/gpg.py:46 Debomatic/gpg.py:67
+#: Debomatic/debomatic.py:47
+msgid "You must run deb-o-matic as root"
+msgstr "O deb-o-matic tem que ser lanaçado com acesso root"
+
+#: Debomatic/debomatic.py:58
+msgid "Another instance is running. Aborting"
+msgstr "Outra instância da aplicação já em execução"
+
+#: Debomatic/debomatic.py:70
+msgid "Unable to enter daemon mode"
+msgstr "Impossível entrar em modo daemon"
+
+#: Debomatic/debomatic.py:83
+msgid "Configuration file has not been specified"
+msgstr ""
+
+#: Debomatic/debomatic.py:85
+#, python-format
+msgid "Configuration file %s does not exist"
+msgstr "Ficheiro de configuração %s não existente"
+
+#: Debomatic/debomatic.py:90
+#, python-format
+msgid "Set \"%(opt)s\" in %(conffile)s"
+msgstr ""
+
+#: Debomatic/debomatic.py:133
+#, python-format
+msgid "Unable to access %s directory"
+msgstr "Impossível aceder o directório %s"
+
+#: Debomatic/debomatic.py:143
+msgid "Waiting for threads to finish, it could take a while..."
+msgstr ""
+
+#: Debomatic/gpg.py:43
 msgid "Keyring not found"
 msgstr "Chaveiro não encontrado"
 
-#: Debomatic/gpg.py:50 Debomatic/gpg.py:57 Debomatic/gpg.py:70
-#: Debomatic/gpg.py:77
+#: Debomatic/gpg.py:52
 msgid "No valid signatures found"
 msgstr "Nenhuma assinatura válida encontrada"
