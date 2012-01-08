@@ -34,13 +34,14 @@ from modules import Module
 class Build:
 
     def __init__(self, opts, log, package=None, dsc=None,
-                 distribution=None, origin=None):
+                 debopts=None, distribution=None, origin=None):
         self.log = log
         self.e = self.log.t
         self.w = self.log.w
         self.opts = opts
         self.package = package
         self.dscfile = dsc
+        self.debopts = debopts
         self.distribution = distribution
         self.origin = origin
         self.cmd = None
@@ -87,7 +88,8 @@ class Build:
             base = '--basepath'
         else:
             base = '--basetgz'
-        debopts = ' '.join((self.get_compression(),
+        debopts = ' '.join((self.get_build_options(),
+                            self.get_compression(),
                             self.get_changelog_versions()))
         with open(os.devnull, 'w') as fd:
             call([builder, '--build', '--override-config',
@@ -138,6 +140,12 @@ class Build:
                         e.write(data)
             if not (os.path.join(self.packagedir, entry)) in self.files:
                 self.files.add(os.path.join(self.packagedir, entry))
+
+    def get_build_options(self):
+        if self.debopts:
+            return '-B -m"%s"' % self.debopts
+        else:
+            return ''
 
     def get_changelog_versions(self):
         version = ''

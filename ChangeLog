@@ -4,6 +4,7 @@
 * PEP-8 syntax
 * Support rebuilding packages available in other distributions
 * Support for pbuilder/cowbuilder hooks
+* Support for porter uploads
 
 0.9 "bafana" (2011-02-06)
 * Mailer support
