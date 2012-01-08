@@ -20,6 +20,7 @@
 import os
 from re import findall, DOTALL
 from subprocess import Popen, PIPE
+from tempfile import mkstemp
 
 
 class GPG:
@@ -42,10 +43,15 @@ class GPG:
                 self.keyring = None
                 self.error = _('Keyring not found')
                 return
+        fd, trustdb = mkstemp()
+        os.close(fd)
+        os.unlink(trustdb)
         gpgresult = Popen(['gpg', '--homedir', os.path.dirname(self.keyring),
+                           '--trustdb-name', trustdb,
                            '--no-default-keyring', '--keyring',
                            self.keyring, '--verify', self.filename],
                           stderr=PIPE).communicate()[1]
+        os.unlink(trustdb)
         signature = findall('Good signature from "(.*) <(.*)>"', gpgresult)
         if signature:
             self.sig = signature[0]
