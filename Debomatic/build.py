@@ -89,17 +89,19 @@ class Build:
             base = '--basetgz'
         debopts = ' '.join((self.get_compression(),
                             self.get_changelog_versions()))
-        call([builder, '--build', '--override-config',
-             base, '%s/%s' % (self.buildpath, self.distribution),
-             '--logfile', '%s/pool/%s/%s.buildlog' %
-             (self.buildpath, packageversion, packageversion),
-             '--buildplace', '%s/build' % self.buildpath,
-             '--buildresult', '%s/pool/%s' % (self.buildpath, packageversion),
-             '--aptcache', '%s/aptcache' % self.buildpath,
-             '--debbuildopts', '%s' % debopts,
-             '--hookdir', self.opts.get('default', 'pbuilderhooks'),
-             '--configfile', self.configfile, self.dscfile],
-             stdout=PIPE, stderr=PIPE)
+        with open(os.devnull, 'w') as fd:
+            call([builder, '--build', '--override-config',
+                 base, '%s/%s' % (self.buildpath, self.distribution),
+                 '--logfile', '%s/pool/%s/%s.buildlog' %
+                 (self.buildpath, packageversion, packageversion),
+                 '--buildplace', '%s/build' % self.buildpath,
+                 '--buildresult', '%s/pool/%s' %
+                 (self.buildpath, packageversion),
+                 '--aptcache', '%s/aptcache' % self.buildpath,
+                 '--debbuildopts', '%s' % debopts,
+                 '--hookdir', self.opts.get('default', 'pbuilderhooks'),
+                 '--configfile', self.configfile, self.dscfile],
+                 stdout=fd, stderr=fd)
         mod.execute_hook('post_build', {'cfg': self.configfile,
                                         'directory': self.buildpath,
                                         'distribution': self.distribution,
@@ -275,16 +277,17 @@ class Build:
             base = '--basepath'
         else:
             base = '--basetgz'
-        if call([builder, '--%s' % self.cmd, '--override-config',
-                base, '%s/%s' % (self.buildpath, self.distribution),
-                '--buildplace', '%s/build' % self.buildpath,
-                '--aptcache', '%s/aptcache' % self.buildpath,
-                '--logfile', '%s/logs/%s.%s' %
-                (self.buildpath, self.cmd, strftime('%Y%m%d_%H%M')),
-                '--configfile', '%s' % self.configfile],
-                stdout=PIPE, stderr=PIPE):
-            self.e(_('%(builder)s %(cmd)s failed') %
-                   {'builder': builder, 'cmd': self.cmd})
+        with open(os.devnull, 'w') as fd:
+            if call([builder, '--%s' % self.cmd, '--override-config',
+                    base, '%s/%s' % (self.buildpath, self.distribution),
+                    '--buildplace', '%s/build' % self.buildpath,
+                    '--aptcache', '%s/aptcache' % self.buildpath,
+                    '--logfile', '%s/logs/%s.%s' %
+                    (self.buildpath, self.cmd, strftime('%Y%m%d_%H%M')),
+                    '--configfile', '%s' % self.configfile],
+                    stdout=fd, stderr=fd):
+                self.e(_('%(builder)s %(cmd)s failed') %
+                       {'builder': builder, 'cmd': self.cmd})
 
     def release_lock(self):
         self.lockfile.release()
