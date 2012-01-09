@@ -20,6 +20,7 @@
 from os import setpgrp
 from Queue import Queue
 from threading import Thread
+from traceback import print_exc
 
 
 class Job(Thread):
@@ -36,8 +37,8 @@ class Job(Thread):
             setpgrp()
             try:
                 func()
-            except Exception as error:
-                pass
+            except:
+                print_exc()
             try:
                 jobs.remove(args)
             except KeyError:
