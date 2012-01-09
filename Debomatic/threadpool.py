@@ -37,6 +37,8 @@ class Job(Thread):
             setpgrp()
             try:
                 func()
+            except RuntimeError:
+                pass
             except:
                 print_exc()
             try:

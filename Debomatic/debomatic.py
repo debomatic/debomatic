@@ -21,9 +21,8 @@ import os
 from ConfigParser import ConfigParser
 from datetime import datetime
 from getopt import getopt, GetoptError
-from daemon import DaemonContext
-from daemon.pidlockfile import PIDLockFile
-from signal import signal, SIGINT
+from daemon import DaemonContext, pidlockfile
+from signal import signal, SIGINT, SIGTERM
 from sys import argv, stderr
 from time import sleep
 
@@ -36,44 +35,43 @@ from threadpool import ThreadPool
 class Debomatic:
 
     def __init__(self):
-        daemon = True
+        self.daemon = True
         self.log = Output()
         self.e = self.log.e
         self.w = self.log.w
         self.conffile = None
-        self.lockfile = PIDLockFile('/var/run/debomatic')
+        self.lockfilepath = '/var/run/debomatic'
+        self.lockfile = pidlockfile.PIDLockFile(self.lockfilepath)
         self.opts = ConfigParser()
         if os.getuid():
             self.e(_('You must run deb-o-matic as root'))
         try:
-            opts, args = getopt(argv[1:], 'c:n', ['config=', 'nodaemon'])
+            opts, args = getopt(argv[1:], 'c:nq',
+                                ['config=', 'nodaemon', 'quit-process'])
         except GetoptError as error:
             self.e(error.msg)
         for o, a in opts:
             if o in ('-c', '--config'):
                 self.conffile = a
             if o in ('-n', '--nodaemon'):
-                daemon = False
+                self.daemon = False
+            if o in ('-q', '--quit-process'):
+                self.quit_process()
         if self.lockfile.is_locked():
             self.e(_('Another instance is running. Aborting'))
         self.default_options()
         self.mod_sys = Module(self.opts)
         self.mod_sys.execute_hook('on_start', {})
         self.packagedir = self.opts.get('default', 'packagedir')
-        if daemon:
-            try:
-                with open(self.opts.get('default', 'logfile'), 'a') as fd:
-                    with DaemonContext(pidfile=self.lockfile,
-                                       stdout=fd, stderr=fd):
-                        self.launcher()
-            except ImportError:
-                self.w(_('Unable to enter daemon mode'))
-                self.lockfile.acquire()
-                signal(SIGINT, self.quit)
-                self.launcher()
+        signal(SIGINT, self.quit)
+        signal(SIGTERM, self.quit)
+        if self.daemon:
+            with open(self.opts.get('default', 'logfile'), 'a') as fd:
+                with DaemonContext(pidfile=self.lockfile, stdout=fd, stderr=fd,
+                                   signal_map={SIGTERM: self.quit}):
+                    self.launcher()
         else:
             self.lockfile.acquire()
-            signal(SIGINT, self.quit)
             self.launcher()
 
     def default_options(self):
@@ -140,11 +138,33 @@ class Debomatic:
                 self.commandpool.add_task(c.process_command, filename)
 
     def quit(self, signum, frame):
-        self.w(_('Waiting for threads to finish, it could take a while...'))
+        self.w(_('Waiting for threads to complete...'))
         self.commandpool.wait_completion()
         self.pool.wait_completion()
         self.mod_sys.execute_hook('on_quit', {})
-        self.lockfile.release()
+        if not self.daemon:
+            self.lockfile.release()
+        exit()
+
+    def quit_process(self):
+        lockfile = pidlockfile.PIDLockFile('/var/run/debomatic')
+        if self.lockfile.is_locked():
+            try:
+                pid = pidlockfile.read_pid_from_pidfile(self.lockfilepath)
+                try:
+                    os.kill(pid, 0)
+                except OSError:
+                    pid = None
+            except pidlockfile.PIDFileParseError:
+                pid = None
+            if pid:
+                self.w(_('Waiting for threads to complete...'))
+                os.kill(pid, SIGTERM)
+                lockfile.acquire()
+                lockfile.release()
+            else:
+                lockfile.break_lock()
+                self.w(_('Obsolete lock removed'))
         exit()
 
 
