@@ -7,42 +7,42 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2012-01-07 12:49+0100\n"
+"POT-Creation-Date: 2012-01-09 22:56+0100\n"
 "PO-Revision-Date: 2010-05-09 16:54+0000\n"
 "Last-Translator: Roman Horník <Unknown>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-01-08 04:41+0000\n"
+"X-Launchpad-Export-Date: 2012-01-10 05:14+0000\n"
 "X-Generator: Launchpad (build 14640)\n"
 
-#: Debomatic/commands.py:77 Debomatic/build.py:225 Debomatic/build.py:239
-#: Debomatic/build.py:254 Debomatic/build.py:328
+#: Debomatic/commands.py:48 Debomatic/build.py:235 Debomatic/build.py:249
+#: Debomatic/build.py:264 Debomatic/build.py:339
 #, python-format
 msgid "Unable to open %s"
 msgstr "Nelze otevřít %s"
 
-#: Debomatic/commands.py:83 Debomatic/build.py:245 Debomatic/build.py:259
+#: Debomatic/commands.py:55 Debomatic/build.py:255 Debomatic/build.py:269
 msgid "Please set %(parm)s in %s(conf)s"
 msgstr ""
 
-#: Debomatic/commands.py:104 Debomatic/build.py:195 Debomatic/build.py:312
+#: Debomatic/commands.py:68 Debomatic/build.py:205 Debomatic/build.py:323
 #, python-format
 msgid "Unable to fetch %s"
 msgstr ""
 
-#: Debomatic/build.py:64
+#: Debomatic/build.py:65
 #, python-format
 msgid "Distribution %s is disabled"
 msgstr ""
 
-#: Debomatic/build.py:229 Debomatic/build.py:333
+#: Debomatic/build.py:239 Debomatic/build.py:344
 #, python-format
 msgid "Bad .changes file: %s"
 msgstr "Špatný .changes soubor: %s"
 
-#: Debomatic/build.py:286
+#: Debomatic/build.py:297
 #, python-format
 msgid "%(builder)s %(cmd)s failed"
 msgstr "%(builder)s %(cmd)s selhalo"
@@ -51,41 +51,41 @@ msgstr "%(builder)s %(cmd)s selhalo"
 msgid "You must run deb-o-matic as root"
 msgstr "deb-o-matic musíte spustit jako root"
 
-#: Debomatic/debomatic.py:58
+#: Debomatic/debomatic.py:61
 msgid "Another instance is running. Aborting"
 msgstr "Jiná instance je spuštěna. Rušení"
 
-#: Debomatic/debomatic.py:70
-msgid "Unable to enter daemon mode"
-msgstr "Nelze vložit mód démona"
-
-#: Debomatic/debomatic.py:83
+#: Debomatic/debomatic.py:81
 msgid "Configuration file has not been specified"
 msgstr ""
 
-#: Debomatic/debomatic.py:85
+#: Debomatic/debomatic.py:83
 #, python-format
 msgid "Configuration file %s does not exist"
 msgstr "Konfigurační soubor %s neexistuje"
 
-#: Debomatic/debomatic.py:90
+#: Debomatic/debomatic.py:88
 #, python-format
 msgid "Set \"%(opt)s\" in %(conffile)s"
 msgstr ""
 
-#: Debomatic/debomatic.py:133
+#: Debomatic/debomatic.py:131
 #, python-format
 msgid "Unable to access %s directory"
 msgstr "Nelze otevřít adresář %s"
 
-#: Debomatic/debomatic.py:143
-msgid "Waiting for threads to finish, it could take a while..."
+#: Debomatic/debomatic.py:141 Debomatic/debomatic.py:161 prova.py:17
+msgid "Waiting for threads to complete..."
 msgstr ""
 
-#: Debomatic/gpg.py:43
+#: Debomatic/debomatic.py:167 prova.py:23
+msgid "Obsolete lock removed"
+msgstr ""
+
+#: Debomatic/gpg.py:44
 msgid "Keyring not found"
 msgstr "Klíčenka nenalezena"
 
-#: Debomatic/gpg.py:52
+#: Debomatic/gpg.py:60
 msgid "No valid signatures found"
 msgstr "Žádný validní podpis"
