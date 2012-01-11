@@ -53,7 +53,7 @@ class GPG:
                           stderr=PIPE).communicate()[1]
         if os.path.isfile(trustdb):
             os.unlink(trustdb)
-        signature = findall('Good signature from "(.*) <(.*)>"', gpgresult)
+        signature = findall('Good signature from "(.*) <(.*)>.*"', gpgresult)
         if signature:
             self.sig = signature[0]
         else:
