@@ -280,6 +280,7 @@ class Build:
             if not os.path.exists(repo_file):
                 with open(repo_file, 'w') as fd:
                     pass
+        call(['gzip', '-9', os.path.join(self.buildpath, 'pool', 'Packages')])
         builder = self.opts.get('default', 'builder')
         if builder == 'cowbuilder':
             base = '--basepath'

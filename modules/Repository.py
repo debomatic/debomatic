@@ -27,6 +27,7 @@ class DebomaticModule_Repository:
 
     def __init__(self):
         self.af = '/usr/bin/apt-ftparchive'
+        self.gzip = '/bin/gzip'
 
     def post_build(self, args):
         cwd = os.getcwd()
@@ -38,6 +39,7 @@ class DebomaticModule_Repository:
         os.chdir(pool_dir)
         with open(packages_file, 'w') as fd:
             call([self.af, 'packages', '.'], stdout=fd, stderr=PIPE)
+        call([self.gzip, '-9', '-f', packages_file], stdout=PIPE, stderr=PIPE)
         with open(release_file, 'w') as fd:
             call([self.af, '-qq',
                  '-o', 'APT::FTPArchive::Release::Origin="Deb-o-Matic"',
