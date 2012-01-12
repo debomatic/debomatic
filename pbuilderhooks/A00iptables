@@ -3,4 +3,4 @@
 apt-get install -y iptables
 
 # GID must match the one defined by BUILDUSERID into pbuilderrc file
-iptables -A OUTPUT -m owner --gid-owner 1234 -j REJECT --reject-with icmp-port-unreachable 
+iptables -A OUTPUT ! -s 127.0.0.1 ! -d 127.0.0.1 -m owner --gid-owner 1234 -j REJECT --reject-with icmp-port-unreachable 

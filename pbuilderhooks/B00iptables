@@ -1,4 +1,4 @@
 #!/bin/sh
 
 # GID must match the one defined by BUILDUSERID into pbuilderrc file
-iptables -D OUTPUT -m owner --gid-owner 1234 -j REJECT --reject-with icmp-port-unreachable 
+iptables -D OUTPUT ! -s 127.0.0.1 ! -d 127.0.0.1 -m owner --gid-owner 1234 -j REJECT --reject-with icmp-port-unreachable 
