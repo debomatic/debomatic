@@ -294,6 +294,7 @@ class Build:
                     (self.buildpath, self.cmd, strftime('%Y%m%d_%H%M')),
                     '--configfile', '%s' % self.configfile],
                     stdout=fd, stderr=fd):
+                self.release_lock()
                 self.e(_('%(builder)s %(cmd)s failed') %
                        {'builder': builder, 'cmd': self.cmd})
 
