@@ -69,6 +69,7 @@ class Command():
                        '_'.join((self.package, self.version)))
 
     def process_command(self):
+        self.w(_('Processing %s') % os.path.basename(self.cmdfile))
         gpg = GPG(self.opts, self.cmdfile)
         if gpg.gpg:
             if not gpg.sig:

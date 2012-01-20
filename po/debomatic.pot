@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-09 22:56+0100\n"
+"POT-Creation-Date: 2012-01-21 00:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,31 +18,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: Debomatic/commands.py:48 Debomatic/build.py:235 Debomatic/build.py:249
-#: Debomatic/build.py:264 Debomatic/build.py:339
+#: Debomatic/build.py:264 Debomatic/build.py:339 Debomatic/build.py:236
+#: Debomatic/build.py:250 Debomatic/build.py:265 Debomatic/build.py:344
 #, python-format
 msgid "Unable to open %s"
 msgstr ""
 
 #: Debomatic/commands.py:55 Debomatic/build.py:255 Debomatic/build.py:269
+#: Debomatic/build.py:256 Debomatic/build.py:270
 msgid "Please set %(parm)s in %s(conf)s"
 msgstr ""
 
 #: Debomatic/commands.py:68 Debomatic/build.py:205 Debomatic/build.py:323
+#: Debomatic/build.py:206 Debomatic/build.py:327
 #, python-format
 msgid "Unable to fetch %s"
 msgstr ""
 
-#: Debomatic/build.py:65
+#: Debomatic/build.py:65 Debomatic/build.py:66
 #, python-format
 msgid "Distribution %s is disabled"
 msgstr ""
 
-#: Debomatic/build.py:239 Debomatic/build.py:344
+#: Debomatic/build.py:239 Debomatic/build.py:344 Debomatic/build.py:240
+#: Debomatic/build.py:349
 #, python-format
 msgid "Bad .changes file: %s"
 msgstr ""
 
-#: Debomatic/build.py:297
+#: Debomatic/build.py:297 Debomatic/build.py:301
 #, python-format
 msgid "%(builder)s %(cmd)s failed"
 msgstr ""
@@ -88,4 +92,14 @@ msgstr ""
 
 #: Debomatic/gpg.py:60
 msgid "No valid signatures found"
+msgstr ""
+
+#: Debomatic/commands.py:72 Debomatic/build.py:339
+#, python-format
+msgid "Processing %s"
+msgstr ""
+
+#: Debomatic/build.py:60
+#, python-format
+msgid "Building %s"
 msgstr ""

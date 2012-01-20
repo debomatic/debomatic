@@ -57,6 +57,7 @@ class Build:
         self.lockfile.acquire()
 
     def build(self):
+        self.w(_('Building %s') % os.path.basename(self.dscfile))
         if self.dscfile:
             self.files.add(self.dscfile)
         self.parse_distribution_options()
@@ -335,6 +336,7 @@ class FullBuild(Build):
         self.full = True
         self.packagepath = os.path.join(self.packagedir, self.package)
         self.files.add(self.packagepath)
+        self.w(_('Processing %s') % self.package)
         try:
             with open(self.packagepath, 'r') as fd:
                 data = fd.read()
