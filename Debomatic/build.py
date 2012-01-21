@@ -57,7 +57,6 @@ class Build:
         self.lockfile.acquire()
 
     def build(self):
-        self.w(_('Building %s') % os.path.basename(self.dscfile))
         if self.dscfile:
             self.files.add(self.dscfile)
         self.parse_distribution_options()
@@ -73,6 +72,7 @@ class Build:
         uploader_email = ''
         packageversion = os.path.splitext(os.path.basename(self.dscfile))[0]
         builddir = os.path.join(self.buildpath, 'pool', packageversion)
+        self.w(_('Building %s') % os.path.basename(self.dscfile))
         if not os.path.exists(builddir):
             os.mkdir(builddir)
         if self.uploader:
