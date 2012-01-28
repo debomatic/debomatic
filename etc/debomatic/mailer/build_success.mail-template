@@ -1,6 +1,6 @@
 From: %(fromaddr)s
 To: %(uploader)s
-Subject: %(package)s has been built succesfully
+Subject: %(package)s has been built successfully
 
 The package %(package)s you have uploaded was built successfully.
 
