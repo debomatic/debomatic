@@ -174,7 +174,7 @@ class Build:
 
     def is_blacklisted(self):
         try:
-            blfile = self.opts.get('default', 'distblacklist')
+            blfile = self.opts.get('runtime', 'distblacklist')
         except NoSectionError:
             blfile = ''
         if os.path.isfile(blfile):
@@ -190,14 +190,16 @@ class Build:
         if not os.path.exists(gpgfile):
             self.cmd = 'create'
             return
-        alwaysupdate = self.opts.get('default', 'alwaysupdate')
-        if alwaysupdate:
-            if os.path.isfile(alwaysupdate):
-                with open(alwaysupdate, 'r') as fd:
-                    for line in fd:
-                        if line.rstrip() == self.distribution:
-                            self.cmd = 'update'
-                            return
+        try:
+            alwaysupdate = self.opts.get('runtime', 'alwaysupdate')
+        except NoSectionError:
+            alwaysupdate = ''
+        if os.path.isfile(alwaysupdate):
+            with open(alwaysupdate, 'r') as fd:
+                for line in fd:
+                    if line.rstrip() == self.distribution:
+                        self.cmd = 'update'
+                        return
         uri = '%s/dists/%s/Release.gpg' % (self.distopts['mirror'],
                                            self.distribution)
         try:
