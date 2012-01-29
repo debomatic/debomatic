@@ -28,7 +28,10 @@ class GPG:
         self.opts = opts
         self.filename = filename
         self.error = None
-        self.gpg = self.opts.getint('gpg', 'gpg')
+        if self.opts.has_option('gpg', 'gpg'):
+            self.gpg = self.opts.getint('gpg', 'gpg')
+        else:
+            self.gpg = False
         self.sig = None
         if self.gpg:
             self.check_signature()

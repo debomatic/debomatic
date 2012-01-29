@@ -19,7 +19,6 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
-from ConfigParser import NoSectionError
 from hashlib import sha256
 from lockfile import FileLock
 from re import findall, split
@@ -173,9 +172,9 @@ class Build:
         return compression
 
     def is_blacklisted(self):
-        try:
+        if self.opts.has_option('runtime', 'distblacklist'):
             blfile = self.opts.get('runtime', 'distblacklist')
-        except NoSectionError:
+        else:
             blfile = ''
         if os.path.isfile(blfile):
             with open(blfile, 'r') as fd:
@@ -190,9 +189,9 @@ class Build:
         if not os.path.exists(gpgfile):
             self.cmd = 'create'
             return
-        try:
+        if self.opts.has_option('runtime', 'alwaysupdate'):
             alwaysupdate = self.opts.get('runtime', 'alwaysupdate')
-        except NoSectionError:
+        else:
             alwaysupdate = ''
         if os.path.isfile(alwaysupdate):
             with open(alwaysupdate, 'r') as fd:

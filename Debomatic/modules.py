@@ -18,7 +18,6 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
-from ConfigParser import NoSectionError
 from sys import path
 
 
@@ -37,9 +36,9 @@ class Module():
         elif self.opts.get('modules', 'modules') == "0":
             self.use_modules = False
         # Retrieve the path of the blacklist file
-        try:
+        if self.opts.has_option('modules', 'blacklist'):
             self.blacklist = self.opts.get('modules', 'blacklist')
-        except NoSectionError:
+        else:
             self.blacklist = None
 
         # Add the modules directory to the python path
