@@ -42,8 +42,11 @@ class Module():
             self.blacklist = None
 
         # Add the modules directory to the python path
-        self.mod_path = self.opts.get('modules', 'modulespath')
-        path.append(self.mod_path)
+        if self.opts.has_option('modules', 'modulespath'):
+            self.mod_path = self.opts.get('modules', 'modulespath')
+            path.append(self.mod_path)
+        else:
+            self.mod_path = ''
 
         # Get a list of modules and remove any extra cruft that gets in
         try:
