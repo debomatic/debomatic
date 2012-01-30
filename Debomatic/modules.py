@@ -1,6 +1,7 @@
 # Deb-o-Matic
 #
 # Copyright (C) 2008-2009 David Futcher
+# Copyright (C) 2012 Luca Falavigna
 #
 # Author: David Futcher <bobbo@ubuntu.com>
 #
@@ -23,44 +24,26 @@ from sys import path
 
 class Module():
 
-    # Set up the modules system
     def __init__(self, opts):
-        self.opts = opts
-        # Default to having modules enabled
+        (self.opts, self.rtopts, self.conffile) = opts
         self.use_modules = True
         self.modules_list = []
-
-        # Check if the modules system is turned on
         if not self.opts.has_option('modules', 'modules'):
             self.use_modules = False
         elif self.opts.get('modules', 'modules') == "0":
             self.use_modules = False
-        # Retrieve the path of the blacklist file
-        if self.opts.has_option('modules', 'blacklist'):
-            self.blacklist = self.opts.get('modules', 'blacklist')
-        else:
-            self.blacklist = None
-
-        # Add the modules directory to the python path
         if self.opts.has_option('modules', 'modulespath'):
             self.mod_path = self.opts.get('modules', 'modulespath')
             path.append(self.mod_path)
         else:
             self.mod_path = ''
-
-        # Get a list of modules and remove any extra cruft that gets in
         try:
             self.modules_list = os.listdir(self.mod_path)
         except OSError:
             self.use_modules = False
-
-        # Check the user isnt on crack and have actually specified
-        # a directory with modules in it
         if len(self.modules_list) == 0:
             self.use_modules = False
-
         if self.use_modules:
-            # Now load the module instances into a dict
             self.instances = {}
             for module in self.modules_list:
                 module_split = module.split(".")[:-1]
@@ -75,15 +58,15 @@ class Module():
                 except NameError:
                     pass
 
-    # Executes a hook (and all the plugin functions that implement it)
     def execute_hook(self, hook, args):
         if self.use_modules:
-            blacklisted_mods = []
-            if self.blacklist:
-                with open(self.blacklist, 'r') as fd:
-                    data = fd.read()
-                blacklisted_mods = data.split()
-            for module in set(self.instances).difference(blacklisted_mods):
+            self.rtopts.read(self.conffile)
+            if self.rtopts.has_option('runtime', 'modulesblacklist'):
+                blist_mods = self.rtopts.get('runtime', 'modulesblacklist')
+                blist_mods = blist_mods.split()
+            else:
+                blist_mods = []
+            for module in set(self.instances).difference(blist_mods):
                 try:
                     exec 'self.instances["%s"].%s(args)' % (module, hook)
                 except AttributeError:

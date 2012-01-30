@@ -1,5 +1,6 @@
 0.10
 * Massive code refactorization
+* New configuration file format
 * Local package repository support
 * PEP-8 syntax
 * Support rebuilding packages available in other distributions

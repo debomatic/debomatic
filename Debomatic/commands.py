@@ -31,10 +31,10 @@ class Command():
     def __init__(self, opts, log, pool, commandfile):
         self.log = log
         self.w = self.log.w
-        self.opts = opts
+        (self.opts, self.rtopts, self.conffile) = opts
         self.pool = pool
-        self.configdir = opts.get('default', 'configdir')
-        self.packagedir = opts.get('default', 'packagedir')
+        self.configdir = self.opts.get('default', 'configdir')
+        self.packagedir = self.opts.get('default', 'packagedir')
         self.cmdfile = os.path.join(self.packagedir, commandfile)
 
     def fetch_dsc(self):
@@ -102,8 +102,9 @@ class Command():
                 dsc = os.path.join(self.packagedir, self.dscname)
                 with open(dsc, 'w') as fd:
                     fd.write(self.data)
-                b = Build(self.opts, self.log, dsc=dsc,
-                          distribution=self.target, debopts=self.debopts)
+                b = Build((self.opts, self.rtopts, self.conffile), self.log,
+                           dsc=dsc, distribution=self.target,
+                           debopts=self.debopts)
                 self.pool.add_task(b.build)
 
     def process_rebuild(self, packages):
@@ -119,8 +120,9 @@ class Command():
                 dsc = os.path.join(self.packagedir, self.dscname)
                 with open(dsc, 'w') as fd:
                     fd.write(self.data)
-                b = Build(self.opts, self.log, dsc=dsc,
-                          distribution=self.target, origin=self.origin)
+                b = Build((self.opts, self.rtopts, self.conffile), self.log,
+                          dsc=dsc, distribution=self.target,
+                          origin=self.origin)
                 self.pool.add_task(b.build)
 
     def process_rm(self, filesets):

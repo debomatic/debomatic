@@ -37,7 +37,7 @@ class Build:
         self.log = log
         self.e = self.log.t
         self.w = self.log.w
-        self.opts = opts
+        (self.opts, self.rtopts, self.conffile) = opts
         self.package = package
         self.dscfile = dsc
         self.debopts = debopts
@@ -59,7 +59,7 @@ class Build:
         if self.dscfile:
             self.files.add(self.dscfile)
         self.parse_distribution_options()
-        if self.is_blacklisted():
+        if self.distribution in self.runtime_option('distblacklist'):
             self.remove_files()
             self.e(_('Distribution %s is disabled' % self.distribution))
         self.fetch_missing_files()
@@ -67,7 +67,7 @@ class Build:
         self.build_package()
 
     def build_package(self):
-        mod = Module(self.opts)
+        mod = Module((self.opts, self.rtopts, self.conffile))
         uploader_email = ''
         packageversion = os.path.splitext(os.path.basename(self.dscfile))[0]
         builddir = os.path.join(self.buildpath, 'pool', packageversion)
@@ -171,17 +171,6 @@ class Build:
                         pass
         return compression
 
-    def is_blacklisted(self):
-        if self.opts.has_option('runtime', 'distblacklist'):
-            blfile = self.opts.get('runtime', 'distblacklist')
-        else:
-            blfile = ''
-        if os.path.isfile(blfile):
-            with open(blfile, 'r') as fd:
-                blacklist = fd.read()
-        if self.distribution in blacklist.split():
-            return True
-
     def needs_update(self):
         if not os.path.exists(os.path.join(self.buildpath, 'gpg')):
             os.mkdir(os.path.join(self.buildpath, 'gpg'))
@@ -189,16 +178,9 @@ class Build:
         if not os.path.exists(gpgfile):
             self.cmd = 'create'
             return
-        if self.opts.has_option('runtime', 'alwaysupdate'):
-            alwaysupdate = self.opts.get('runtime', 'alwaysupdate')
-        else:
-            alwaysupdate = ''
-        if os.path.isfile(alwaysupdate):
-            with open(alwaysupdate, 'r') as fd:
-                for line in fd:
-                    if line.rstrip() == self.distribution:
-                        self.cmd = 'update'
-                        return
+        if self.distribution in self.runtime_option('alwaysupdate'):
+            self.cmd = 'update'
+            return
         uri = '%s/dists/%s/Release.gpg' % (self.distopts['mirror'],
                                            self.distribution)
         try:
@@ -309,6 +291,13 @@ class Build:
         for pkgfile in self.files:
             if os.path.exists(pkgfile):
                 os.remove(pkgfile)
+
+    def runtime_option(self, option):
+        self.rtopts.read(self.conffile)
+        if self.rtopts.has_option('runtime', option):
+            return self.rtopts.get('runtime', option).split()
+        else:
+            return ()
 
     def setup_pbuilder(self):
         if not os.path.exists(os.path.join(self.buildpath)):

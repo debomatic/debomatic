@@ -43,6 +43,7 @@ class Debomatic:
         self.lockfilepath = '/var/run/debomatic'
         self.lockfile = pidlockfile.PIDLockFile(self.lockfilepath)
         self.opts = ConfigParser()
+        self.rtopts = ConfigParser()
         if os.getuid():
             self.e(_('You must run deb-o-matic as root'))
         try:
@@ -60,7 +61,7 @@ class Debomatic:
         if self.lockfile.is_locked():
             self.e(_('Another instance is running. Aborting'))
         self.default_options()
-        self.mod_sys = Module(self.opts)
+        self.mod_sys = Module((self.opts, self.rtopts, self.conffile))
         self.mod_sys.execute_hook('on_start', {})
         self.packagedir = self.opts.get('default', 'packagedir')
         signal(SIGINT, self.quit)
@@ -80,7 +81,7 @@ class Debomatic:
         if not self.conffile:
             self.e(_('Configuration file has not been specified'))
         if not os.path.exists(self.conffile):
-            self.err(_('Configuration file %s does not exist') % self.conffile)
+            self.e(_('Configuration file %s does not exist') % self.conffile)
         self.opts.read(self.conffile)
         for opt in defaultoptions:
             if not self.opts.has_option('default', opt) or not \
@@ -131,10 +132,12 @@ class Debomatic:
                 self.e(_('Unable to access %s directory') % self.packagedir)
         for filename in filelist:
             if filename.endswith('source.changes'):
-                b = FullBuild(self.opts, self.log, package=filename)
+                b = FullBuild((self.opts, self.rtopts, self.conffile),
+                              self.log, package=filename)
                 self.pool.add_task(b.run, filename)
             elif filename.endswith('.commands'):
-                c = Command(self.opts, self.log, self.pool, filename)
+                c = Command((self.opts, self.rtopts, self.conffile),
+                            self.log,self.pool, filename)
                 self.commandpool.add_task(c.process_command, filename)
 
     def quit(self, signum, frame):
