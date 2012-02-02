@@ -39,6 +39,7 @@ class Command():
 
     def fetch_dsc(self):
         parms = {}
+        self.data = None
         conf = {'mirror': ('[^#]?MIRRORSITE="?(.*[^"])"?\n', 'MIRRORSITE'),
                 'components': ('[^#]?COMPONENTS="?(.*[^"])"?\n', 'COMPONENTS')}
         try:
@@ -51,7 +52,6 @@ class Command():
             try:
                 parms[elem] = findall(conf[elem][0], data)[0]
             except IndexError:
-                self.data = None
                 self.w(_('Please set %(parm)s in %s(conf)s') % \
                        {'parm': conf[elem][0], 'conf': self.originconf})
                 return
@@ -64,7 +64,6 @@ class Command():
                 self.data = urlopen(request).read()
                 break
             except (HTTPError, URLError):
-                self.data = None
                 self.w(_('Unable to fetch %s') % \
                        '_'.join((self.package, self.version)))
 
