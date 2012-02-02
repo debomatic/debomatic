@@ -18,6 +18,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
+from ast import literal_eval
 from glob import glob
 from re import findall
 from urllib2 import Request, urlopen, HTTPError, URLError
@@ -46,7 +47,7 @@ class Command():
             with open(self.originconf, 'r') as fd:
                 data = fd.read()
         except IOError:
-            self.w(_('Unable to open %s') % originconf)
+            self.w(_('Unable to open %s') % self.originconf)
             return
         for elem in conf.keys():
             try:
@@ -66,6 +67,20 @@ class Command():
             except (HTTPError, URLError):
                 self.w(_('Unable to fetch %s') % \
                        '_'.join((self.package, self.version)))
+
+    def map_distribution(self):
+        self.rtopts.read(self.conffile)
+        if self.rtopts.has_option('runtime', 'mapper'):
+            try:
+                mapper = literal_eval(self.rtopts.get('runtime', 'mapper'))
+            except SyntaxError:
+                pass
+            else:
+                if isinstance(mapper, dict):
+                    if self.target in mapper:
+                        self.target = mapper[self.target]
+                    if self.origin in mapper:
+                        self.origin = mapper[self.origin]
 
     def process_command(self):
         self.w(_('Processing %s') % os.path.basename(self.cmdfile))
@@ -94,7 +109,9 @@ class Command():
             self.version = package[1]
             self.dscname = '%s_%s.dsc' % (self.package, self.version)
             self.target = package[2]
+            self.origin = None
             self.debopts = package[3]
+            self.map_distribution()
             self.originconf = os.path.join(self.configdir, self.target)
             self.fetch_dsc()
             if self.data:
@@ -113,6 +130,7 @@ class Command():
             self.dscname = '%s_%s.dsc' % (self.package, self.version)
             self.target = package[2]
             self.origin = package[3] if package[3] else package[2]
+            self.map_distribution()
             self.originconf = os.path.join(self.configdir, self.origin)
             self.fetch_dsc()
             if self.data:

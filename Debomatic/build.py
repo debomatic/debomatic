@@ -19,6 +19,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
+from ast import literal_eval
 from hashlib import sha256
 from lockfile import FileLock
 from re import findall, split
@@ -173,7 +174,7 @@ class Build:
 
     def get_orig_tarball(self):
         sa = ''
-        if self.packagepath:
+        if self.full:
             with open(self.packagepath, 'r') as fd:
                 data = fd.read()
             for file in findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)', data):
@@ -181,6 +182,18 @@ class Build:
                     sa = '-sa'
                     break
         return sa
+
+    def map_distribution(self):
+        self.rtopts.read(self.conffile)
+        if self.rtopts.has_option('runtime', 'mapper'):
+            try:
+                mapper = literal_eval(self.rtopts.get('runtime', 'mapper'))
+            except SyntaxError:
+                pass
+            else:
+                if isinstance(mapper, dict):
+                    if self.distribution in mapper:
+                        self.distribution = mapper[self.distribution]
 
     def needs_update(self):
         if not os.path.exists(os.path.join(self.buildpath, 'gpg')):
@@ -229,11 +242,14 @@ class Build:
             except IOError:
                 self.e(_('Unable to open %s') % self.packagepath)
             try:
-                distro = findall('Distribution:\s+(\w+)', data)[0]
+                distro = findall('Distribution:\s+(\S+)', data)[0]
             except IndexError:
                 self.e(_('Bad .changes file: %s') % self.packagepath)
-            self.distopts['distribution'] = distro.lower()
-            self.distribution = self.distopts['distribution']
+            self.distribution = distro.lower()
+            self.map_distribution()
+            self.distopts['distribution'] = self.distribution
+        else:
+            self.map_distribution()
         self.buildpath = os.path.join(self.packagedir, self.distribution)
         self.configfile = os.path.join(self.opts.get('default', 'configdir'),
                                        self.distribution)

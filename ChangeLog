@@ -2,10 +2,11 @@
 * Massive code refactorization
 * New configuration file format
 * Local package repository support
-* PEP-8 syntax
 * Support rebuilding packages available in other distributions
 * Support for pbuilder/cowbuilder hooks
 * Support for porter uploads
+* Support for distribution mappings
+* PEP-8 syntax
 
 0.9 "bafana" (2011-02-06)
 * Mailer support
