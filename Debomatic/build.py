@@ -90,7 +90,8 @@ class Build:
             base = '--basetgz'
         debopts = ' '.join((self.get_build_options(),
                             self.get_compression(),
-                            self.get_changelog_versions()))
+                            self.get_changelog_versions(),
+                            self.get_orig_tarball()))
         with open(os.path.join(self.buildpath, 'pool', packageversion,
                   packageversion + '.buildlog'), 'w') as fd:
             call([builder, '--build', '--override-config',
@@ -169,6 +170,17 @@ class Build:
                     except IndexError:
                         pass
         return compression
+
+    def get_orig_tarball(self):
+        sa = ''
+        if self.packagepath:
+            with open(self.packagepath, 'r') as fd:
+                data = fd.read()
+            for file in findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)', data):
+                if '.orig.' in file:
+                    sa = '-sa'
+                    break
+        return sa
 
     def needs_update(self):
         if not os.path.exists(os.path.join(self.buildpath, 'gpg')):
