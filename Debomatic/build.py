@@ -91,11 +91,10 @@ class Build:
         debopts = ' '.join((self.get_build_options(),
                             self.get_compression(),
                             self.get_changelog_versions()))
-        with open(os.devnull, 'w') as fd:
+        with open(os.path.join(self.buildpath, 'pool', packageversion,
+                  packageversion + '.buildlog'), 'w') as fd:
             call([builder, '--build', '--override-config',
                  base, '%s/%s' % (self.buildpath, self.distribution),
-                 '--logfile', '%s/pool/%s/%s.buildlog' %
-                 (self.buildpath, packageversion, packageversion),
                  '--buildplace', '%s/build' % self.buildpath,
                  '--buildresult', '%s/pool/%s' %
                  (self.buildpath, packageversion),
@@ -271,13 +270,12 @@ class Build:
             base = '--basepath'
         else:
             base = '--basetgz'
-        with open(os.devnull, 'w') as fd:
+        with open(os.path.join(self.buildpath, 'logs',
+                  '%s.%s' % (self.cmd, strftime('%Y%m%d_%H%M'))), 'w') as fd:
             if call([builder, '--%s' % self.cmd, '--override-config',
                     base, '%s/%s' % (self.buildpath, self.distribution),
                     '--buildplace', '%s/build' % self.buildpath,
                     '--aptcache', '%s/aptcache' % self.buildpath,
-                    '--logfile', '%s/logs/%s.%s' %
-                    (self.buildpath, self.cmd, strftime('%Y%m%d_%H%M')),
                     '--configfile', '%s' % self.configfile],
                     stdout=fd, stderr=fd):
                 self.release_lock()
