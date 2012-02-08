@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2012-01-21 00:18+0100\n"
-"PO-Revision-Date: 2012-01-09 22:07+0000\n"
+"PO-Revision-Date: 2012-02-07 21:45+0000\n"
 "Last-Translator: Stefan Ebner <sebner@ubuntu.com>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-02-04 04:54+0000\n"
-"X-Generator: Launchpad (build 14738)\n"
+"X-Launchpad-Export-Date: 2012-02-08 04:39+0000\n"
+"X-Generator: Launchpad (build 14747)\n"
 
 #: Debomatic/commands.py:48 Debomatic/build.py:235 Debomatic/build.py:249
 #: Debomatic/build.py:264 Debomatic/build.py:339 Debomatic/build.py:236
@@ -97,9 +97,9 @@ msgstr "Keine gültigen Signaturen gefunden"
 #: Debomatic/commands.py:72 Debomatic/build.py:339
 #, python-format
 msgid "Processing %s"
-msgstr ""
+msgstr "%s wird verarbeitet"
 
 #: Debomatic/build.py:60
 #, python-format
 msgid "Building %s"
-msgstr ""
+msgstr "%s wird gebildet"
