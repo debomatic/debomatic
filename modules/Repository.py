@@ -42,9 +42,10 @@ class DebomaticModule_Repository:
         call([self.gzip, '-9', '-f', packages_file], stdout=PIPE, stderr=PIPE)
         with open(release_file, 'w') as fd:
             call([self.af, '-qq',
-                 '-o', 'APT::FTPArchive::Release::Origin="Deb-o-Matic"',
-                 '-o', 'APT::FTPArchive::Release::Label="%s"' % \
-                       args['distribution'],
+                 '-o', 'APT::FTPArchive::Release::Origin=Deb-o-Matic',
+                 '-o', 'APT::FTPArchive::Release::Label=Deb-o-Matic',
+                 '-o', 'APT::FTPArchive::Release::Suite=%(dist)s' %
+                        {'dist': args['distribution']},
                  'release', '.'], stdout=fd, stderr=PIPE)
         with open(release_file, 'r+') as fd:
             data = fd.read()
