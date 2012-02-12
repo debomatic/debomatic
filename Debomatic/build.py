@@ -287,13 +287,13 @@ class Build:
         for d in ('aptcache', 'build', 'logs', 'pool'):
             if not os.path.exists(os.path.join(self.buildpath, d)):
                 os.mkdir(os.path.join(self.buildpath, d))
-        for f in ('Packages', 'Release'):
+        for f in ('Packages.gz', 'Release'):
             repo_file = os.path.join(self.buildpath, 'pool', f)
             if not os.path.exists(repo_file):
-                with open(repo_file, 'w') as fd:
+                with open(os.path.splitext(repo_file)[0], 'w') as fd:
                     pass
         call(['gzip', '-9', '-f',
-              os.path.join(self.buildpath, 'pool', 'Packages')])
+              os.path.join(self.buildpath, 'pool', 'Packages')], stderr=PIPE)
         builder = self.opts.get('default', 'builder')
         if builder == 'cowbuilder':
             base = '--basepath'
