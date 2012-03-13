@@ -28,15 +28,18 @@ from email.parser import Parser
 class DebomaticModule_Mailer:
 
     DEFAULT_OPTIONS = (
+        'fromaddr',
         'smtphost',
         'smtpport',
         'authrequired',
         'smtpuser',
         'smtppass',
-        'build_success_template',
-        'build_failure_template',
-        'fromaddr',
+        'success',
+        'failure'
     )
+
+    def __init__(self):
+        pass
 
     def write_reply(self, template, buildlog, args):
         with open(template, 'r') as fd:
@@ -47,23 +50,21 @@ class DebomaticModule_Mailer:
         msg = Parser().parsestr(reply)
         return msg.as_string()
 
-    def __init__(self):
-        if args[opts].has_section('mailer'):
-            for opt in self.DEFAULT_OPTIONS:
-                setattr(self, opt, args[opts].get('mailer', opt))
-
     def post_build(self, args):
         if not args['uploader']:
             return
         template = None
         uploader = args['uploader']
         resultdir = os.path.join(args['directory'], 'pool', args['package'])
+        if args['opts'].has_section('mailer'):
+            for opt in self.DEFAULT_OPTIONS:
+                setattr(self, opt, args['opts'].get('mailer', opt))
         for filename in os.listdir(resultdir):
             if filename.endswith('.changes'):
-                template = self.build_success_template
+                template = self.success
                 break
         if not template:
-            template = self.build_failure_template
+            template = self.failure
         try:
             bp = '%(directory)s/pool/%(package)s/%(package)s.buildlog' % args
             buildlog_exc = Popen(['tail', '--lines=20', bp],
