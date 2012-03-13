@@ -32,6 +32,10 @@ class DebomaticModule_Lintian:
 
     def post_build(self, args):
         changesfile = None
+        if args['opts'].has_section('lintian'):
+            lintopts = args['opts'].get('lintian', 'lintopts').strip()
+        else:
+            lintopts = []
         resultdir = os.path.join(args['directory'], 'pool', args['package'])
         lintian = os.path.join(resultdir, args['package']) + '.lintian'
         for filename in os.listdir(resultdir):
@@ -41,5 +45,5 @@ class DebomaticModule_Lintian:
         if changesfile:
             with open(lintian, 'w') as fd:
                 call([self.lintian, '-V'], stdout=fd)
-                call([self.lintian, '--allow-root', '-i', '-I', '-E',
-                      '--pedantic', changesfile], stdout=fd)
+                cmd = [self.lintian] + lintopts.split() + [changesfile]
+                call(cmd, stdout=fd)
