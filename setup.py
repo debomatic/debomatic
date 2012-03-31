@@ -36,8 +36,9 @@ for po in glob(os.path.join('po', '*.po')):
 class InstallGuide(install_data):
 
     def run(self):
-        call(['rst2html', 'docs/guide.rst', 'build/guide.html'])
-        self.data_files.extend([('share/doc/debomatic', ['build/guide.html'])])
+        call(['make', '-C', 'docs', 'latexpdf'])
+        self.data_files.extend([('share/doc/debomatic',
+                                 ['docs/_build/latex/Deb-o-Matic.pdf'])])
         install_data.run(self)
 
 
@@ -61,9 +62,7 @@ setup(name='debomatic',
       license = 'GNU GPL',
       packages = ['Debomatic'],
       scripts = ['debomatic'],
-      data_files = [('share/man/man1', ['docs/debomatic.1']),
-                   ('share/man/man5', ['docs/debomatic.conf.5']),
-                   ('share/doc/debomatic', ['docs/ExampleModule.py'])] +
+      data_files = [('share/man/man1', ['docs/debomatic.1'])] +
                    install_files('etc', '/') +
                    install_files('modules', 'share/debomatic') +
                    install_files('pbuilderhooks', 'share/debomatic') +

@@ -1,5 +1,6 @@
 0.10
 * Massive code refactorization
+* Documentation has been rewritten from scratch
 * New configuration file format
 * Local package repository support
 * Support rebuilding packages available in other distributions
