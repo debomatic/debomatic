@@ -86,7 +86,7 @@ class Debomatic:
         self.opts.read(self.conffile)
         if not self.opts.has_option('internals', 'configversion') or not \
                self.opts.get('internals', 'configversion') == self.configvers:
-            self.e(_('Configuration file is not at version %s') % 
+            self.e(_('Configuration file is not at version %s') %
                    self.configvers)
         for opt in defaultoptions:
             if not self.opts.has_option('default', opt) or not \
@@ -142,7 +142,7 @@ class Debomatic:
                 self.pool.add_task(b.run, filename)
             elif filename.endswith('.commands'):
                 c = Command((self.opts, self.rtopts, self.conffile),
-                            self.log,self.pool, filename)
+                            self.log, self.pool, filename)
                 self.commandpool.add_task(c.process_command, filename)
 
     def quit(self, signum, frame):

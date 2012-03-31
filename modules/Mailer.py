@@ -35,8 +35,7 @@ class DebomaticModule_Mailer:
         'smtpuser',
         'smtppass',
         'success',
-        'failure'
-    )
+        'failure')
 
     def __init__(self):
         pass
