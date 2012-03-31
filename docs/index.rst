@@ -127,11 +127,12 @@ Configuration file
 
 Deb-o-Matic configuration file is the most important file within Deb-o-Matic
 infrastructure. It defines almost every option needed by Deb-o-Matic.
-It is divided into four sections: ``default``, which contains the mandatory
+It is divided into five sections: ``default``, which contains the mandatory
 options needed for Deb-o-Matic to work; ``runtime``, which contains the options
 related to parameters which can be modified at runtime; ``gpg``, which contains
 the options related to gpg signature checking; ``modules``, which contains the
-options related to module handling.
+options related to module handling; ``internals``, which contains options
+related to Deb-o-Matic implementation details.
 
 .. CAUTION::
 
@@ -349,6 +350,21 @@ will pick the updated value during the build process.
  packages upon.
 
  Suggested value: ``{'sid': 'unstable'}``
+
+internals section
+.................
+
+These options are mandatory, Deb-o-Matic refuses to start if one of these
+options is missing from configuration file. Also, these options should not be
+modified, and must follow this guide thoroughly.
+
+* ``configversion``
+
+ This option indicates which version of the configuration file Deb-o-Matic
+ expects to find. If it does not match the one needed by Deb-o-Matic, it
+ refuses to start.
+
+ This option must be set to ``010a``
 
 Distribution files
 ------------------

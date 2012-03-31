@@ -40,6 +40,7 @@ class Debomatic:
         self.e = self.log.e
         self.w = self.log.w
         self.conffile = None
+        self.configvers = '010a'
         self.lockfilepath = '/var/run/debomatic'
         self.lockfile = pidlockfile.PIDLockFile(self.lockfilepath)
         self.opts = ConfigParser()
@@ -83,6 +84,10 @@ class Debomatic:
         if not os.path.exists(self.conffile):
             self.e(_('Configuration file %s does not exist') % self.conffile)
         self.opts.read(self.conffile)
+        if not self.opts.has_option('internals', 'configversion') or not \
+               self.opts.get('internals', 'configversion') == self.configvers:
+            self.e(_('Configuration file is not at version %s') % 
+                   self.configvers)
         for opt in defaultoptions:
             if not self.opts.has_option('default', opt) or not \
                    self.opts.get('default', opt):
