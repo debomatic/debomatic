@@ -52,7 +52,7 @@ The following packages are required to install documentation and translations:
 * texlive-latex-recommended
 * texlive-fonts-recommended
 * texlive-latex-extra
-* intltool
+* gettext
 
 Runtime requirements
 --------------------
@@ -68,7 +68,7 @@ In order to be able to run Deb-o-Matic, the following packages are required:
 To enable additional features, you may want to install these packages:
 
 * python-pyinotify (>= 0.8.6)
-* gnupg
+* gpgv
 * lintian
 * debian-archive-keyring and/or ubuntu-keyring
 
