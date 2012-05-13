@@ -210,7 +210,7 @@ class Build:
                                            self.distribution)
         try:
             remote = urlopen(uri).read()
-        except HTTPError:
+        except (HTTPError, URLError):
             self.w(_('Unable to fetch %s') % uri)
             self.cmd = update
             return
@@ -339,7 +339,7 @@ class Build:
                                                self.distopts['distribution'])
             try:
                 remote = urlopen(uri).read()
-            except HTTPError:
+            except (HTTPError, URLError):
                 self.release_lock()
                 self.e(_('Unable to fetch %s') % uri)
             with open(gpgfile, 'w') as fd:
