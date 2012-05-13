@@ -247,10 +247,7 @@ class Build:
             except IndexError:
                 self.e(_('Bad .changes file: %s') % self.packagepath)
             self.distribution = distro.lower()
-            self.map_distribution()
-            self.distopts['distribution'] = self.distribution
-        else:
-            self.map_distribution()
+        self.map_distribution()
         self.buildpath = os.path.join(self.packagedir, self.distribution)
         self.configfile = os.path.join(self.opts.get('default', 'configdir'),
                                        self.distribution)
