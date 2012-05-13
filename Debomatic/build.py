@@ -255,6 +255,7 @@ class Build:
             with open(self.configfile) as fd:
                 data = fd.read()
         except IOError:
+            self.remove_files()
             self.log.e(_('Unable to open %s') % self.configfile)
         for elem in conf.keys():
             try:
