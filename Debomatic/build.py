@@ -199,7 +199,8 @@ class Build:
     def needs_update(self):
         if not os.path.exists(os.path.join(self.buildpath, 'gpg')):
             os.mkdir(os.path.join(self.buildpath, 'gpg'))
-        gpgfile = os.path.join(self.buildpath, 'gpg', self.distribution)
+        gpgfile = os.path.join(self.buildpath, 'gpg',
+                               self.distopts['distribution'])
         if not os.path.exists(gpgfile):
             self.cmd = 'create'
             return
@@ -207,7 +208,7 @@ class Build:
             self.cmd = 'update'
             return
         uri = '%s/dists/%s/Release.gpg' % (self.distopts['mirror'],
-                                           self.distribution)
+                                           self.distopts['distribution'])
         try:
             remote = urlopen(uri).read()
         except (HTTPError, URLError):
