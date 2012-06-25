@@ -36,6 +36,16 @@ class DebomaticModule_Lintian:
             lintopts = args['opts'].get('lintian', 'lintopts').strip()
         else:
             lintopts = []
+        with open(args['cfg'], 'r') as fd:
+            for line in [line.strip() for line in fd.readlines()]:
+                if 'MIRRORSITE' in line:
+                    try:
+                        profile = line.split('/')[-1]
+                    except IndexError:
+                        profile = None
+                    if profile:
+                        lintopts += ' --profile %s' % profile
+                    break
         resultdir = os.path.join(args['directory'], 'pool', args['package'])
         lintian = os.path.join(resultdir, args['package']) + '.lintian'
         for filename in os.listdir(resultdir):
@@ -45,5 +55,7 @@ class DebomaticModule_Lintian:
         if changesfile:
             with open(lintian, 'w') as fd:
                 call([self.lintian, '-V'], stdout=fd)
+                fd.write('Options: %s\n\n' % lintopts)
+                fd.flush()
                 cmd = [self.lintian] + lintopts.split() + [changesfile]
                 call(cmd, stdout=fd)
