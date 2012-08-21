@@ -66,7 +66,10 @@ class Module():
                 blist_mods = blist_mods.split()
             else:
                 blist_mods = []
-            for module in set(self.instances).difference(blist_mods):
+            modules = [ i for i in self.instances.keys()
+                       if i not in blist_mods ]
+            modules.sort()
+            for module in modules:
                 try:
                     exec 'self.instances["%s"].%s(args)' % (module, hook)
                 except AttributeError:

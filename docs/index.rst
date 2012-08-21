@@ -70,6 +70,7 @@ To enable additional features, you may want to install these packages:
 * python-pyinotify (>= 0.8.6)
 * gpgv
 * lintian
+* piuparts (>= 0.45)
 * debian-archive-keyring and/or ubuntu-keyring
 
 An Internet connection is also required, broadband access is recommended
@@ -586,7 +587,7 @@ file created in the same directory of the resultinf files.
 Lintian
 -------
 
-This module allows lintian to be executed, checking the build packages for
+This module allows lintian to be executed, checking the built packages for
 errors and warnings, and creates a report in the same directory of the
 resulting files.
 
@@ -649,6 +650,25 @@ This option indicates the template to be used to report successful builds.
 * ``failure``
 
 This option indicates the template to be used to report failed builds.
+
+Piuparts
+--------
+
+This module allows piuparts to be executed, checking the built packages for
+potential problems, and creates a report in the same directory of the
+resulting files.
+
+In order for this module to work properly, ``piuparts`` package must be
+installed.
+
+Parameters
+..........
+
+* ``piupopts``
+
+This option indicates the extra options to pass to piuparts.
+
+ Suggested value: ``--log-level=info``
 
 PrevBuildCleaner
 ----------------
