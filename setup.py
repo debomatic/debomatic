@@ -22,6 +22,7 @@ import os
 from distutils.core import setup
 from distutils.command.install_data import install_data
 from glob import glob
+from re import sub
 from subprocess import call
 
 
@@ -33,28 +34,40 @@ for po in glob(os.path.join('po', '*.po')):
     call(['msgfmt', '-o', mo, po])
 
 
-class InstallGuide(install_data):
+class InstallData(install_data):
 
     def run(self):
         call(['make', '-C', 'docs', 'latexpdf'])
         self.data_files.extend([('share/doc/debomatic',
                                  ['docs/_build/latex/Deb-o-Matic.pdf'])])
+        self.install_files('etc')
+        self.install_files('modules', 'share/debomatic')
+        self.install_files('pbuilderhooks', 'share/debomatic')
+        self.install_files('locale', 'share')
         install_data.run(self)
 
-
-def install_files(rootdir, prefix=''):
-    filelist = []
-    for root, subFolders, files in os.walk(rootdir):
-        dirlist = []
-        for file in files:
-            dirlist.append(os.path.join(root, file))
-        if dirlist:
-            filelist.append((os.path.join(prefix, root), dirlist))
-    return filelist
+    def install_files(self, rootdir, prefix=''):
+        filelist = []
+        for root, subFolders, files in os.walk(rootdir):
+            dirlist = []
+            for file in files:
+                dirlist.append(os.path.join(root, file))
+            if dirlist:
+                filelist.append((os.path.join(prefix, root), dirlist))
+        if not prefix:
+            orig_prefix = self.install_dir
+            orig_data_files = self.data_files
+            self.install_dir = sub('/*usr/*$', '/', self.install_dir)
+            self.data_files = filelist
+            install_data.run(self)
+            self.install_dir = orig_prefix
+            self.data_files = orig_data_files
+        else:
+            self.data_files.extend(filelist)
 
 
 setup(name='debomatic',
-      version = '0.10',
+      version = '0.11',
       author = 'Luca Falavigna',
       author_email = 'dktrkranz@debian.org',
       description = 'Automatic build machine for Debian source packages',
@@ -62,9 +75,5 @@ setup(name='debomatic',
       license = 'GNU GPL',
       packages = ['Debomatic'],
       scripts = ['debomatic'],
-      data_files = [('share/man/man1', ['docs/debomatic.1'])] +
-                   install_files('etc', '/') +
-                   install_files('modules', 'share/debomatic') +
-                   install_files('pbuilderhooks', 'share/debomatic') +
-                   install_files('locale', 'share'),
-      cmdclass = {'install_data': InstallGuide})
+      data_files = [('share/man/man1', ['docs/debomatic.1'])],
+      cmdclass = {'install_data': InstallData})
