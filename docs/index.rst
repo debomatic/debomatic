@@ -466,11 +466,13 @@ parameters defined in ``/etc/default/debomatic`` file.
 Prepare source packages
 =======================
 
-Deb-o-Matic will take into account source uploads only, so make sure you create
-packages by passing ``-S`` flag to ``debuild`` or ``dpkg-buildpackage``.
+Deb-o-Matic will take into account both source only uploads and source plus
+binary uploads, while it will discard binary only uploads. Source only uploads
+are recommended to avoid waste of bandwith, so make sure you create packages by
+passing ``-S`` flag to ``debuild`` or ``dpkg-buildpackage``.
 
-Then, source packages must be copied or uploaded into the directory specified
-by ``packagedir`` option in the configuration files to let Deb-o-Matic process
+Then, packages must be copied or uploaded into the directory specified by
+``packagedir`` option in the configuration file to let Deb-o-Matic process
 them.
 
 In order to save bandwidth while uploading your packages, you could want to
@@ -479,8 +481,8 @@ available in the distribution mirrors, Deb-o-Matic will fetch it automatically
 for you. In order to do so, you have to pass ``-sd`` flag to ``debuild`` or
 ``dpkg-buildpackage``.
 
-Multiple uploads of the same source packages are allowed, Deb-o-Matic will
-overwrite previous builds with new, fresh files.
+Multiple uploads of the same packages are allowed, Deb-o-Matic will overwrite
+previous builds with new, fresh files.
 
 Prepare command files
 =====================

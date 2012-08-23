@@ -123,6 +123,9 @@ class Build:
                 if filename.endswith('.dsc'):
                     self.dscfile = filename
                     break
+        if not self.dscfile:
+            self.remove_files()
+            self.e(_('Bad .changes file: %s') % self.package)
         with open(self.dscfile, 'r') as fd:
             data = fd.read()
         for entry in findall('\s\w{32}\s\d+\s(\S+)', data):

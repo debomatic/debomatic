@@ -115,7 +115,7 @@ class Debomatic:
                 self.parent = parent
 
             def process_IN_CLOSE_WRITE(self, event):
-                if (event.name.endswith('source.changes') or
+                if (event.name.endswith('.changes') or
                   event.name.endswith('commands')):
                     self.parent.queue_files([event.name])
 
@@ -136,7 +136,7 @@ class Debomatic:
             except OSError:
                 self.e(_('Unable to access %s directory') % self.packagedir)
         for filename in filelist:
-            if filename.endswith('source.changes'):
+            if filename.endswith('.changes'):
                 b = FullBuild((self.opts, self.rtopts, self.conffile),
                               self.log, package=filename)
                 self.pool.add_task(b.run, filename)
