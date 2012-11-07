@@ -134,6 +134,7 @@ class Debomatic:
             try:
                 filelist = os.listdir(self.packagedir)
             except OSError:
+                self.lockfile.release()
                 self.e(_('Unable to access %s directory') % self.packagedir)
         for filename in filelist:
             if filename.endswith('.changes'):
