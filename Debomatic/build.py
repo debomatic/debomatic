@@ -64,8 +64,12 @@ class Build:
             self.remove_files()
             self.e(_('Distribution %s is disabled' % self.distribution))
         self.fetch_missing_files()
-        self.setup_pbuilder()
-        self.build_package()
+        try:
+            self.setup_pbuilder()
+        except RuntimeError:
+            self.remove_files()
+        else:
+            self.build_package()
 
     def build_package(self):
         mod = Module((self.opts, self.rtopts, self.conffile))
@@ -302,15 +306,16 @@ class Build:
         else:
             base = '--basetgz'
         with open(os.devnull, 'w') as fd:
-            while call([builder, '--%s' % self.cmd, '--override-config',
-                       base, '%s/%s' % (self.buildpath, self.distribution),
-                       '--buildplace', '%s/build' % self.buildpath,
-                       '--aptcache', '%s/aptcache' % self.buildpath,
-                       '--logfile', '%s/logs/%s.%s' %
-                       (self.buildpath, self.cmd, strftime('%Y%m%d_%H%M%S')),
-                       '--configfile', '%s' % self.configfile],
-                       stdout=fd, stderr=fd):
-                self.w(_('%(builder)s %(cmd)s failed') %
+            if call([builder, '--%s' % self.cmd, '--override-config',
+                    base, '%s/%s' % (self.buildpath, self.distribution),
+                    '--buildplace', '%s/build' % self.buildpath,
+                    '--aptcache', '%s/aptcache' % self.buildpath,
+                    '--logfile', '%s/logs/%s.%s' %
+                    (self.buildpath, self.cmd, strftime('%Y%m%d_%H%M%S')),
+                    '--configfile', '%s' % self.configfile],
+                    stdout=fd, stderr=fd):
+                self.release_lock()
+                self.e(_('%(builder)s %(cmd)s failed') %
                        {'builder': builder, 'cmd': self.cmd})
 
     def release_lock(self):
