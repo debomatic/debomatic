@@ -313,7 +313,7 @@ will pick the updated value during the build process.
  Option must define a space-separated distribution names matching the ones
  listed in the `Distribution files section`_.
 
- Suggested value: ``unstable experimental precise``
+ Suggested value: ``unstable experimental raring``
 
 * ``distblacklist``
 
