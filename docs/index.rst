@@ -336,7 +336,7 @@ will pick the updated value during the build process.
 
  More on module handling will be discussed in the `Modules section`_.
 
- Suggested value: ``Lintian Mailer``
+ Suggested value: ``Lintian Mailer Piuparts``
 
 * ``mapper``
 
