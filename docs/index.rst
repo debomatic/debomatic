@@ -365,7 +365,7 @@ modified, and must follow this guide thoroughly.
  expects to find. If it does not match the one needed by Deb-o-Matic, it
  refuses to start.
 
- This option must be set to ``010a``
+ This option must be set to ``011a``
 
 Distribution files
 ------------------
@@ -652,6 +652,11 @@ This option indicates the template to be used to report successful builds.
 * ``failure``
 
 This option indicates the template to be used to report failed builds.
+
+* ``lintlog``
+
+This option indicates whether the lintian log is to be attached after the build
+log or not.
 
 Piuparts
 --------

@@ -45,6 +45,13 @@ class DebomaticModule_Mailer:
             substdict = dict(args)
             substdict['buildlog'] = buildlog
             substdict['fromaddr'] = self.fromaddr
+            substdict['lintlog'] = 'No log'
+            if self.lintlog:
+                lintfile = os.path.join(self.resultdir, '%s.lintian'
+                                        % args['package'])
+                if os.path.isfile(lintfile):
+                    with open(lintfile, 'r') as lintfd:
+                        substdict['lintlog'] = lintfd.read()
             reply = fd.read() % substdict
         msg = Parser().parsestr(reply)
         return msg.as_string()
@@ -54,11 +61,14 @@ class DebomaticModule_Mailer:
             return
         template = None
         uploader = args['uploader']
-        resultdir = os.path.join(args['directory'], 'pool', args['package'])
+        self.resultdir = os.path.join(args['directory'], 'pool',
+                                      args['package'])
         if args['opts'].has_section('mailer'):
             for opt in self.DEFAULT_OPTIONS:
                 setattr(self, opt, args['opts'].get('mailer', opt))
-        for filename in os.listdir(resultdir):
+            if args['opts'].has_option('mailer', 'lintlog'):
+                self.lintlog = args['opts'].getint('mailer', 'lintlog')
+        for filename in os.listdir(self.resultdir):
             if filename.endswith('.changes'):
                 template = self.success
                 break

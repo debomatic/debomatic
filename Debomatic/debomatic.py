@@ -40,7 +40,7 @@ class Debomatic:
         self.e = self.log.e
         self.w = self.log.w
         self.conffile = None
-        self.configvers = '010a'
+        self.configvers = '011a'
         self.lockfilepath = '/var/run/debomatic'
         self.lockfile = pidlockfile.PIDLockFile(self.lockfilepath)
         self.opts = ConfigParser()
