@@ -1,0 +1,7 @@
+DISTRIBUTION=raring
+MIRRORSITE=http://archive.ubuntu.com/ubuntu
+OTHERMIRROR="deb http://archive.ubuntu.com/ubuntu/ raring-updates main restricted universe multiverse | deb http://security.ubuntu.com/ubuntu raring-security main restricted universe multiverse"
+COMPONENTS="main restricted universe multiverse"
+DEBOOTSTRAP=debootstrap
+DEBOOTSTRAPOPTS=('--variant=buildd' '--keyring' '/usr/share/keyrings/ubuntu-archive-keyring.gpg')
+EXTRAPACKAGES="pkgbinarymangler pkg-create-dbgsym"
