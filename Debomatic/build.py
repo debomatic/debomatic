@@ -98,18 +98,21 @@ class Build:
                             self.get_changelog_versions(),
                             self.get_orig_tarball()))
         with open(os.devnull, 'w') as fd:
-            call([builder, '--build', '--override-config',
-                 base, '%s/%s' % (self.buildpath, self.distribution),
-                 '--logfile', '%s/pool/%s/%s.buildlog' %
-                 (self.buildpath, packageversion, packageversion),
-                 '--buildplace', '%s/build' % self.buildpath,
-                 '--buildresult', '%s/pool/%s' %
-                 (self.buildpath, packageversion),
-                 '--aptcache', '%s/aptcache' % self.buildpath,
-                 '--debbuildopts', '%s' % debopts,
-                 '--hookdir', self.opts.get('default', 'pbuilderhooks'),
-                 '--configfile', self.configfile, self.dscfile],
-                 stdout=fd, stderr=fd)
+            try:
+                call([builder, '--build', '--override-config',
+                     base, '%s/%s' % (self.buildpath, self.distribution),
+                     '--logfile', '%s/pool/%s/%s.buildlog' %
+                     (self.buildpath, packageversion, packageversion),
+                     '--buildplace', '%s/build' % self.buildpath,
+                     '--buildresult', '%s/pool/%s' %
+                     (self.buildpath, packageversion),
+                     '--aptcache', '%s/aptcache' % self.buildpath,
+                     '--debbuildopts', '%s' % debopts,
+                     '--hookdir', self.opts.get('default', 'pbuilderhooks'),
+                     '--configfile', self.configfile, self.dscfile],
+                     stdout=fd, stderr=fd)
+            except OSError:
+                self.w(_('Unable to launch %s') % builder)
         mod.execute_hook('post_build', {'cfg': self.configfile,
                                         'directory': self.buildpath,
                                         'distribution': self.distribution,
@@ -298,25 +301,32 @@ class Build:
             if not os.path.exists(repo_file):
                 with open(os.path.splitext(repo_file)[0], 'w') as fd:
                     pass
-        call(['gzip', '-9', '-f',
-              os.path.join(self.buildpath, 'pool', 'Packages')], stderr=PIPE)
+        try:
+            call(['gzip', '-9', '-f', os.path.join(self.buildpath, 'pool',
+                                                   'Packages')], stderr=PIPE)
+        except OSError:
+            self.w(_('Unable to launch %s') % 'gzip')
         builder = self.opts.get('default', 'builder')
         if builder == 'cowbuilder':
             base = '--basepath'
         else:
             base = '--basetgz'
         with open(os.devnull, 'w') as fd:
-            if call([builder, '--%s' % self.cmd, '--override-config',
-                    base, '%s/%s' % (self.buildpath, self.distribution),
-                    '--buildplace', '%s/build' % self.buildpath,
-                    '--aptcache', '%s/aptcache' % self.buildpath,
-                    '--logfile', '%s/logs/%s.%s' %
-                    (self.buildpath, self.cmd, strftime('%Y%m%d_%H%M%S')),
-                    '--configfile', '%s' % self.configfile],
-                    stdout=fd, stderr=fd):
+            try:
+                if call([builder, '--%s' % self.cmd, '--override-config',
+                        base, '%s/%s' % (self.buildpath, self.distribution),
+                        '--buildplace', '%s/build' % self.buildpath,
+                        '--aptcache', '%s/aptcache' % self.buildpath,
+                        '--logfile', '%s/logs/%s.%s' %
+                        (self.buildpath, self.cmd, strftime('%Y%m%d_%H%M%S')),
+                        '--configfile', '%s' % self.configfile],
+                        stdout=fd, stderr=fd):
+                    self.release_lock()
+                    self.e(_('%(builder)s %(cmd)s failed') %
+                           {'builder': builder, 'cmd': self.cmd})
+            except OSError:
                 self.release_lock()
-                self.e(_('%(builder)s %(cmd)s failed') %
-                       {'builder': builder, 'cmd': self.cmd})
+                self.e(_('Unable to launch %s') % builder)
 
     def release_lock(self):
         self.lockfile.release()
