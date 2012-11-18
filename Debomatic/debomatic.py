@@ -62,16 +62,19 @@ class Debomatic:
         if self.lockfile.is_locked():
             self.e(_('Another instance is running. Aborting'))
         self.default_options()
-        self.mod_sys = Module((self.opts, self.rtopts, self.conffile))
-        self.mod_sys.execute_hook('on_start', {})
-        self.packagedir = self.opts.get('default', 'packagedir')
         self.log.logverbosity = self.opts.getint('default', 'logverbosity')
+        self.mod_sys = Module((self.opts, self.rtopts, self.conffile))
+        self.w(_('Startup hooks launched'), 3)
+        self.mod_sys.execute_hook('on_start', {})
+        self.w(_('Startup hooks finished'), 3)
+        self.packagedir = self.opts.get('default', 'packagedir')
         signal(SIGINT, self.quit)
         signal(SIGTERM, self.quit)
         if self.daemon:
             with open(self.opts.get('default', 'logfile'), 'a') as fd:
                 with DaemonContext(pidfile=self.lockfile, stdout=fd, stderr=fd,
                                    signal_map={SIGTERM: self.quit}):
+                    self.w(_('Entering daemon mode'), 3)
                     self.launcher()
         else:
             self.lockfile.acquire()
@@ -124,9 +127,11 @@ class Debomatic:
         wm = pyinotify.WatchManager()
         notifier = pyinotify.Notifier(wm, PE(self))
         wm.add_watch(self.packagedir, pyinotify.IN_CLOSE_WRITE)
+        self.w(_('Inotify loop started'), 3)
         notifier.loop()
 
     def launcher_timer(self):
+        self.w(_('Timer loop started'), 3)
         while True:
             sleep(self.opts.getint('default', 'sleep'))
             self.queue_files()
@@ -142,17 +147,21 @@ class Debomatic:
             if filename.endswith('.changes'):
                 b = FullBuild((self.opts, self.rtopts, self.conffile),
                               self.log, package=filename)
+                self.w(_('Thread for %s scheduled') % filename, 3)
                 self.pool.add_task(b.run, filename)
             elif filename.endswith('.commands'):
                 c = Command((self.opts, self.rtopts, self.conffile),
                             self.log, self.pool, filename)
+                self.w(_('Thread for %s scheduled') % filename, 3)
                 self.commandpool.add_task(c.process_command, filename)
 
     def quit(self, signum, frame):
         self.w(_('Waiting for threads to complete...'))
         self.commandpool.wait_completion()
         self.pool.wait_completion()
+        self.w(_('Shutdown hooks launched'), 3)
         self.mod_sys.execute_hook('on_quit', {})
+        self.w(_('Shutdown hooks finished'), 3)
         if not self.daemon:
             self.lockfile.release()
         exit()

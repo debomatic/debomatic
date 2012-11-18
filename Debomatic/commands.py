@@ -62,6 +62,7 @@ class Command():
                                findall('^lib\S|^\S', self.package)[0],
                                        self.package, self.dscname))
             try:
+                self.w(_('Downloading missing %s' % self.dscname), 2)
                 self.data = urlopen(request).read()
                 break
             except (HTTPError, URLError):
@@ -78,8 +79,12 @@ class Command():
             else:
                 if isinstance(mapper, dict):
                     if self.target in mapper:
+                        self.w(_('%s mapped as %s') % (self.target,
+                                mapper[self.target]), 3)
                         self.target = mapper[self.target]
                     if self.origin in mapper:
+                        self.w(_('%s mapped as %s') % (self.origin,
+                                mapper[self.origin]), 3)
                         self.origin = mapper[self.origin]
 
     def process_command(self):
@@ -104,6 +109,7 @@ class Command():
             self.process_rebuild(cmd_rebuild)
 
     def process_porter(self, packages):
+        self.w(_('Performing a porter build'), 3)
         for package in packages:
             self.package = package[0]
             self.version = package[1]
@@ -121,9 +127,11 @@ class Command():
                 b = Build((self.opts, self.rtopts, self.conffile), self.log,
                            dsc=dsc, distribution=self.target,
                            debopts=self.debopts)
+                self.w(_('Thread for %s scheduled') % os.path.basename(dsc), 3)
                 self.pool.add_task(b.build)
 
     def process_rebuild(self, packages):
+        self.w(_('Performing a package rebuild'), 3)
         for package in packages:
             self.package = package[0]
             self.version = package[1]
@@ -140,11 +148,14 @@ class Command():
                 b = Build((self.opts, self.rtopts, self.conffile), self.log,
                           dsc=dsc, distribution=self.target,
                           origin=self.origin)
+                self.w(_('Thread for %s scheduled') % os.path.basename(dsc), 3)
                 self.pool.add_task(b.build)
 
     def process_rm(self, filesets):
+        self.w(_('Removing files'), 3)
         for files in filesets:
             for pattern in files.split():
                 pattern = os.path.basename(pattern)
                 for absfile in glob(os.path.join(self.packagedir, pattern)):
+                    self.w(_('Removing %s' % pattern), 2)
                     os.remove(absfile)

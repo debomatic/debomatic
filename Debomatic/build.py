@@ -57,6 +57,10 @@ class Build:
         self.lockfile.acquire()
 
     def build(self):
+        if self.full:
+            self.w(_('Full build routine launched'), 3)
+        else:
+            self.w(_('Simple build routine launched'), 3)
         if self.dscfile:
             self.files.add(self.dscfile)
         self.parse_distribution_options()
@@ -81,6 +85,7 @@ class Build:
             os.mkdir(builddir)
         if self.uploader:
             uploader_email = self.uploader[1]
+        self.w(_('Pre-build hooks launched'), 3)
         mod.execute_hook('pre_build', {'cfg': self.configfile,
                                        'directory': self.buildpath,
                                        'distribution': self.distribution,
@@ -88,6 +93,7 @@ class Build:
                                        'opts': self.opts,
                                        'package': packageversion,
                                        'uploader': uploader_email})
+        self.w(_('Pre-build hooks finished'), 3)
         builder = self.opts.get('default', 'builder')
         if builder == 'cowbuilder':
             base = '--basepath'
@@ -99,6 +105,7 @@ class Build:
                             self.get_orig_tarball()))
         with open(os.devnull, 'w') as fd:
             try:
+                self.w(_('Launching %s') % builder , 2)
                 call([builder, '--build', '--override-config',
                      base, '%s/%s' % (self.buildpath, self.distribution),
                      '--logfile', '%s/pool/%s/%s.buildlog' %
@@ -113,6 +120,7 @@ class Build:
                      stdout=fd, stderr=fd)
             except OSError:
                 self.w(_('Unable to launch %s') % builder)
+        self.w(_('Post-build hooks launched'), 3)
         mod.execute_hook('post_build', {'cfg': self.configfile,
                                         'directory': self.buildpath,
                                         'distribution': self.distribution,
@@ -120,7 +128,9 @@ class Build:
                                         'opts': self.opts,
                                         'package': packageversion,
                                         'uploader': uploader_email})
+        self.w(_('Post-build hooks finished'), 3)
         self.remove_files()
+        self.w(_('Build of %s complete') % os.path.basename(self.dscfile))
 
     def fetch_missing_files(self):
         filename = self.dscfile if self.dscfile else self.package
@@ -143,6 +153,7 @@ class Build:
                                        findall('^lib\S|^\S', packagename)[0],
                                        packagename, entry))
                     try:
+                        self.w(_('Downloading missing %s' % entry), 2)
                         data = urlopen(request).read()
                         break
                     except (HTTPError, URLError):
@@ -204,6 +215,8 @@ class Build:
             else:
                 if isinstance(mapper, dict):
                     if self.distribution in mapper:
+                        self.w(_('%s mapped as %s') % (self.distribution,
+                               mapper[self.distribution]), 3)
                         self.distribution = mapper[self.distribution]
 
     def needs_update(self):
@@ -213,9 +226,11 @@ class Build:
                                self.distopts['distribution'])
         if not os.path.exists(gpgfile):
             self.cmd = 'create'
+            self.w(_('Chroot must be created'), 2)
             return
         if self.distribution in self.runtime_option('alwaysupdate'):
             self.cmd = 'update'
+            self.w(_('Chroot must be updated'), 2)
             return
         uri = '%s/dists/%s/Release.gpg' % (self.distopts['mirror'],
                                            self.distopts['distribution'])
@@ -224,6 +239,7 @@ class Build:
         except (HTTPError, URLError):
             self.w(_('Unable to fetch %s') % uri)
             self.cmd = update
+            self.w(_('Chroot must be updated'), 2)
             return
         remote_sha = sha256()
         gpgfile_sha = sha256()
@@ -233,9 +249,11 @@ class Build:
                 gpgfile_sha.update(fd.read())
         except OSError:
             self.cmd = 'create'
+            self.w(_('Chroot must be created'), 2)
             return
         if remote_sha.digest() != gpgfile_sha.digest():
             self.cmd = 'update'
+            self.w(_('Chroot must be updated'), 2)
 
     def parse_distribution_options(self):
         conf = {'components': ('[^#]?COMPONENTS="?(.*[^"])"?\n', 'COMPONENTS'),
@@ -313,6 +331,7 @@ class Build:
             base = '--basetgz'
         with open(os.devnull, 'w') as fd:
             try:
+                self.w(_('Launching %s %s') % (builder, self.cmd) , 2)
                 if call([builder, '--%s' % self.cmd, '--override-config',
                         base, '%s/%s' % (self.buildpath, self.distribution),
                         '--buildplace', '%s/build' % self.buildpath,
