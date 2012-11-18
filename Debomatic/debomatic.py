@@ -65,6 +65,7 @@ class Debomatic:
         self.mod_sys = Module((self.opts, self.rtopts, self.conffile))
         self.mod_sys.execute_hook('on_start', {})
         self.packagedir = self.opts.get('default', 'packagedir')
+        self.log.logverbosity = self.opts.getint('default', 'logverbosity')
         signal(SIGINT, self.quit)
         signal(SIGTERM, self.quit)
         if self.daemon:
@@ -77,8 +78,9 @@ class Debomatic:
             self.launcher()
 
     def default_options(self):
-        defaultoptions = ('builder', 'packagedir', 'configdir', 'maxbuilds',
-                          'pbuilderhooks', 'inotify', 'sleep', 'logfile')
+        defaultoptions = ('builder', 'packagedir', 'configdir',
+                          'maxbuilds', 'pbuilderhooks', 'inotify',
+                          'sleep', 'logfile', 'logverbosity')
         if not self.conffile:
             self.e(_('Configuration file has not been specified'))
         if not os.path.exists(self.conffile):
@@ -179,8 +181,12 @@ class Debomatic:
 
 class Output:
 
-    def w(self, msg):
-        stderr.write('%s: %s\n' % (datetime.now().ctime(), msg))
+    def __init__(self):
+        self.logverbosity = 1
+
+    def w(self, msg, level=1):
+        if self.logverbosity >= level:
+            stderr.write('%s: %s\n' % (datetime.now().ctime(), msg))
 
     def e(self, msg):
         self.w(msg)
