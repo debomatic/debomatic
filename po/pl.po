@@ -7,111 +7,214 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2012-03-31 23:54+0200\n"
+"POT-Creation-Date: 2012-11-18 03:45+0100\n"
 "PO-Revision-Date: 2012-10-21 22:02+0000\n"
 "Last-Translator: Stanisław Dac <s.dac@yandex.ru>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-11-15 04:38+0000\n"
-"X-Generator: Launchpad (build 16265)\n"
+"X-Launchpad-Export-Date: 2012-11-18 04:30+0000\n"
+"X-Generator: Launchpad (build 16278)\n"
 
-#: Debomatic/commands.py:48 Debomatic/build.py:235 Debomatic/build.py:249
-#: Debomatic/build.py:264 Debomatic/build.py:339 Debomatic/build.py:236
-#: Debomatic/build.py:250 Debomatic/build.py:265 Debomatic/build.py:344
-#: Debomatic/commands.py:50 Debomatic/build.py:244 Debomatic/build.py:261
-#: Debomatic/build.py:276 Debomatic/build.py:361
+#: Debomatic/commands.py:50 Debomatic/build.py:274 Debomatic/build.py:289
+#: Debomatic/build.py:304 Debomatic/build.py:399
 #, python-format
 msgid "Unable to open %s"
 msgstr "Nie można otworzyć %s"
 
-#: Debomatic/commands.py:55 Debomatic/build.py:255 Debomatic/build.py:269
-#: Debomatic/build.py:256 Debomatic/build.py:270 Debomatic/commands.py:56
-#: Debomatic/build.py:267 Debomatic/build.py:281
+#: Debomatic/commands.py:56 Debomatic/build.py:295 Debomatic/build.py:309
 msgid "Please set %(parm)s in %s(conf)s"
 msgstr "Proszę ustawić %(param)s w %s(conf)s"
 
-#: Debomatic/commands.py:68 Debomatic/build.py:205 Debomatic/build.py:323
-#: Debomatic/build.py:206 Debomatic/build.py:327 Debomatic/build.py:214
-#: Debomatic/build.py:344
+#: Debomatic/commands.py:65 Debomatic/build.py:156
+#, python-format
+msgid "Downloading missing %s"
+msgstr ""
+
+#: Debomatic/commands.py:69 Debomatic/build.py:241 Debomatic/build.py:382
 #, python-format
 msgid "Unable to fetch %s"
 msgstr "Nie można pozyskać %s"
 
-#: Debomatic/build.py:65 Debomatic/build.py:66
+#: Debomatic/commands.py:82 Debomatic/commands.py:87 Debomatic/build.py:218
 #, python-format
-msgid "Distribution %s is disabled"
-msgstr "Dystrybucja %s jest wyłączona"
-
-#: Debomatic/build.py:239 Debomatic/build.py:344 Debomatic/build.py:240
-#: Debomatic/build.py:349 Debomatic/build.py:248 Debomatic/build.py:366
-#, python-format
-msgid "Bad .changes file: %s"
-msgstr "Nieprawidłowy plik .changes: %s"
-
-#: Debomatic/build.py:297 Debomatic/build.py:301 Debomatic/build.py:311
-#, python-format
-msgid "%(builder)s %(cmd)s failed"
-msgstr "%(builder)s %(cmd)s nie powiodło się"
-
-#: Debomatic/debomatic.py:47 Debomatic/debomatic.py:49
-msgid "You must run deb-o-matic as root"
+msgid "%(mapped)s mapped as %(mapper)s"
 msgstr ""
-"Deb-o-matic do poprawnego działania wymaga uruchomienia z poziomu root'a"
 
-#: Debomatic/debomatic.py:61 Debomatic/debomatic.py:63
-msgid "Another instance is running. Aborting"
-msgstr "Aplikacja jest już uruchomiona. Anulowanie"
-
-#: Debomatic/debomatic.py:81 Debomatic/debomatic.py:83
-msgid "Configuration file has not been specified"
-msgstr "Plik konfiguracyjny nie został określony"
-
-#: Debomatic/debomatic.py:83 Debomatic/debomatic.py:85
-#, python-format
-msgid "Configuration file %s does not exist"
-msgstr "Plik konfiguracyjny %s nie istnieje"
-
-#: Debomatic/debomatic.py:88 Debomatic/debomatic.py:94
-#, python-format
-msgid "Set \"%(opt)s\" in %(conffile)s"
-msgstr "Ustaw \"%(opt)s\" w %(conffile)s"
-
-#: Debomatic/debomatic.py:131 Debomatic/debomatic.py:137
-#, python-format
-msgid "Unable to access %s directory"
-msgstr "Nie można uzyskać dostępu do katalogu %s"
-
-#: Debomatic/debomatic.py:141 Debomatic/debomatic.py:161 prova.py:17
-#: Debomatic/debomatic.py:149 Debomatic/debomatic.py:169
-msgid "Waiting for threads to complete..."
-msgstr "Czekam na ukończenie wątków..."
-
-#: Debomatic/debomatic.py:167 prova.py:23 Debomatic/debomatic.py:175
-msgid "Obsolete lock removed"
-msgstr "Usunięto przestarzałe blokady"
-
-#: Debomatic/gpg.py:44 Debomatic/gpg.py:46
-msgid "Keyring not found"
-msgstr "Baza kluczy nie odnaleziona"
-
-#: Debomatic/gpg.py:60 Debomatic/gpg.py:54
-msgid "No valid signatures found"
-msgstr "Nie znaleziono prawidłowych podpisów"
-
-#: Debomatic/commands.py:72 Debomatic/build.py:339 Debomatic/commands.py:86
-#: Debomatic/build.py:356
+#: Debomatic/commands.py:93 Debomatic/build.py:394
 #, python-format
 msgid "Processing %s"
 msgstr "Przetwarzanie %s"
 
-#: Debomatic/build.py:60 Debomatic/build.py:75
+#: Debomatic/commands.py:114
+msgid "Performing a porter build"
+msgstr ""
+
+#: Debomatic/commands.py:132 Debomatic/commands.py:153
+#: Debomatic/debomatic.py:150 Debomatic/debomatic.py:155
+#, python-format
+msgid "Thread for %s scheduled"
+msgstr ""
+
+#: Debomatic/commands.py:136
+msgid "Performing a package rebuild"
+msgstr ""
+
+#: Debomatic/commands.py:157
+msgid "Removing files"
+msgstr ""
+
+#: Debomatic/commands.py:162
+#, python-format
+msgid "Removing %s"
+msgstr ""
+
+#: Debomatic/build.py:61
+msgid "Full build routine launched"
+msgstr ""
+
+#: Debomatic/build.py:63
+msgid "Simple build routine launched"
+msgstr ""
+
+#: Debomatic/build.py:69
+#, python-format
+msgid "Distribution %s is disabled"
+msgstr "Dystrybucja %s jest wyłączona"
+
+#: Debomatic/build.py:83
 #, python-format
 msgid "Building %s"
 msgstr "Buduję %s"
 
-#: Debomatic/debomatic.py:89
+#: Debomatic/build.py:88
+msgid "Pre-build hooks launched"
+msgstr ""
+
+#: Debomatic/build.py:96
+msgid "Pre-build hooks finished"
+msgstr ""
+
+#: Debomatic/build.py:108
+#, python-format
+msgid "Launching %s"
+msgstr ""
+
+#: Debomatic/build.py:122 Debomatic/build.py:327 Debomatic/build.py:350
+#, python-format
+msgid "Unable to launch %s"
+msgstr ""
+
+#: Debomatic/build.py:123
+msgid "Post-build hooks launched"
+msgstr ""
+
+#: Debomatic/build.py:131
+msgid "Post-build hooks finished"
+msgstr ""
+
+#: Debomatic/build.py:133
+#, python-format
+msgid "Build of %s complete"
+msgstr ""
+
+#: Debomatic/build.py:145 Debomatic/build.py:278 Debomatic/build.py:404
+#, python-format
+msgid "Bad .changes file: %s"
+msgstr "Nieprawidłowy plik .changes: %s"
+
+#: Debomatic/build.py:230 Debomatic/build.py:253
+msgid "Chroot must be created"
+msgstr ""
+
+#: Debomatic/build.py:234 Debomatic/build.py:243 Debomatic/build.py:257
+msgid "Chroot must be updated"
+msgstr ""
+
+#: Debomatic/build.py:335
+#, python-format
+msgid "Launching %(builder)s %(cmd)s"
+msgstr ""
+
+#: Debomatic/build.py:346
+#, python-format
+msgid "%(builder)s %(cmd)s failed"
+msgstr "%(builder)s %(cmd)s nie powiodło się"
+
+#: Debomatic/debomatic.py:49
+msgid "You must run deb-o-matic as root"
+msgstr ""
+"Deb-o-matic do poprawnego działania wymaga uruchomienia z poziomu root'a"
+
+#: Debomatic/debomatic.py:63
+msgid "Another instance is running. Aborting"
+msgstr "Aplikacja jest już uruchomiona. Anulowanie"
+
+#: Debomatic/debomatic.py:67
+msgid "Startup hooks launched"
+msgstr ""
+
+#: Debomatic/debomatic.py:69
+msgid "Startup hooks finished"
+msgstr ""
+
+#: Debomatic/debomatic.py:77
+msgid "Entering daemon mode"
+msgstr ""
+
+#: Debomatic/debomatic.py:88
+msgid "Configuration file has not been specified"
+msgstr "Plik konfiguracyjny nie został określony"
+
+#: Debomatic/debomatic.py:90
+#, python-format
+msgid "Configuration file %s does not exist"
+msgstr "Plik konfiguracyjny %s nie istnieje"
+
+#: Debomatic/debomatic.py:94
 #, python-format
 msgid "Configuration file is not at version %s"
 msgstr "Plik konfiguracyjny nie jest w wersji %s"
+
+#: Debomatic/debomatic.py:99
+#, python-format
+msgid "Set \"%(opt)s\" in %(conffile)s"
+msgstr "Ustaw \"%(opt)s\" w %(conffile)s"
+
+#: Debomatic/debomatic.py:130
+msgid "Inotify loop started"
+msgstr ""
+
+#: Debomatic/debomatic.py:134
+msgid "Timer loop started"
+msgstr ""
+
+#: Debomatic/debomatic.py:145
+#, python-format
+msgid "Unable to access %s directory"
+msgstr "Nie można uzyskać dostępu do katalogu %s"
+
+#: Debomatic/debomatic.py:159 Debomatic/debomatic.py:181
+msgid "Waiting for threads to complete..."
+msgstr "Czekam na ukończenie wątków..."
+
+#: Debomatic/debomatic.py:162
+msgid "Shutdown hooks launched"
+msgstr ""
+
+#: Debomatic/debomatic.py:164
+msgid "Shutdown hooks finished"
+msgstr ""
+
+#: Debomatic/debomatic.py:187
+msgid "Obsolete lock removed"
+msgstr "Usunięto przestarzałe blokady"
+
+#: Debomatic/gpg.py:46
+msgid "Keyring not found"
+msgstr "Baza kluczy nie odnaleziona"
+
+#: Debomatic/gpg.py:54
+msgid "No valid signatures found"
+msgstr "Nie znaleziono prawidłowych podpisów"
