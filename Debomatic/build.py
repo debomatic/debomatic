@@ -215,8 +215,9 @@ class Build:
             else:
                 if isinstance(mapper, dict):
                     if self.distribution in mapper:
-                        self.w(_('%s mapped as %s') % (self.distribution,
-                               mapper[self.distribution]), 3)
+                        self.w(_('%(mapped)s mapped as %(mapper)s') % 
+                               {'mapped': self.distribution,
+                               'mapper': mapper[self.distribution]}, 3)
                         self.distribution = mapper[self.distribution]
 
     def needs_update(self):
@@ -331,7 +332,8 @@ class Build:
             base = '--basetgz'
         with open(os.devnull, 'w') as fd:
             try:
-                self.w(_('Launching %s %s') % (builder, self.cmd) , 2)
+                self.w(_('Launching %(builder)s %(cmd)s')
+                       % {'builder': builder, 'cmd': self.cmd} , 2)
                 if call([builder, '--%s' % self.cmd, '--override-config',
                         base, '%s/%s' % (self.buildpath, self.distribution),
                         '--buildplace', '%s/build' % self.buildpath,

@@ -79,12 +79,14 @@ class Command():
             else:
                 if isinstance(mapper, dict):
                     if self.target in mapper:
-                        self.w(_('%s mapped as %s') % (self.target,
-                                mapper[self.target]), 3)
+                        self.w(_('%(mapped)s mapped as %(mapper)s') % 
+                               {'mapped': self.target,
+                               'mapper': mapper[self.target]}, 3)
                         self.target = mapper[self.target]
                     if self.origin in mapper:
-                        self.w(_('%s mapped as %s') % (self.origin,
-                                mapper[self.origin]), 3)
+                        self.w(_('%(mapped)s mapped as %(mapper)s') % 
+                               {'mapped': self.origin,
+                               'mapper': mapper[self.origin]}, 3)
                         self.origin = mapper[self.origin]
 
     def process_command(self):
