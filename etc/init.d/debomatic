@@ -67,6 +67,9 @@ case "$1" in
 		;;
 	esac
 	;;
+  status)
+	status_of_proc /usr/bin/$NAME $NAME
+	;;
   *)
 	echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
 	exit 3
