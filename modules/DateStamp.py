@@ -1,7 +1,7 @@
 # Deb-o-Matic - Lintian module
 #
 # Copyright (C) 2008-2009 David Futcher
-# Copyright (C) 2008-2012 Luca Falavigna
+# Copyright (C) 2008-2013 Luca Falavigna
 #
 # Authors: David Futcher <bobbo@ubuntu.com>
 #          Luca Falavigna <dktrkranz@debian.org>

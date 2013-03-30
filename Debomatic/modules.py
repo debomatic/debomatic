@@ -1,7 +1,7 @@
 # Deb-o-Matic
 #
 # Copyright (C) 2008-2009 David Futcher
-# Copyright (C) 2012 Luca Falavigna
+# Copyright (C) 2012-2013 Luca Falavigna
 #
 # Author: David Futcher <bobbo@ubuntu.com>
 #

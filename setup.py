@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # Deb-o-Matic
 #
-# Copyright (C) 2007-2012 Luca Falavigna
+# Copyright (C) 2007-2013 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
 #
