@@ -19,8 +19,8 @@
 
 import os
 from ConfigParser import ConfigParser
+from argparse import ArgumentParser
 from datetime import datetime
-from getopt import getopt, GetoptError
 from daemon import DaemonContext, pidlockfile
 from signal import signal, SIGINT, SIGTERM
 from sys import argv, stderr
@@ -45,20 +45,22 @@ class Debomatic:
         self.lockfile = pidlockfile.PIDLockFile(self.lockfilepath)
         self.opts = ConfigParser()
         self.rtopts = ConfigParser()
+        parser = ArgumentParser()
+        parser.add_argument('-c', '--configfile', metavar='file', type=str,
+                            nargs=1, help='configuration file for Deb-o-Matic')
+        parser.add_argument('-n', '--no-daemon', action='store_true',
+                    help='do not launch Deb-o-Matic in daemon mode')
+        parser.add_argument('-q', '--quit-process', action='store_true',
+                    help='terminate Deb-o-Matic processes')
+        args = parser.parse_args()
         if os.getuid():
             self.e(_('You must run deb-o-matic as root'))
-        try:
-            opts, args = getopt(argv[1:], 'c:nq',
-                                ['config=', 'nodaemon', 'quit-process'])
-        except GetoptError as error:
-            self.e(error.msg)
-        for o, a in opts:
-            if o in ('-c', '--config'):
-                self.conffile = a
-            if o in ('-n', '--nodaemon'):
-                self.daemon = False
-            if o in ('-q', '--quit-process'):
-                self.quit_process()
+        if args.configfile:
+            self.conffile = args.configfile[0]
+        if args.no_daemon:
+            self.daemon = False
+        if args.quit_process:
+            self.quit_process()
         if self.lockfile.is_locked():
             self.e(_('Another instance is running. Aborting'))
         self.default_options()

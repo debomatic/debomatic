@@ -43,7 +43,7 @@ Build and installation requirements
 
 In order to build and install Deb-o-Matic, the following packages are required:
 
-* python (>= 2.6)
+* python (>= 2.7)
 
 The following packages are required to install documentation and translations:
 
@@ -59,7 +59,7 @@ Runtime requirements
 
 In order to be able to run Deb-o-Matic, the following packages are required:
 
-* python (>= 2.6)
+* python (>= 2.7)
 * pbuilder or cowbuilder
 * debootstrap or cdebootstrap
 * python-daemon
