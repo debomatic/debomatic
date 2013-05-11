@@ -129,7 +129,7 @@ class Command():
                 b = Build((self.opts, self.rtopts, self.conffile), self.log,
                            dsc=dsc, distribution=self.target,
                            debopts=self.debopts)
-                if self.pool.add_task(b.build):
+                if self.pool.add_task(b.build, dsc):
                     self.w(_('Thread for %s scheduled') %
                            os.path.basename(dsc), 3)
 
@@ -151,7 +151,7 @@ class Command():
                 b = Build((self.opts, self.rtopts, self.conffile), self.log,
                           dsc=dsc, distribution=self.target,
                           origin=self.origin)
-                if self.pool.add_task(b.build):
+                if self.pool.add_task(b.build, dsc):
                     self.w(_('Thread for %s scheduled') %
                            os.path.basename(dsc), 3)
 
