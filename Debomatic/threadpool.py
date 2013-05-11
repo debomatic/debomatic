@@ -60,6 +60,8 @@ class ThreadPool:
         if not args in self.jobs:
             self.jobs.add(args)
             self.tasks.put((func, args, kargs, self.jobs))
+            return True
+        return False
 
     def wait_completion(self):
         self.tasks.join()

@@ -149,13 +149,13 @@ class Debomatic:
             if filename.endswith('.changes'):
                 b = FullBuild((self.opts, self.rtopts, self.conffile),
                               self.log, package=filename)
-                self.w(_('Thread for %s scheduled') % filename, 3)
-                self.pool.add_task(b.run, filename)
+                if self.pool.add_task(b.run, filename):
+                    self.w(_('Thread for %s scheduled') % filename, 3)
             elif filename.endswith('.commands'):
                 c = Command((self.opts, self.rtopts, self.conffile),
                             self.log, self.pool, filename)
-                self.w(_('Thread for %s scheduled') % filename, 3)
-                self.commandpool.add_task(c.process_command, filename)
+                if self.commandpool.add_task(c.process_command, filename):
+                    self.w(_('Thread for %s scheduled') % filename, 3)
 
     def quit(self, signum, frame):
         self.w(_('Waiting for threads to complete...'))

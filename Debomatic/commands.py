@@ -129,8 +129,9 @@ class Command():
                 b = Build((self.opts, self.rtopts, self.conffile), self.log,
                            dsc=dsc, distribution=self.target,
                            debopts=self.debopts)
-                self.w(_('Thread for %s scheduled') % os.path.basename(dsc), 3)
-                self.pool.add_task(b.build)
+                if self.pool.add_task(b.build):
+                    self.w(_('Thread for %s scheduled') %
+                           os.path.basename(dsc), 3)
 
     def process_rebuild(self, packages):
         self.w(_('Performing a package rebuild'), 3)
@@ -150,8 +151,9 @@ class Command():
                 b = Build((self.opts, self.rtopts, self.conffile), self.log,
                           dsc=dsc, distribution=self.target,
                           origin=self.origin)
-                self.w(_('Thread for %s scheduled') % os.path.basename(dsc), 3)
-                self.pool.add_task(b.build)
+                if self.pool.add_task(b.build):
+                    self.w(_('Thread for %s scheduled') %
+                           os.path.basename(dsc), 3)
 
     def process_rm(self, filesets):
         self.w(_('Removing files'), 3)
