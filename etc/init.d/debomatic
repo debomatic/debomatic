@@ -20,7 +20,6 @@ SCRIPTNAME=/etc/init.d/$NAME
 [ -x "$DAEMON" ] || exit 0
 [ "$DEBOMATIC_AUTOSTART" = 0  ] && exit 0
 
-. /lib/init/vars.sh
 . /lib/lsb/init-functions
 
 do_start()
