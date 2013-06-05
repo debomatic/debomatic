@@ -1,5 +1,7 @@
-0.11 (not released yet)
+0.11 "lazy" (2013-06-05)
 * Piuparts module
+* Log verbosity increased
+* Several bugfixes
 
 0.10 "antwerp" (2012-04-01)
 * Massive code refactorization
