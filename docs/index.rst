@@ -576,6 +576,24 @@ upload.
  Make sure packages are available in the distribution mirrors, otherwise they
  cannot be downloaded and processed by Deb-o-Matic.
 
+Rebuild packages with extra build-dependencies
+----------------------------------------------
+
+You could want to rebuild a package already in the mirrors also adding a
+specific build-dependency to see whether it compiles with a newer library
+version. In order to do so, you must use the ``builddep`` command:
+
+ *echo "builddep foo_version dist extrapackage=packageversion" > foo.commands*
+
+where ``extrapackage`` is the name of the package you want to install before
+the compilation takes place, and ``packageversion`` is the optional version of
+the package you want to install.
+
+.. CAUTION::
+
+ Make sure packages are available in the distribution mirrors, otherwise they
+ cannot be downloaded and processed by Deb-o-Matic.
+
 Modules
 =======
 

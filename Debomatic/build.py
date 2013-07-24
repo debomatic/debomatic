@@ -34,7 +34,7 @@ from modules import Module
 class Build:
 
     def __init__(self, opts, log, package=None, dsc=None,
-                 debopts=None, distribution=None, origin=None):
+                 debopts=None, distribution=None, extrabd=None, origin=None):
         self.log = log
         self.e = self.log.t
         self.w = self.log.w
@@ -43,6 +43,7 @@ class Build:
         self.dscfile = dsc
         self.debopts = debopts
         self.distribution = distribution
+        self.extrabd = extrabd
         self.origin = origin
         self.cmd = None
         self.distopts = {}
@@ -100,8 +101,8 @@ class Build:
         else:
             base = '--basetgz'
         debopts = ' '.join((self.get_build_options(),
-                            self.get_compression(),
                             self.get_changelog_versions(),
+                            self.get_compression(),
                             self.get_orig_tarball()))
         with open(os.devnull, 'w') as fd:
             try:
@@ -116,6 +117,7 @@ class Build:
                      '--aptcache', '%s/aptcache' % self.buildpath,
                      '--debbuildopts', '%s' % debopts,
                      '--hookdir', self.opts.get('default', 'pbuilderhooks'),
+                     '--extrapackages', '%s' % self.get_extra_builddeps(),
                      '--configfile', self.configfile, self.dscfile],
                      stdout=fd, stderr=fd)
             except OSError:
@@ -193,6 +195,12 @@ class Build:
                     except IndexError:
                         pass
         return compression
+
+    def get_extra_builddeps(self):
+        if self.extrabd:
+            return self.extrabd
+        else:
+            return ''
 
     def get_orig_tarball(self):
         sa = ''

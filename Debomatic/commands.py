@@ -100,15 +100,41 @@ class Command():
         with open(self.cmdfile, 'r') as fd:
             cmd = fd.read()
         os.remove(self.cmdfile)
+        cmd_builddep = findall('\s?builddep\s+(\S+)_(\S+) (\S+) (.*)', cmd)        
         cmd_rm = findall('\s?rm\s+(.*)', cmd)
         cmd_rebuild = findall('\s?rebuild\s+(\S+)_(\S+) (\S+) ?(\S*)', cmd)
         cmd_porter = findall('\s?porter\s+(\S+)_(\S+) (\S+) (.*)', cmd)
+        if cmd_builddep:
+            self.process_builddep(cmd_builddep)
         if cmd_rm:
             self.process_rm(cmd_rm)
         if cmd_porter:
             self.process_porter(cmd_porter)
         if cmd_rebuild:
             self.process_rebuild(cmd_rebuild)
+
+    def process_builddep(self, packages):
+        self.w(_('Performing a package rebuild with extra build-dependencies'), 3)
+        for package in packages:
+            self.package = package[0]
+            self.version = package[1]
+            self.dscname = '%s_%s.dsc' % (self.package, self.version)
+            self.target = package[2]
+            self.origin = None
+            self.extrabd = package[3]
+            self.map_distribution()
+            self.originconf = os.path.join(self.configdir, self.target)
+            self.fetch_dsc()
+            if self.data:
+                dsc = os.path.join(self.packagedir, self.dscname)
+                with open(dsc, 'w') as fd:
+                    fd.write(self.data)
+                b = Build((self.opts, self.rtopts, self.conffile), self.log,
+                          dsc=dsc, distribution=self.target,
+                          extrabd=self.extrabd)
+                if self.pool.add_task(b.build, dsc):
+                    self.w(_('Thread for %s scheduled') %
+                           os.path.basename(dsc), 3)
 
     def process_porter(self, packages):
         self.w(_('Performing a porter build'), 3)
