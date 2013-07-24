@@ -563,7 +563,7 @@ architecture dependent binaries only. Additional information can be found in
 
 In order to do so, you must use the ``rebuild`` command:
 
- *echo "porter foo_version dist \\"Joe Doe <j.doe@acme.com\\"" > foo.commands*
+ *echo "porter foo_version dist Joe Doe <j.doe@acme.com>" > foo.commands*
 
 where foo is the name of the source package you want to rebuild, version is
 the version of the package you want to rebuild, dist is the distribution which
