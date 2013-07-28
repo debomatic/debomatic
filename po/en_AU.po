@@ -1,0 +1,219 @@
+# English (Australia) translation for debomatic
+# Copyright (c) 2013 Rosetta Contributors and Canonical Ltd 2013
+# This file is distributed under the same license as the debomatic package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: debomatic\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2012-11-18 03:45+0100\n"
+"PO-Revision-Date: 2013-07-27 06:15+0000\n"
+"Last-Translator: Jackson Doak <Doak.jackson@gmail.com>\n"
+"Language-Team: English (Australia) <en_AU@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2013-07-28 05:17+0000\n"
+"X-Generator: Launchpad (build 16700)\n"
+
+#: Debomatic/commands.py:50 Debomatic/build.py:274 Debomatic/build.py:289
+#: Debomatic/build.py:304 Debomatic/build.py:399
+#, python-format
+msgid "Unable to open %s"
+msgstr "Unable to open %s"
+
+#: Debomatic/commands.py:56 Debomatic/build.py:295 Debomatic/build.py:309
+msgid "Please set %(parm)s in %s(conf)s"
+msgstr "Please set %(parm)s in %s(conf)s"
+
+#: Debomatic/commands.py:65 Debomatic/build.py:156
+#, python-format
+msgid "Downloading missing %s"
+msgstr "Downloading missing %s"
+
+#: Debomatic/commands.py:69 Debomatic/build.py:241 Debomatic/build.py:382
+#, python-format
+msgid "Unable to fetch %s"
+msgstr "Unable to fetch %s"
+
+#: Debomatic/commands.py:82 Debomatic/commands.py:87 Debomatic/build.py:218
+#, python-format
+msgid "%(mapped)s mapped as %(mapper)s"
+msgstr "%(mapped)s mapped as %(mapper)s"
+
+#: Debomatic/commands.py:93 Debomatic/build.py:394
+#, python-format
+msgid "Processing %s"
+msgstr "Processing %s"
+
+#: Debomatic/commands.py:114
+msgid "Performing a porter build"
+msgstr "Performing a porter build"
+
+#: Debomatic/commands.py:132 Debomatic/commands.py:153
+#: Debomatic/debomatic.py:150 Debomatic/debomatic.py:155
+#, python-format
+msgid "Thread for %s scheduled"
+msgstr "Thread for %s scheduled"
+
+#: Debomatic/commands.py:136
+msgid "Performing a package rebuild"
+msgstr "Performing a package rebuild"
+
+#: Debomatic/commands.py:157
+msgid "Removing files"
+msgstr "Removing files"
+
+#: Debomatic/commands.py:162
+#, python-format
+msgid "Removing %s"
+msgstr "Removing %s"
+
+#: Debomatic/build.py:61
+msgid "Full build routine launched"
+msgstr "Full build routine launched"
+
+#: Debomatic/build.py:63
+msgid "Simple build routine launched"
+msgstr "Simple build routine launched"
+
+#: Debomatic/build.py:69
+#, python-format
+msgid "Distribution %s is disabled"
+msgstr "Distribution %s is disabled"
+
+#: Debomatic/build.py:83
+#, python-format
+msgid "Building %s"
+msgstr "Building %s"
+
+#: Debomatic/build.py:88
+msgid "Pre-build hooks launched"
+msgstr "Pre-build hooks launched"
+
+#: Debomatic/build.py:96
+msgid "Pre-build hooks finished"
+msgstr "Pre-build hooks finished"
+
+#: Debomatic/build.py:108
+#, python-format
+msgid "Launching %s"
+msgstr "Launching %s"
+
+#: Debomatic/build.py:122 Debomatic/build.py:327 Debomatic/build.py:350
+#, python-format
+msgid "Unable to launch %s"
+msgstr "Unable to launch %s"
+
+#: Debomatic/build.py:123
+msgid "Post-build hooks launched"
+msgstr "Post-build hooks launched"
+
+#: Debomatic/build.py:131
+msgid "Post-build hooks finished"
+msgstr "Post-build hooks finished"
+
+#: Debomatic/build.py:133
+#, python-format
+msgid "Build of %s complete"
+msgstr "Build of %s complete"
+
+#: Debomatic/build.py:145 Debomatic/build.py:278 Debomatic/build.py:404
+#, python-format
+msgid "Bad .changes file: %s"
+msgstr "Bad .changes file: %s"
+
+#: Debomatic/build.py:230 Debomatic/build.py:253
+msgid "Chroot must be created"
+msgstr "Chroot must be created"
+
+#: Debomatic/build.py:234 Debomatic/build.py:243 Debomatic/build.py:257
+msgid "Chroot must be updated"
+msgstr "Chroot must be updated"
+
+#: Debomatic/build.py:335
+#, python-format
+msgid "Launching %(builder)s %(cmd)s"
+msgstr "Launching %(builder)s %(cmd)s"
+
+#: Debomatic/build.py:346
+#, python-format
+msgid "%(builder)s %(cmd)s failed"
+msgstr "%(builder)s %(cmd)s failed"
+
+#: Debomatic/debomatic.py:49
+msgid "You must run deb-o-matic as root"
+msgstr "You must run deb-o-matic as root"
+
+#: Debomatic/debomatic.py:63
+msgid "Another instance is running. Aborting"
+msgstr "Another instance is running. Aborting"
+
+#: Debomatic/debomatic.py:67
+msgid "Startup hooks launched"
+msgstr "Startup hooks launched"
+
+#: Debomatic/debomatic.py:69
+msgid "Startup hooks finished"
+msgstr "Startup hooks finished"
+
+#: Debomatic/debomatic.py:77
+msgid "Entering daemon mode"
+msgstr "Entering daemon mode"
+
+#: Debomatic/debomatic.py:88
+msgid "Configuration file has not been specified"
+msgstr "Configuration file has not been specified"
+
+#: Debomatic/debomatic.py:90
+#, python-format
+msgid "Configuration file %s does not exist"
+msgstr "Configuration file %s does not exist"
+
+#: Debomatic/debomatic.py:94
+#, python-format
+msgid "Configuration file is not at version %s"
+msgstr "Configuration file is not at version %s"
+
+#: Debomatic/debomatic.py:99
+#, python-format
+msgid "Set \"%(opt)s\" in %(conffile)s"
+msgstr "Set \"%(opt)s\" in %(conffile)s"
+
+#: Debomatic/debomatic.py:130
+msgid "Inotify loop started"
+msgstr "Inotify loop started"
+
+#: Debomatic/debomatic.py:134
+msgid "Timer loop started"
+msgstr "Timer loop started"
+
+#: Debomatic/debomatic.py:145
+#, python-format
+msgid "Unable to access %s directory"
+msgstr "Unable to access %s directory"
+
+#: Debomatic/debomatic.py:159 Debomatic/debomatic.py:181
+msgid "Waiting for threads to complete..."
+msgstr "Waiting for threads to complete..."
+
+#: Debomatic/debomatic.py:162
+msgid "Shutdown hooks launched"
+msgstr "Shutdown hooks launched"
+
+#: Debomatic/debomatic.py:164
+msgid "Shutdown hooks finished"
+msgstr "Shutdown hooks finished"
+
+#: Debomatic/debomatic.py:187
+msgid "Obsolete lock removed"
+msgstr "Obsolete lock removed"
+
+#: Debomatic/gpg.py:46
+msgid "Keyring not found"
+msgstr "Keyring not found"
+
+#: Debomatic/gpg.py:54
+msgid "No valid signatures found"
+msgstr "No valid signatures found"
