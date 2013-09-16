@@ -17,7 +17,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from os import setpgrp
 from Queue import Queue
 from threading import Thread
 from traceback import print_exc
@@ -34,7 +33,6 @@ class Job(Thread):
     def run(self):
         while True:
             func, args, kargs, jobs = self.tasks.get()
-            setpgrp()
             try:
                 func()
             except (RuntimeError, SystemExit):
