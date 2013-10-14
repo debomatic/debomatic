@@ -23,7 +23,7 @@ from ast import literal_eval
 from hashlib import sha256
 from lockfile import FileLock
 from re import findall, split
-from subprocess import call, PIPE
+from subprocess import call, check_output, PIPE
 from time import strftime
 from urllib2 import Request, urlopen, HTTPError, URLError
 
@@ -96,6 +96,10 @@ class Build:
                                        'uploader': uploader_email})
         self.w(_('Pre-build hooks finished'), 3)
         builder = self.opts.get('default', 'builder')
+        architecture = self.opts.get('default', 'architecture')
+        if architecture == 'system':
+            architecture = check_output(['dpkg-architecture',
+                                         '-qDEB_BUILD_ARCH']).strip()
         if builder == 'cowbuilder':
             base = '--basepath'
         else:
@@ -109,6 +113,7 @@ class Build:
                 self.w(_('Launching %s') % builder , 2)
                 call([builder, '--build', '--override-config',
                      base, '%s/%s' % (self.buildpath, self.distribution),
+                     '--architecture', architecture,
                      '--logfile', '%s/pool/%s/%s.buildlog' %
                      (self.buildpath, packageversion, packageversion),
                      '--buildplace', '%s/build' % self.buildpath,
@@ -126,6 +131,7 @@ class Build:
         mod.execute_hook('post_build', {'cfg': self.configfile,
                                         'directory': self.buildpath,
                                         'distribution': self.distribution,
+                                        'architecture': architecture,
                                         'dsc': self.dscfile,
                                         'opts': self.opts,
                                         'package': packageversion,
@@ -334,6 +340,10 @@ class Build:
         except OSError:
             self.w(_('Unable to launch %s') % 'gzip')
         builder = self.opts.get('default', 'builder')
+        architecture = self.opts.get('default', 'architecture')
+        if architecture == 'system':
+            architecture = check_output(['dpkg-architecture',
+                                         '-qDEB_BUILD_ARCH']).strip()
         if builder == 'cowbuilder':
             base = '--basepath'
         else:
@@ -346,6 +356,7 @@ class Build:
                         base, '%s/%s' % (self.buildpath, self.distribution),
                         '--buildplace', '%s/build' % self.buildpath,
                         '--aptcache', '%s/aptcache' % self.buildpath,
+                        '--architecture', architecture,
                         '--logfile', '%s/logs/%s.%s' %
                         (self.buildpath, self.cmd, strftime('%Y%m%d_%H%M%S')),
                         '--configfile', '%s' % self.configfile],

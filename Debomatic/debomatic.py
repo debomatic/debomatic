@@ -40,7 +40,7 @@ class Debomatic:
         self.e = self.log.e
         self.w = self.log.w
         self.conffile = None
-        self.configvers = '011a'
+        self.configvers = '012a'
         self.lockfilepath = '/var/run/debomatic'
         self.lockfile = pidlockfile.PIDLockFile(self.lockfilepath)
         self.opts = ConfigParser()
@@ -84,8 +84,8 @@ class Debomatic:
 
     def default_options(self):
         defaultoptions = ('builder', 'packagedir', 'configdir',
-                          'maxbuilds', 'pbuilderhooks', 'inotify',
-                          'sleep', 'logfile', 'logverbosity')
+                          'architecture', 'maxbuilds', 'pbuilderhooks',
+                          'inotify', 'sleep', 'logfile', 'logverbosity')
         if not self.conffile:
             self.e(_('Configuration file has not been specified'))
         if not os.path.exists(self.conffile):

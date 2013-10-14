@@ -185,6 +185,14 @@ restarted to pick any change to one of these options.
  Make sure chosen directory exists before launching Deb-o-Matic, otherwise it
  will not be able to build any package.
 
+* ``architecture``
+
+ This option indicates the architecture to build package for. To build
+ packages for the same architecture of the running system, ``system``
+ can be used instead of specifying the exact one.
+
+ Suggested value: ``system``
+
 * ``pbuilderhooks``
 
  This option indicates the directory where pbuilder hooks are stored. Hooks
