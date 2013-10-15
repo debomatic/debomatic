@@ -434,7 +434,7 @@ Stop Deb-o-Matic
 In order to stop Deb-o-Matic, you should pass ``q`` or ``--quit-process``
 options to ``debomatic``:
 
- *sudo debomatic -q*
+ *sudo debomatic -c debomatic.conf -q*
 
 Deb-o-Matic will not terminate child processes, but will wait for them to end
 first, so it could take a while to completely stop Deb-o-Matic instance.

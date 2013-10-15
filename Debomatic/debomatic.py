@@ -22,6 +22,7 @@ from ConfigParser import ConfigParser
 from argparse import ArgumentParser
 from datetime import datetime
 from daemon import DaemonContext, pidlockfile
+from hashlib import sha256
 from signal import signal, SIGINT, SIGTERM
 from sys import argv, stderr
 from time import sleep
@@ -41,8 +42,6 @@ class Debomatic:
         self.w = self.log.w
         self.conffile = None
         self.configvers = '012a'
-        self.lockfilepath = '/var/run/debomatic'
-        self.lockfile = pidlockfile.PIDLockFile(self.lockfilepath)
         self.opts = ConfigParser()
         self.rtopts = ConfigParser()
         parser = ArgumentParser()
@@ -59,17 +58,21 @@ class Debomatic:
             self.conffile = args.configfile[0]
         if args.no_daemon:
             self.daemon = False
+        self.default_options()
+        self.packagedir = self.opts.get('default', 'packagedir')
+        lock_sha = sha256()
+        lock_sha.update(self.packagedir)
+        self.lockfilepath = '/var/run/debomatic-' + lock_sha.hexdigest()
+        self.lockfile = pidlockfile.PIDLockFile(self.lockfilepath)
         if args.quit_process:
             self.quit_process()
         if self.lockfile.is_locked():
             self.e(_('Another instance is running. Aborting'))
-        self.default_options()
         self.log.logverbosity = self.opts.getint('default', 'logverbosity')
         self.mod_sys = Module((self.opts, self.rtopts, self.conffile))
         self.w(_('Startup hooks launched'), 3)
         self.mod_sys.execute_hook('on_start', {})
         self.w(_('Startup hooks finished'), 3)
-        self.packagedir = self.opts.get('default', 'packagedir')
         signal(SIGINT, self.quit)
         signal(SIGTERM, self.quit)
         if self.daemon:
@@ -169,7 +172,6 @@ class Debomatic:
         exit()
 
     def quit_process(self):
-        lockfile = pidlockfile.PIDLockFile('/var/run/debomatic')
         if self.lockfile.is_locked():
             try:
                 pid = pidlockfile.read_pid_from_pidfile(self.lockfilepath)
@@ -182,10 +184,10 @@ class Debomatic:
             if pid:
                 self.w(_('Waiting for threads to complete...'))
                 os.kill(pid, SIGTERM)
-                lockfile.acquire()
-                lockfile.release()
+                self.lockfile.acquire()
+                self.lockfile.release()
             else:
-                lockfile.break_lock()
+                self.lockfile.break_lock()
                 self.w(_('Obsolete lock removed'))
         exit()
 

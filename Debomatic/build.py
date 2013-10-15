@@ -53,8 +53,11 @@ class Build:
         self.uploader = None
 
     def acquire_lock(self):
-        self.lockfile = FileLock('/var/run/debomatic.%s' %
-                                 (os.path.basename(self.configfile)))
+        lock_sha = sha256()
+        lock_sha.update('-'.join((self.conffile,
+                                  os.path.basename(self.configfile))))
+        self.lockfile = FileLock('-'.join(('/var/run/debomatic',
+                                           lock_sha.hexdigest())))
         self.lockfile.acquire()
 
     def build(self):
