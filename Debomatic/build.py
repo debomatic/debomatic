@@ -113,7 +113,7 @@ class Build:
                             self.get_orig_tarball()))
         with open(os.devnull, 'w') as fd:
             try:
-                self.w(_('Launching %s') % builder , 2)
+                self.w(_('Launching %s') % builder, 2)
                 call([builder, '--build', '--override-config',
                      base, '%s/%s' % (self.buildpath, self.distribution),
                      '--architecture', architecture,
@@ -200,7 +200,7 @@ class Build:
                 if findall('(.*\.debian\..*)', pkgfile):
                     try:
                         compression = '-Z%s' % \
-                                       ext[os.path.splitext(pkgfile)[1]]
+                            ext[os.path.splitext(pkgfile)[1]]
                     except IndexError:
                         pass
         return compression
@@ -232,7 +232,7 @@ class Build:
             else:
                 if isinstance(mapper, dict):
                     if self.distribution in mapper:
-                        self.w(_('%(mapped)s mapped as %(mapper)s') % 
+                        self.w(_('%(mapped)s mapped as %(mapper)s') %
                                {'mapped': self.distribution,
                                'mapper': mapper[self.distribution]}, 3)
                         self.distribution = mapper[self.distribution]
@@ -354,7 +354,7 @@ class Build:
         with open(os.devnull, 'w') as fd:
             try:
                 self.w(_('Launching %(builder)s %(cmd)s')
-                       % {'builder': builder, 'cmd': self.cmd} , 2)
+                       % {'builder': builder, 'cmd': self.cmd}, 2)
                 if call([builder, '--%s' % self.cmd, '--override-config',
                         base, '%s/%s' % (self.buildpath, self.distribution),
                         '--buildplace', '%s/build' % self.buildpath,
