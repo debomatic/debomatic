@@ -20,7 +20,7 @@
 import os
 from ast import literal_eval
 from glob import glob
-from re import findall
+from re import findall, sub
 from urllib2 import Request, urlopen, HTTPError, URLError
 
 from build import Build
@@ -68,6 +68,9 @@ class Command():
             except (HTTPError, URLError):
                 self.w(_('Unable to fetch %s') % \
                        '_'.join((self.package, self.version)))
+
+    def mangle_version(self, version):
+        self.version = sub('^\d+\:', '', version)
 
     def map_distribution(self):
         self.rtopts.read(self.conffile)
@@ -117,7 +120,7 @@ class Command():
         self.w(_('Performing a package rebuild with extra build-dependencies'), 3)
         for package in packages:
             self.package = package[0]
-            self.version = package[1]
+            self.mangle_version(package[1])
             self.dscname = '%s_%s.dsc' % (self.package, self.version)
             self.target = package[2]
             self.origin = None
@@ -140,7 +143,7 @@ class Command():
         self.w(_('Performing a porter build'), 3)
         for package in packages:
             self.package = package[0]
-            self.version = package[1]
+            self.mangle_version(package[1])
             self.dscname = '%s_%s.dsc' % (self.package, self.version)
             self.target = package[2]
             self.origin = None
@@ -163,7 +166,7 @@ class Command():
         self.w(_('Performing a package rebuild'), 3)
         for package in packages:
             self.package = package[0]
-            self.version = package[1]
+            self.mangle_version(package[1])
             self.dscname = '%s_%s.dsc' % (self.package, self.version)
             self.target = package[2]
             self.origin = package[3] if package[3] else package[2]
