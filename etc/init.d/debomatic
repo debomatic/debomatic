@@ -29,7 +29,7 @@ do_start()
 
 do_stop()
 {
-	$DAEMON -q
+	$DAEMON -c $DEBOMATIC_CONFIG_FILE -q
 }
 
 case "$1" in
