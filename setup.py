@@ -40,7 +40,7 @@ class InstallData(install_data):
         call(['make', '-C', 'docs', 'latexpdf'])
         self.data_files.extend([('share/doc/debomatic',
                                  ['docs/_build/latex/Deb-o-Matic.pdf'])])
-        self.install_files('etc')
+        self.install_files('etc', 'lib')
         self.install_files('modules', 'share/debomatic')
         self.install_files('pbuilderhooks', 'share/debomatic')
         self.install_files('locale', 'share')
