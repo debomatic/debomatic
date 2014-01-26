@@ -1,0 +1,11 @@
+[Unit]
+Description=Automatic build machine for Debian source package
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/debomatic
+ExecStart=/usr/bin/debomatic -c ${DEBOMATIC_CONFIG_FILE}
+ExecStop=/usr/bin/debomatic -c ${DEBOMATIC_CONFIG_FILE} -q
+
+[Install]
+WantedBy=multi-user.target
