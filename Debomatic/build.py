@@ -329,6 +329,11 @@ class Build:
             self.origin = self.distribution
 
     def prepare_pbuilder(self):
+        mod = Module((self.opts, self.rtopts, self.conffile))
+        self.w(_('Pre-chroot maintenance hooks launched'), 3)
+        mod.execute_hook('pre_chroot', {'cfg': self.configfile,
+                                        'distribution': self.distribution,
+                                        'cmd': self.cmd})
         for d in ('aptcache', 'build', 'logs', 'pool'):
             if not os.path.exists(os.path.join(self.buildpath, d)):
                 os.mkdir(os.path.join(self.buildpath, d))
@@ -364,12 +369,24 @@ class Build:
                         (self.buildpath, self.cmd, strftime('%Y%m%d_%H%M%S')),
                         '--configfile', '%s' % self.configfile],
                         stdout=fd, stderr=fd):
+                    self.w(_('Post-chroot maintenance hooks launched'), 3)
+                    mod.execute_hook('post_chroot', {'cfg': self.configfile,
+                                     'distribution': self.distribution,
+                                     'cmd': self.cmd, 'success': False})
                     self.release_lock()
                     self.e(_('%(builder)s %(cmd)s failed') %
                            {'builder': builder, 'cmd': self.cmd})
             except OSError:
+                self.w(_('Post-chroot maintenance hooks launched'), 3)
+                mod.execute_hook('post_chroot', {'cfg': self.configfile,
+                                 'distribution': self.distribution,
+                                 'cmd': self.cmd, 'success': False})
                 self.release_lock()
                 self.e(_('Unable to launch %s') % builder)
+        self.w(_('Post-chroot maintenance hooks launched'), 3)
+        mod.execute_hook('post_chroot', {'cfg': self.configfile,
+                                        'distribution': self.distribution,
+                                        'cmd': self.cmd, 'success': True})
 
     def release_lock(self):
         self.lockfile.release()
