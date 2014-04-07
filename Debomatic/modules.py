@@ -74,8 +74,8 @@ class Module():
             modules.sort()
             for module in modules:
                 try:
-                    self.log.w(_('Executing hook %s from module %s' %
-                                 (hook, module)), 3)
+                    self.log.w(_('Executing hook %(hook)s from module %(mod)s' %
+                                 {'hook': hook, 'mod': module}), 3)
                     exec 'self.instances["%s"].%s(args)' % (module, hook)
                 except AttributeError:
                     pass
