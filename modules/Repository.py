@@ -45,7 +45,7 @@ class DebomaticModule_Repository:
                  '-o', 'APT::FTPArchive::Release::Origin=Deb-o-Matic',
                  '-o', 'APT::FTPArchive::Release::Label=Deb-o-Matic',
                  '-o', 'APT::FTPArchive::Release::Suite=%(dist)s' %
-                        {'dist': args['distribution']},
+                 {'dist': args['distribution']},
                  'release', '.'], stdout=fd, stderr=PIPE)
         with open(release_file, 'r+') as fd:
             data = fd.read()

@@ -68,13 +68,13 @@ class InstallData(install_data):
 
 
 setup(name='debomatic',
-      version = '0.12',
-      author = 'Luca Falavigna',
-      author_email = 'dktrkranz@debian.org',
-      description = 'Automatic build machine for Debian source packages',
-      url = 'https://launchpad.net/debomatic/',
-      license = 'GNU GPL',
-      packages = ['Debomatic'],
-      scripts = ['debomatic'],
-      data_files = [('share/man/man1', ['docs/debomatic.1'])],
-      cmdclass = {'install_data': InstallData})
+      version='0.12',
+      author='Luca Falavigna',
+      author_email='dktrkranz@debian.org',
+      description='Automatic build machine for Debian source packages',
+      url='https://launchpad.net/debomatic/',
+      license='GNU GPL',
+      packages=['Debomatic'],
+      scripts=['debomatic'],
+      data_files=[('share/man/man1', ['docs/debomatic.1'])],
+      cmdclass={'install_data': InstallData})

@@ -205,7 +205,7 @@ class Build:
                 if findall('(.*\.debian\..*)', pkgfile):
                     try:
                         compression = ('-Z%s' %
-                            ext[os.path.splitext(pkgfile)[1]])
+                                       ext[os.path.splitext(pkgfile)[1]])
                     except IndexError:
                         pass
         return compression
@@ -239,7 +239,7 @@ class Build:
                     if self.distribution in mapper:
                         self.w(_('%(mapped)s mapped as %(mapper)s') %
                                {'mapped': self.distribution,
-                               'mapper': mapper[self.distribution]}, 2)
+                                'mapper': mapper[self.distribution]}, 2)
                         self.distribution = mapper[self.distribution]
 
     def needs_update(self):

@@ -60,7 +60,7 @@ class Command():
             request = Request('%s/pool/%s/%s/%s/%s' %
                               (parms['mirror'], component,
                                findall('^lib\S|^\S', self.package)[0],
-                                       self.package, self.dscname))
+                               self.package, self.dscname))
             self.w(_('Requesting URL %s' % request.get_full_url()), 3)
             try:
                 self.w(_('Downloading missing %s' % self.dscname), 2)
@@ -83,14 +83,14 @@ class Command():
             else:
                 if isinstance(mapper, dict):
                     if self.target in mapper:
-                        self.w(_('%(mapped)s mapped as %(mapper)s') % 
+                        self.w(_('%(mapped)s mapped as %(mapper)s') %
                                {'mapped': self.target,
-                               'mapper': mapper[self.target]}, 2)
+                                'mapper': mapper[self.target]}, 2)
                         self.target = mapper[self.target]
                     if self.origin in mapper:
-                        self.w(_('%(mapped)s mapped as %(mapper)s') % 
+                        self.w(_('%(mapped)s mapped as %(mapper)s') %
                                {'mapped': self.origin,
-                               'mapper': mapper[self.origin]}, 2)
+                                'mapper': mapper[self.origin]}, 2)
                         self.origin = mapper[self.origin]
 
     def process_command(self):
@@ -104,7 +104,7 @@ class Command():
         with open(self.cmdfile, 'r') as fd:
             cmd = fd.read()
         os.remove(self.cmdfile)
-        cmd_builddep = findall('\s?builddep\s+(\S+)_(\S+) (\S+) (.*)', cmd)        
+        cmd_builddep = findall('\s?builddep\s+(\S+)_(\S+) (\S+) (.*)', cmd)
         cmd_rm = findall('\s?rm\s+(.*)', cmd)
         cmd_rebuild = findall('\s?rebuild\s+(\S+)_(\S+) (\S+) ?(\S*)', cmd)
         cmd_porter = findall('\s?porter\s+(\S+)_(\S+) (\S+) (.*)', cmd)
@@ -157,8 +157,8 @@ class Command():
                 with open(dsc, 'w') as fd:
                     fd.write(self.data)
                 b = Build((self.opts, self.rtopts, self.conffile), self.log,
-                           dsc=dsc, distribution=self.target,
-                           debopts=self.debopts)
+                          dsc=dsc, distribution=self.target,
+                          debopts=self.debopts)
                 if self.pool.add_task(b.build, dsc):
                     self.w(_('Thread for %s scheduled' %
                            os.path.basename(dsc)), 3)

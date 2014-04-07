@@ -48,9 +48,9 @@ class Debomatic:
         parser.add_argument('-c', '--configfile', metavar='file', type=str,
                             nargs=1, help='configuration file for Deb-o-Matic')
         parser.add_argument('-n', '--no-daemon', action='store_true',
-                    help='do not launch Deb-o-Matic in daemon mode')
+                            help='do not launch Deb-o-Matic in daemon mode')
         parser.add_argument('-q', '--quit-process', action='store_true',
-                    help='terminate Deb-o-Matic processes')
+                            help='terminate Deb-o-Matic processes')
         args = parser.parse_args()
         if os.getuid():
             self.e(_('You must run Deb-o-Matic as root'))
@@ -96,13 +96,14 @@ class Debomatic:
         if not os.path.exists(self.conffile):
             self.e(_('Configuration file %s does not exist') % self.conffile)
         self.opts.read(self.conffile)
-        if (not self.opts.has_option('internals', 'configversion') or not
-               self.opts.get('internals', 'configversion') == self.configvers):
+        if (not self.opts.has_option('internals', 'configversion') or
+                not self.opts.get('internals', 'configversion') ==
+                self.configvers):
             self.e(_('Configuration file is not at version %s') %
                    self.configvers)
         for opt in defaultoptions:
-            if (not self.opts.has_option('default', opt) or not
-                   self.opts.get('default', opt)):
+            if (not self.opts.has_option('default', opt) or
+                    not self.opts.get('default', opt)):
                 self.e(_('Set "%(opt)s" in %(conffile)s') %
                        {'opt': opt, 'conffile': self.conffile})
 
@@ -129,7 +130,7 @@ class Debomatic:
 
             def process_IN_CLOSE_WRITE(self, event):
                 if (event.name.endswith('.changes') or
-                  event.name.endswith('commands')):
+                        event.name.endswith('commands')):
                     self.parent.queue_files([event.name])
 
         wm = pyinotify.WatchManager()
