@@ -22,7 +22,7 @@ import os
 from ast import literal_eval
 from hashlib import sha256
 from lockfile import FileLock
-from re import findall, split
+from re import findall
 from subprocess import call, check_output, PIPE
 from time import strftime
 from urllib2 import Request, urlopen, HTTPError, URLError
@@ -261,7 +261,7 @@ class Build:
             remote = urlopen(uri).read()
         except (HTTPError, URLError):
             self.w(_('Unable to fetch %s') % uri)
-            self.cmd = update
+            self.cmd = 'update'
             self.w(_('%s chroot must be updated' % distribution), 2)
             return
         remote_sha = sha256()

@@ -24,7 +24,7 @@ from datetime import datetime
 from daemon import DaemonContext, pidlockfile
 from hashlib import sha256
 from signal import signal, SIGINT, SIGTERM
-from sys import argv, stderr
+from sys import stderr
 from time import sleep
 
 from build import FullBuild

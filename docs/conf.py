@@ -19,9 +19,6 @@
 #
 # Deb-o-Matic documentation build configuration file
 
-import os
-import sys
-
 
 extensions = []
 templates_path = ['_templates']
