@@ -25,9 +25,9 @@ from sys import path
 class Module():
 
     def __init__(self, opts):
-        (self.opts, self.rtopts, self.conffile) = opts
+        (self.log, self.opts, self.rtopts, self.conffile) = opts
         self.use_modules = True
-        self.modules_list = []
+        self.modules_list = set()
         if not self.opts.has_option('modules', 'modules'):
             self.use_modules = False
         elif self.opts.get('modules', 'modules') == "0":
@@ -38,23 +38,26 @@ class Module():
         else:
             self.mod_path = ''
         try:
-            self.modules_list = os.listdir(self.mod_path)
+            self.modules_list = set(os.listdir(self.mod_path))
         except OSError:
             self.use_modules = False
-        if len(self.modules_list) == 0:
+        if not self.modules_list:
             self.use_modules = False
         if self.use_modules:
             self.instances = {}
             for module in self.modules_list:
+                if module.endswith('.pyc'):
+                    continue
                 module_split = module.split(".")[:-1]
                 module = ""
                 for i in module_split:
                     module += i
                 try:
-                    exec 'from %s import DebomaticModule_%s' % \
-                         (module, module)
-                    exec 'self.instances["%s"] = DebomaticModule_%s()' % \
-                         (module, module)
+                    exec('from %s import DebomaticModule_%s' %
+                         (module, module))
+                    exec('self.instances["%s"] = DebomaticModule_%s()' %
+                         (module, module))
+                    self.log.w(_('Module %s loaded' % module), 3)
                 except NameError:
                     pass
 
@@ -71,6 +74,8 @@ class Module():
             modules.sort()
             for module in modules:
                 try:
+                    self.log.w(_('Executing hook %s from module %s' %
+                                 (hook, module)), 3)
                     exec 'self.instances["%s"].%s(args)' % (module, hook)
                 except AttributeError:
                     pass

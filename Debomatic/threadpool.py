@@ -48,7 +48,8 @@ class Job(Thread):
 
 class ThreadPool:
 
-    def __init__(self, num_threads):
+    def __init__(self, log, num_threads):
+        self.log = log
         self.jobs = set()
         self.tasks = Queue(num_threads)
         for i in range(num_threads):
@@ -56,8 +57,14 @@ class ThreadPool:
 
     def add_task(self, func, *args, **kargs):
         if not args in self.jobs:
+            self.log.w(_('Scheduling function %s with parameter %s' %
+                         (func.func_name, args[0])), 3)
             self.jobs.add(args)
             self.tasks.put((func, args, kargs, self.jobs))
+            self.log.w(_('Queue size: %d' % self.tasks.qsize()), 3)
+            for queued in self.tasks.queue:
+                self.log.w(_('   -> function %s with item %s' %
+                             (queued[0].func_name, queued[1][0])), 3)
             return True
         return False
 

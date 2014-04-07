@@ -53,7 +53,7 @@ class Command():
             try:
                 parms[elem] = findall(conf[elem][0], data)[0]
             except IndexError:
-                self.w(_('Please set %(parm)s in %s(conf)s') % \
+                self.w(_('Please set %(parm)s in %s(conf)s') %
                        {'parm': conf[elem][0], 'conf': self.originconf})
                 return
         for component in parms['components'].split():
@@ -61,12 +61,13 @@ class Command():
                               (parms['mirror'], component,
                                findall('^lib\S|^\S', self.package)[0],
                                        self.package, self.dscname))
+            self.w(_('Requesting URL %s' % request.get_full_url()), 3)
             try:
                 self.w(_('Downloading missing %s' % self.dscname), 2)
                 self.data = urlopen(request).read()
                 break
             except (HTTPError, URLError):
-                self.w(_('Unable to fetch %s') % \
+                self.w(_('Unable to fetch %s') %
                        '_'.join((self.package, self.version)))
 
     def mangle_version(self, version):
@@ -84,12 +85,12 @@ class Command():
                     if self.target in mapper:
                         self.w(_('%(mapped)s mapped as %(mapper)s') % 
                                {'mapped': self.target,
-                               'mapper': mapper[self.target]}, 3)
+                               'mapper': mapper[self.target]}, 2)
                         self.target = mapper[self.target]
                     if self.origin in mapper:
                         self.w(_('%(mapped)s mapped as %(mapper)s') % 
                                {'mapped': self.origin,
-                               'mapper': mapper[self.origin]}, 3)
+                               'mapper': mapper[self.origin]}, 2)
                         self.origin = mapper[self.origin]
 
     def process_command(self):
@@ -117,7 +118,7 @@ class Command():
             self.process_rebuild(cmd_rebuild)
 
     def process_builddep(self, packages):
-        self.w(_('Performing a package rebuild with extra build-dependencies'), 3)
+        self.w(_('Performing a package rebuild with extra dependencies'), 2)
         for package in packages:
             self.package = package[0]
             self.mangle_version(package[1])
@@ -136,11 +137,11 @@ class Command():
                           dsc=dsc, distribution=self.target,
                           extrabd=self.extrabd)
                 if self.pool.add_task(b.build, dsc):
-                    self.w(_('Thread for %s scheduled') %
-                           os.path.basename(dsc), 3)
+                    self.w(_('Thread for %s scheduled' %
+                           os.path.basename(dsc)), 3)
 
     def process_porter(self, packages):
-        self.w(_('Performing a porter build'), 3)
+        self.w(_('Performing a porter build'), 2)
         for package in packages:
             self.package = package[0]
             self.mangle_version(package[1])
@@ -159,11 +160,11 @@ class Command():
                            dsc=dsc, distribution=self.target,
                            debopts=self.debopts)
                 if self.pool.add_task(b.build, dsc):
-                    self.w(_('Thread for %s scheduled') %
-                           os.path.basename(dsc), 3)
+                    self.w(_('Thread for %s scheduled' %
+                           os.path.basename(dsc)), 3)
 
     def process_rebuild(self, packages):
-        self.w(_('Performing a package rebuild'), 3)
+        self.w(_('Performing a package rebuild'), 2)
         for package in packages:
             self.package = package[0]
             self.mangle_version(package[1])
@@ -181,11 +182,11 @@ class Command():
                           dsc=dsc, distribution=self.target,
                           origin=self.origin)
                 if self.pool.add_task(b.build, dsc):
-                    self.w(_('Thread for %s scheduled') %
-                           os.path.basename(dsc), 3)
+                    self.w(_('Thread for %s scheduled' %
+                           os.path.basename(dsc)), 3)
 
     def process_rm(self, filesets):
-        self.w(_('Removing files'), 3)
+        self.w(_('Removing files'), 2)
         for files in filesets:
             for pattern in files.split():
                 pattern = os.path.basename(pattern)

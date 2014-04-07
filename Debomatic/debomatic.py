@@ -53,7 +53,7 @@ class Debomatic:
                     help='terminate Deb-o-Matic processes')
         args = parser.parse_args()
         if os.getuid():
-            self.e(_('You must run deb-o-matic as root'))
+            self.e(_('You must run Deb-o-Matic as root'))
         if args.configfile:
             self.conffile = args.configfile[0]
         if args.no_daemon:
@@ -64,22 +64,24 @@ class Debomatic:
         lock_sha.update(self.packagedir)
         self.lockfilepath = '/var/run/debomatic-' + lock_sha.hexdigest()
         self.lockfile = pidlockfile.PIDLockFile(self.lockfilepath)
+        self.w(_('Lockfile is %s' % self.lockfilepath), 3)
         if args.quit_process:
             self.quit_process()
         if self.lockfile.is_locked():
-            self.e(_('Another instance is running. Aborting'))
+            self.e(_('Another instance is running, aborting'))
         self.log.logverbosity = self.opts.getint('default', 'logverbosity')
-        self.mod_sys = Module((self.opts, self.rtopts, self.conffile))
-        self.w(_('Startup hooks launched'), 3)
+        self.mod_sys = Module((self.log, self.opts,
+                               self.rtopts, self.conffile))
+        self.w(_('Startup hooks launched'), 2)
         self.mod_sys.execute_hook('on_start', {})
-        self.w(_('Startup hooks finished'), 3)
+        self.w(_('Startup hooks finished'), 2)
         signal(SIGINT, self.quit)
         signal(SIGTERM, self.quit)
         if self.daemon:
             with open(self.opts.get('default', 'logfile'), 'a') as fd:
                 with DaemonContext(pidfile=self.lockfile, stdout=fd, stderr=fd,
                                    signal_map={SIGTERM: self.quit}):
-                    self.w(_('Entering daemon mode'), 3)
+                    self.w(_('Entering daemon mode'), 2)
                     self.launcher()
         else:
             self.lockfile.acquire()
@@ -94,19 +96,20 @@ class Debomatic:
         if not os.path.exists(self.conffile):
             self.e(_('Configuration file %s does not exist') % self.conffile)
         self.opts.read(self.conffile)
-        if not self.opts.has_option('internals', 'configversion') or not \
-               self.opts.get('internals', 'configversion') == self.configvers:
+        if (not self.opts.has_option('internals', 'configversion') or not
+               self.opts.get('internals', 'configversion') == self.configvers):
             self.e(_('Configuration file is not at version %s') %
                    self.configvers)
         for opt in defaultoptions:
-            if not self.opts.has_option('default', opt) or not \
-                   self.opts.get('default', opt):
+            if (not self.opts.has_option('default', opt) or not
+                   self.opts.get('default', opt)):
                 self.e(_('Set "%(opt)s" in %(conffile)s') %
                        {'opt': opt, 'conffile': self.conffile})
 
     def launcher(self):
-        self.pool = ThreadPool(self.opts.getint('default', 'maxbuilds'))
-        self.commandpool = ThreadPool(1)
+        self.pool = ThreadPool(self.log,
+                               self.opts.getint('default', 'maxbuilds'))
+        self.commandpool = ThreadPool(self.log, 1)
         self.queue_files()
         if self.opts.getint('default', 'inotify'):
             try:
@@ -132,11 +135,11 @@ class Debomatic:
         wm = pyinotify.WatchManager()
         notifier = pyinotify.Notifier(wm, PE(self))
         wm.add_watch(self.packagedir, pyinotify.IN_CLOSE_WRITE)
-        self.w(_('Inotify loop started'), 3)
+        self.w(_('Inotify loop started'), 2)
         notifier.loop()
 
     def launcher_timer(self):
-        self.w(_('Timer loop started'), 3)
+        self.w(_('Timer loop started'), 2)
         while True:
             sleep(self.opts.getint('default', 'sleep'))
             self.queue_files()
@@ -153,20 +156,20 @@ class Debomatic:
                 b = FullBuild((self.opts, self.rtopts, self.conffile),
                               self.log, package=filename)
                 if self.pool.add_task(b.run, filename):
-                    self.w(_('Thread for %s scheduled') % filename, 3)
+                    self.w(_('Thread for %s scheduled' % filename), 2)
             elif filename.endswith('.commands'):
                 c = Command((self.opts, self.rtopts, self.conffile),
                             self.log, self.pool, filename)
                 if self.commandpool.add_task(c.process_command, filename):
-                    self.w(_('Thread for %s scheduled') % filename, 3)
+                    self.w(_('Thread for %s scheduled' % filename), 2)
 
     def quit(self, signum, frame):
         self.w(_('Waiting for threads to complete...'))
         self.commandpool.wait_completion()
         self.pool.wait_completion()
-        self.w(_('Shutdown hooks launched'), 3)
+        self.w(_('Shutdown hooks launched'), 2)
         self.mod_sys.execute_hook('on_quit', {})
-        self.w(_('Shutdown hooks finished'), 3)
+        self.w(_('Shutdown hooks finished'), 2)
         if not self.daemon:
             self.lockfile.release()
         exit()
