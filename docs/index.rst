@@ -159,6 +159,19 @@ restarted to pick any change to one of these options.
  Make sure chosen builder is installed on your system, otherwise Deb-o-Matic
  will not be able to create chroots and build packages.
 
+* ``debootstrap``
+
+ This option indicates which debootstrap tool is required to create the chroot
+ to build source packags from. Deb-o-Matic currently supports debootstrap,
+ cdebootstrap, and qemu-debootstrap.
+
+ Suggested value: ``debootstrap``
+
+.. CAUTION::
+
+ Make sure chosen debootstrap is installed on your system, otherwise Deb-o-Matic
+ will not be able to create chroots and build packages.
+
 * ``packagedir``
 
  This option indicates the directory where Deb-o-Matic expects to find source

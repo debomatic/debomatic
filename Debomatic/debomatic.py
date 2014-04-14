@@ -88,7 +88,7 @@ class Debomatic:
             self.launcher()
 
     def default_options(self):
-        defaultoptions = ('builder', 'packagedir', 'configdir',
+        defaultoptions = ('builder', 'debootstrap', 'packagedir', 'configdir',
                           'architecture', 'maxbuilds', 'pbuilderhooks',
                           'inotify', 'sleep', 'logfile', 'logverbosity')
         if not self.conffile:

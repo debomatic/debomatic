@@ -355,6 +355,7 @@ class Build:
             self.w(_('Unable to launch %s') % 'gzip')
         builder = self.opts.get('default', 'builder')
         architecture = self.opts.get('default', 'architecture')
+        debootstrap = self.opts.get('default', 'debootstrap')
         if architecture == 'system':
             architecture = check_output(['dpkg-architecture',
                                          '-qDEB_BUILD_ARCH']).strip()
@@ -373,7 +374,8 @@ class Build:
                         '--architecture', architecture,
                         '--logfile', '%s/logs/%s.%s' %
                         (self.buildpath, self.cmd, strftime('%Y%m%d_%H%M%S')),
-                        '--configfile', '%s' % self.configfile],
+                        '--configfile', '%s' % self.configfile,
+                        '--debootstrap', debootstrap],
                         stdout=fd, stderr=fd):
                     self.w(_('Post-chroot maintenance hooks launched'), 2)
                     mod.execute_hook('post_chroot', {'cfg': self.configfile,
