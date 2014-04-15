@@ -8,19 +8,19 @@ msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2014-04-07 22:44+0200\n"
-"PO-Revision-Date: 2013-07-27 06:15+0000\n"
-"Last-Translator: Jackson Doak <Doak.jackson@gmail.com>\n"
+"PO-Revision-Date: 2014-04-14 20:20+0000\n"
+"Last-Translator: Luca Falavigna <dktrkranz@ubuntu.com>\n"
 "Language-Team: English (Australia) <en_AU@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-04-08 05:54+0000\n"
+"X-Launchpad-Export-Date: 2014-04-15 05:34+0000\n"
 "X-Generator: Launchpad (build 16976)\n"
 
 #: Debomatic/build.py:62
 #, python-format
 msgid "Lock acquired on %s"
-msgstr ""
+msgstr "Lock acquired on %s"
 
 #: Debomatic/build.py:66
 msgid "Full build routine launched"
@@ -34,7 +34,7 @@ msgstr "Simple build routine launched"
 #: Debomatic/build.py:455
 #, python-format
 msgid "File %s added"
-msgstr ""
+msgstr "File %s added"
 
 #: Debomatic/build.py:75
 #, python-format
@@ -85,7 +85,7 @@ msgstr "Bad .changes file: %s"
 #: Debomatic/build.py:168 Debomatic/commands.py:64
 #, python-format
 msgid "Requesting URL %s"
-msgstr ""
+msgstr "Requesting URL %s"
 
 #: Debomatic/build.py:170 Debomatic/commands.py:66
 #, python-format
@@ -100,12 +100,12 @@ msgstr "%(mapped)s mapped as %(mapper)s"
 #: Debomatic/build.py:252 Debomatic/build.py:275
 #, python-format
 msgid "%s chroot must be created"
-msgstr ""
+msgstr "%s chroot must be created"
 
 #: Debomatic/build.py:256 Debomatic/build.py:265 Debomatic/build.py:279
 #, python-format
 msgid "%s chroot must be updated"
-msgstr ""
+msgstr "%s chroot must be updated"
 
 #: Debomatic/build.py:263 Debomatic/build.py:432 Debomatic/commands.py:70
 #, python-format
@@ -124,7 +124,7 @@ msgstr "Please set %(parm)s in %s(conf)s"
 
 #: Debomatic/build.py:338
 msgid "Pre-chroot maintenance hooks launched"
-msgstr ""
+msgstr "Pre-chroot maintenance hooks launched"
 
 #: Debomatic/build.py:367
 #, python-format
@@ -133,7 +133,7 @@ msgstr "Launching %(builder)s %(cmd)s"
 
 #: Debomatic/build.py:378 Debomatic/build.py:387 Debomatic/build.py:394
 msgid "Post-chroot maintenance hooks launched"
-msgstr ""
+msgstr "Post-chroot maintenance hooks launched"
 
 #: Debomatic/build.py:384
 #, python-format
@@ -143,12 +143,12 @@ msgstr "%(builder)s %(cmd)s failed"
 #: Debomatic/build.py:402
 #, python-format
 msgid "Lock released on %s"
-msgstr ""
+msgstr "Lock released on %s"
 
 #: Debomatic/build.py:408
 #, python-format
 msgid "File %s removed"
-msgstr ""
+msgstr "File %s removed"
 
 #: Debomatic/build.py:445 Debomatic/commands.py:97
 #, python-format
@@ -158,25 +158,25 @@ msgstr "Processing %s"
 #: Debomatic/modules.py:60
 #, python-format
 msgid "Module %s loaded"
-msgstr ""
+msgstr "Module %s loaded"
 
 #: Debomatic/modules.py:77
 #, python-format
 msgid "Executing hook %(hook)s from module %(mod)s"
-msgstr ""
+msgstr "Executing hook %(hook)s from module %(mod)s"
 
 #: Debomatic/debomatic.py:56
 msgid "You must run Deb-o-Matic as root"
-msgstr ""
+msgstr "You must run Deb-o-Matic as root"
 
 #: Debomatic/debomatic.py:67
 #, python-format
 msgid "Lockfile is %s"
-msgstr ""
+msgstr "Lockfile is %s"
 
 #: Debomatic/debomatic.py:71
 msgid "Another instance is running, aborting"
-msgstr ""
+msgstr "Another instance is running, aborting"
 
 #: Debomatic/debomatic.py:75
 msgid "Startup hooks launched"
@@ -248,21 +248,21 @@ msgstr "Obsolete lock removed"
 #: Debomatic/threadpool.py:60
 #, python-format
 msgid "Scheduling %(func)s with parameter %(parm)s"
-msgstr ""
+msgstr "Scheduling %(func)s with parameter %(parm)s"
 
 #: Debomatic/threadpool.py:64
 #, python-format
 msgid "Queue size: %d"
-msgstr ""
+msgstr "Queue size: %d"
 
 #: Debomatic/threadpool.py:66
 #, python-format
 msgid "   -> function %(func)s with parameter %(parm)s"
-msgstr ""
+msgstr "   -> function %(func)s with parameter %(parm)s"
 
 #: Debomatic/commands.py:121
 msgid "Performing a package rebuild with extra dependencies"
-msgstr ""
+msgstr "Performing a package rebuild with extra dependencies"
 
 #: Debomatic/commands.py:144
 msgid "Performing a porter build"
