@@ -91,20 +91,21 @@ class Build:
             os.mkdir(builddir)
         if self.uploader:
             uploader_email = self.uploader[1]
-        self.w(_('Pre-build hooks launched'), 2)
-        mod.execute_hook('pre_build', {'cfg': self.configfile,
-                                       'directory': self.buildpath,
-                                       'distribution': self.distribution,
-                                       'dsc': self.dscfile,
-                                       'opts': self.opts,
-                                       'package': packageversion,
-                                       'uploader': uploader_email})
-        self.w(_('Pre-build hooks finished'), 2)
         builder = self.opts.get('default', 'builder')
         architecture = self.opts.get('default', 'architecture')
         if architecture == 'system':
             architecture = check_output(['dpkg-architecture',
                                          '-qDEB_BUILD_ARCH']).strip()
+        self.w(_('Pre-build hooks launched'), 2)
+        mod.execute_hook('pre_build', {'cfg': self.configfile,
+                                       'directory': self.buildpath,
+                                       'distribution': self.distribution,
+                                       'architecture': architecture,
+                                       'dsc': self.dscfile,
+                                       'opts': self.opts,
+                                       'package': packageversion,
+                                       'uploader': uploader_email})
+        self.w(_('Pre-build hooks finished'), 2)
         if builder == 'cowbuilder':
             base = '--basepath'
         else:
@@ -334,31 +335,23 @@ class Build:
             self.origin = self.distribution
 
     def prepare_pbuilder(self):
+        builder = self.opts.get('default', 'builder')
+        architecture = self.opts.get('default', 'architecture')
+        if architecture == 'system':
+            architecture = check_output(['dpkg-architecture',
+                                         '-qDEB_BUILD_ARCH']).strip()
+        debootstrap = self.opts.get('default', 'debootstrap')
         mod = Module((self.log, self.opts, self.rtopts, self.conffile))
         self.w(_('Pre-chroot maintenance hooks launched'), 2)
         mod.execute_hook('pre_chroot', {'cfg': self.configfile,
+                                        'directory': self.buildpath,
                                         'opts': self.opts,
                                         'distribution': self.distribution,
+                                        'architecture': architecture,
                                         'cmd': self.cmd})
         for d in ('aptcache', 'build', 'logs', 'pool'):
             if not os.path.exists(os.path.join(self.buildpath, d)):
                 os.mkdir(os.path.join(self.buildpath, d))
-        for f in ('Packages.gz', 'Release'):
-            repo_file = os.path.join(self.buildpath, 'pool', f)
-            if not os.path.exists(repo_file):
-                with open(os.path.splitext(repo_file)[0], 'w') as fd:
-                    pass
-        try:
-            call(['gzip', '-9', '-f', os.path.join(self.buildpath, 'pool',
-                                                   'Packages')], stderr=PIPE)
-        except OSError:
-            self.w(_('Unable to launch %s') % 'gzip')
-        builder = self.opts.get('default', 'builder')
-        architecture = self.opts.get('default', 'architecture')
-        debootstrap = self.opts.get('default', 'debootstrap')
-        if architecture == 'system':
-            architecture = check_output(['dpkg-architecture',
-                                         '-qDEB_BUILD_ARCH']).strip()
         if builder == 'cowbuilder':
             base = '--basepath'
         else:
@@ -379,8 +372,10 @@ class Build:
                         stdout=fd, stderr=fd):
                     self.w(_('Post-chroot maintenance hooks launched'), 2)
                     mod.execute_hook('post_chroot', {'cfg': self.configfile,
+                                     'directory': self.buildpath,
                                      'opts': self.opts,
                                      'distribution': self.distribution,
+                                     'architecture': architecture,
                                      'cmd': self.cmd, 'success': False})
                     self.release_lock()
                     self.e(_('%(builder)s %(cmd)s failed') %
@@ -388,15 +383,19 @@ class Build:
             except OSError:
                 self.w(_('Post-chroot maintenance hooks launched'), 2)
                 mod.execute_hook('post_chroot', {'cfg': self.configfile,
+                                 'directory': self.buildpath,
                                  'opts': self.opts,
                                  'distribution': self.distribution,
+                                 'architecture': architecture,
                                  'cmd': self.cmd, 'success': False})
                 self.release_lock()
                 self.e(_('Unable to launch %s') % builder)
         self.w(_('Post-chroot maintenance hooks launched'), 2)
         mod.execute_hook('post_chroot', {'cfg': self.configfile,
+                                         'directory': self.buildpath,
                                          'opts': self.opts,
                                          'distribution': self.distribution,
+                                         'architecture': architecture,
                                          'cmd': self.cmd, 'success': True})
 
     def release_lock(self):

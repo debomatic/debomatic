@@ -750,6 +750,24 @@ packages build-depending on previously built ones. In order for this module to
 work properly, ``apt-ftparchive`` tool from ``apt-utils`` package must be
 available.
 
+Parameters
+..........
+
+* ``gpgkey``
+
+This option indicates the GPG ID used to sign the Release file of the
+repository.
+
+* ``pubring``
+
+This option indicates the path where to look for the public GPG key used to
+sign the Release file of the repository.
+
+* ``secring``
+
+This option indicates the path where to look for the private GPG key used to
+sign the Release file of the repository.
+
 .. Links
 .. _Canonical's PPAs: http://www.ubuntu.com/news/launchpad-ppa
 .. _wanna-build: http://git.debian.org/?p=mirror/wanna-build.git;a=summary

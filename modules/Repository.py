@@ -27,16 +27,42 @@ class DebomaticModule_Repository:
 
     def __init__(self):
         self.af = '/usr/bin/apt-ftparchive'
+        self.gpg = '/usr/bin/gpg'
         self.gzip = '/bin/gzip'
 
     def post_build(self, args):
+        self.update_repository(args)
+
+    def pre_chroot(self, args):
+        self.update_repository(args)
+
+    def post_chroot(self, args):
+        if not (args['cmd'] == 'create' and not args['success']):
+            self.update_repository(args)
+
+    def update_repository(self, args):
+        if args['opts'].has_section('repository'):
+            gpgkey = args['opts'].get('repository', 'gpgkey')
+            pubring =args['opts'].get('repository', 'pubring')
+            secring =args['opts'].get('repository', 'secring')
+        else:
+            return
         cwd = os.getcwd()
         if not os.path.isfile(self.af):
             return
-        pool_dir = os.path.join(args['directory'], 'pool')
-        packages_file = os.path.join(pool_dir, 'Packages')
-        release_file = os.path.join(pool_dir, 'Release')
-        os.chdir(pool_dir)
+        distribution = args['distribution']
+        architecture = args['architecture']
+        archive = args['directory']
+        pool = os.path.join(archive, 'pool')
+        dists = os.path.join(archive, 'dists', distribution)
+        packages = os.path.join(dists, 'main', 'binary-%s' % architecture)
+        packages_file = os.path.join(packages, 'Packages')
+        release_file = os.path.join(dists, 'Release')
+        release_gpg = os.path.join(dists, 'Release.gpg')
+        for dir in (pool, dists, packages):
+            if not os.path.isdir(dir):
+                os.makedirs(dir)
+        os.chdir(archive)
         with open(packages_file, 'w') as fd:
             call([self.af, 'packages', '.'], stdout=fd, stderr=PIPE)
         call([self.gzip, '-9', '-f', packages_file], stdout=PIPE, stderr=PIPE)
@@ -45,10 +71,13 @@ class DebomaticModule_Repository:
                  '-o', 'APT::FTPArchive::Release::Origin=Deb-o-Matic',
                  '-o', 'APT::FTPArchive::Release::Label=Deb-o-Matic',
                  '-o', 'APT::FTPArchive::Release::Suite=%(dist)s' %
-                 {'dist': args['distribution']},
+                 {'dist': distribution},
                  'release', '.'], stdout=fd, stderr=PIPE)
         with open(release_file, 'r+') as fd:
             data = fd.read()
             fd.seek(0)
             fd.write(data.replace('MD5Sum', 'NotAutomatic: yes\nMD5Sum'))
+        call([self.gpg, '--no-default-keyring', '--keyring', pubring,
+             '--secret-keyring', secring, '-u', gpgkey, '--yes', '-a',
+             '-o', release_gpg , '-s', release_file])
         os.chdir(cwd)
