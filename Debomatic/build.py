@@ -21,7 +21,6 @@
 import os
 from ast import literal_eval
 from hashlib import sha256
-from lockfile import FileLock
 from re import findall
 from subprocess import call, check_output, PIPE
 from time import strftime
@@ -51,15 +50,6 @@ class Build:
         self.packagedir = self.opts.get('default', 'packagedir')
         self.full = False
         self.uploader = None
-
-    def acquire_lock(self):
-        lock_sha = sha256()
-        lock_sha.update('-'.join((self.conffile,
-                                  os.path.basename(self.configfile))))
-        self.lockfile = FileLock('-'.join(('/var/run/debomatic',
-                                           lock_sha.hexdigest())))
-        self.lockfile.acquire()
-        self.w(_('Lock acquired on %s' % self.lockfile.path), 3)
 
     def build(self):
         if self.full:
@@ -377,7 +367,6 @@ class Build:
                                      'distribution': self.distribution,
                                      'architecture': architecture,
                                      'cmd': self.cmd, 'success': False})
-                    self.release_lock()
                     self.e(_('%(builder)s %(cmd)s failed') %
                            {'builder': builder, 'cmd': self.cmd})
             except OSError:
@@ -388,7 +377,6 @@ class Build:
                                  'distribution': self.distribution,
                                  'architecture': architecture,
                                  'cmd': self.cmd, 'success': False})
-                self.release_lock()
                 self.e(_('Unable to launch %s') % builder)
         self.w(_('Post-chroot maintenance hooks launched'), 2)
         mod.execute_hook('post_chroot', {'cfg': self.configfile,
@@ -397,10 +385,6 @@ class Build:
                                          'distribution': self.distribution,
                                          'architecture': architecture,
                                          'cmd': self.cmd, 'success': True})
-
-    def release_lock(self):
-        self.lockfile.release()
-        self.w(_('Lock released on %s' % self.lockfile.path), 3)
 
     def remove_files(self):
         for pkgfile in self.files:
@@ -418,7 +402,6 @@ class Build:
     def setup_pbuilder(self):
         if not os.path.exists(os.path.join(self.buildpath)):
             os.mkdir(os.path.join(self.buildpath))
-        self.acquire_lock()
         self.needs_update()
         if self.cmd:
             self.prepare_pbuilder()
@@ -429,11 +412,9 @@ class Build:
             try:
                 remote = urlopen(uri).read()
             except (HTTPError, URLError):
-                self.release_lock()
                 self.e(_('Unable to fetch %s') % uri)
             with open(gpgfile, 'w') as fd:
                 fd.write(remote)
-        self.release_lock()
 
 
 class FullBuild(Build):
