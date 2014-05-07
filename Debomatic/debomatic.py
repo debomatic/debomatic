@@ -21,8 +21,6 @@ import os
 from ConfigParser import ConfigParser
 from argparse import ArgumentParser
 from datetime import datetime
-from daemon import DaemonContext, pidlockfile
-from hashlib import sha256
 from signal import signal, SIGINT, SIGTERM
 from sys import stderr
 from time import sleep
@@ -86,8 +84,8 @@ class Debomatic:
         signal(SIGINT, self.quit)
         signal(SIGTERM, self.quit)
         if self.daemon:
-            daemon = self.DebomaticDaemon(self, self.packagedir)
-            daemon.start()            
+            self.debomaticdaemon = self.DebomaticDaemon(self, self.packagedir)
+            self.debomaticdaemon.start()
         else:
             self.launcher()
 
@@ -180,23 +178,9 @@ class Debomatic:
         exit()
 
     def quit_process(self):
-        if self.lockfile.lock():
-            try:
-                pid = pidlockfile.read_pid_from_pidfile(self.lockfilepath)
-                try:
-                    os.kill(pid, 0)
-                except OSError:
-                    pid = None
-            except pidlockfile.PIDFileParseError:
-                pid = None
-            if pid:
-                self.w(_('Waiting for threads to complete...'))
-                os.kill(pid, SIGTERM)
-                self.lockfile.acquire()
-                self.lockfile.release()
-            else:
-                self.lockfile.break_lock()
-                self.w(_('Obsolete lock removed'))
+        info(_('Waiting for threads to complete...'))
+        self.debomaticdaemon.stop()
+        self.lockfile.lock(wait=True)
         self.lockfile.unlock()
         exit()
 

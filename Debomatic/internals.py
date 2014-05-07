@@ -132,11 +132,12 @@ class Singleton:
         self.lockfile = '/var/run/debomatic-%s.lock' % lock_sha.hexdigest()
         logging.debug(_('Lockfile is %s') % self.lockfile)
 
-    def lock(self):
+    def lock(self, wait=False):
         fd = None
         try:
             fd = open(self.lockfile, 'w')
-            flock(fd, LOCK_EX | LOCK_NB)
+            flags = LOCK_EX | LOCK_NB if wait else LOCK_EX
+            flock(fd, flags)
             self.fd = fd
             return True
         except (OSError, IOError):
