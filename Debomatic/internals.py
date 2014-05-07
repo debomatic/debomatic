@@ -130,6 +130,7 @@ class Singleton:
         lock_sha = sha256()
         lock_sha.update(lockfile)
         self.lockfile = '/var/run/debomatic-%s.lock' % lock_sha.hexdigest()
+        logging.debug(_('Lockfile is %s') % self.lockfile)
 
     def lock(self):
         fd = None

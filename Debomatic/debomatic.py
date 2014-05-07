@@ -30,10 +30,22 @@ from time import sleep
 from build import FullBuild
 from commands import Command
 from modules import Module
-from threadpool import ThreadPool
+from internals import Daemon, Singleton, ThreadPool
 
 
 class Debomatic:
+
+    class DebomaticDaemon(Daemon):
+
+        def __init__(self, parent, pidfile):
+            Daemon.__init__(self, pidfile)
+            self.parent = parent
+
+        def run(self):
+            self.parent.launcher()
+
+        def quit(self):
+            self.parent.quit()
 
     def __init__(self):
         self.daemon = True
@@ -60,14 +72,10 @@ class Debomatic:
             self.daemon = False
         self.default_options()
         self.packagedir = self.opts.get('default', 'packagedir')
-        lock_sha = sha256()
-        lock_sha.update(self.packagedir)
-        self.lockfilepath = '/var/run/debomatic-' + lock_sha.hexdigest()
-        self.lockfile = pidlockfile.PIDLockFile(self.lockfilepath)
-        self.w(_('Lockfile is %s' % self.lockfilepath), 3)
+        self.lockfile = Singleton(self.packagedir)
         if args.quit_process:
             self.quit_process()
-        if self.lockfile.is_locked():
+        if not self.lockfile.lock():
             self.e(_('Another instance is running, aborting'))
         self.log.logverbosity = self.opts.getint('default', 'logverbosity')
         self.mod_sys = Module((self.log, self.opts,
@@ -78,13 +86,9 @@ class Debomatic:
         signal(SIGINT, self.quit)
         signal(SIGTERM, self.quit)
         if self.daemon:
-            with open(self.opts.get('default', 'logfile'), 'a') as fd:
-                with DaemonContext(pidfile=self.lockfile, stdout=fd, stderr=fd,
-                                   signal_map={SIGTERM: self.quit}):
-                    self.w(_('Entering daemon mode'), 2)
-                    self.launcher()
+            daemon = self.DebomaticDaemon(self, self.packagedir)
+            daemon.start()            
         else:
-            self.lockfile.acquire()
             self.launcher()
 
     def default_options(self):
@@ -150,7 +154,7 @@ class Debomatic:
             try:
                 filelist = os.listdir(self.packagedir)
             except OSError:
-                self.lockfile.release()
+                self.lockfile.unlock()
                 self.e(_('Unable to access %s directory') % self.packagedir)
         for filename in filelist:
             if filename.endswith('.changes'):
@@ -172,11 +176,11 @@ class Debomatic:
         self.mod_sys.execute_hook('on_quit', {})
         self.w(_('Shutdown hooks finished'), 2)
         if not self.daemon:
-            self.lockfile.release()
+            self.lockfile.unlock()
         exit()
 
     def quit_process(self):
-        if self.lockfile.is_locked():
+        if self.lockfile.lock():
             try:
                 pid = pidlockfile.read_pid_from_pidfile(self.lockfilepath)
                 try:
@@ -193,6 +197,7 @@ class Debomatic:
             else:
                 self.lockfile.break_lock()
                 self.w(_('Obsolete lock removed'))
+        self.lockfile.unlock()
         exit()
 
 
