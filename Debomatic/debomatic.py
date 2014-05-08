@@ -20,7 +20,6 @@
 import os
 from ConfigParser import ConfigParser
 from argparse import ArgumentParser
-from datetime import datetime
 from logging import basicConfig as log, debug, error, getLogger, info
 from logging import CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET
 from signal import signal, SIGINT, SIGTERM
