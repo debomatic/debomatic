@@ -18,10 +18,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
-import logging
 from atexit import register as on_exit
 from fcntl import flock, LOCK_EX, LOCK_NB, LOCK_UN
 from hashlib import sha256
+from logging import basicConfig as log, debug, error, getLogger, INFO
 from signal import SIGTERM
 from sys import stdin, stdout, stderr
 from threading import Thread
@@ -44,7 +44,7 @@ class Daemon:
             if pid > 0:
                 exit()
         except OSError as e:
-            logging.error(_('Error entering daemon mode: %s') % e.strerror)
+            error(_('Error entering daemon mode: %s') % e.strerror)
             exit()
         os.chdir('/')
         os.setsid()
@@ -54,7 +54,7 @@ class Daemon:
             if pid > 0:
                 exit()
         except OSError as e:
-            logging.error(_('Error entering daemon mode: %s') % e.strerror)
+            error(_('Error entering daemon mode: %s') % e.strerror)
             exit()
         stdout.flush()
         stderr.flush()
@@ -68,13 +68,12 @@ class Daemon:
         pid = str(os.getpid())
         with open(self.pidfile, 'w+') as fd:
             fd.write('%s\n' % pid)
-        log = logging.getLogger()
-        if log.handlers:
-            for handler in log.handlers:
-                log.removeHandler(handler)
-        logging.basicConfig(filename=self.logfile,
-                            format='%(asctime)s %(levelname)-8s %(message)s',
-                            level=logging.INFO)
+        old_log = getLogger()
+        if old_log.handlers:
+            for handler in old_log.handlers:
+                old_log.removeHandler(handler)
+        log(filename=self.logfile,
+            format='%(asctime)s %(levelname)-8s %(message)s', level=INFO)
 
     def _delpid(self):
         os.remove(self.pidfile)
@@ -89,8 +88,8 @@ class Daemon:
     def start(self):
         self._getpid()
         if pid:
-            logging.error('pidfile %s already exist. Daemon already running?' %
-                          self.pidfile)
+            error('pidfile %s already exist. Daemon already running?' %
+                   self.pidfile)
             exit()
         self._daemonize()
         self.run()
@@ -99,8 +98,8 @@ class Daemon:
         self._getpid()
         if not pid:
             message = 'pidfile %s does not exist. Daemon not running?'
-            logging.error('pidfile %s does not exist. Daemon not running?' %
-                          self.pidfile)
+            error('pidfile %s does not exist. Daemon not running?' %
+                   self.pidfile)
             return
         self.quit()
         try:
@@ -113,7 +112,7 @@ class Daemon:
                 if os.path.exists(self.pidfile):
                     os.remove(self.pidfile)
             else:
-                logging.error(err)
+                error(err)
                 exit()
 
     def run(self):
@@ -130,7 +129,7 @@ class Singleton:
         lock_sha = sha256()
         lock_sha.update(lockfile)
         self.lockfile = '/var/run/debomatic-%s.lock' % lock_sha.hexdigest()
-        logging.debug(_('Lockfile is %s') % self.lockfile)
+        debug(_('Lockfile is %s') % self.lockfile)
 
     def lock(self, wait=False):
         fd = None
@@ -180,7 +179,7 @@ class Job(Thread):
 
 class ThreadPool:
 
-    def __init__(self, log, num_threads):
+    def __init__(self, num_threads=1):
         self.log = log
         self.jobs = set()
         self.tasks = Queue(num_threads)

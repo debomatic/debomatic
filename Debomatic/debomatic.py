@@ -18,9 +18,12 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
+import logging
 from ConfigParser import ConfigParser
 from argparse import ArgumentParser
 from datetime import datetime
+from logging import basicConfig as log, debug, error, info
+from logging import CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET
 from signal import signal, SIGINT, SIGTERM
 from sys import stderr
 from time import sleep
@@ -47,9 +50,7 @@ class Debomatic:
 
     def __init__(self):
         self.daemon = True
-        self.log = Output()
-        self.e = self.log.e
-        self.w = self.log.w
+        self.setlog('%(levelname)s: %(message)s')
         self.conffile = None
         self.configvers = '012a'
         self.opts = ConfigParser()
@@ -63,7 +64,8 @@ class Debomatic:
                             help='terminate Deb-o-Matic processes')
         args = parser.parse_args()
         if os.getuid():
-            self.e(_('You must run Deb-o-Matic as root'))
+            error(_('You must run Deb-o-Matic as root'))
+            exit(1)
         if args.configfile:
             self.conffile = args.configfile[0]
         if args.no_daemon:
@@ -74,13 +76,14 @@ class Debomatic:
         if args.quit_process:
             self.quit_process()
         if not self.lockfile.lock():
-            self.e(_('Another instance is running, aborting'))
-        self.log.logverbosity = self.opts.getint('default', 'logverbosity')
-        self.mod_sys = Module((self.log, self.opts,
-                               self.rtopts, self.conffile))
-        self.w(_('Startup hooks launched'), 2)
+            error(_('Another instance is running, aborting'))
+            exit(1)
+        self.setlog('%(levelname)s: %(message)s',
+                    self.opts.get('default', 'logverbosity'))
+        self.mod_sys = Module((self.opts, self.rtopts, self.conffile))
+        debug(_('Startup hooks launched'))
         self.mod_sys.execute_hook('on_start', {})
-        self.w(_('Startup hooks finished'), 2)
+        debug(_('Startup hooks finished'), 2)
         signal(SIGINT, self.quit)
         signal(SIGTERM, self.quit)
         if self.daemon:
@@ -94,25 +97,28 @@ class Debomatic:
                           'architecture', 'maxbuilds', 'pbuilderhooks',
                           'inotify', 'sleep', 'logfile', 'logverbosity')
         if not self.conffile:
-            self.e(_('Configuration file has not been specified'))
+            error(_('Configuration file has not been specified'))
+            exit(1)
         if not os.path.exists(self.conffile):
-            self.e(_('Configuration file %s does not exist') % self.conffile)
+            error(_('Configuration file %s does not exist') % self.conffile)
+            exit(1)
         self.opts.read(self.conffile)
         if (not self.opts.has_option('internals', 'configversion') or
                 not self.opts.get('internals', 'configversion') ==
                 self.configvers):
-            self.e(_('Configuration file is not at version %s') %
+            error(_('Configuration file is not at version %s') %
                    self.configvers)
+            exit(1)
         for opt in defaultoptions:
             if (not self.opts.has_option('default', opt) or
                     not self.opts.get('default', opt)):
-                self.e(_('Set "%(opt)s" in %(conffile)s') %
+                error(_('Set "%(opt)s" in %(conffile)s') %
                        {'opt': opt, 'conffile': self.conffile})
+                exit(1)
 
     def launcher(self):
-        self.pool = ThreadPool(self.log,
-                               self.opts.getint('default', 'maxbuilds'))
-        self.commandpool = ThreadPool(self.log, 1)
+        self.pool = ThreadPool(self.opts.getint('default', 'maxbuilds'))
+        self.commandpool = ThreadPool()
         self.queue_files()
         if self.opts.getint('default', 'inotify'):
             try:
@@ -138,11 +144,11 @@ class Debomatic:
         wm = pyinotify.WatchManager()
         notifier = pyinotify.Notifier(wm, PE(self))
         wm.add_watch(self.packagedir, pyinotify.IN_CLOSE_WRITE)
-        self.w(_('Inotify loop started'), 2)
+        debug(_('Inotify loop started'))
         notifier.loop()
 
     def launcher_timer(self):
-        self.w(_('Timer loop started'), 2)
+        debug(_('Timer loop started'))
         while True:
             sleep(self.opts.getint('default', 'sleep'))
             self.queue_files()
@@ -153,26 +159,27 @@ class Debomatic:
                 filelist = os.listdir(self.packagedir)
             except OSError:
                 self.lockfile.unlock()
-                self.e(_('Unable to access %s directory') % self.packagedir)
+                error(_('Unable to access %s directory') % self.packagedir)
+                exit(1)
         for filename in filelist:
             if filename.endswith('.changes'):
                 b = FullBuild((self.opts, self.rtopts, self.conffile),
-                              self.log, package=filename)
+                              package=filename)
                 if self.pool.add_task(b.run, filename):
-                    self.w(_('Thread for %s scheduled' % filename), 2)
+                    debug(_('Thread for %s scheduled' % filename))
             elif filename.endswith('.commands'):
                 c = Command((self.opts, self.rtopts, self.conffile),
-                            self.log, self.pool, filename)
+                            self.pool, filename)
                 if self.commandpool.add_task(c.process_command, filename):
-                    self.w(_('Thread for %s scheduled' % filename), 2)
+                    debug(_('Thread for %s scheduled' % filename))
 
     def quit(self, signum, frame):
-        self.w(_('Waiting for threads to complete...'))
+        info(_('Waiting for threads to complete...'))
         self.commandpool.wait_completion()
         self.pool.wait_completion()
-        self.w(_('Shutdown hooks launched'), 2)
+        debug(_('Shutdown hooks launched'))
         self.mod_sys.execute_hook('on_quit', {})
-        self.w(_('Shutdown hooks finished'), 2)
+        debug(_('Shutdown hooks finished'))
         if not self.daemon:
             self.lockfile.unlock()
         exit()
@@ -184,20 +191,16 @@ class Debomatic:
         self.lockfile.unlock()
         exit()
 
+    def setlog(self, fmt, level='INFO'):
+        loglevels = {'CRITICAL': CRITICAL,
+                     'ERROR': ERROR,
+                     'WARNING': WARNING,
+                     'INFO': INFO,
+                     'DEBUG': DEBUG,
+                     'NOTSET': NOTSET}
+        log = logging.getLogger()
+        if log.handlers:
+            for handler in log.handlers:
+                log.removeHandler(handler)
+        log(format=fmt, level=loglevels[level])
 
-class Output:
-
-    def __init__(self):
-        self.logverbosity = 1
-
-    def w(self, msg, level=1):
-        if self.logverbosity >= level:
-            stderr.write('%s: %s\n' % (datetime.now().ctime(), msg))
-
-    def e(self, msg):
-        self.w(msg)
-        exit()
-
-    def t(self, msg):
-        self.w(msg)
-        raise RuntimeError
