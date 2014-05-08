@@ -18,11 +18,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
-import logging
 from ConfigParser import ConfigParser
 from argparse import ArgumentParser
 from datetime import datetime
-from logging import basicConfig as log, debug, error, info
+from logging import basicConfig as log, debug, error, getLogger, info
 from logging import CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET
 from signal import signal, SIGINT, SIGTERM
 from sys import stderr
@@ -198,9 +197,9 @@ class Debomatic:
                      'INFO': INFO,
                      'DEBUG': DEBUG,
                      'NOTSET': NOTSET}
-        log = logging.getLogger()
-        if log.handlers:
-            for handler in log.handlers:
-                log.removeHandler(handler)
+        old_log = getLogger()
+        if old_log.handlers:
+            for handler in old_log.handlers:
+                old_log.removeHandler(handler)
         log(format=fmt, level=loglevels[level])
 
