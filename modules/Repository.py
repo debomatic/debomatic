@@ -20,6 +20,7 @@
 # Generate local repository of built packages
 
 import os
+from datetime import datetime
 from subprocess import call, PIPE
 
 
@@ -36,7 +37,7 @@ class DebomaticModule_Repository:
         self.update_repository(args)
 
     def post_chroot(self, args):
-        if not (args['cmd'] == 'create' and not args['success']):
+        if args['cmd'] == 'update' and args['success']:
             self.update_repository(args)
 
     def update_repository(self, args):
@@ -56,21 +57,32 @@ class DebomaticModule_Repository:
         dists = os.path.join(archive, 'dists', distribution)
         packages = os.path.join(dists, 'main', 'binary-%s' % architecture)
         packages_file = os.path.join(packages, 'Packages')
+        arch_release_file = os.path.join(packages, 'Release')
         release_file = os.path.join(dists, 'Release')
         release_gpg = os.path.join(dists, 'Release.gpg')
+        inrelease_gpg = os.path.join(dists, 'InRelease')
         for dir in (pool, dists, packages):
             if not os.path.isdir(dir):
                 os.makedirs(dir)
         os.chdir(archive)
         with open(packages_file, 'w') as fd:
-            call([self.af, 'packages', '.'], stdout=fd, stderr=PIPE)
+            call([self.af, 'packages', 'pool'], stdout=fd, stderr=PIPE)
+        with open(arch_release_file, 'w') as fd:
+            fd.write('Origin: Deb-O-Matic\n')
+            fd.write('Label: Deb-O-Matic\n')
+            fd.write('Archive: %s\n' % distribution)
+            fd.write('Component: main\n')
+            fd.write('Architecture: %s\n' % architecture)
         with open(release_file, 'w') as fd:
+            date = datetime.now().strftime('%A, %d %B %Y %H:%M:%S')
             call([self.af, '-qq',
                  '-o', 'APT::FTPArchive::Release::Origin=Deb-o-Matic',
                  '-o', 'APT::FTPArchive::Release::Label=Deb-o-Matic',
-                 '-o', 'APT::FTPArchive::Release::Suite=%(dist)s' %
-                 {'dist': distribution},
-                 'release', '.'], stdout=fd, stderr=PIPE)
+                 '-o', 'APT::FTPArchive::Release::Suite=%s' % distribution,
+                 '-o', 'APT::FTPArchive::Release::Date=%s' % date,
+                 '-o', 'APT::FTPArchive::Release::Architectures=%s' % architecture,
+                 '-o', 'APT::FTPArchive::Release::Components=main',
+                 'release', 'dists/%s'% distribution], stdout=fd, stderr=PIPE)
         with open(release_file, 'r+') as fd:
             data = fd.read()
             fd.seek(0)
@@ -78,4 +90,7 @@ class DebomaticModule_Repository:
         call([self.gpg, '--no-default-keyring', '--keyring', pubring,
              '--secret-keyring', secring, '-u', gpgkey, '--yes', '-a',
              '-o', release_gpg , '-s', release_file])
+        call([self.gpg, '--no-default-keyring', '--keyring', pubring,
+             '--secret-keyring', secring, '-u', gpgkey, '--yes', '-a',
+             '-o', inrelease_gpg , '--clearsign', release_file])
         os.chdir(cwd)
