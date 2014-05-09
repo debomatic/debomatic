@@ -69,7 +69,9 @@ class Debomatic:
         if args.no_daemon:
             self.daemonize = False
         self.default_options()
+        logfile = self.opts.get('default', 'logfile')
         self.packagedir = self.opts.get('default', 'packagedir')
+        self.daemon = self.DebomaticDaemon(self, self.packagedir, logfile)
         self.lockfile = Singleton(self.packagedir)
         if args.quit_process:
             self.quit_process()
@@ -85,8 +87,6 @@ class Debomatic:
         signal(SIGINT, self.quit)
         signal(SIGTERM, self.quit)
         if self.daemonize:
-            logfile = self.opts.get('default', 'logfile')
-            self.daemon = self.DebomaticDaemon(self, self.packagedir, logfile)
             self.daemon.start()
         else:
             self.launcher()

@@ -64,7 +64,7 @@ class Daemon:
         os.dup2(si.fileno(), stdin.fileno())
         os.dup2(so.fileno(), stdout.fileno())
         os.dup2(se.fileno(), stderr.fileno())
-        on_exit(self.delpid)
+        on_exit(self._delpid)
         pid = str(os.getpid())
         with open(self.pidfile, 'w+') as fd:
             fd.write('%s\n' % pid)
@@ -81,7 +81,7 @@ class Daemon:
     def _getpid(self):
         try:
             with open(self.pidfile, 'r') as fd:
-                self.pid = int(pf.read().strip())
+                self.pid = int(fd.read().strip())
         except (IOError, ValueError):
             self.pid = None
 
@@ -96,7 +96,7 @@ class Daemon:
 
     def stop(self):
         self._getpid()
-        if not pid:
+        if not self.pid:
             message = 'pidfile %s does not exist. Daemon not running?'
             error('pidfile %s does not exist. Daemon not running?' %
                    self.pidfile)
