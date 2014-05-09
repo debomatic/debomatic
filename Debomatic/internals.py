@@ -87,7 +87,7 @@ class Daemon:
 
     def start(self):
         self._getpid()
-        if pid:
+        if self.pid:
             error('pidfile %s already exist. Daemon already running?' %
                    self.pidfile)
             exit()
@@ -180,7 +180,6 @@ class Job(Thread):
 class ThreadPool:
 
     def __init__(self, num_threads=1):
-        self.log = log
         self.jobs = set()
         self.tasks = Queue(num_threads)
         for i in range(num_threads):
@@ -188,15 +187,15 @@ class ThreadPool:
 
     def add_task(self, func, *args, **kargs):
         if not args in self.jobs:
-            self.log.w(_('Scheduling %(func)s with parameter %(parm)s' %
-                         {'func': func.func_name, 'parm': args[0]}), 3)
+            debug(_('Scheduling %(func)s with parameter %(parm)s') %
+                  {'func': func.func_name, 'parm': args[0]})
             self.jobs.add(args)
             self.tasks.put((func, args, kargs, self.jobs))
-            self.log.w(_('Queue size: %d' % self.tasks.qsize()), 3)
+            debug(_('Queue size: %d' % self.tasks.qsize()))
             for queued in self.tasks.queue:
-                self.log.w(_('   -> function %(func)s with parameter %(parm)s' %
+                debug(_('   -> function %(func)s with parameter %(parm)s') %
                              {'func': queued[0].func_name,
-                              'parm': queued[1][0]}), 3)
+                              'parm': queued[1][0]})
             return True
         return False
 

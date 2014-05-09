@@ -36,8 +36,8 @@ class Debomatic:
 
     class DebomaticDaemon(Daemon):
 
-        def __init__(self, parent, pidfile):
-            Daemon.__init__(self, pidfile)
+        def __init__(self, parent, pidfile, logfile):
+            Daemon.__init__(self, pidfile, logfile)
             self.parent = parent
 
         def run(self):
@@ -47,7 +47,7 @@ class Debomatic:
             self.parent.quit()
 
     def __init__(self):
-        self.daemon = True
+        self.daemonize = True
         self.setlog('%(levelname)s: %(message)s')
         self.conffile = None
         self.configvers = '012a'
@@ -67,7 +67,7 @@ class Debomatic:
         if args.configfile:
             self.conffile = args.configfile[0]
         if args.no_daemon:
-            self.daemon = False
+            self.daemonize = False
         self.default_options()
         self.packagedir = self.opts.get('default', 'packagedir')
         self.lockfile = Singleton(self.packagedir)
@@ -81,12 +81,13 @@ class Debomatic:
         self.mod_sys = Module((self.opts, self.rtopts, self.conffile))
         debug(_('Startup hooks launched'))
         self.mod_sys.execute_hook('on_start', {})
-        debug(_('Startup hooks finished'), 2)
+        debug(_('Startup hooks finished'))
         signal(SIGINT, self.quit)
         signal(SIGTERM, self.quit)
-        if self.daemon:
-            self.debomaticdaemon = self.DebomaticDaemon(self, self.packagedir)
-            self.debomaticdaemon.start()
+        if self.daemonize:
+            logfile = self.opts.get('default', 'logfile')
+            self.daemon = self.DebomaticDaemon(self, self.packagedir, logfile)
+            self.daemon.start()
         else:
             self.launcher()
 
@@ -178,13 +179,13 @@ class Debomatic:
         debug(_('Shutdown hooks launched'))
         self.mod_sys.execute_hook('on_quit', {})
         debug(_('Shutdown hooks finished'))
-        if not self.daemon:
+        if not self.daemonize:
             self.lockfile.unlock()
         exit()
 
     def quit_process(self):
         info(_('Waiting for threads to complete...'))
-        self.debomaticdaemon.stop()
+        self.daemon.stop()
         self.lockfile.lock(wait=True)
         self.lockfile.unlock()
         exit()
