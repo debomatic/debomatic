@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 from argparse import ArgumentParser
 from logging import basicConfig as log, debug, error, getLogger, info
 from logging import CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET
@@ -26,10 +26,10 @@ from signal import signal, SIGINT, SIGTERM
 from sys import stderr
 from time import sleep
 
-from build import FullBuild
-from commands import Command
-from modules import Module
-from internals import Daemon, ThreadPool
+from .build import FullBuild
+from .commands import Command
+from .modules import Module
+from .internals import Daemon, ThreadPool
 
 
 class Debomatic(Daemon):

@@ -22,10 +22,11 @@ from ast import literal_eval
 from glob import glob
 from logging import debug, error, info
 from re import findall, sub
-from urllib2 import Request, urlopen, HTTPError, URLError
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
 
-from build import Build
-from gpg import GPG
+from .build import Build
+from .gpg import GPG
 
 
 class Command():
@@ -48,7 +49,7 @@ class Command():
         except IOError:
             error(_('Unable to open %s') % self.originconf)
             return
-        for elem in conf.keys():
+        for elem in conf:
             try:
                 parms[elem] = findall(conf[elem][0], data)[0]
             except IndexError:

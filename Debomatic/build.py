@@ -25,10 +25,11 @@ from logging import debug, error, info
 from re import findall
 from subprocess import call, check_output, PIPE
 from time import strftime
-from urllib2 import Request, urlopen, HTTPError, URLError
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
 
-from gpg import GPG
-from modules import Module
+from .gpg import GPG
+from .modules import Module
 
 
 class Build:
@@ -303,7 +304,7 @@ class Build:
             self.remove_files()
             error(_('Unable to open %s') % self.configfile)
             exit(2)
-        for elem in conf.keys():
+        for elem in conf:
             try:
                 if not elem in self.distopts or not self.distopts[elem]:
                     self.distopts[elem] = findall(conf[elem][0], data)[0]

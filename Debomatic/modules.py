@@ -70,13 +70,13 @@ class Module():
                 blist_mods = blist_mods.split()
             else:
                 blist_mods = []
-            modules = [i for i in self.instances.keys()
+            modules = [i for i in self.instances
                        if i not in blist_mods]
             modules.sort()
             for module in modules:
                 try:
                     debug(_('Executing hook %(hook)s from module %(mod)s' %
                           {'hook': hook, 'mod': module}))
-                    exec 'self.instances["%s"].%s(args)' % (module, hook)
+                    exec('self.instances["%s"].%s(args)' % (module, hook))
                 except AttributeError:
                     pass

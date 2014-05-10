@@ -27,7 +27,7 @@ from sys import stdin, stdout, stderr
 from threading import Thread
 from time import sleep
 from traceback import print_exc
-from Queue import Queue
+from queue import Queue
 
 
 class Daemon:
@@ -189,13 +189,13 @@ class ThreadPool:
     def add_task(self, func, *args, **kargs):
         if not args in self.jobs:
             debug(_('Scheduling %(func)s with parameter %(parm)s') %
-                  {'func': func.func_name, 'parm': args[0]})
+                  {'func': func.__name__, 'parm': args[0]})
             self.jobs.add(args)
             self.tasks.put((func, args, kargs, self.jobs))
             debug(_('Queue size: %d' % self.tasks.qsize()))
             for queued in self.tasks.queue:
                 debug(_('   -> function %(func)s with parameter %(parm)s') %
-                      {'func': queued[0].func_name, 'parm': queued[1][0]})
+                      {'func': queued[0].__name__, 'parm': queued[1][0]})
             return True
         return False
 
