@@ -91,13 +91,13 @@ class Debomatic(Daemon):
                 not self.opts.get('internals', 'configversion') ==
                 self.configvers):
             error(_('Configuration file is not at version %s') %
-                   self.configvers)
+                  self.configvers)
             exit(1)
         for opt in defaultoptions:
             if (not self.opts.has_option('default', opt) or
                     not self.opts.get('default', opt)):
                 error(_('Set "%(opt)s" in %(conffile)s') %
-                       {'opt': opt, 'conffile': self.conffile})
+                      {'opt': opt, 'conffile': self.conffile})
                 exit(1)
 
     def launcher(self):

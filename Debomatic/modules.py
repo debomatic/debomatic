@@ -76,7 +76,7 @@ class Module():
             for module in modules:
                 try:
                     debug(_('Executing hook %(hook)s from module %(mod)s' %
-                                 {'hook': hook, 'mod': module}))
+                          {'hook': hook, 'mod': module}))
                     exec 'self.instances["%s"].%s(args)' % (module, hook)
                 except AttributeError:
                     pass

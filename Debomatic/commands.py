@@ -53,7 +53,7 @@ class Command():
                 parms[elem] = findall(conf[elem][0], data)[0]
             except IndexError:
                 error(_('Please set %(parm)s in %s(conf)s') %
-                       {'parm': conf[elem][0], 'conf': self.originconf})
+                      {'parm': conf[elem][0], 'conf': self.originconf})
                 return
         for component in parms['components'].split():
             request = Request('%s/pool/%s/%s/%s/%s' %
@@ -67,7 +67,7 @@ class Command():
                 break
             except (HTTPError, URLError):
                 error(_('Unable to fetch %s') %
-                       '_'.join((self.package, self.version)))
+                      '_'.join((self.package, self.version)))
 
     def mangle_version(self, version):
         self.version = sub('^\d+\:', '', version)
@@ -83,13 +83,13 @@ class Command():
                 if isinstance(mapper, dict):
                     if self.target in mapper:
                         debug(_('%(mapped)s mapped as %(mapper)s') %
-                               {'mapped': self.target,
-                                'mapper': mapper[self.target]})
+                              {'mapped': self.target,
+                               'mapper': mapper[self.target]})
                         self.target = mapper[self.target]
                     if self.origin in mapper:
                         debug(_('%(mapped)s mapped as %(mapper)s') %
-                               {'mapped': self.origin,
-                                'mapper': mapper[self.origin]})
+                              {'mapped': self.origin,
+                               'mapper': mapper[self.origin]})
                         self.origin = mapper[self.origin]
 
     def process_command(self):
@@ -135,8 +135,7 @@ class Command():
                 b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
                           distribution=self.target, extrabd=self.extrabd)
                 if self.pool.add_task(b.build, dsc):
-                    debug(_('Thread for %s scheduled' %
-                           os.path.basename(dsc)))
+                    debug(_('Thread for %s scheduled' % os.path.basename(dsc)))
 
     def process_porter(self, packages):
         debug(_('Performing a porter build'))
@@ -157,8 +156,7 @@ class Command():
                 b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
                           distribution=self.target, debopts=self.debopts)
                 if self.pool.add_task(b.build, dsc):
-                    debug(_('Thread for %s scheduled' %
-                           os.path.basename(dsc)))
+                    debug(_('Thread for %s scheduled' % os.path.basename(dsc)))
 
     def process_rebuild(self, packages):
         debug(_('Performing a package rebuild'))
@@ -178,8 +176,7 @@ class Command():
                 b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
                           distribution=self.target, origin=self.origin)
                 if self.pool.add_task(b.build, dsc):
-                    debug(_('Thread for %s scheduled' %
-                           os.path.basename(dsc)))
+                    debug(_('Thread for %s scheduled' % os.path.basename(dsc)))
 
     def process_rm(self, filesets):
         debug(_('Removing files'))

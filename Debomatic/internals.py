@@ -195,8 +195,7 @@ class ThreadPool:
             debug(_('Queue size: %d' % self.tasks.qsize()))
             for queued in self.tasks.queue:
                 debug(_('   -> function %(func)s with parameter %(parm)s') %
-                             {'func': queued[0].func_name,
-                              'parm': queued[1][0]})
+                      {'func': queued[0].func_name, 'parm': queued[1][0]})
             return True
         return False
 
