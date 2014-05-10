@@ -29,22 +29,10 @@ from time import sleep
 from build import FullBuild
 from commands import Command
 from modules import Module
-from internals import Daemon, Singleton, ThreadPool
+from internals import Daemon, ThreadPool
 
 
-class Debomatic:
-
-    class DebomaticDaemon(Daemon):
-
-        def __init__(self, parent, pidfile, logfile):
-            Daemon.__init__(self, pidfile, logfile)
-            self.parent = parent
-
-        def run(self):
-            self.parent.launcher()
-
-        def quit(self):
-            self.parent.quit()
+class Debomatic(Daemon):
 
     def __init__(self):
         self.daemonize = True
@@ -69,27 +57,24 @@ class Debomatic:
         if args.no_daemon:
             self.daemonize = False
         self.default_options()
-        logfile = self.opts.get('default', 'logfile')
         self.packagedir = self.opts.get('default', 'packagedir')
-        self.daemon = self.DebomaticDaemon(self, self.packagedir, logfile)
-        self.lockfile = Singleton(self.packagedir)
+        self.pool = ThreadPool(self.opts.getint('default', 'maxbuilds'))
+        self.commandpool = ThreadPool()
+        self.logfile = self.opts.get('default', 'logfile')
+        self.mod_sys = Module((self.opts, self.rtopts, self.conffile))
         if args.quit_process:
-            self.quit_process()
-        if not self.lockfile.lock():
-            error(_('Another instance is running, aborting'))
-            exit(1)
+            self.shutdown()
+            exit()
         self.setlog('%(levelname)s: %(message)s',
                     self.opts.get('default', 'logverbosity'))
-        self.mod_sys = Module((self.opts, self.rtopts, self.conffile))
         debug(_('Startup hooks launched'))
         self.mod_sys.execute_hook('on_start', {})
         debug(_('Startup hooks finished'))
-        signal(SIGINT, self.quit)
-        signal(SIGTERM, self.quit)
-        if self.daemonize:
-            self.daemon.start()
-        else:
-            self.launcher()
+        try:
+            self.startup()
+        except RuntimeError:
+            error(_('Another instance is running, aborting'))
+            exit(1)
 
     def default_options(self):
         defaultoptions = ('builder', 'debootstrap', 'packagedir', 'configdir',
@@ -116,8 +101,6 @@ class Debomatic:
                 exit(1)
 
     def launcher(self):
-        self.pool = ThreadPool(self.opts.getint('default', 'maxbuilds'))
-        self.commandpool = ThreadPool()
         self.queue_files()
         if self.opts.getint('default', 'inotify'):
             try:
@@ -172,24 +155,6 @@ class Debomatic:
                 if self.commandpool.add_task(c.process_command, filename):
                     debug(_('Thread for %s scheduled' % filename))
 
-    def quit(self, signum, frame):
-        info(_('Waiting for threads to complete...'))
-        self.commandpool.wait_completion()
-        self.pool.wait_completion()
-        debug(_('Shutdown hooks launched'))
-        self.mod_sys.execute_hook('on_quit', {})
-        debug(_('Shutdown hooks finished'))
-        if not self.daemonize:
-            self.lockfile.unlock()
-        exit()
-
-    def quit_process(self):
-        info(_('Waiting for threads to complete...'))
-        self.daemon.stop()
-        self.lockfile.lock(wait=True)
-        self.lockfile.unlock()
-        exit()
-
     def setlog(self, fmt, level='INFO'):
         loglevels = {'CRITICAL': CRITICAL,
                      'ERROR': ERROR,
@@ -202,4 +167,3 @@ class Debomatic:
             for handler in old_log.handlers:
                 old_log.removeHandler(handler)
         log(format=fmt, level=loglevels[level])
-

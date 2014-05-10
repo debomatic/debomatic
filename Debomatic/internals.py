@@ -21,8 +21,8 @@ import os
 from atexit import register as on_exit
 from fcntl import flock, LOCK_EX, LOCK_NB, LOCK_UN
 from hashlib import sha256
-from logging import basicConfig as log, debug, error, getLogger, INFO
-from signal import SIGTERM
+from logging import basicConfig as log, debug, error, getLogger, info, INFO
+from signal import signal, SIGINT, SIGTERM
 from sys import stdin, stdout, stderr
 from threading import Thread
 from time import sleep
@@ -31,12 +31,8 @@ from Queue import Queue
 
 
 class Daemon:
-    def __init__(self, pidfile, logfile):
-        self.fd = None
-        lock_sha = sha256()
-        lock_sha.update(pidfile)
-        self.pidfile = '/var/run/debomatic-%s.pid' % lock_sha.hexdigest()
-        self.logfile = logfile
+    def __init__(self):
+        pass
 
     def _daemonize(self):
         try:
@@ -64,93 +60,98 @@ class Daemon:
         os.dup2(si.fileno(), stdin.fileno())
         os.dup2(so.fileno(), stdout.fileno())
         os.dup2(se.fileno(), stderr.fileno())
-        on_exit(self._delpid)
-        pid = str(os.getpid())
-        with open(self.pidfile, 'w+') as fd:
-            fd.write('%s\n' % pid)
+        on_exit(self._on_quit)
         old_log = getLogger()
         if old_log.handlers:
             for handler in old_log.handlers:
                 old_log.removeHandler(handler)
         log(filename=self.logfile,
             format='%(asctime)s %(levelname)-8s %(message)s', level=INFO)
+        self._set_pid()
+        self.launcher()
 
-    def _delpid(self):
-        os.remove(self.pidfile)
-
-    def _getpid(self):
+    def _get_pid(self):
+        self.pidfile = ('/var/run/debomatic-%s.pid' %
+                        self._get_sha256(self.packagedir))
         try:
             with open(self.pidfile, 'r') as fd:
                 self.pid = int(fd.read().strip())
         except (IOError, ValueError):
             self.pid = None
 
-    def start(self):
-        self._getpid()
-        if self.pid:
-            error('pidfile %s already exist. Daemon already running?' %
-                   self.pidfile)
-            exit()
-        self._daemonize()
-        self.run()
+    def _set_pid(self):
+        self.pidfile = ('/var/run/debomatic-%s.pid' %
+                        self._get_sha256(self.packagedir))
+        pid = str(os.getpid())
+        with open(self.pidfile, 'w+') as fd:
+            fd.write('%s\n' % pid)
 
-    def stop(self):
-        self._getpid()
-        if not self.pid:
-            message = 'pidfile %s does not exist. Daemon not running?'
-            error('pidfile %s does not exist. Daemon not running?' %
-                   self.pidfile)
-            return
-        self.quit()
-        try:
-            while True:
-                os.kill(pid, SIGTERM)
-                sleep(0.5)
-        except OSError as err:
-            err = str(err)
-            if err.find('No such process') > 0:
-                if os.path.exists(self.pidfile):
-                    os.remove(self.pidfile)
-            else:
-                error(err)
-                exit()
-
-    def run(self):
-        pass
-
-    def quit(self):
-        pass
-
-
-class Singleton:
-
-    def __init__(self, lockfile):
+    def _lock(self, wait=False):
         self.fd = None
-        lock_sha = sha256()
-        lock_sha.update(lockfile)
-        self.lockfile = '/var/run/debomatic-%s.lock' % lock_sha.hexdigest()
-        debug(_('Lockfile is %s') % self.lockfile)
-
-    def lock(self, wait=False):
-        fd = None
+        self.lockfile = ('/var/run/debomatic-%s.lock' %
+                         self._get_sha256(self.packagedir))
         try:
-            fd = open(self.lockfile, 'w')
-            flags = LOCK_EX | LOCK_NB if wait else LOCK_EX
-            flock(fd, flags)
-            self.fd = fd
-            return True
-        except (OSError, IOError):
-            if fd:
-                fd.close()
-            return False
+            self.fd = open(self.lockfile, 'w')
+            flags = LOCK_EX if wait else LOCK_EX | LOCK_NB
+            flock(self.fd, flags)
+        except (OSError, IOError) as ex:
+            if self.fd:
+                self.fd.close()
+            raise ex
 
-    def unlock(self):
+    def _unlock(self):
         if self.fd:
             flock(self.fd, LOCK_UN)
             self.fd.close()
             self.fd = None
         if os.path.isfile(self.lockfile):
             os.unlink(self.lockfile)
+
+    def _on_quit(self, signum=None, frame=None):
+        info(_('Waiting for threads to complete...'))
+        self.commandpool.wait_completion()
+        self.pool.wait_completion()
+        debug(_('Shutdown hooks launched'))
+        self.mod_sys.execute_hook('on_quit', {})
+        debug(_('Shutdown hooks finished'))
+        self._unlock()
+        os.unlink(self.pidfile)
+        exit()
+
+    def _get_sha256(self, value):
+        lock_sha = sha256()
+        lock_sha.update(value)
+        return lock_sha.hexdigest()
+
+    def startup(self):
+        try:
+            self._lock()
+        except (OSError, IOError):
+            error(_('Another instance is running, aborting'))
+            raise RuntimeError
+        self._set_pid()
+        signal(SIGINT, self._on_quit)
+        signal(SIGTERM, self._on_quit)
+        if self.daemonize:
+            self._daemonize()
+        else:
+            self.launcher()
+
+    def shutdown(self):
+        self._get_pid()
+        if not self.pid:
+            return
+        info(_('Waiting for threads to complete...'))
+        try:
+            os.kill(self.pid, SIGTERM)
+            self._lock(wait=True)
+        except OSError as err:
+            err = str(err)
+            if err.find('No such process') > 0:
+                if os.path.exists(self.pidfile):
+                    os.unlink(self.pidfile)
+            else:
+                error(err)
 
 
 class Job(Thread):
