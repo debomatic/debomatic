@@ -30,7 +30,7 @@ from traceback import print_exc
 from queue import Queue
 
 
-class Daemon:
+class Process:
     def __init__(self):
         pass
 

@@ -29,10 +29,10 @@ from time import sleep
 from .build import FullBuild
 from .commands import Command
 from .modules import Module
-from .internals import Daemon, ThreadPool
+from .process import Process, ThreadPool
 
 
-class Debomatic(Daemon):
+class Debomatic(Process):
 
     def __init__(self):
         self.daemonize = True
