@@ -61,9 +61,9 @@ class Command():
                               (parms['mirror'], component,
                                findall('^lib\S|^\S', self.package)[0],
                                self.package, self.dscname))
-            debug(_('Requesting URL %s' % request.get_full_url()))
+            debug(_('Requesting URL %s') % request.get_full_url())
             try:
-                debug(_('Downloading missing %s' % self.dscname))
+                debug(_('Downloading missing %s') % self.dscname)
                 self.data = urlopen(request).read()
                 break
             except (HTTPError, URLError):
@@ -136,7 +136,7 @@ class Command():
                 b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
                           distribution=self.target, extrabd=self.extrabd)
                 if self.pool.add_task(b.build, dsc):
-                    debug(_('Thread for %s scheduled' % os.path.basename(dsc)))
+                    debug(_('Thread for %s scheduled') % os.path.basename(dsc))
 
     def process_porter(self, packages):
         debug(_('Performing a porter build'))
@@ -157,7 +157,7 @@ class Command():
                 b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
                           distribution=self.target, debopts=self.debopts)
                 if self.pool.add_task(b.build, dsc):
-                    debug(_('Thread for %s scheduled' % os.path.basename(dsc)))
+                    debug(_('Thread for %s scheduled') % os.path.basename(dsc))
 
     def process_rebuild(self, packages):
         debug(_('Performing a package rebuild'))
@@ -177,7 +177,7 @@ class Command():
                 b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
                           distribution=self.target, origin=self.origin)
                 if self.pool.add_task(b.build, dsc):
-                    debug(_('Thread for %s scheduled' % os.path.basename(dsc)))
+                    debug(_('Thread for %s scheduled') % os.path.basename(dsc))
 
     def process_rm(self, filesets):
         debug(_('Removing files'))
@@ -185,5 +185,5 @@ class Command():
             for pattern in files.split():
                 pattern = os.path.basename(pattern)
                 for absfile in glob(os.path.join(self.packagedir, pattern)):
-                    debug(_('Removing %s' % pattern))
+                    debug(_('Removing %s') % pattern)
                     os.remove(absfile)

@@ -58,7 +58,7 @@ class Module():
                          (module, module))
                     exec('self.instances["%s"] = DebomaticModule_%s()' %
                          (module, module))
-                    debug(_('Module %s loaded' % module))
+                    debug(_('Module %s loaded') % module)
                 except (NameError, SyntaxError):
                     pass
 
@@ -75,8 +75,8 @@ class Module():
             modules.sort()
             for module in modules:
                 try:
-                    debug(_('Executing hook %(hook)s from module %(mod)s' %
-                          {'hook': hook, 'mod': module}))
+                    debug(_('Executing hook %(hook)s from module %(mod)s') %
+                          {'hook': hook, 'mod': module})
                     exec('self.instances["%s"].%s(args)' % (module, hook))
                 except AttributeError:
                     pass

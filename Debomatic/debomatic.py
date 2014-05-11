@@ -148,12 +148,12 @@ class Debomatic(Daemon):
                 b = FullBuild((self.opts, self.rtopts, self.conffile),
                               package=filename)
                 if self.pool.add_task(b.run, filename):
-                    debug(_('Thread for %s scheduled' % filename))
+                    debug(_('Thread for %s scheduled') % filename)
             elif filename.endswith('.commands'):
                 c = Command((self.opts, self.rtopts, self.conffile),
                             self.pool, filename)
                 if self.commandpool.add_task(c.process_command, filename):
-                    debug(_('Thread for %s scheduled' % filename))
+                    debug(_('Thread for %s scheduled') % filename)
 
     def setlog(self, fmt, level='INFO'):
         loglevels = {'CRITICAL': CRITICAL,

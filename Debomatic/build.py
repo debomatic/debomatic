@@ -57,11 +57,11 @@ class Build:
             debug(_('Simple build routine launched'))
         if self.dscfile:
             self.files.add(self.dscfile)
-            debug(_('File %s added' % self.dscfile))
+            debug(_('File %s added') % self.dscfile)
         self.parse_distribution_options()
         if self.distribution in self.runtime_option('distblacklist'):
             self.remove_files()
-            error(_('Distribution %s is disabled' % self.distribution))
+            error(_('Distribution %s is disabled') % self.distribution)
             raise RuntimeError
         self.fetch_missing_files()
         try:
@@ -157,9 +157,9 @@ class Build:
                                       (self.distopts['origin'], component,
                                        findall('^lib\S|^\S', packagename)[0],
                                        packagename, entry))
-                    debug(_('Requesting URL %s' % request.get_full_url()))
+                    debug(_('Requesting URL %s') % request.get_full_url())
                     try:
-                        debug(_('Downloading missing %s' % entry))
+                        debug(_('Downloading missing %s') % entry)
                         data = urlopen(request).read()
                         break
                     except (HTTPError, URLError):
@@ -170,7 +170,7 @@ class Build:
             if not (os.path.join(self.packagedir, entry)) in self.files:
                 entry = os.path.join(self.packagedir, entry)
                 self.files.add(entry)
-                debug(_('File %s added' % entry))
+                debug(_('File %s added') % entry)
 
     def get_build_options(self):
         if self.debopts:
@@ -241,11 +241,11 @@ class Build:
         gpgfile = os.path.join(self.buildpath, 'gpg', distribution)
         if not os.path.exists(gpgfile):
             self.cmd = 'create'
-            debug(_('%s chroot must be created' % distribution))
+            debug(_('%s chroot must be created') % distribution)
             return
         if self.distribution in self.runtime_option('alwaysupdate'):
             self.cmd = 'update'
-            debug(_('%s chroot must be updated' % distribution))
+            debug(_('%s chroot must be updated') % distribution)
             return
         uri = '%s/dists/%s/Release.gpg' % (self.distopts['mirror'],
                                            distribution)
@@ -254,7 +254,7 @@ class Build:
         except (HTTPError, URLError):
             error(_('Unable to fetch %s') % uri)
             self.cmd = 'update'
-            debug(_('%s chroot must be updated' % distribution))
+            debug(_('%s chroot must be updated') % distribution)
             return
         remote_sha = sha256()
         gpgfile_sha = sha256()
@@ -264,11 +264,11 @@ class Build:
                 gpgfile_sha.update(fd.read())
         except OSError:
             self.cmd = 'create'
-            debug(_('%s chroot must be created' % distribution))
+            debug(_('%s chroot must be created') % distribution)
             return
         if remote_sha.digest() != gpgfile_sha.digest():
             self.cmd = 'update'
-            debug(_('%s chroot must be updated' % distribution))
+            debug(_('%s chroot must be updated') % distribution)
 
     def parse_distribution_options(self):
         conf = {'components': ('[^#]?COMPONENTS="?(.*[^"])"?\n', 'COMPONENTS'),
@@ -399,7 +399,7 @@ class Build:
         for pkgfile in self.files:
             if os.path.exists(pkgfile):
                 os.remove(pkgfile)
-                debug(_('File %s removed' % pkgfile))
+                debug(_('File %s removed') % pkgfile)
 
     def runtime_option(self, option):
         self.rtopts.read(self.conffile)
@@ -433,7 +433,7 @@ class FullBuild(Build):
         self.full = True
         self.packagepath = os.path.join(self.packagedir, self.package)
         self.files.add(self.packagepath)
-        debug(_('File %s added' % self.packagepath))
+        debug(_('File %s added') % self.packagepath)
         info(_('Processing %s') % self.package)
         try:
             with open(self.packagepath, 'r') as fd:
@@ -445,7 +445,7 @@ class FullBuild(Build):
             for entry in findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)', data):
                 entry = os.path.join(self.packagedir, entry)
                 self.files.add(entry)
-                debug(_('File %s added' % entry))
+                debug(_('File %s added') % entry)
         except IndexError:
             error(_('Bad .changes file: %s') % self.packagepath)
             raise RuntimeError
