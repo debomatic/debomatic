@@ -60,7 +60,7 @@ class Daemon:
         os.dup2(si.fileno(), stdin.fileno())
         os.dup2(so.fileno(), stdout.fileno())
         os.dup2(se.fileno(), stderr.fileno())
-        on_exit(self._on_quit)
+        on_exit(self._quit)
         old_log = getLogger()
         if old_log.handlers:
             for handler in old_log.handlers:
@@ -71,25 +71,18 @@ class Daemon:
         self.launcher()
 
     def _get_pid(self):
-        self.pidfile = ('/var/run/debomatic-%s.pid' %
-                        self._get_sha256(self.packagedir))
+        self.pidfile = ('/var/run/debomatic-%s' %
+                        self._sha256(self.packagedir))
         try:
             with open(self.pidfile, 'r') as fd:
                 self.pid = int(fd.read().strip())
         except (IOError, ValueError):
             self.pid = None
 
-    def _set_pid(self):
-        self.pidfile = ('/var/run/debomatic-%s.pid' %
-                        self._get_sha256(self.packagedir))
-        pid = str(os.getpid())
-        with open(self.pidfile, 'w+') as fd:
-            fd.write('%s\n' % pid)
-
     def _lock(self, wait=False):
         self.fd = None
         self.lockfile = ('/var/run/debomatic-%s.lock' %
-                         self._get_sha256(self.packagedir))
+                         self._sha256(self.packagedir))
         try:
             self.fd = open(self.lockfile, 'w')
             flags = LOCK_EX if wait else LOCK_EX | LOCK_NB
@@ -99,15 +92,7 @@ class Daemon:
                 self.fd.close()
             raise ex
 
-    def _unlock(self):
-        if self.fd:
-            flock(self.fd, LOCK_UN)
-            self.fd.close()
-            self.fd = None
-        if os.path.isfile(self.lockfile):
-            os.unlink(self.lockfile)
-
-    def _on_quit(self, signum=None, frame=None):
+    def _quit(self, signum=None, frame=None):
         info(_('Waiting for threads to complete...'))
         self.commandpool.wait_completion()
         self.pool.wait_completion()
@@ -118,24 +103,25 @@ class Daemon:
         os.unlink(self.pidfile)
         exit()
 
-    def _get_sha256(self, value):
+    def _set_pid(self):
+        self.pidfile = ('/var/run/debomatic-%s' %
+                        self._sha256(self.packagedir))
+        pid = str(os.getpid())
+        with open(self.pidfile, 'w+') as fd:
+            fd.write('%s\n' % pid)
+
+    def _sha256(self, value):
         lock_sha = sha256()
         lock_sha.update(value.encode('utf-8'))
         return lock_sha.hexdigest()
 
-    def startup(self):
-        try:
-            self._lock()
-        except (OSError, IOError):
-            error(_('Another instance is running, aborting'))
-            raise RuntimeError
-        self._set_pid()
-        signal(SIGINT, self._on_quit)
-        signal(SIGTERM, self._on_quit)
-        if self.daemonize:
-            self._daemonize()
-        else:
-            self.launcher()
+    def _unlock(self):
+        if self.fd:
+            flock(self.fd, LOCK_UN)
+            self.fd.close()
+            self.fd = None
+        if os.path.isfile(self.lockfile):
+            os.unlink(self.lockfile)
 
     def shutdown(self):
         self._get_pid()
@@ -152,6 +138,20 @@ class Daemon:
                     os.unlink(self.pidfile)
             else:
                 error(err)
+
+    def startup(self):
+        try:
+            self._lock()
+        except (OSError, IOError):
+            error(_('Another instance is running, aborting'))
+            raise RuntimeError
+        self._set_pid()
+        signal(SIGINT, self._quit)
+        signal(SIGTERM, self._quit)
+        if self.daemonize:
+            self._daemonize()
+        else:
+            self.launcher()
 
 
 class Job(Thread):
