@@ -47,7 +47,7 @@ class GPG:
                 return
         gpgresult = Popen(['gpgv', '--keyring', self.keyring, self.filename],
                           stderr=PIPE).communicate()[1]
-        signature = findall('Good signature from "(.*) <(.*)>.*"', gpgresult)
+        signature = findall(b'Good signature from "(.*) <(.*)>.*"', gpgresult)
         if signature:
             self.sig = signature[0]
         else:

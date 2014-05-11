@@ -59,7 +59,7 @@ class Module():
                     exec('self.instances["%s"] = DebomaticModule_%s()' %
                          (module, module))
                     debug(_('Module %s loaded' % module))
-                except NameError:
+                except (NameError, SyntaxError):
                     pass
 
     def execute_hook(self, hook, args):

@@ -120,7 +120,7 @@ class Daemon:
 
     def _get_sha256(self, value):
         lock_sha = sha256()
-        lock_sha.update(value)
+        lock_sha.update(value.encode('utf-8'))
         return lock_sha.hexdigest()
 
     def startup(self):

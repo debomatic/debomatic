@@ -131,7 +131,7 @@ class Command():
             self.fetch_dsc()
             if self.data:
                 dsc = os.path.join(self.packagedir, self.dscname)
-                with open(dsc, 'w') as fd:
+                with open(dsc, 'wb') as fd:
                     fd.write(self.data)
                 b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
                           distribution=self.target, extrabd=self.extrabd)
@@ -152,7 +152,7 @@ class Command():
             self.fetch_dsc()
             if self.data:
                 dsc = os.path.join(self.packagedir, self.dscname)
-                with open(dsc, 'w') as fd:
+                with open(dsc, 'wb') as fd:
                     fd.write(self.data)
                 b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
                           distribution=self.target, debopts=self.debopts)
@@ -172,7 +172,7 @@ class Command():
             self.fetch_dsc()
             if self.data:
                 dsc = os.path.join(self.packagedir, self.dscname)
-                with open(dsc, 'w') as fd:
+                with open(dsc, 'wb') as fd:
                     fd.write(self.data)
                 b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
                           distribution=self.target, origin=self.origin)

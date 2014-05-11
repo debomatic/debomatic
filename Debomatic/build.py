@@ -165,7 +165,7 @@ class Build:
                     except (HTTPError, URLError):
                         data = None
                 if data:
-                    with open(os.path.join(self.packagedir, entry), 'w') as e:
+                    with open(os.path.join(self.packagedir, entry), 'wb') as e:
                         e.write(data)
             if not (os.path.join(self.packagedir, entry)) in self.files:
                 entry = os.path.join(self.packagedir, entry)
@@ -423,7 +423,7 @@ class Build:
             except (HTTPError, URLError):
                 error(_('Unable to fetch %s') % uri)
                 raise RuntimeError
-            with open(gpgfile, 'w') as fd:
+            with open(gpgfile, 'wb') as fd:
                 fd.write(remote)
 
 
