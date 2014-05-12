@@ -20,7 +20,7 @@
 import os
 from configparser import ConfigParser
 from argparse import ArgumentParser
-from logging import basicConfig as log, debug, error, getLogger, info
+from logging import basicConfig as log, debug, error, getLogger, info, warning
 from logging import CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET
 from signal import signal, SIGINT, SIGTERM
 from sys import stderr
@@ -155,13 +155,17 @@ class Debomatic(Process):
                 if self.commandpool.add_task(c.process_command, filename):
                     debug(_('Thread for %s scheduled') % filename)
 
-    def setlog(self, fmt, level='INFO'):
-        loglevels = {'CRITICAL': CRITICAL,
-                     'ERROR': ERROR,
-                     'WARNING': WARNING,
-                     'INFO': INFO,
-                     'DEBUG': DEBUG,
-                     'NOTSET': NOTSET}
+    def setlog(self, fmt, level='info'):
+        loglevels = {'critical': CRITICAL,
+                     'error': ERROR,
+                     'warning': WARNING,
+                     'info': INFO,
+                     'debug': DEBUG,
+                     'notset': NOTSET}
+        level = level.lower()
+        if level not in loglevels:
+            warning(_('Log level not valid, defaulting to "info"'))
+            level = 'info'
         old_log = getLogger()
         if old_log.handlers:
             for handler in old_log.handlers:
