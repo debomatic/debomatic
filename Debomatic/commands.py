@@ -135,7 +135,7 @@ class Command():
                     fd.write(self.data)
                 b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
                           distribution=self.target, extrabd=self.extrabd)
-                if self.pool.add_task(b.build, dsc):
+                if self.pool.schedule(b.build):
                     debug(_('Thread for %s scheduled') % os.path.basename(dsc))
 
     def process_porter(self, packages):
@@ -156,7 +156,7 @@ class Command():
                     fd.write(self.data)
                 b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
                           distribution=self.target, debopts=self.debopts)
-                if self.pool.add_task(b.build, dsc):
+                if self.pool.schedule(b.build):
                     debug(_('Thread for %s scheduled') % os.path.basename(dsc))
 
     def process_rebuild(self, packages):
@@ -176,7 +176,7 @@ class Command():
                     fd.write(self.data)
                 b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
                           distribution=self.target, origin=self.origin)
-                if self.pool.add_task(b.build, dsc):
+                if self.pool.schedule(b.build):
                     debug(_('Thread for %s scheduled') % os.path.basename(dsc))
 
     def process_rm(self, filesets):

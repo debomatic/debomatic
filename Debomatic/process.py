@@ -18,13 +18,13 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
+from concurrent.futures import as_completed, ThreadPoolExecutor
 from atexit import register as on_exit
 from fcntl import flock, LOCK_EX, LOCK_NB, LOCK_UN
 from hashlib import sha256
 from logging import basicConfig as log, debug, error, getLogger, info, INFO
 from signal import signal, SIGINT, SIGTERM
 from sys import stdin, stdout, stderr
-from threading import Thread
 from time import sleep
 from traceback import print_exc
 from queue import Queue
@@ -94,8 +94,8 @@ class Process:
 
     def _quit(self, signum=None, frame=None):
         info(_('Waiting for threads to complete...'))
-        self.commandpool.wait_completion()
-        self.pool.wait_completion()
+        self.pool.wait()
+        self.commandpool.wait()
         debug(_('Shutdown hooks launched'))
         self.mod_sys.execute_hook('on_quit', {})
         debug(_('Shutdown hooks finished'))
@@ -154,50 +154,23 @@ class Process:
             self.launcher()
 
 
-class Job(Thread):
-
-    def __init__(self, tasks):
-        Thread.__init__(self)
-        self.tasks = tasks
-        self.daemon = True
-        self.start()
-
-    def run(self):
-        while True:
-            func, args, kargs, jobs = self.tasks.get()
-            try:
-                func()
-            except (RuntimeError, SystemExit):
-                pass
-            except:
-                print_exc()
-            try:
-                jobs.remove(args)
-            except KeyError:
-                pass
-            self.tasks.task_done()
-
-
 class ThreadPool:
 
-    def __init__(self, num_threads=1):
-        self.jobs = set()
-        self.tasks = Queue(num_threads)
-        for i in range(num_threads):
-            Job(self.tasks)
+    def __init__(self, workers=1):
+        self._jobs = []
+        self._pool = ThreadPoolExecutor(workers)
 
-    def add_task(self, func, *args, **kargs):
-        if not args in self.jobs:
-            debug(_('Scheduling %(func)s with parameter %(parm)s') %
-                  {'func': func.__name__, 'parm': args[0]})
-            self.jobs.add(args)
-            self.tasks.put((func, args, kargs, self.jobs))
-            debug(_('Queue size: %d' % self.tasks.qsize()))
-            for queued in self.tasks.queue:
-                debug(_('   -> function %(func)s with parameter %(parm)s') %
-                      {'func': queued[0].__name__, 'parm': queued[1][0]})
-            return True
-        return False
+    def _finish(self, job):
+        try:
+            self._jobs.remove(job)
+        except ValueError:
+            pass
 
-    def wait_completion(self):
-        self.tasks.join()
+    def schedule(self, func):
+        job = self._pool.submit(func)
+        job.add_done_callback(self._finish)
+        self._jobs.append(job)
+
+    def wait(self):
+        for job in as_completed(self._jobs):
+            job.result()
