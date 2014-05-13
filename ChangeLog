@@ -1,5 +1,13 @@
 0.12
+* Converted to Python 3
 * New builddep command
+* Support building for foreign architectures
+* Per-packagedir lock files
+* Chroot maintenance hooks
+* Improved logging subsystem
+* Improved Repository plugin
+* systemd support
+* Several bugfixes
 
 0.11 "lazy" (2013-06-05)
 * Piuparts module
