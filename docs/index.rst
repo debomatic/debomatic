@@ -265,14 +265,12 @@ restarted to pick any change to one of these options.
 
  Suggested value: ``/var/log/debomatic.log``
 
-* ``logverbosity``
+* ``loglevel``
 
  This option indicates which kind of debug messages will be displayed. There
- are three levels: level 1 is for standard information, level 2 also includes
- chroot information, level 3 is for debugging information. Set this value to
- 0 to disable logging completely.
+ are four levels: ``error``, ``warning``, ``info``, and ``debug``.
 
- Suggested value: ``1``
+ Suggested value: ``info``
 
 gpg section
 ...........

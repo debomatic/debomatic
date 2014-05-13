@@ -65,8 +65,8 @@ class Process:
         if old_log.handlers:
             for handler in old_log.handlers:
                 old_log.removeHandler(handler)
-        log(filename=self.logfile,
-            format='%(asctime)s %(levelname)-8s %(message)s', level=INFO)
+        log(filename=self.logfile, level=self.loglevel,
+            format='%(asctime)s %(levelname)-8s %(message)s')
         self._set_pid()
         self.launcher()
 

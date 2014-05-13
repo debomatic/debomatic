@@ -21,7 +21,7 @@ import os
 from configparser import ConfigParser
 from argparse import ArgumentParser
 from logging import basicConfig as log, debug, error, getLogger, info, warning
-from logging import CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET
+from logging import ERROR, WARNING, INFO, DEBUG
 from signal import signal, SIGINT, SIGTERM
 from sys import stderr
 from time import sleep
@@ -66,7 +66,7 @@ class Debomatic(Process):
             self.shutdown()
             exit()
         self.setlog('%(levelname)s: %(message)s',
-                    self.opts.get('default', 'logverbosity'))
+                    self.opts.get('default', 'loglevel'))
         debug(_('Startup hooks launched'))
         self.mod_sys.execute_hook('on_start', {})
         debug(_('Startup hooks finished'))
@@ -79,7 +79,7 @@ class Debomatic(Process):
     def default_options(self):
         defaultoptions = ('builder', 'debootstrap', 'packagedir', 'configdir',
                           'architecture', 'maxbuilds', 'pbuilderhooks',
-                          'inotify', 'sleep', 'logfile', 'logverbosity')
+                          'inotify', 'sleep', 'logfile', 'loglevel')
         if not self.conffile:
             error(_('Configuration file has not been specified'))
             exit(1)
@@ -156,18 +156,17 @@ class Debomatic(Process):
                 debug(_('Thread for %s scheduled') % filename)
 
     def setlog(self, fmt, level='info'):
-        loglevels = {'critical': CRITICAL,
-                     'error': ERROR,
+        loglevels = {'error': ERROR,
                      'warning': WARNING,
                      'info': INFO,
-                     'debug': DEBUG,
-                     'notset': NOTSET}
+                     'debug': DEBUG}
         level = level.lower()
         if level not in loglevels:
             warning(_('Log level not valid, defaulting to "info"'))
             level = 'info'
+        self.loglevel = loglevels[level]
         old_log = getLogger()
         if old_log.handlers:
             for handler in old_log.handlers:
                 old_log.removeHandler(handler)
-        log(format=fmt, level=loglevels[level])
+        log(level=self.loglevel, format=fmt)
