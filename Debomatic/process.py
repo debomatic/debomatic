@@ -42,13 +42,6 @@ class Process:
         os.chdir('/')
         os.setsid()
         os.umask(0)
-        try:
-            pid = os.fork()
-            if pid > 0:
-                exit()
-        except OSError as e:
-            error(_('Error entering daemon mode: %s') % e.strerror)
-            exit()
         stdout.flush()
         stderr.flush()
         si = open(os.devnull, 'r')
