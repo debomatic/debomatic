@@ -20,10 +20,8 @@
 import os
 from configparser import ConfigParser
 from argparse import ArgumentParser
-from logging import basicConfig as log, debug, error, getLogger, info, warning
+from logging import basicConfig as log, debug, error, getLogger, warning
 from logging import ERROR, WARNING, INFO, DEBUG
-from signal import signal, SIGINT, SIGTERM
-from sys import stderr
 from time import sleep
 
 from .build import FullBuild

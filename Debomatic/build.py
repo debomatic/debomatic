@@ -23,7 +23,7 @@ from ast import literal_eval
 from hashlib import sha256
 from logging import debug, error, info
 from re import findall
-from subprocess import call, check_output, PIPE
+from subprocess import call, check_output
 from time import strftime
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError

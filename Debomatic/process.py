@@ -22,12 +22,9 @@ from concurrent.futures import as_completed, ThreadPoolExecutor
 from atexit import register as on_exit
 from fcntl import flock, LOCK_EX, LOCK_NB, LOCK_UN
 from hashlib import sha256
-from logging import basicConfig as log, debug, error, getLogger, info, INFO
+from logging import basicConfig as log, debug, error, getLogger, info
 from signal import signal, SIGINT, SIGTERM
 from sys import stdin, stdout, stderr
-from time import sleep
-from traceback import print_exc
-from queue import Queue
 
 
 class Process:
