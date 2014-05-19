@@ -449,12 +449,15 @@ class FullBuild(Build):
         except IndexError:
             error(_('Bad .changes file: %s') % self.packagepath)
             raise RuntimeError
-        gpg = GPG(self.opts, self.packagepath)
-        if gpg.gpg:
-            if gpg.sig:
-                self.uploader = gpg.sig
-            else:
-                self.remove_files()
-                error(gpg.error)
-                raise RuntimeError
-        self.build()
+        try:
+            with GPG(self.opts, self.packagepath) as gpg:
+                try:
+                    self.uploader = gpg.check()
+                except RuntimeError:
+                    self.remove_files()
+                    error(gpg.error())
+                    raise RuntimeError
+                finally:
+                    self.build()
+        except IOError:
+            pass

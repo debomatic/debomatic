@@ -95,12 +95,16 @@ class Command():
 
     def process_command(self):
         info(_('Processing %s') % os.path.basename(self.cmdfile))
-        gpg = GPG(self.opts, self.cmdfile)
-        if gpg.gpg:
-            if not gpg.sig:
-                os.remove(self.cmdfile)
-                error(gpg.error)
-                return
+        try:
+            with GPG(self.opts, self.cmdfile) as gpg:
+                try:
+                    gpg.check()
+                except RuntimeError:
+                    os.remove(self.cmdfile)
+                    error(gpg.error())
+                    return
+        except IOerror:
+            return
         with open(self.cmdfile, 'r') as fd:
             cmd = fd.read()
         os.remove(self.cmdfile)
