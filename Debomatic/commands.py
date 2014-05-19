@@ -103,7 +103,7 @@ class Command():
                     os.remove(self.cmdfile)
                     error(gpg.error())
                     return
-        except IOerror:
+        except IOError:
             return
         with open(self.cmdfile, 'r') as fd:
             cmd = fd.read()

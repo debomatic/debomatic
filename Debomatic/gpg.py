@@ -40,7 +40,6 @@ class GPG:
         flock(self._fd, LOCK_EX | LOCK_NB)
         return self
 
-
     def __exit__(self, exc_type, exc_value, traceback):
         flock(self._fd, LOCK_UN)
         self._fd.close()
