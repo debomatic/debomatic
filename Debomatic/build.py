@@ -84,8 +84,8 @@ class Build:
         builder = self.opts.get('default', 'builder')
         architecture = self.opts.get('default', 'architecture')
         if architecture == 'system':
-            architecture = check_output(['dpkg-architecture',
-                                         '-qDEB_BUILD_ARCH']).strip()
+            b_arch = check_output(['dpkg-architecture', '-qDEB_BUILD_ARCH'])
+            architecture = b_arch.strip().decode('utf-8')
         debug(_('Pre-build hooks launched'))
         mod.execute_hook('pre_build', {'cfg': self.configfile,
                                        'directory': self.buildpath,
@@ -335,8 +335,8 @@ class Build:
         builder = self.opts.get('default', 'builder')
         architecture = self.opts.get('default', 'architecture')
         if architecture == 'system':
-            architecture = check_output(['dpkg-architecture',
-                                         '-qDEB_BUILD_ARCH']).strip()
+            b_arch = check_output(['dpkg-architecture', '-qDEB_BUILD_ARCH'])
+            architecture = b_arch.strip().decode('utf-8')
         debootstrap = self.opts.get('default', 'debootstrap')
         mod = Module((self.opts, self.rtopts, self.conffile))
         debug(_('Pre-chroot maintenance hooks launched'))

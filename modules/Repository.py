@@ -51,7 +51,7 @@ class DebomaticModule_Repository:
         if not os.path.isfile(self.af):
             return
         distribution = args['distribution']
-        arch = args['architecture'].decode('utf-8')
+        arch = args['architecture']
         archive = args['directory']
         pool = os.path.join(archive, 'pool')
         dists = os.path.join(archive, 'dists', distribution)

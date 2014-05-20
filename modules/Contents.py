@@ -40,5 +40,5 @@ class DebomaticModule_Contents:
                 break
         if changes_file:
             with open(contents_file, 'w') as fd:
-                call([self.debc, '-a%s' % args['architecture'].decode('utf-8'),
-                      changes_file], stdout=fd)
+                call([self.debc, '-a%s' % args['architecture'], changes_file],
+                     stdout=fd)
