@@ -80,7 +80,7 @@ class Build:
         if not os.path.exists(builddir):
             os.mkdir(builddir)
         if self.uploader:
-            uploader_email = self.uploader[1]
+            uploader_email = self.uploader[1].decode('utf-8')
         builder = self.opts.get('default', 'builder')
         architecture = self.opts.get('default', 'architecture')
         if architecture == 'system':
