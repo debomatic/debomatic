@@ -58,7 +58,6 @@ class Process:
         log(filename=self.logfile, level=self.loglevel,
             format='%(asctime)s %(levelname)-8s %(message)s')
         self._set_pid()
-        self.launcher()
 
     def _get_pid(self):
         self.pidfile = ('/var/run/debomatic-%s' %
@@ -140,8 +139,7 @@ class Process:
         signal(SIGTERM, self._quit)
         if self.daemonize:
             self._daemonize()
-        else:
-            self.launcher()
+        self.launcher()
 
 
 class ThreadPool:

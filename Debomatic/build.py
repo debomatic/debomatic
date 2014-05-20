@@ -453,11 +453,10 @@ class FullBuild(Build):
             with GPG(self.opts, self.packagepath) as gpg:
                 try:
                     self.uploader = gpg.check()
+                    self.build()
                 except RuntimeError:
                     self.remove_files()
                     error(gpg.error())
                     raise RuntimeError
-                finally:
-                    self.build()
         except IOError:
             pass
