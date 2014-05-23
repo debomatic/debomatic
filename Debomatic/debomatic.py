@@ -18,28 +18,23 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 from argparse import ArgumentParser
-from datetime import datetime
-from daemon import DaemonContext, pidlockfile
-from hashlib import sha256
-from signal import signal, SIGINT, SIGTERM
-from sys import stderr
+from logging import basicConfig as log, debug, error, getLogger, warning
+from logging import ERROR, WARNING, INFO, DEBUG
 from time import sleep
 
-from build import FullBuild
-from commands import Command
-from modules import Module
-from threadpool import ThreadPool
+from .build import FullBuild
+from .commands import Command
+from .modules import Module
+from .process import Process, ThreadPool
 
 
-class Debomatic:
+class Debomatic(Process):
 
     def __init__(self):
-        self.daemon = True
-        self.log = Output()
-        self.e = self.log.e
-        self.w = self.log.w
+        self.daemonize = True
+        self.setlog('%(levelname)s: %(message)s')
         self.conffile = None
         self.configvers = '012a'
         self.opts = ConfigParser()
@@ -53,64 +48,57 @@ class Debomatic:
                             help='terminate Deb-o-Matic processes')
         args = parser.parse_args()
         if os.getuid():
-            self.e(_('You must run Deb-o-Matic as root'))
+            error(_('You must run Deb-o-Matic as root'))
+            exit(1)
         if args.configfile:
             self.conffile = args.configfile[0]
         if args.no_daemon:
-            self.daemon = False
+            self.daemonize = False
         self.default_options()
         self.packagedir = self.opts.get('default', 'packagedir')
-        lock_sha = sha256()
-        lock_sha.update(self.packagedir)
-        self.lockfilepath = '/var/run/debomatic-' + lock_sha.hexdigest()
-        self.lockfile = pidlockfile.PIDLockFile(self.lockfilepath)
-        self.w(_('Lockfile is %s' % self.lockfilepath), 3)
+        self.pool = ThreadPool(self.opts.getint('default', 'maxbuilds'))
+        self.commandpool = ThreadPool()
+        self.logfile = self.opts.get('default', 'logfile')
+        self.mod_sys = Module((self.opts, self.rtopts, self.conffile))
         if args.quit_process:
-            self.quit_process()
-        if self.lockfile.is_locked():
-            self.e(_('Another instance is running, aborting'))
-        self.log.logverbosity = self.opts.getint('default', 'logverbosity')
-        self.mod_sys = Module((self.log, self.opts,
-                               self.rtopts, self.conffile))
-        self.w(_('Startup hooks launched'), 2)
+            self.shutdown()
+            exit()
+        self.setlog('%(levelname)s: %(message)s',
+                    self.opts.get('default', 'loglevel'))
+        debug(_('Startup hooks launched'))
         self.mod_sys.execute_hook('on_start', {})
-        self.w(_('Startup hooks finished'), 2)
-        signal(SIGINT, self.quit)
-        signal(SIGTERM, self.quit)
-        if self.daemon:
-            with open(self.opts.get('default', 'logfile'), 'a') as fd:
-                with DaemonContext(pidfile=self.lockfile, stdout=fd, stderr=fd,
-                                   signal_map={SIGTERM: self.quit}):
-                    self.w(_('Entering daemon mode'), 2)
-                    self.launcher()
-        else:
-            self.lockfile.acquire()
-            self.launcher()
+        debug(_('Startup hooks finished'))
+        try:
+            self.startup()
+        except RuntimeError:
+            error(_('Another instance is running, aborting'))
+            exit(1)
 
     def default_options(self):
         defaultoptions = ('builder', 'debootstrap', 'packagedir', 'configdir',
                           'architecture', 'maxbuilds', 'pbuilderhooks',
-                          'inotify', 'sleep', 'logfile', 'logverbosity')
+                          'inotify', 'sleep', 'logfile', 'loglevel')
         if not self.conffile:
-            self.e(_('Configuration file has not been specified'))
+            error(_('Configuration file has not been specified'))
+            exit(1)
         if not os.path.exists(self.conffile):
-            self.e(_('Configuration file %s does not exist') % self.conffile)
+            error(_('Configuration file %s does not exist') % self.conffile)
+            exit(1)
         self.opts.read(self.conffile)
         if (not self.opts.has_option('internals', 'configversion') or
                 not self.opts.get('internals', 'configversion') ==
                 self.configvers):
-            self.e(_('Configuration file is not at version %s') %
-                   self.configvers)
+            error(_('Configuration file is not at version %s') %
+                  self.configvers)
+            exit(1)
         for opt in defaultoptions:
             if (not self.opts.has_option('default', opt) or
                     not self.opts.get('default', opt)):
-                self.e(_('Set "%(opt)s" in %(conffile)s') %
-                       {'opt': opt, 'conffile': self.conffile})
+                error(_('Set "%(opt)s" in %(conffile)s') %
+                      {'opt': opt, 'conffile': self.conffile})
+                exit(1)
 
     def launcher(self):
-        self.pool = ThreadPool(self.log,
-                               self.opts.getint('default', 'maxbuilds'))
-        self.commandpool = ThreadPool(self.log, 1)
         self.queue_files()
         if self.opts.getint('default', 'inotify'):
             try:
@@ -136,11 +124,11 @@ class Debomatic:
         wm = pyinotify.WatchManager()
         notifier = pyinotify.Notifier(wm, PE(self))
         wm.add_watch(self.packagedir, pyinotify.IN_CLOSE_WRITE)
-        self.w(_('Inotify loop started'), 2)
+        debug(_('Inotify loop started'))
         notifier.loop()
 
     def launcher_timer(self):
-        self.w(_('Timer loop started'), 2)
+        debug(_('Timer loop started'))
         while True:
             sleep(self.opts.getint('default', 'sleep'))
             self.queue_files()
@@ -150,65 +138,33 @@ class Debomatic:
             try:
                 filelist = os.listdir(self.packagedir)
             except OSError:
-                self.lockfile.release()
-                self.e(_('Unable to access %s directory') % self.packagedir)
+                self.lockfile.unlock()
+                error(_('Unable to access %s directory') % self.packagedir)
+                exit(1)
         for filename in filelist:
             if filename.endswith('.changes'):
                 b = FullBuild((self.opts, self.rtopts, self.conffile),
-                              self.log, package=filename)
-                if self.pool.add_task(b.run, filename):
-                    self.w(_('Thread for %s scheduled' % filename), 2)
+                              package=filename)
+                self.pool.schedule(b.run)
+                debug(_('Thread for %s scheduled') % filename)
             elif filename.endswith('.commands'):
                 c = Command((self.opts, self.rtopts, self.conffile),
-                            self.log, self.pool, filename)
-                if self.commandpool.add_task(c.process_command, filename):
-                    self.w(_('Thread for %s scheduled' % filename), 2)
+                            self.pool, filename)
+                self.commandpool.schedule(c.process_command)
+                debug(_('Thread for %s scheduled') % filename)
 
-    def quit(self, signum, frame):
-        self.w(_('Waiting for threads to complete...'))
-        self.commandpool.wait_completion()
-        self.pool.wait_completion()
-        self.w(_('Shutdown hooks launched'), 2)
-        self.mod_sys.execute_hook('on_quit', {})
-        self.w(_('Shutdown hooks finished'), 2)
-        if not self.daemon:
-            self.lockfile.release()
-        exit()
-
-    def quit_process(self):
-        if self.lockfile.is_locked():
-            try:
-                pid = pidlockfile.read_pid_from_pidfile(self.lockfilepath)
-                try:
-                    os.kill(pid, 0)
-                except OSError:
-                    pid = None
-            except pidlockfile.PIDFileParseError:
-                pid = None
-            if pid:
-                self.w(_('Waiting for threads to complete...'))
-                os.kill(pid, SIGTERM)
-                self.lockfile.acquire()
-                self.lockfile.release()
-            else:
-                self.lockfile.break_lock()
-                self.w(_('Obsolete lock removed'))
-        exit()
-
-
-class Output:
-
-    def __init__(self):
-        self.logverbosity = 1
-
-    def w(self, msg, level=1):
-        if self.logverbosity >= level:
-            stderr.write('%s: %s\n' % (datetime.now().ctime(), msg))
-
-    def e(self, msg):
-        self.w(msg)
-        exit()
-
-    def t(self, msg):
-        self.w(msg)
-        raise RuntimeError
+    def setlog(self, fmt, level='info'):
+        loglevels = {'error': ERROR,
+                     'warning': WARNING,
+                     'info': INFO,
+                     'debug': DEBUG}
+        level = level.lower()
+        if level not in loglevels:
+            warning(_('Log level not valid, defaulting to "info"'))
+            level = 'info'
+        self.loglevel = loglevels[level]
+        old_log = getLogger()
+        if old_log.handlers:
+            for handler in old_log.handlers:
+                old_log.removeHandler(handler)
+        log(level=self.loglevel, format=fmt)

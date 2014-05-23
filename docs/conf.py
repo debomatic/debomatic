@@ -24,8 +24,8 @@ extensions = []
 templates_path = ['_templates']
 source_suffix = '.rst'
 master_doc = 'index'
-project = u'Deb-o-Matic'
-copyright = u'2007-2014, Luca Falavigna'
+project = 'Deb-o-Matic'
+copyright = '2007-2014, Luca Falavigna'
 version = '0.12'
 release = '0.12'
 exclude_patterns = ['_build']
@@ -35,11 +35,11 @@ html_static_path = ['_static']
 html_use_index = True
 htmlhelp_basename = 'Deb-o-Maticdoc'
 latex_documents = [
-    ('index', 'Deb-o-Matic.tex', u'Deb-o-Matic Documentation',
-     u'Luca Falavigna', 'manual')]
+    ('index', 'Deb-o-Matic.tex', 'Deb-o-Matic Documentation',
+     'Luca Falavigna', 'manual')]
 latex_elements = {
     'classoptions': ',oneside',
     'babel': '\\usepackage[english]{babel}'}
 man_pages = [
-    ('index', 'deb-o-matic', u'Deb-o-Matic Documentation',
-     [u'Luca Falavigna'], 1)]
+    ('index', 'deb-o-matic', 'Deb-o-Matic Documentation',
+     ['Luca Falavigna'], 1)]

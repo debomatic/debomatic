@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # Deb-o-Matic
 #
 # Copyright (C) 2007-2014 Luca Falavigna

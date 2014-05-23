@@ -20,18 +20,18 @@
 import os
 from ast import literal_eval
 from glob import glob
+from logging import debug, error, info
 from re import findall, sub
-from urllib2 import Request, urlopen, HTTPError, URLError
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
 
-from build import Build
-from gpg import GPG
+from .build import Build
+from .gpg import GPG
 
 
 class Command():
 
-    def __init__(self, opts, log, pool, commandfile):
-        self.log = log
-        self.w = self.log.w
+    def __init__(self, opts, pool, commandfile):
         (self.opts, self.rtopts, self.conffile) = opts
         self.pool = pool
         self.configdir = self.opts.get('default', 'configdir')
@@ -47,28 +47,28 @@ class Command():
             with open(self.originconf, 'r') as fd:
                 data = fd.read()
         except IOError:
-            self.w(_('Unable to open %s') % self.originconf)
+            error(_('Unable to open %s') % self.originconf)
             return
-        for elem in conf.keys():
+        for elem in conf:
             try:
                 parms[elem] = findall(conf[elem][0], data)[0]
             except IndexError:
-                self.w(_('Please set %(parm)s in %s(conf)s') %
-                       {'parm': conf[elem][0], 'conf': self.originconf})
+                error(_('Please set %(parm)s in %s(conf)s') %
+                      {'parm': conf[elem][0], 'conf': self.originconf})
                 return
         for component in parms['components'].split():
             request = Request('%s/pool/%s/%s/%s/%s' %
                               (parms['mirror'], component,
                                findall('^lib\S|^\S', self.package)[0],
                                self.package, self.dscname))
-            self.w(_('Requesting URL %s' % request.get_full_url()), 3)
+            debug(_('Requesting URL %s') % request.get_full_url())
             try:
-                self.w(_('Downloading missing %s' % self.dscname), 2)
+                debug(_('Downloading missing %s') % self.dscname)
                 self.data = urlopen(request).read()
                 break
             except (HTTPError, URLError):
-                self.w(_('Unable to fetch %s') %
-                       '_'.join((self.package, self.version)))
+                error(_('Unable to fetch %s') %
+                      '_'.join((self.package, self.version)))
 
     def mangle_version(self, version):
         self.version = sub('^\d+\:', '', version)
@@ -83,24 +83,28 @@ class Command():
             else:
                 if isinstance(mapper, dict):
                     if self.target in mapper:
-                        self.w(_('%(mapped)s mapped as %(mapper)s') %
-                               {'mapped': self.target,
-                                'mapper': mapper[self.target]}, 2)
+                        debug(_('%(mapped)s mapped as %(mapper)s') %
+                              {'mapped': self.target,
+                               'mapper': mapper[self.target]})
                         self.target = mapper[self.target]
                     if self.origin in mapper:
-                        self.w(_('%(mapped)s mapped as %(mapper)s') %
-                               {'mapped': self.origin,
-                                'mapper': mapper[self.origin]}, 2)
+                        debug(_('%(mapped)s mapped as %(mapper)s') %
+                              {'mapped': self.origin,
+                               'mapper': mapper[self.origin]})
                         self.origin = mapper[self.origin]
 
     def process_command(self):
-        self.w(_('Processing %s') % os.path.basename(self.cmdfile))
-        gpg = GPG(self.opts, self.cmdfile)
-        if gpg.gpg:
-            if not gpg.sig:
-                os.remove(self.cmdfile)
-                self.w(gpg.error)
-                return
+        info(_('Processing %s') % os.path.basename(self.cmdfile))
+        try:
+            with GPG(self.opts, self.cmdfile) as gpg:
+                try:
+                    gpg.check()
+                except RuntimeError:
+                    os.remove(self.cmdfile)
+                    error(gpg.error())
+                    return
+        except IOError:
+            return
         with open(self.cmdfile, 'r') as fd:
             cmd = fd.read()
         os.remove(self.cmdfile)
@@ -118,7 +122,7 @@ class Command():
             self.process_rebuild(cmd_rebuild)
 
     def process_builddep(self, packages):
-        self.w(_('Performing a package rebuild with extra dependencies'), 2)
+        debug(_('Performing a package rebuild with extra dependencies'))
         for package in packages:
             self.package = package[0]
             self.mangle_version(package[1])
@@ -131,17 +135,15 @@ class Command():
             self.fetch_dsc()
             if self.data:
                 dsc = os.path.join(self.packagedir, self.dscname)
-                with open(dsc, 'w') as fd:
+                with open(dsc, 'wb') as fd:
                     fd.write(self.data)
-                b = Build((self.opts, self.rtopts, self.conffile), self.log,
-                          dsc=dsc, distribution=self.target,
-                          extrabd=self.extrabd)
-                if self.pool.add_task(b.build, dsc):
-                    self.w(_('Thread for %s scheduled' %
-                           os.path.basename(dsc)), 3)
+                b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
+                          distribution=self.target, extrabd=self.extrabd)
+                if self.pool.schedule(b.build):
+                    debug(_('Thread for %s scheduled') % os.path.basename(dsc))
 
     def process_porter(self, packages):
-        self.w(_('Performing a porter build'), 2)
+        debug(_('Performing a porter build'))
         for package in packages:
             self.package = package[0]
             self.mangle_version(package[1])
@@ -154,17 +156,15 @@ class Command():
             self.fetch_dsc()
             if self.data:
                 dsc = os.path.join(self.packagedir, self.dscname)
-                with open(dsc, 'w') as fd:
+                with open(dsc, 'wb') as fd:
                     fd.write(self.data)
-                b = Build((self.opts, self.rtopts, self.conffile), self.log,
-                          dsc=dsc, distribution=self.target,
-                          debopts=self.debopts)
-                if self.pool.add_task(b.build, dsc):
-                    self.w(_('Thread for %s scheduled' %
-                           os.path.basename(dsc)), 3)
+                b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
+                          distribution=self.target, debopts=self.debopts)
+                if self.pool.schedule(b.build):
+                    debug(_('Thread for %s scheduled') % os.path.basename(dsc))
 
     def process_rebuild(self, packages):
-        self.w(_('Performing a package rebuild'), 2)
+        debug(_('Performing a package rebuild'))
         for package in packages:
             self.package = package[0]
             self.mangle_version(package[1])
@@ -176,20 +176,18 @@ class Command():
             self.fetch_dsc()
             if self.data:
                 dsc = os.path.join(self.packagedir, self.dscname)
-                with open(dsc, 'w') as fd:
+                with open(dsc, 'wb') as fd:
                     fd.write(self.data)
-                b = Build((self.opts, self.rtopts, self.conffile), self.log,
-                          dsc=dsc, distribution=self.target,
-                          origin=self.origin)
-                if self.pool.add_task(b.build, dsc):
-                    self.w(_('Thread for %s scheduled' %
-                           os.path.basename(dsc)), 3)
+                b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
+                          distribution=self.target, origin=self.origin)
+                if self.pool.schedule(b.build):
+                    debug(_('Thread for %s scheduled') % os.path.basename(dsc))
 
     def process_rm(self, filesets):
-        self.w(_('Removing files'), 2)
+        debug(_('Removing files'))
         for files in filesets:
             for pattern in files.split():
                 pattern = os.path.basename(pattern)
                 for absfile in glob(os.path.join(self.packagedir, pattern)):
-                    self.w(_('Removing %s' % pattern), 2)
+                    debug(_('Removing %s') % pattern)
                     os.remove(absfile)

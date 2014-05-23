@@ -43,11 +43,11 @@ Build and installation requirements
 
 In order to build and install Deb-o-Matic, the following packages are required:
 
-* python (>= 2.7)
+* python3 (>= 3.2)
 
 The following packages are required to install documentation and translations:
 
-* python-sphinx
+* python3-sphinx
 * texlive-latex-base
 * texlive-latex-recommended
 * texlive-fonts-recommended
@@ -59,16 +59,15 @@ Runtime requirements
 
 In order to be able to run Deb-o-Matic, the following packages are required:
 
-* python (>= 2.7)
+* python3 (>= 3.2)
 * pbuilder or cowbuilder
 * debootstrap or cdebootstrap
-* python-daemon
-* python-lockfile
 
 To enable additional features, you may want to install these packages:
 
-* python-pyinotify (>= 0.8.6)
+* python3-pyinotify (>= 0.8.6)
 * gpgv
+* gnupg
 * lintian
 * piuparts (>= 0.45)
 * debian-archive-keyring and/or ubuntu-keyring
@@ -265,14 +264,12 @@ restarted to pick any change to one of these options.
 
  Suggested value: ``/var/log/debomatic.log``
 
-* ``logverbosity``
+* ``loglevel``
 
  This option indicates which kind of debug messages will be displayed. There
- are three levels: level 1 is for standard information, level 2 also includes
- chroot information, level 3 is for debugging information. Set this value to
- 0 to disable logging completely.
+ are four levels: ``error``, ``warning``, ``info``, and ``debug``.
 
- Suggested value: ``1``
+ Suggested value: ``info``
 
 gpg section
 ...........
@@ -395,7 +392,7 @@ modified, and must follow this guide thoroughly.
  expects to find. If it does not match the one needed by Deb-o-Matic, it
  refuses to start.
 
- This option must be set to ``011a``
+ This option must be set to ``012a``
 
 Distribution files
 ------------------

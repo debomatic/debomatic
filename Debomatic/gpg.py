@@ -18,46 +18,63 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
+from fcntl import flock, LOCK_EX, LOCK_NB, LOCK_UN
 from re import findall, DOTALL
 from subprocess import Popen, PIPE
 
 
 class GPG:
 
-    def __init__(self, opts, filename):
-        self.opts = opts
-        self.filename = filename
-        self.error = None
-        if self.opts.has_option('gpg', 'gpg'):
-            self.gpg = self.opts.getint('gpg', 'gpg')
+    def __init__(self, opts, file):
+        self._opts = opts
+        self._file = file
+        self._error = None
+        if self._opts.has_option('gpg', 'gpg'):
+            self._gpg = self._opts.getint('gpg', 'gpg')
         else:
-            self.gpg = False
-        self.sig = None
-        if self.gpg:
-            self.check_signature()
-            if self.sig:
-                self.strip_signature()
+            self._gpg = False
+        self._sig = None
 
-    def check_signature(self):
-        if self.opts.has_option('gpg', 'keyring'):
-            self.keyring = self.opts.get('gpg', 'keyring')
-            if not os.path.isfile(self.keyring):
-                self.keyring = None
-                self.error = _('Keyring not found')
-                return
-        gpgresult = Popen(['gpgv', '--keyring', self.keyring, self.filename],
+    def __enter__(self):
+        self._fd = open(self._file, 'r')
+        flock(self._fd, LOCK_EX | LOCK_NB)
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        flock(self._fd, LOCK_UN)
+        self._fd.close()
+
+    def _check_signature(self):
+        if self._opts.has_option('gpg', 'keyring'):
+            self._keyring = self._opts.get('gpg', 'keyring')
+            if not os.path.isfile(self._keyring):
+                self._keyring = None
+                self._error = _('Keyring not found')
+                raise RuntimeError
+        gpgresult = Popen(['gpgv', '--keyring', self._keyring, self._file],
                           stderr=PIPE).communicate()[1]
-        signature = findall('Good signature from "(.*) <(.*)>.*"', gpgresult)
+        signature = findall(b'Good signature from "(.*) <(.*)>.*"', gpgresult)
         if signature:
-            self.sig = signature[0]
+            self._sig = signature[0]
         else:
-            self.error = _('No valid signatures found')
+            self._error = _('No valid signatures found')
+            raise RuntimeError
 
-    def strip_signature(self):
-        with open(self.filename, 'r') as fd:
+    def _strip_signature(self):
+        with open(self._file, 'r') as fd:
             data = fd.read()
-        with open(self.filename, 'w') as fd:
+        with open(self._file, 'w') as fd:
             try:
                 fd.write(findall('\n\n(.*?)\n\n?-', data, DOTALL)[0])
             except IndexError:
                 pass
+
+    def check(self):
+        if self._gpg:
+            self._check_signature()
+            if self._sig:
+                self._strip_signature()
+        return self._sig
+
+    def error(self):
+        return self._error

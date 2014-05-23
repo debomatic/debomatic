@@ -19,13 +19,14 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
+from logging import debug
 from sys import path
 
 
 class Module():
 
     def __init__(self, opts):
-        (self.log, self.opts, self.rtopts, self.conffile) = opts
+        (self.opts, self.rtopts, self.conffile) = opts
         self.use_modules = True
         self.modules_list = set()
         if not self.opts.has_option('modules', 'modules'):
@@ -57,8 +58,8 @@ class Module():
                          (module, module))
                     exec('self.instances["%s"] = DebomaticModule_%s()' %
                          (module, module))
-                    self.log.w(_('Module %s loaded' % module), 3)
-                except NameError:
+                    debug(_('Module %s loaded') % module)
+                except (NameError, SyntaxError):
                     pass
 
     def execute_hook(self, hook, args):
@@ -69,13 +70,13 @@ class Module():
                 blist_mods = blist_mods.split()
             else:
                 blist_mods = []
-            modules = [i for i in self.instances.keys()
+            modules = [i for i in self.instances
                        if i not in blist_mods]
             modules.sort()
             for module in modules:
                 try:
-                    self.log.w(_('Executing hook %(hook)s from module %(mod)s' %
-                                 {'hook': hook, 'mod': module}), 3)
-                    exec 'self.instances["%s"].%s(args)' % (module, hook)
+                    debug(_('Executing hook %(hook)s from module %(mod)s') %
+                          {'hook': hook, 'mod': module})
+                    exec('self.instances["%s"].%s(args)' % (module, hook))
                 except AttributeError:
                     pass

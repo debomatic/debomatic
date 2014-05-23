@@ -21,22 +21,21 @@
 import os
 from ast import literal_eval
 from hashlib import sha256
+from logging import debug, error, info
 from re import findall
-from subprocess import call, check_output, PIPE
+from subprocess import call, check_output
 from time import strftime
-from urllib2 import Request, urlopen, HTTPError, URLError
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
 
-from gpg import GPG
-from modules import Module
+from .gpg import GPG
+from .modules import Module
 
 
 class Build:
 
-    def __init__(self, opts, log, package=None, dsc=None,
-                 debopts=None, distribution=None, extrabd=None, origin=None):
-        self.log = log
-        self.e = self.log.t
-        self.w = self.log.w
+    def __init__(self, opts, package=None, dsc=None, debopts=None,
+                 distribution=None, extrabd=None, origin=None):
         (self.opts, self.rtopts, self.conffile) = opts
         self.package = package
         self.dscfile = dsc
@@ -53,16 +52,17 @@ class Build:
 
     def build(self):
         if self.full:
-            self.w(_('Full build routine launched'), 2)
+            debug(_('Full build routine launched'))
         else:
-            self.w(_('Simple build routine launched'), 2)
+            debug(_('Simple build routine launched'))
         if self.dscfile:
             self.files.add(self.dscfile)
-            self.w(_('File %s added' % self.dscfile), 3)
+            debug(_('File %s added') % self.dscfile)
         self.parse_distribution_options()
         if self.distribution in self.runtime_option('distblacklist'):
             self.remove_files()
-            self.e(_('Distribution %s is disabled' % self.distribution))
+            error(_('Distribution %s is disabled') % self.distribution)
+            raise RuntimeError
         self.fetch_missing_files()
         try:
             self.setup_pbuilder()
@@ -72,21 +72,21 @@ class Build:
             self.build_package()
 
     def build_package(self):
-        mod = Module((self.log, self.opts, self.rtopts, self.conffile))
+        mod = Module((self.opts, self.rtopts, self.conffile))
         uploader_email = ''
         packageversion = os.path.splitext(os.path.basename(self.dscfile))[0]
         builddir = os.path.join(self.buildpath, 'pool', packageversion)
-        self.w(_('Building %s') % os.path.basename(self.dscfile))
+        info(_('Building %s') % os.path.basename(self.dscfile))
         if not os.path.exists(builddir):
             os.mkdir(builddir)
         if self.uploader:
-            uploader_email = self.uploader[1]
+            uploader_email = self.uploader[1].decode('utf-8')
         builder = self.opts.get('default', 'builder')
         architecture = self.opts.get('default', 'architecture')
         if architecture == 'system':
-            architecture = check_output(['dpkg-architecture',
-                                         '-qDEB_BUILD_ARCH']).strip()
-        self.w(_('Pre-build hooks launched'), 2)
+            b_arch = check_output(['dpkg-architecture', '-qDEB_BUILD_ARCH'])
+            architecture = b_arch.strip().decode('utf-8')
+        debug(_('Pre-build hooks launched'))
         mod.execute_hook('pre_build', {'cfg': self.configfile,
                                        'directory': self.buildpath,
                                        'distribution': self.distribution,
@@ -95,7 +95,7 @@ class Build:
                                        'opts': self.opts,
                                        'package': packageversion,
                                        'uploader': uploader_email})
-        self.w(_('Pre-build hooks finished'), 2)
+        debug(_('Pre-build hooks finished'))
         if builder == 'cowbuilder':
             base = '--basepath'
         else:
@@ -106,7 +106,7 @@ class Build:
                             self.get_orig_tarball()))
         with open(os.devnull, 'w') as fd:
             try:
-                self.w(_('Launching %s') % builder, 2)
+                debug(_('Launching %s') % builder)
                 call([builder, '--build', '--override-config',
                      base, '%s/%s' % (self.buildpath, self.distribution),
                      '--architecture', architecture,
@@ -122,8 +122,8 @@ class Build:
                      '--configfile', self.configfile, self.dscfile],
                      stdout=fd, stderr=fd)
             except OSError:
-                self.w(_('Unable to launch %s') % builder)
-        self.w(_('Post-build hooks launched'), 2)
+                error(_('Unable to launch %s') % builder)
+        debug(_('Post-build hooks launched'))
         mod.execute_hook('post_build', {'cfg': self.configfile,
                                         'directory': self.buildpath,
                                         'distribution': self.distribution,
@@ -132,9 +132,9 @@ class Build:
                                         'opts': self.opts,
                                         'package': packageversion,
                                         'uploader': uploader_email})
-        self.w(_('Post-build hooks finished'), 2)
+        debug(_('Post-build hooks finished'))
         self.remove_files()
-        self.w(_('Build of %s complete') % os.path.basename(self.dscfile))
+        info(_('Build of %s complete') % os.path.basename(self.dscfile))
 
     def fetch_missing_files(self):
         filename = self.dscfile if self.dscfile else self.package
@@ -146,7 +146,8 @@ class Build:
                     break
         if not self.dscfile:
             self.remove_files()
-            self.e(_('Bad .changes file: %s') % self.package)
+            error(_('Bad .changes file: %s') % self.package)
+            raise RuntimeError
         with open(self.dscfile, 'r') as fd:
             data = fd.read()
         for entry in findall('\s\w{32}\s\d+\s(\S+)', data):
@@ -156,20 +157,20 @@ class Build:
                                       (self.distopts['origin'], component,
                                        findall('^lib\S|^\S', packagename)[0],
                                        packagename, entry))
-                    self.w(_('Requesting URL %s' % request.get_full_url()), 3)
+                    debug(_('Requesting URL %s') % request.get_full_url())
                     try:
-                        self.w(_('Downloading missing %s' % entry), 2)
+                        debug(_('Downloading missing %s') % entry)
                         data = urlopen(request).read()
                         break
                     except (HTTPError, URLError):
                         data = None
                 if data:
-                    with open(os.path.join(self.packagedir, entry), 'w') as e:
+                    with open(os.path.join(self.packagedir, entry), 'wb') as e:
                         e.write(data)
             if not (os.path.join(self.packagedir, entry)) in self.files:
                 entry = os.path.join(self.packagedir, entry)
                 self.files.add(entry)
-                self.w(_('File %s added' % entry), 3)
+                debug(_('File %s added') % entry)
 
     def get_build_options(self):
         if self.debopts:
@@ -228,9 +229,9 @@ class Build:
             else:
                 if isinstance(mapper, dict):
                     if self.distribution in mapper:
-                        self.w(_('%(mapped)s mapped as %(mapper)s') %
-                               {'mapped': self.distribution,
-                                'mapper': mapper[self.distribution]}, 2)
+                        debug(_('%(mapped)s mapped as %(mapper)s') %
+                              {'mapped': self.distribution,
+                               'mapper': mapper[self.distribution]})
                         self.distribution = mapper[self.distribution]
 
     def needs_update(self):
@@ -240,20 +241,20 @@ class Build:
         gpgfile = os.path.join(self.buildpath, 'gpg', distribution)
         if not os.path.exists(gpgfile):
             self.cmd = 'create'
-            self.w(_('%s chroot must be created' % distribution), 2)
+            debug(_('%s chroot must be created') % distribution)
             return
         if self.distribution in self.runtime_option('alwaysupdate'):
             self.cmd = 'update'
-            self.w(_('%s chroot must be updated' % distribution), 2)
+            debug(_('%s chroot must be updated') % distribution)
             return
         uri = '%s/dists/%s/Release.gpg' % (self.distopts['mirror'],
                                            distribution)
         try:
             remote = urlopen(uri).read()
         except (HTTPError, URLError):
-            self.w(_('Unable to fetch %s') % uri)
+            error(_('Unable to fetch %s') % uri)
             self.cmd = 'update'
-            self.w(_('%s chroot must be updated' % distribution), 2)
+            debug(_('%s chroot must be updated') % distribution)
             return
         remote_sha = sha256()
         gpgfile_sha = sha256()
@@ -263,11 +264,11 @@ class Build:
                 gpgfile_sha.update(fd.read())
         except OSError:
             self.cmd = 'create'
-            self.w(_('%s chroot must be created' % distribution), 2)
+            debug(_('%s chroot must be created') % distribution)
             return
         if remote_sha.digest() != gpgfile_sha.digest():
             self.cmd = 'update'
-            self.w(_('%s chroot must be updated' % distribution), 2)
+            debug(_('%s chroot must be updated') % distribution)
 
     def parse_distribution_options(self):
         conf = {'components': ('[^#]?COMPONENTS="?(.*[^"])"?\n', 'COMPONENTS'),
@@ -284,11 +285,13 @@ class Build:
                 with open(self.packagepath, 'r') as fd:
                     data = fd.read()
             except IOError:
-                self.e(_('Unable to open %s') % self.packagepath)
+                error(_('Unable to open %s') % self.packagepath)
+                raise RuntimeError
             try:
                 distro = findall('Distribution:\s+(\S+)', data)[0]
             except IndexError:
-                self.e(_('Bad .changes file: %s') % self.packagepath)
+                error(_('Bad .changes file: %s') % self.packagepath)
+                raise RuntimeError
             self.distribution = distro.lower()
         self.map_distribution()
         self.buildpath = os.path.join(self.packagedir, self.distribution)
@@ -299,14 +302,16 @@ class Build:
                 data = fd.read()
         except IOError:
             self.remove_files()
-            self.log.e(_('Unable to open %s') % self.configfile)
-        for elem in conf.keys():
+            error(_('Unable to open %s') % self.configfile)
+            exit(2)
+        for elem in conf:
             try:
                 if not elem in self.distopts or not self.distopts[elem]:
                     self.distopts[elem] = findall(conf[elem][0], data)[0]
             except IndexError:
-                self.e(_('Please set %(parm)s in %s(conf)s') %
-                       {'parm': conf[elem][0], 'conf': conf})
+                error(_('Please set %(parm)s in %s(conf)s') %
+                      {'parm': conf[elem][0], 'conf': conf})
+                raise RuntimeError
         if self.origin:
             originconfig = os.path.join(self.opts.get('default', 'configdir'),
                                         self.origin)
@@ -314,13 +319,15 @@ class Build:
                 with open(originconfig) as fd:
                     data = fd.read()
             except IOError:
-                self.log.e(_('Unable to open %s') % originconfig)
+                error(_('Unable to open %s') % originconfig)
+                exit(2)
             for elem in ('origin', 'ocomponents'):
                 try:
                     self.distopts[elem] = findall(conf[elem][0], data)[0]
                 except IndexError:
-                    self.e(_('Please set %(parm)s in %s(conf)s') %
-                           {'parm': conf[elem][0], 'conf': conf})
+                    error(_('Please set %(parm)s in %s(conf)s') %
+                          {'parm': conf[elem][0], 'conf': conf})
+                    raise RuntimeError
         else:
             self.origin = self.distribution
 
@@ -328,11 +335,11 @@ class Build:
         builder = self.opts.get('default', 'builder')
         architecture = self.opts.get('default', 'architecture')
         if architecture == 'system':
-            architecture = check_output(['dpkg-architecture',
-                                         '-qDEB_BUILD_ARCH']).strip()
+            b_arch = check_output(['dpkg-architecture', '-qDEB_BUILD_ARCH'])
+            architecture = b_arch.strip().decode('utf-8')
         debootstrap = self.opts.get('default', 'debootstrap')
-        mod = Module((self.log, self.opts, self.rtopts, self.conffile))
-        self.w(_('Pre-chroot maintenance hooks launched'), 2)
+        mod = Module((self.opts, self.rtopts, self.conffile))
+        debug(_('Pre-chroot maintenance hooks launched'))
         mod.execute_hook('pre_chroot', {'cfg': self.configfile,
                                         'directory': self.buildpath,
                                         'opts': self.opts,
@@ -348,8 +355,8 @@ class Build:
             base = '--basetgz'
         with open(os.devnull, 'w') as fd:
             try:
-                self.w(_('Launching %(builder)s %(cmd)s')
-                       % {'builder': builder, 'cmd': self.cmd}, 2)
+                debug(_('Launching %(builder)s %(cmd)s')
+                      % {'builder': builder, 'cmd': self.cmd})
                 if call([builder, '--%s' % self.cmd, '--override-config',
                         base, '%s/%s' % (self.buildpath, self.distribution),
                         '--buildplace', '%s/build' % self.buildpath,
@@ -360,25 +367,27 @@ class Build:
                         '--configfile', '%s' % self.configfile,
                         '--debootstrap', debootstrap],
                         stdout=fd, stderr=fd):
-                    self.w(_('Post-chroot maintenance hooks launched'), 2)
+                    debug(_('Post-chroot maintenance hooks launched'))
                     mod.execute_hook('post_chroot', {'cfg': self.configfile,
                                      'directory': self.buildpath,
                                      'opts': self.opts,
                                      'distribution': self.distribution,
                                      'architecture': architecture,
                                      'cmd': self.cmd, 'success': False})
-                    self.e(_('%(builder)s %(cmd)s failed') %
-                           {'builder': builder, 'cmd': self.cmd})
+                    error(_('%(builder)s %(cmd)s failed') %
+                          {'builder': builder, 'cmd': self.cmd})
+                    raise RuntimeError
             except OSError:
-                self.w(_('Post-chroot maintenance hooks launched'), 2)
+                debug(_('Post-chroot maintenance hooks launched'))
                 mod.execute_hook('post_chroot', {'cfg': self.configfile,
                                  'directory': self.buildpath,
                                  'opts': self.opts,
                                  'distribution': self.distribution,
                                  'architecture': architecture,
                                  'cmd': self.cmd, 'success': False})
-                self.e(_('Unable to launch %s') % builder)
-        self.w(_('Post-chroot maintenance hooks launched'), 2)
+                error(_('Unable to launch %s') % builder)
+                raise RuntimeError
+        debug(_('Post-chroot maintenance hooks launched'))
         mod.execute_hook('post_chroot', {'cfg': self.configfile,
                                          'directory': self.buildpath,
                                          'opts': self.opts,
@@ -390,7 +399,7 @@ class Build:
         for pkgfile in self.files:
             if os.path.exists(pkgfile):
                 os.remove(pkgfile)
-                self.w(_('File %s removed' % pkgfile), 3)
+                debug(_('File %s removed') % pkgfile)
 
     def runtime_option(self, option):
         self.rtopts.read(self.conffile)
@@ -412,8 +421,9 @@ class Build:
             try:
                 remote = urlopen(uri).read()
             except (HTTPError, URLError):
-                self.e(_('Unable to fetch %s') % uri)
-            with open(gpgfile, 'w') as fd:
+                error(_('Unable to fetch %s') % uri)
+                raise RuntimeError
+            with open(gpgfile, 'wb') as fd:
                 fd.write(remote)
 
 
@@ -423,25 +433,30 @@ class FullBuild(Build):
         self.full = True
         self.packagepath = os.path.join(self.packagedir, self.package)
         self.files.add(self.packagepath)
-        self.w(_('File %s added' % self.packagepath), 3)
-        self.w(_('Processing %s') % self.package)
+        debug(_('File %s added') % self.packagepath)
+        info(_('Processing %s') % self.package)
         try:
             with open(self.packagepath, 'r') as fd:
                 data = fd.read()
         except IOError:
-            self.e(_('Unable to open %s') % self.packagepath)
+            error(_('Unable to open %s') % self.packagepath)
+            raise RuntimeError
         try:
             for entry in findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)', data):
                 entry = os.path.join(self.packagedir, entry)
                 self.files.add(entry)
-                self.w(_('File %s added' % entry), 3)
+                debug(_('File %s added') % entry)
         except IndexError:
-            self.e(_('Bad .changes file: %s') % self.packagepath)
-        gpg = GPG(self.opts, self.packagepath)
-        if gpg.gpg:
-            if gpg.sig:
-                self.uploader = gpg.sig
-            else:
-                self.remove_files()
-                self.e(gpg.error)
-        self.build()
+            error(_('Bad .changes file: %s') % self.packagepath)
+            raise RuntimeError
+        try:
+            with GPG(self.opts, self.packagepath) as gpg:
+                try:
+                    self.uploader = gpg.check()
+                    self.build()
+                except RuntimeError:
+                    self.remove_files()
+                    error(gpg.error())
+                    raise RuntimeError
+        except IOError:
+            pass
