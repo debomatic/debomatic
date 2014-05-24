@@ -56,6 +56,9 @@ class Debomatic(Process):
             self.daemonize = False
         self.default_options()
         self.packagedir = self.opts.get('default', 'packagedir')
+        if not os.path.isdir(self.packagedir):
+            error(_('Unable to access %s directory') % self.packagedir)
+            exit(1)
         self.pool = ThreadPool(self.opts.getint('default', 'maxbuilds'))
         self.commandpool = ThreadPool()
         self.logfile = self.opts.get('default', 'logfile')
@@ -138,7 +141,6 @@ class Debomatic(Process):
             try:
                 filelist = os.listdir(self.packagedir)
             except OSError:
-                self.lockfile.unlock()
                 error(_('Unable to access %s directory') % self.packagedir)
                 exit(1)
         for filename in filelist:
