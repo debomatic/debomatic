@@ -77,9 +77,13 @@ class DebomaticModule_Mailer:
         try:
             bp = '%(directory)s/pool/%(package)s/%(package)s.buildlog' % args
             buildlog_exc = Popen(['tail', '--lines=20', bp],
-                                 stdout=PIPE).communicate()[0]
+                                 stdout=PIPE).communicate()[0].decode('utf-8')
             msg = self.write_reply(template, buildlog_exc, args)
             self.smtp = SMTP(self.smtphost, int(self.smtpport))
+            self.smtp.ehlo()
+            if args['opts'].has_option('mailer', 'tls'):
+                if args['opts'].getint('mailer', 'tls'):
+                    self.smtp.starttls()
             if int(self.authrequired):
                 self.smtp.login(self.smtpuser, self.smtppass)
             self.smtp.sendmail(self.fromaddr, uploader, msg)

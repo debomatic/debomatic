@@ -678,6 +678,10 @@ This option indicates the SMTP server used to send the emails.
 
 This option indicates the SMTP port on which the SMTP server listens to.
 
+* ``tls``
+
+This option indicates whether to enable TLS mode or not.
+
 * ``authrequired``
 
 This option indicates whether the SMTP server requires authentication or not.
