@@ -1,4 +1,4 @@
-0.12
+0.12 "blind" (2014-05-30)
 * Converted to Python 3
 * New builddep command
 * Support building for foreign architectures
