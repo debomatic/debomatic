@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2014-05-23 10:32+0200\n"
+"POT-Creation-Date: 2014-05-29 20:42+0200\n"
 "PO-Revision-Date: 2009-12-06 02:02+0000\n"
 "Last-Translator: Jarkko Oranen <oranenj+lp@iki.fi>\n"
 "Language-Team: Finnish <fi@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-05-24 05:26+0000\n"
-"X-Generator: Launchpad (build 17017)\n"
+"X-Launchpad-Export-Date: 2014-05-30 05:32+0000\n"
+"X-Generator: Launchpad (build 17023)\n"
 
 #: Debomatic/build.py:62
 #, python-format
@@ -185,15 +185,17 @@ msgid "Lockfile is %s"
 msgstr ""
 
 #: Debomatic/debomatic.py:71 Debomatic/process.py:135
-#: Debomatic/debomatic.py:74
+#: Debomatic/debomatic.py:74 Debomatic/debomatic.py:77
 msgid "Another instance is running, aborting"
 msgstr ""
 
 #: Debomatic/debomatic.py:75 Debomatic/debomatic.py:68
+#: Debomatic/debomatic.py:71
 msgid "Startup hooks launched"
 msgstr ""
 
 #: Debomatic/debomatic.py:77 Debomatic/debomatic.py:70
+#: Debomatic/debomatic.py:73
 msgid "Startup hooks finished"
 msgstr ""
 
@@ -202,33 +204,40 @@ msgid "Entering daemon mode"
 msgstr ""
 
 #: Debomatic/debomatic.py:95 Debomatic/debomatic.py:82
+#: Debomatic/debomatic.py:85
 msgid "Configuration file has not been specified"
 msgstr ""
 
 #: Debomatic/debomatic.py:97 Debomatic/debomatic.py:85
+#: Debomatic/debomatic.py:88
 #, python-format
 msgid "Configuration file %s does not exist"
 msgstr "Asetustiedosto %s ei ole olemassa"
 
 #: Debomatic/debomatic.py:102 Debomatic/debomatic.py:91
+#: Debomatic/debomatic.py:94
 #, python-format
 msgid "Configuration file is not at version %s"
 msgstr ""
 
 #: Debomatic/debomatic.py:107 Debomatic/debomatic.py:97
+#: Debomatic/debomatic.py:100
 #, python-format
 msgid "Set \"%(opt)s\" in %(conffile)s"
 msgstr ""
 
 #: Debomatic/debomatic.py:139 Debomatic/debomatic.py:127
+#: Debomatic/debomatic.py:130
 msgid "Inotify loop started"
 msgstr ""
 
 #: Debomatic/debomatic.py:143 Debomatic/debomatic.py:131
+#: Debomatic/debomatic.py:134
 msgid "Timer loop started"
 msgstr ""
 
 #: Debomatic/debomatic.py:154 Debomatic/debomatic.py:142
+#: Debomatic/debomatic.py:60 Debomatic/debomatic.py:144
 #, python-format
 msgid "Unable to access %s directory"
 msgstr "Hakemistoa %s ei voitu lukea"
@@ -238,6 +247,7 @@ msgstr "Hakemistoa %s ei voitu lukea"
 #: Debomatic/commands.py:185 Debomatic/commands.py:143
 #: Debomatic/commands.py:164 Debomatic/commands.py:184
 #: Debomatic/debomatic.py:149 Debomatic/debomatic.py:154
+#: Debomatic/debomatic.py:151 Debomatic/debomatic.py:156
 #, python-format
 msgid "Thread for %s scheduled"
 msgstr ""
@@ -308,6 +318,6 @@ msgstr "Kelvollisia allekirjoituksia ei löydy"
 msgid "Error entering daemon mode: %s"
 msgstr ""
 
-#: Debomatic/debomatic.py:163
+#: Debomatic/debomatic.py:163 Debomatic/debomatic.py:165
 msgid "Log level not valid, defaulting to \"info\""
 msgstr ""
