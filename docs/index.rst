@@ -533,7 +533,7 @@ usually safer to issue a single command per file.
 
 .. CAUTION::
 
- If signature checking support is enabled, .changes files must be signed by a
+ If signature checking support is enabled, .commands files must be signed by a
  known key, otherwise they will be deleted and no action will be taken.
 
 Remove packages
