@@ -579,7 +579,7 @@ You could want to prepare a porter upload, a binary-only upload which generates
 architecture dependent binaries only. Additional information can be found in
 `Debian Developer's Reference`_.
 
-In order to do so, you must use the ``rebuild`` command:
+In order to do so, you must use the ``porter`` command:
 
  *echo "porter foo_version dist Joe Doe <j.doe@acme.com>" > foo.commands*
 
