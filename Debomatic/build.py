@@ -261,7 +261,7 @@ class Build:
         remote_sha.update(remote)
         try:
             with open(gpgfile, 'r') as fd:
-                gpgfile_sha.update(fd.read())
+                gpgfile_sha.update(fd.read().encode('utf-8'))
         except OSError:
             self.cmd = 'create'
             debug(_('%s chroot must be created') % distribution)
