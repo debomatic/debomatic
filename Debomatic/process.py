@@ -158,6 +158,12 @@ class ThreadPool:
         job = self._pool.submit(func)
         job.add_done_callback(self._finish)
         self._jobs.append(job)
+        try:
+            e = job.exception()
+            if e:
+                raise e
+        except:
+            debug(str(e), exc_info=True)
 
     def wait(self):
         for job in as_completed(self._jobs):
