@@ -38,7 +38,7 @@ class DebomaticModule_Blhc:
         blhc = os.path.join(resultdir, args['package']) + '.blhc'
         if buildlog:
             with open(blhc, 'w') as fd:
-                call([self.blhc, '-V'], stdout=fd)
+                call([self.blhc], stdout=fd)
                 fd.flush()
                 cmd = [self.blhc] + blhcopts.split() + [buildlog]
                 call(cmd, stdout=fd)
