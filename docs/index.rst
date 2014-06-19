@@ -726,6 +726,23 @@ This option indicates the extra options to pass to piuparts.
 
  Suggested value: ``--log-level=info``
 
+Blhc
+----
+
+This module allows blhc to be executed, checking the build log of build packages
+for missing hardening flags.
+
+In order for this module to work properly, ``blhc`` package must be installed.
+
+Parameters
+----------
+
+* ``blhcopts``
+
+This option indicates the extra options to pass to blhc.
+
+ Suggested value: ``--all``
+
 PrevBuildCleaner
 ----------------
 
