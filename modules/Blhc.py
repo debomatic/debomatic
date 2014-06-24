@@ -20,6 +20,7 @@
 # Stores blhc output on top of the built package in the pool directory.
 
 import os
+from logging import error
 from subprocess import call
 
 
@@ -36,9 +37,14 @@ class DebomaticModule_Blhc:
         resultdir = os.path.join(args['directory'], 'pool', args['package'])
         buildlog = os.path.join(resultdir, args['package']) + '.buildlog'
         blhc = os.path.join(resultdir, args['package']) + '.blhc'
-        if buildlog:
+        if os.access(buildlog, os.R_OK) and os.access(self.blhc, os.X_OK):
             with open(blhc, 'w') as fd:
-                call([self.blhc], stdout=fd)
-                fd.flush()
                 cmd = [self.blhc] + blhcopts.split() + [buildlog]
-                call(cmd, stdout=fd)
+                exitcode = call(cmd, stdout=fd)
+                if not exitcode:
+                    fd.flush()
+                    fd.write(_('The build log of %s looks fine.') % args['package'])
+        else:
+            if not os.access(self.blhc, os.X_OK):
+                error(_('The binary %s is not avilable or is not set as executable') %
+                                                                    self.blhc)
