@@ -729,7 +729,7 @@ This option indicates the extra options to pass to piuparts.
 Blhc
 ----
 
-This module allows blhc to be executed, checking the build log of build packages
+This module allows blhc to be executed, checking the build log of built packages
 for missing hardening flags.
 
 In order for this module to work properly, ``blhc`` package must be installed.
