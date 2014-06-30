@@ -31,10 +31,14 @@ class DebomaticModule_DateStamp:
         self.ts = ''
         self.begin = ''
         self.end = ''
+        self.uploader = ''
 
     def pre_build(self, args):
         self.ts = '%(directory)s/pool/%(package)s/%(package)s.datestamp' % args
         with open(self.ts, 'w') as fd:
+            if 'uploader' in args and args['uploader']:
+                self.uploader = args['uploader']
+                fd.write('Uploaded by %s\n' % self.uploader)
             self.begin = gmtime(time())
             now = datetime.now().strftime('%A, %d %B %Y %H:%M')
             fd.write('Build started at %s\n' % now)
