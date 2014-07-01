@@ -323,6 +323,12 @@ More on modules handling will be discussed in the `Modules section`_.
 
  Suggested value: ``/usr/share/debomatic/modules``
 
+* ``maxthreads``
+
+ This option indicates how many modules Deb-o-Matic should launch in parallel.
+
+ Suggested value: ``5``
+
 runtime section
 ...............
 
@@ -392,7 +398,7 @@ modified, and must follow this guide thoroughly.
  expects to find. If it does not match the one needed by Deb-o-Matic, it
  refuses to start.
 
- This option must be set to ``012a``
+ This option must be set to ``013a``
 
 Distribution files
 ------------------

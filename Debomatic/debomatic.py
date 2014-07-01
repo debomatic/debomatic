@@ -36,7 +36,7 @@ class Debomatic(Process):
         self.daemonize = True
         self.setlog('%(levelname)s: %(message)s')
         self.conffile = None
-        self.configvers = '012a'
+        self.configvers = '013a'
         self.opts = ConfigParser()
         self.rtopts = ConfigParser()
         parser = ArgumentParser()
@@ -62,12 +62,12 @@ class Debomatic(Process):
         self.pool = ThreadPool(self.opts.getint('default', 'maxbuilds'))
         self.commandpool = ThreadPool()
         self.logfile = self.opts.get('default', 'logfile')
-        self.mod_sys = Module((self.opts, self.rtopts, self.conffile))
         if args.quit_process:
             self.shutdown()
             exit()
         self.setlog('%(levelname)s: %(message)s',
                     self.opts.get('default', 'loglevel'))
+        self.mod_sys = Module((self.opts, self.rtopts, self.conffile))
         debug(_('Startup hooks launched'))
         self.mod_sys.execute_hook('on_start', {})
         debug(_('Startup hooks finished'))

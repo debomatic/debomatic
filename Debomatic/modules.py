@@ -19,64 +19,112 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
+from glob import glob
 from logging import debug
 from sys import path
+
+from .process import ModulePool
 
 
 class Module():
 
     def __init__(self, opts):
-        (self.opts, self.rtopts, self.conffile) = opts
-        self.use_modules = True
-        self.modules_list = set()
-        if not self.opts.has_option('modules', 'modules'):
-            self.use_modules = False
-        elif self.opts.get('modules', 'modules') == "0":
-            self.use_modules = False
-        if self.opts.has_option('modules', 'modulespath'):
-            self.mod_path = self.opts.get('modules', 'modulespath')
-            path.append(self.mod_path)
+        blist = []
+        (self._opts, self._rtopts, self._conffile) = opts
+        self._use_modules = False
+        if self._opts.has_option('modules', 'modules'):
+            if self._opts.getint('modules', 'modules'):
+                self._use_modules = True
+        if self._opts.has_option('modules', 'modulespath'):
+            mod_path = self._opts.get('modules', 'modulespath')
+            path.append(mod_path)
         else:
-            self.mod_path = ''
+            self._use_modules = False
         try:
-            self.modules_list = set(os.listdir(self.mod_path))
+            modules = set([os.path.splitext(os.path.basename(m))[0] for m in
+                           glob(os.path.join(mod_path, '*.py'))])
         except OSError:
-            self.use_modules = False
-        if not self.modules_list:
-            self.use_modules = False
-        if self.use_modules:
-            self.instances = {}
-            for module in self.modules_list:
-                if module.endswith('.pyc'):
-                    continue
-                module_split = module.split(".")[:-1]
-                module = ""
-                for i in module_split:
-                    module += i
+            self._use_modules = False
+        if not modules:
+            self._use_modules = False
+        if self._use_modules:
+            self._instances = {}
+            self._rtopts.read(self._conffile)
+            if self._rtopts.has_option('runtime', 'modulesblacklist'):
+                blist = self._rtopts.get('runtime', 'modulesblacklist').split()
+            for module in modules:
                 try:
-                    exec('from %s import DebomaticModule_%s' %
-                         (module, module))
-                    exec('self.instances["%s"] = DebomaticModule_%s()' %
-                         (module, module))
+                    _class = 'DebomaticModule_%s' % module
+                    _mod = __import__(module)
+                    self._instances[module] = getattr(_mod, _class)()
+                    self._instances[module]._enabled = True
+                    self._instances[module]._depends = set()
+                    try:
+                        deps = getattr(self._instances[module], 'dependencies')
+                        if deps:
+                            for dep in deps:
+                                self._instances[module]._depends.add(dep)
+                    except AttributeError:
+                        pass
+                    self._instances[module]._enhances = set()
+                    self._instances[module]._missing = set()
+                    self._instances[module]._modulename = module
                     debug(_('Module %s loaded') % module)
                 except (NameError, SyntaxError):
                     pass
+            for instance in self._instances:
+                instance = self._instances[instance]
+                module = instance._modulename
+                for dep in instance._depends:
+                    if dep in self._instances:
+                        self._instances[dep]._enhances.add(module)
+                if module in blist:
+                    instance._enabled = False
+                    debug(_('Module %s is blacklisted') % module)
+            for module in self._instances:
+                self._check_dependencies(module)
+
+    def _check_dependencies(self, module):
+        instance = self._instances[module]
+        for dep in self._instances[module]._depends:
+            if dep in self._instances:
+                if not self._instances[dep]._enabled:
+                    instance._enabled = False
+                    instance._missing.add(dep)
+            else:
+                instance._enabled = False
+                instance._missing.add(dep)
+        if not instance._enabled:
+            if instance._missing:
+                debug(_('%s module disabled, needs %s') %
+                      (instance._modulename, ', '.join(instance._missing)))
+            for module in instance._enhances:
+                self._check_dependencies(module)
+
+    def _launcher(self, hook):
+        func, args, module, hookname, dependencies = hook
+        debug(_('Executing hook %(hook)s from module %(mod)s') %
+              {'hook': hookname, 'mod': module})
+        func(args)
 
     def execute_hook(self, hook, args):
-        if self.use_modules:
-            self.rtopts.read(self.conffile)
-            if self.rtopts.has_option('runtime', 'modulesblacklist'):
-                blist_mods = self.rtopts.get('runtime', 'modulesblacklist')
-                blist_mods = blist_mods.split()
-            else:
-                blist_mods = []
-            modules = [i for i in self.instances
-                       if i not in blist_mods]
-            modules.sort()
-            for module in modules:
+        hooks = []
+        if self._use_modules:
+            for instance in [self._instances[m]
+                             for m in sorted(self._instances)
+                             if self._instances[m]._enabled]:
+                module = instance._modulename
+                dependencies = instance._depends
                 try:
-                    debug(_('Executing hook %(hook)s from module %(mod)s') %
-                          {'hook': hook, 'mod': module})
-                    exec('self.instances["%s"].%s(args)' % (module, hook))
+                    hooks.append((getattr(instance, hook),
+                                 args, module, hook, dependencies))
                 except AttributeError:
                     pass
+            if self._opts.has_option('modules', 'maxthreads'):
+                workers = self._opts.getint('modules', 'maxthreads')
+            else:
+                workers = 1
+            modulepool = ModulePool(workers)
+            for hk in hooks:
+                modulepool.schedule(self._launcher, hk)
+            modulepool.wait()

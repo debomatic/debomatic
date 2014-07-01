@@ -25,6 +25,7 @@ from hashlib import sha256
 from logging import basicConfig as log, debug, error, getLogger, info
 from signal import signal, SIGINT, SIGTERM
 from sys import stdin, stdout, stderr
+from time import sleep
 
 
 class Process:
@@ -142,6 +143,33 @@ class Process:
         self.launcher()
 
 
+class ModulePool:
+
+    def __init__(self, workers=1):
+        self._jobs = {}
+        self._pool = ThreadPoolExecutor(workers)
+
+    def _launch(self, func, hook, dependencies):
+        if dependencies:
+            for dependency in dependencies:
+                while True:
+                    if dependency in self._jobs.keys():
+                        self._jobs[dependency].result()
+                        break
+                    else:
+                        sleep(0.1)
+        func(hook)
+
+    def schedule(self, func, hook):
+        innerfunc, args, module, hookname, dependencies = hook
+        job = self._pool.submit(self._launch, func, hook, dependencies)
+        self._jobs[module] = job
+
+    def wait(self):
+        for job in as_completed([self._jobs[j] for j in self._jobs]):
+            job.result()
+
+
 class ThreadPool:
 
     def __init__(self, workers=1):
@@ -162,7 +190,7 @@ class ThreadPool:
             e = job.exception()
             if e:
                 raise e
-        except:
+        except Exception as e:
             debug(str(e), exc_info=True)
 
     def wait(self):

@@ -346,6 +346,7 @@ class Build:
                                         'distribution': self.distribution,
                                         'architecture': architecture,
                                         'cmd': self.cmd})
+        debug(_('Pre-chroot maintenance hooks finished'))
         for d in ('aptcache', 'build', 'logs', 'pool'):
             if not os.path.exists(os.path.join(self.buildpath, d)):
                 os.mkdir(os.path.join(self.buildpath, d))
@@ -367,6 +368,8 @@ class Build:
                         '--configfile', '%s' % self.configfile,
                         '--debootstrap', debootstrap],
                         stdout=fd, stderr=fd):
+                    error(_('%(builder)s %(cmd)s failed') %
+                          {'builder': builder, 'cmd': self.cmd})
                     debug(_('Post-chroot maintenance hooks launched'))
                     mod.execute_hook('post_chroot', {'cfg': self.configfile,
                                      'directory': self.buildpath,
@@ -374,10 +377,10 @@ class Build:
                                      'distribution': self.distribution,
                                      'architecture': architecture,
                                      'cmd': self.cmd, 'success': False})
-                    error(_('%(builder)s %(cmd)s failed') %
-                          {'builder': builder, 'cmd': self.cmd})
+                    debug(_('Post-chroot maintenance hooks finished'))
                     raise RuntimeError
             except OSError:
+                error(_('Unable to launch %s') % builder)
                 debug(_('Post-chroot maintenance hooks launched'))
                 mod.execute_hook('post_chroot', {'cfg': self.configfile,
                                  'directory': self.buildpath,
@@ -385,7 +388,7 @@ class Build:
                                  'distribution': self.distribution,
                                  'architecture': architecture,
                                  'cmd': self.cmd, 'success': False})
-                error(_('Unable to launch %s') % builder)
+                debug(_('Post-chroot maintenance hooks finished'))
                 raise RuntimeError
         debug(_('Post-chroot maintenance hooks launched'))
         mod.execute_hook('post_chroot', {'cfg': self.configfile,
@@ -394,6 +397,7 @@ class Build:
                                          'distribution': self.distribution,
                                          'architecture': architecture,
                                          'cmd': self.cmd, 'success': True})
+        debug(_('Post-chroot maintenance hooks finished'))
 
     def remove_files(self):
         for pkgfile in self.files:

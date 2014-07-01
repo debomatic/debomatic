@@ -38,7 +38,7 @@ class DebomaticModule_Mailer:
         'failure')
 
     def __init__(self):
-        pass
+        self.dependencies = None
 
     def write_reply(self, template, buildlog, args):
         with open(template, 'r') as fd:
@@ -47,6 +47,7 @@ class DebomaticModule_Mailer:
             substdict['fromaddr'] = self.fromaddr
             substdict['lintlog'] = 'No log'
             if self.lintlog:
+                self.dependencies = ['Lintian']
                 lintfile = os.path.join(self.resultdir, '%s.lintian'
                                         % args['package'])
                 if os.path.isfile(lintfile):
