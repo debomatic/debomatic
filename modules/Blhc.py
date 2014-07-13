@@ -30,20 +30,26 @@ class DebomaticModule_Blhc:
         self.blhc = '/usr/bin/blhc'
 
     def post_build(self, args):
-        if args['opts'].has_section('blhc'):
-            blhcopts = args['opts'].get('blhc', 'blhcopts').strip()
+        if args['opts'].has_section('blhc') and \
+           args['opts'].has_option('blhc', 'blhcopts'):
+            blhcopts = args['opts'].get('blhc', 'blhcopts').strip().split()
         else:
             blhcopts = []
         resultdir = os.path.join(args['directory'], 'pool', args['package'])
         buildlog = os.path.join(resultdir, args['package']) + '.buildlog'
         blhc = os.path.join(resultdir, args['package']) + '.blhc'
+        exitcode = -1
         if os.access(buildlog, os.R_OK):
             if os.access(self.blhc, os.X_OK):
+                cmd = [self.blhc] + blhcopts + [buildlog]
                 with open(blhc, 'w') as fd:
-                    cmd = [self.blhc] + blhcopts.split() + [buildlog]
                     exitcode = call(cmd, stdout=fd)
-                    if not exitcode:
+                    if exitcode == 0:
                         fd.write(_('Build log of %s is OK') % args['package'])
                         fd.flush()
+                        return
+                # Remove file if "No compiler commands were found"
+                if exitcode == 1:
+                    os.remove(blhc)
             else:
                 error(_('blhc binary is not avilable'))
