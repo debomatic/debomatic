@@ -42,12 +42,15 @@ class DebomaticModule_Blhc:
             if os.access(self.blhc, os.X_OK):
                 cmd = [self.blhc] + blhcopts + [buildlog]
                 exitcode, output = getstatusoutput(' '.join(cmd))
-                if exitcode == 1:  # No compiler commands were found
+                # Never write bhlc log if no useful information has been
+                # reported, exit statuses:
+                # 0:   Buildlog is OK
+                # 1:   No compiler commands were found
+                if exitcode in [0, 1]:
                     return
-                elif exitcode == 0:  # Build log is fine
-                    return
+                # else, write the report
                 elif len(output) > 0:
                     with open(blhclog, 'w') as fd:
                         fd.write(output)
             else:
-                error(_('blhc binary is not avilable'))
+                error(_('blhc binary is not available'))
