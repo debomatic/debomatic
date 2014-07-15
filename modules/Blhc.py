@@ -21,7 +21,9 @@
 
 import os
 from logging import error
-from subprocess import getstatusoutput
+from subprocess import call
+from tempfile import NamedTemporaryFile
+from shutil import copyfile
 
 
 class DebomaticModule_Blhc:
@@ -41,16 +43,15 @@ class DebomaticModule_Blhc:
         if os.access(buildlog, os.R_OK):
             if os.access(self.blhc, os.X_OK):
                 cmd = [self.blhc] + blhcopts + [buildlog]
-                exitcode, output = getstatusoutput(' '.join(cmd))
-                # Never write bhlc log if no useful information has been
-                # reported, exit statuses:
-                # 0:   Buildlog is OK
-                # 1:   No compiler commands were found
-                if exitcode in [0, 1]:
-                    return
-                # else, write the report
-                elif len(output) > 0:
-                    with open(blhclog, 'w') as fd:
-                        fd.write(output)
+                # fdtmp, tmpfile = mkstemp()
+                with NamedTemporaryFile() as fd:
+                    exitcode = call(cmd, stdout=fd, stderr=fd)
+                    # Save bhlc log only if useful information has been
+                    # reported, discard output when exit status is:
+                    # 0:   Buildlog is OK
+                    # 1:   No compiler commands were found
+                    if not exitcode in [0, 1]:
+                        copyfile(fd.name, blhclog)
+                        return
             else:
                 error(_('blhc binary is not available'))
