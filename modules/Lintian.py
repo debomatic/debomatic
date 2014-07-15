@@ -31,6 +31,8 @@ class DebomaticModule_Lintian:
         self.lintian = '/usr/bin/lintian'
 
     def post_build(self, args):
+        if not args['success']:
+            return
         changesfile = None
         if args['opts'].has_section('lintian'):
             lintopts = args['opts'].get('lintian', 'lintopts').strip()

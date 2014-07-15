@@ -31,6 +31,8 @@ class DebomaticModule_Contents:
         self.debc = '/usr/bin/debc'
 
     def post_build(self, args):
+        if not args['success']:
+            return
         changes_file = None
         resultdir = os.path.join(args['directory'], 'pool', args['package'])
         contents_file = os.path.join(resultdir, args['package']) + '.contents'

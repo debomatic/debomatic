@@ -30,6 +30,8 @@ class DebomaticModule_Piuparts:
         self.piuparts = '/usr/sbin/piuparts'
 
     def post_build(self, args):
+        if not args['success']:
+            return
         if args['opts'].has_section('piuparts'):
             piupopts = args['opts'].get('piuparts', 'piupopts').strip().split()
         else:
