@@ -21,7 +21,7 @@
 
 import os
 from logging import error
-from subprocess import call
+from subprocess import getstatusoutput
 
 
 class DebomaticModule_Blhc:
@@ -37,19 +37,17 @@ class DebomaticModule_Blhc:
             blhcopts = []
         resultdir = os.path.join(args['directory'], 'pool', args['package'])
         buildlog = os.path.join(resultdir, args['package']) + '.buildlog'
-        blhc = os.path.join(resultdir, args['package']) + '.blhc'
-        exitcode = -1
+        blhclog = os.path.join(resultdir, args['package']) + '.blhc'
         if os.access(buildlog, os.R_OK):
             if os.access(self.blhc, os.X_OK):
                 cmd = [self.blhc] + blhcopts + [buildlog]
-                with open(blhc, 'w') as fd:
-                    exitcode = call(cmd, stdout=fd)
-                    if exitcode == 0:
-                        fd.write(_('Build log of %s is OK') % args['package'])
-                        fd.flush()
-                        return
-                # Remove file if "No compiler commands were found"
-                if exitcode == 1:
-                    os.remove(blhc)
+                exitcode, output = getstatusoutput(' '.join(cmd))
+                if exitcode == 1:  # No compiler commands were found
+                    return
+                elif exitcode == 0:  # Build log is fine
+                    return
+                elif len(output) > 0:
+                    with open(blhclog, 'w') as fd:
+                        fd.write(output)
             else:
                 error(_('blhc binary is not avilable'))
