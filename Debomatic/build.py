@@ -107,22 +107,23 @@ class Build:
         with open(os.devnull, 'w') as fd:
             try:
                 debug(_('Launching %s') % builder)
-                call([builder, '--build', '--override-config',
-                     base, '%s/%s' % (self.buildpath, self.distribution),
-                     '--architecture', architecture,
-                     '--logfile', '%s/pool/%s/%s.buildlog' %
-                     (self.buildpath, packageversion, packageversion),
-                     '--buildplace', '%s/build' % self.buildpath,
-                     '--buildresult', '%s/pool/%s' %
-                     (self.buildpath, packageversion),
-                     '--aptcache', '%s/aptcache' % self.buildpath,
-                     '--debbuildopts', '%s' % debopts,
-                     '--hookdir', self.opts.get('default', 'pbuilderhooks'),
-                     '--extrapackages', '%s' % self.get_extra_builddeps(),
-                     '--configfile', self.configfile, self.dscfile],
-                     stdout=fd, stderr=fd)
+                result = call([builder, '--build', '--override-config',
+                         base, '%s/%s' % (self.buildpath, self.distribution),
+                         '--architecture', architecture,
+                         '--logfile', '%s/pool/%s/%s.buildlog' %
+                         (self.buildpath, packageversion, packageversion),
+                         '--buildplace', '%s/build' % self.buildpath,
+                         '--buildresult', '%s/pool/%s' %
+                         (self.buildpath, packageversion),
+                         '--aptcache', '%s/aptcache' % self.buildpath,
+                         '--debbuildopts', '%s' % debopts,
+                         '--hookdir', self.opts.get('default', 'pbuilderhooks'),
+                         '--extrapackages', '%s' % self.get_extra_builddeps(),
+                         '--configfile', self.configfile, self.dscfile],
+                         stdout=fd, stderr=fd)
             except OSError:
                 error(_('Unable to launch %s') % builder)
+                result = -1
         debug(_('Post-build hooks launched'))
         mod.execute_hook('post_build', {'cfg': self.configfile,
                                         'directory': self.buildpath,
@@ -131,7 +132,8 @@ class Build:
                                         'dsc': self.dscfile,
                                         'opts': self.opts,
                                         'package': packageversion,
-                                        'uploader': uploader_email})
+                                        'uploader': uploader_email,
+                                        'success': result == 0})
         debug(_('Post-build hooks finished'))
         self.remove_files()
         info(_('Build of %s complete') % os.path.basename(self.dscfile))
