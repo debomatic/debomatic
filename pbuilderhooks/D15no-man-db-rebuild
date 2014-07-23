@@ -1,0 +1,6 @@
+#!/bin/sh
+# Don't rebuild man-db
+
+debconf-set-selections <<EOF
+man-db man-db/auto-update boolean false
+EOF
