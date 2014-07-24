@@ -98,7 +98,7 @@ class Command():
         try:
             with GPG(self.opts, self.cmdfile) as gpg:
                 try:
-                    gpg.check()
+                    self.uploader = gpg.check()
                 except RuntimeError:
                     os.remove(self.cmdfile)
                     error(gpg.error())
@@ -138,7 +138,8 @@ class Command():
                 with open(dsc, 'wb') as fd:
                     fd.write(self.data)
                 b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
-                          distribution=self.target, extrabd=self.extrabd)
+                          distribution=self.target, extrabd=self.extrabd,
+                          uploader=self.uploader)
                 if self.pool.schedule(b.build):
                     debug(_('Thread for %s scheduled') % os.path.basename(dsc))
 
@@ -159,7 +160,8 @@ class Command():
                 with open(dsc, 'wb') as fd:
                     fd.write(self.data)
                 b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
-                          distribution=self.target, debopts=self.debopts)
+                          distribution=self.target, debopts=self.debopts,
+                          uploader=self.uploader)
                 if self.pool.schedule(b.build):
                     debug(_('Thread for %s scheduled') % os.path.basename(dsc))
 
@@ -179,7 +181,8 @@ class Command():
                 with open(dsc, 'wb') as fd:
                     fd.write(self.data)
                 b = Build((self.opts, self.rtopts, self.conffile), dsc=dsc,
-                          distribution=self.target, origin=self.origin)
+                          distribution=self.target, origin=self.origin,
+                          uploader=self.uploader)
                 if self.pool.schedule(b.build):
                     debug(_('Thread for %s scheduled') % os.path.basename(dsc))
 

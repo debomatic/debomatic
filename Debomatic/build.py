@@ -35,7 +35,7 @@ from .modules import Module
 class Build:
 
     def __init__(self, opts, package=None, dsc=None, debopts=None,
-                 distribution=None, extrabd=None, origin=None):
+                 distribution=None, extrabd=None, origin=None, uploader=None):
         (self.opts, self.rtopts, self.conffile) = opts
         self.package = package
         self.dscfile = dsc
@@ -48,7 +48,7 @@ class Build:
         self.files = set()
         self.packagedir = self.opts.get('default', 'packagedir')
         self.full = False
-        self.uploader = None
+        self.uploader = uploader
 
     def build(self):
         if self.full:
