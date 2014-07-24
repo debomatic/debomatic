@@ -31,6 +31,7 @@ import os
 from subprocess import call
 from time import strftime
 from shutil import rmtree
+from tempfile import NamedTemporaryFile
 
 
 class DebomaticModule_AutoPkgTest:
@@ -92,9 +93,10 @@ class DebomaticModule_AutoPkgTest:
         # summary is where the test summary is stored, relative to resultdir_adt
         self.summary = 'log_summary'
 
-        # script is the main script to run through the builder
-        self.script = os.path.join(self.gpghome,
-                                   "adt_%(distribution)s_%(package)s.sh" % args)
+        # script is the main script launched through the builder, a tmp file
+        tmpfd = NamedTemporaryFile(dir=self.gpghome, delete=False)
+        tmpfd.close()
+        self.script = tmpfd.name
         self._make_script()
         return True
 
