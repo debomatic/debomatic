@@ -39,6 +39,7 @@ class DebomaticModule_AutoPkgTest:
         self.options = []
         self.logging = False
         self.dsc = None
+        self.gpghome = '/var/cache/debomatic/autopkgtest'
 
     def _set_up_commons(self, args):
         """Set up common variables for pre and post build hooks"""
@@ -79,20 +80,20 @@ class DebomaticModule_AutoPkgTest:
                 return ''
             self.options = get_option('options').split()
             self.logging = get_option('logging').lower() == 'true'
+            # gpghome is where adt has its own gpg and it is also used
+            # as tmp directory to put the scripts
+            gpghome = get_option('gpghome')
+            if gpghome:
+                self.gpghome = gpghome
 
         # set up atd-run output dir
         self.resultdir_adt = os.path.join(self.resultdir, 'adt_out_dir')
-
-        # adt_home is where adt has its own gpg and it's used as
-        # tmp directory for the scripts
-        self.adt_home = '/var/cache/debomatic-%s/autopkgtest' % \
-                        args['architecture']
 
         # summary is where the test summary is stored, relative to resultdir_adt
         self.summary = 'log_summary'
 
         # script is the main script to run through the builder
-        self.script = os.path.join(self.adt_home,
+        self.script = os.path.join(self.gpghome,
                                    "adt_%(distribution)s_%(package)s.sh" % args)
         self._make_script()
         return True
@@ -101,7 +102,7 @@ class DebomaticModule_AutoPkgTest:
         """Makes a bash script to being easily called through the builder.
         The script installs autopkgtest and then run adt-run."""
         adt = ['adt-run']
-        adt += ('--gnupg-home', self.adt_home)
+        adt += ('--gnupg-home', self.gpghome)
         adt += ('--summary', os.path.join(self.resultdir_adt, self.summary))
         adt += ('--output-dir', self.resultdir_adt)
         adt += self.options
@@ -116,8 +117,8 @@ class DebomaticModule_AutoPkgTest:
         content.append('apt-get install -y autopkgtest')
         content.append(self.adt)
 
-        if not os.path.isdir(self.adt_home):
-            os.makedirs(self.adt_home)
+        if not os.path.isdir(self.gpghome):
+            os.makedirs(self.gpghome)
         with open(self.script, 'w') as fd:
             fd.write('\n'.join(content))
 
@@ -180,7 +181,7 @@ class DebomaticModule_AutoPkgTest:
             cmd += ('--aptcache', '%s/aptcache' % args['directory'])
             cmd += ('--hookdir', args['opts'].get('default', 'pbuilderhooks'))
             cmd += ('--configfile', args['cfg'])
-            cmd += ('--bindmount', self.adt_home)
+            cmd += ('--bindmount', self.gpghome)
             cmd += ('--bindmount', self.resultdir)
 
             if self.logging:

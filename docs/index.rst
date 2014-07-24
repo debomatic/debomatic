@@ -748,6 +748,12 @@ This option indicates the extra options to pass to adt-run.
 
  Suggested value: ``--no-built-binaries``
 
+* ``gpghome``
+
+This option indicates the GPG home directory used by adt-run.
+
+ Suggested value: ``/var/cache/debomatic/autopkgtest``
+
 * ``logging``
 
 This option if set to True indicates that extra information have
