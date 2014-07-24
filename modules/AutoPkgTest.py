@@ -25,6 +25,7 @@
 # [autopkgtest]
 # options: [adt-run options]
 # logging: [True|False] # enable builder log into the logs directory
+# gpghome: /path/to/gnupg-home # set the gnupg home for adt-run
 #
 
 import os
