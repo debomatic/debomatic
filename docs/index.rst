@@ -732,6 +732,29 @@ This option indicates the extra options to pass to piuparts.
 
  Suggested value: ``--log-level=info``
 
+Autopkgtest
+--------
+
+This module allows adt-run to be executed if source package declares a
+Testsuite against autopkgtest and creates a report in the same directory
+of the resulting files.
+
+Parameters
+..........
+
+* ``options``
+
+This option indicates the extra options to pass to adt-run.
+
+ Suggested value: ``--no-built-binaries``
+
+* ``logging``
+
+This option if set to True indicates that extra information have
+to be stored in logs directory.
+
+ Suggested value: ``True``
+
 Blhc
 ----
 
