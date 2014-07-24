@@ -181,17 +181,17 @@ class ThreadPool:
             self._jobs.remove(job)
         except ValueError:
             pass
-
-    def schedule(self, func):
-        job = self._pool.submit(func)
-        job.add_done_callback(self._finish)
-        self._jobs.append(job)
         try:
             e = job.exception()
             if e:
                 raise e
         except Exception as e:
             debug(str(e), exc_info=True)
+
+    def schedule(self, func):
+        job = self._pool.submit(func)
+        job.add_done_callback(self._finish)
+        self._jobs.append(job)
 
     def wait(self):
         for job in as_completed(self._jobs):
