@@ -793,6 +793,8 @@ picking obsolete files by mistake. It currently deletes these files:
 * \*.contents
 * \*.lintian
 * \*.changes
+* \*.autopkgtest
+* \*.bhlc
 
 Repository
 ----------

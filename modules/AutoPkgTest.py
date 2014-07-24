@@ -131,12 +131,6 @@ class DebomaticModule_AutoPkgTest:
         if (os.path.isdir(self.resultdir_adt)):
             rmtree(self.resultdir_adt)
 
-    def pre_build(self, args):
-        # remove previous .autopkgtest file
-        self._set_up_commons(args)
-        if os.path.isfile(self.output):
-            os.remove(self.output)
-
     def post_build(self, args):
         if not args['success']:
             return
