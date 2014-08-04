@@ -20,7 +20,7 @@
 # Allows uploading source-only packages to Debian archive
 
 import os
-from re import findall, search, sub
+from re import escape, findall, search, sub
 from subprocess import call
 
 
@@ -60,7 +60,7 @@ class DebomaticModule_SourceUpload:
                         for deb in findall(' .* \S+_\S+_\S+.u?deb', cf):
                             if (not deb.endswith('_all.deb')
                                     and not deb.endswith('_all.udeb')):
-                                cf = sub(deb + '\n', '', cf)
+                                cf = sub(escape(deb) + '\n', '', cf)
                     sourcecf = sub('_[^_]+?.changes',
                                    '_sourceupload.changes', changesfile)
                     with open(sourcecf, 'w') as fd:
