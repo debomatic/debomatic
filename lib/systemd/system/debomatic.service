@@ -6,6 +6,9 @@ Type=forking
 EnvironmentFile=/etc/default/debomatic
 ExecStart=/usr/bin/debomatic -c ${DEBOMATIC_CONFIG_FILE}
 ExecStop=/usr/bin/debomatic -c ${DEBOMATIC_CONFIG_FILE} -q
+KillMode=process
+SendSIGKILL=no
+TimeoutStopSec=0
 
 [Install]
 WantedBy=multi-user.target
