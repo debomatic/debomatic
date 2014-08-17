@@ -108,19 +108,23 @@ class Build:
             try:
                 debug(_('Launching %s') % builder)
                 result = call([builder, '--build', '--override-config',
-                         base, '%s/%s' % (self.buildpath, self.distribution),
-                         '--architecture', architecture,
-                         '--logfile', '%s/pool/%s/%s.buildlog' %
-                         (self.buildpath, packageversion, packageversion),
-                         '--buildplace', '%s/build' % self.buildpath,
-                         '--buildresult', '%s/pool/%s' %
-                         (self.buildpath, packageversion),
-                         '--aptcache', '%s/aptcache' % self.buildpath,
-                         '--debbuildopts', '%s' % debopts,
-                         '--hookdir', self.opts.get('default', 'pbuilderhooks'),
-                         '--extrapackages', '%s' % self.get_extra_builddeps(),
-                         '--configfile', self.configfile, self.dscfile],
-                         stdout=fd, stderr=fd)
+                               base, '%s/%s' % (self.buildpath,
+                                                self.distribution),
+                               '--architecture', architecture,
+                               '--logfile', '%s/pool/%s/%s.buildlog' %
+                               (self.buildpath, packageversion,
+                                packageversion),
+                               '--buildplace', '%s/build' % self.buildpath,
+                               '--buildresult', '%s/pool/%s' %
+                               (self.buildpath, packageversion),
+                               '--aptcache', '%s/aptcache' % self.buildpath,
+                               '--debbuildopts', '%s' % debopts,
+                               '--hookdir', self.opts.get('default',
+                                                          'pbuilderhooks'),
+                               '--extrapackages',
+                               '%s' % self.get_extra_builddeps(),
+                               '--configfile', self.configfile, self.dscfile],
+                              stdout=fd, stderr=fd)
             except OSError:
                 error(_('Unable to launch %s') % builder)
                 result = -1
@@ -308,7 +312,7 @@ class Build:
             exit(2)
         for elem in conf:
             try:
-                if not elem in self.distopts or not self.distopts[elem]:
+                if elem not in self.distopts or not self.distopts[elem]:
                     self.distopts[elem] = findall(conf[elem][0], data)[0]
             except IndexError:
                 error(_('Please set %(parm)s in %s(conf)s') %
@@ -357,48 +361,42 @@ class Build:
         else:
             base = '--basetgz'
         with open(os.devnull, 'w') as fd:
+            params = {'cfg': self.configfile,
+                      'directory': self.buildpath,
+                      'opts': self.opts,
+                      'distribution': self.distribution,
+                      'architecture': architecture,
+                      'cmd': self.cmd,
+                      'success': True}
             try:
                 debug(_('Launching %(builder)s %(cmd)s')
                       % {'builder': builder, 'cmd': self.cmd})
                 if call([builder, '--%s' % self.cmd, '--override-config',
-                        base, '%s/%s' % (self.buildpath, self.distribution),
-                        '--buildplace', '%s/build' % self.buildpath,
-                        '--aptcache', '%s/aptcache' % self.buildpath,
-                        '--architecture', architecture,
-                        '--logfile', '%s/logs/%s.%s' %
-                        (self.buildpath, self.cmd, strftime('%Y%m%d_%H%M%S')),
-                        '--configfile', '%s' % self.configfile,
-                        '--debootstrap', debootstrap],
+                         base, '%s/%s' % (self.buildpath, self.distribution),
+                         '--buildplace', '%s/build' % self.buildpath,
+                         '--aptcache', '%s/aptcache' % self.buildpath,
+                         '--architecture', architecture,
+                         '--logfile', '%s/logs/%s.%s' %
+                         (self.buildpath, self.cmd, strftime('%Y%m%d_%H%M%S')),
+                         '--configfile', '%s' % self.configfile,
+                         '--debootstrap', debootstrap],
                         stdout=fd, stderr=fd):
                     error(_('%(builder)s %(cmd)s failed') %
                           {'builder': builder, 'cmd': self.cmd})
                     debug(_('Post-chroot maintenance hooks launched'))
-                    mod.execute_hook('post_chroot', {'cfg': self.configfile,
-                                     'directory': self.buildpath,
-                                     'opts': self.opts,
-                                     'distribution': self.distribution,
-                                     'architecture': architecture,
-                                     'cmd': self.cmd, 'success': False})
+                    params['success'] = False
+                    mod.execute_hook('post_chroot', params)
                     debug(_('Post-chroot maintenance hooks finished'))
                     raise RuntimeError
             except OSError:
                 error(_('Unable to launch %s') % builder)
                 debug(_('Post-chroot maintenance hooks launched'))
-                mod.execute_hook('post_chroot', {'cfg': self.configfile,
-                                 'directory': self.buildpath,
-                                 'opts': self.opts,
-                                 'distribution': self.distribution,
-                                 'architecture': architecture,
-                                 'cmd': self.cmd, 'success': False})
+                params['success'] = False
+                mod.execute_hook('post_chroot', params)
                 debug(_('Post-chroot maintenance hooks finished'))
                 raise RuntimeError
         debug(_('Post-chroot maintenance hooks launched'))
-        mod.execute_hook('post_chroot', {'cfg': self.configfile,
-                                         'directory': self.buildpath,
-                                         'opts': self.opts,
-                                         'distribution': self.distribution,
-                                         'architecture': architecture,
-                                         'cmd': self.cmd, 'success': True})
+        mod.execute_hook('post_chroot', params)
         debug(_('Post-chroot maintenance hooks finished'))
 
     def remove_files(self):

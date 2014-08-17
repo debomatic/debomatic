@@ -68,7 +68,7 @@ class Module():
             self._disable_modules()
             debug(_('Modules will be executed in this order: %s') %
                   ', '.join([m for m in self._sort_modules()
-                               if not self._instances[m]._disabled]))
+                             if not self._instances[m]._disabled]))
 
     def _disable_modules(self):
         for module in self._sort_modules():

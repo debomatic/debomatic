@@ -76,21 +76,22 @@ class DebomaticModule_Repository:
         with open(release_file, 'w') as fd:
             date = datetime.now().strftime('%A, %d %B %Y %H:%M:%S')
             call([self.af, '-qq',
-                 '-o', 'APT::FTPArchive::Release::Origin=Deb-o-Matic',
-                 '-o', 'APT::FTPArchive::Release::Label=Deb-o-Matic',
-                 '-o', 'APT::FTPArchive::Release::Suite=%s' % distribution,
-                 '-o', 'APT::FTPArchive::Release::Date=%s' % date,
-                 '-o', 'APT::FTPArchive::Release::Architectures=%s' % arch,
-                 '-o', 'APT::FTPArchive::Release::Components=main',
-                 'release', 'dists/%s' % distribution], stdout=fd, stderr=PIPE)
+                  '-o', 'APT::FTPArchive::Release::Origin=Deb-o-Matic',
+                  '-o', 'APT::FTPArchive::Release::Label=Deb-o-Matic',
+                  '-o', 'APT::FTPArchive::Release::Suite=%s' % distribution,
+                  '-o', 'APT::FTPArchive::Release::Date=%s' % date,
+                  '-o', 'APT::FTPArchive::Release::Architectures=%s' % arch,
+                  '-o', 'APT::FTPArchive::Release::Components=main',
+                  'release', 'dists/%s' % distribution],
+                 stdout=fd, stderr=PIPE)
         with open(release_file, 'r+') as fd:
             data = fd.read()
             fd.seek(0)
             fd.write(data.replace('MD5Sum', 'NotAutomatic: yes\nMD5Sum'))
         call([self.gpg, '--no-default-keyring', '--keyring', pubring,
-             '--secret-keyring', secring, '-u', gpgkey, '--yes', '-a',
-             '-o', release_gpg, '-s', release_file])
+              '--secret-keyring', secring, '-u', gpgkey, '--yes', '-a',
+              '-o', release_gpg, '-s', release_file])
         call([self.gpg, '--no-default-keyring', '--keyring', pubring,
-             '--secret-keyring', secring, '-u', gpgkey, '--yes', '-a',
-             '-o', inrelease_gpg, '--clearsign', release_file])
+              '--secret-keyring', secring, '-u', gpgkey, '--yes', '-a',
+              '-o', inrelease_gpg, '--clearsign', release_file])
         os.chdir(cwd)

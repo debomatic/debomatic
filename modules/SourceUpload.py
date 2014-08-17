@@ -21,7 +21,6 @@
 
 import os
 from re import escape, findall, search, sub
-from subprocess import call
 
 
 class DebomaticModule_SourceUpload:

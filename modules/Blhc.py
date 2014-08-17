@@ -50,7 +50,7 @@ class DebomaticModule_Blhc:
                     # reported, discard output when exit status is:
                     # 0:   Buildlog is OK
                     # 1:   No compiler commands were found
-                    if not exitcode in [0, 1]:
+                    if exitcode not in [0, 1]:
                         copyfile(fd.name, blhclog)
                         return
             else:

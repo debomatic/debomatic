@@ -91,7 +91,7 @@ class DebomaticModule_AutoPkgTest:
         # set up atd-run output dir
         self.resultdir_adt = os.path.join(self.resultdir, 'adt_out_dir')
 
-        # summary is where the test summary is stored, relative to resultdir_adt
+        # summary is where test summary is stored, relative to resultdir_adt
         self.summary = 'log_summary'
 
         # script is the main script launched through the builder, a tmp file
@@ -183,8 +183,7 @@ class DebomaticModule_AutoPkgTest:
 
             if self.logging:
                 cmd += ('--logfile', '%s/logs/%s.%s' % (args['directory'],
-                        'autopkgtest',
-                        strftime('%Y%m%d_%H%M%S')))
+                        'autopkgtest', strftime('%Y%m%d_%H%M%S')))
 
             cmd += ('--', '/bin/bash', self.script)
 
@@ -201,7 +200,7 @@ class DebomaticModule_AutoPkgTest:
         # then the others
         all_files = [f for f in os.listdir(self.resultdir_adt) if
                      os.path.isfile(os.path.join(self.resultdir_adt, f))
-                     and not f in ['log', self.summary]]
+                     and f not in ['log', self.summary]]
         for curr_file in all_files:
             write_header('File: %s' % curr_file)
             append_file(curr_file, curr_file != all_files[-1])
