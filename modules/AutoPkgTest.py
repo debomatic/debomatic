@@ -38,6 +38,7 @@ from tempfile import NamedTemporaryFile
 class DebomaticModule_AutoPkgTest:
 
     def __init__(self):
+        self.after = ['Piuparts']
         self.options = []
         self.logging = False
         self.dsc = None
