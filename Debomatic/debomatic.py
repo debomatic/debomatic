@@ -60,7 +60,6 @@ class Debomatic(Process):
             error(_('Unable to access %s directory') % self.packagedir)
             exit(1)
         self.pool = ThreadPool(self.opts.getint('default', 'maxbuilds'))
-        self.commandpool = ThreadPool()
         self.logfile = self.opts.get('default', 'logfile')
         if args.quit_process:
             self.shutdown()
@@ -152,8 +151,7 @@ class Debomatic(Process):
             elif filename.endswith('.commands'):
                 c = Command((self.opts, self.rtopts, self.conffile),
                             self.pool, filename)
-                self.commandpool.schedule(c.process_command)
-                debug(_('Thread for %s scheduled') % filename)
+                c.process_command()
 
     def setlog(self, fmt, level='info'):
         loglevels = {'error': ERROR,

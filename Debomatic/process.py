@@ -85,7 +85,6 @@ class Process:
     def _quit(self, signum=None, frame=None):
         info(_('Waiting for threads to complete...'))
         self.pool.shutdown()
-        self.commandpool.shutdown()
         debug(_('Shutdown hooks launched'))
         self.mod_sys.execute_hook('on_quit', {})
         debug(_('Shutdown hooks finished'))
