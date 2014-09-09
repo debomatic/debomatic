@@ -41,7 +41,10 @@ class DebomaticModule_Piuparts:
             distribution = findall('[^#]?DISTRIBUTION="?(.*[^"])"?\n', data)[0]
             mirror = findall('[^#]?MIRRORSITE="?(.*[^"])"?\n', data)[0]
             components = findall('[^#]?COMPONENTS="?(.*[^"])"?\n', data)[0]
-        piupopts += ['-e', '%(directory)s/%(distribution)s' % args]
+
+        builder = args['opts'].get('default', 'builder')
+        opt_content = '-e' if builder == 'cowbuilder' else '-b'
+        piupopts += [opt_content, '%(directory)s/%(distribution)s' % args]
         piupopts += ['-d', '%s' % distribution]
         piupopts += ['-m', '%s %s' % (mirror, components)]
         piupopts += ['-D', '%s' % mirror.split('/')[-1]]
