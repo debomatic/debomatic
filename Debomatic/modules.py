@@ -165,4 +165,4 @@ class Module():
             modulepool = ModulePool(workers)
             for hk in hooks:
                 modulepool.schedule(self._launcher, hk)
-            modulepool.wait()
+            modulepool.shutdown()

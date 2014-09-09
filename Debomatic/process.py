@@ -84,8 +84,8 @@ class Process:
 
     def _quit(self, signum=None, frame=None):
         info(_('Waiting for threads to complete...'))
-        self.pool.wait()
-        self.commandpool.wait()
+        self.pool.shutdown()
+        self.commandpool.shutdown()
         debug(_('Shutdown hooks launched'))
         self.mod_sys.execute_hook('on_quit', {})
         debug(_('Shutdown hooks finished'))
@@ -165,9 +165,10 @@ class ModulePool:
         job = self._pool.submit(self._launch, func, hook, dependencies)
         self._jobs[module] = job
 
-    def wait(self):
+    def shutdown(self):
         for job in as_completed([self._jobs[j] for j in self._jobs]):
             job.result()
+        self._pool.shutdown()
 
 
 class ThreadPool:
@@ -193,6 +194,7 @@ class ThreadPool:
         job.add_done_callback(self._finish)
         self._jobs.append(job)
 
-    def wait(self):
+    def shutdown(self):
         for job in as_completed(self._jobs):
             job.result()
+        self._pool.shutdown()
