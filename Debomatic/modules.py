@@ -81,8 +81,8 @@ class Module():
                     missing.add(dep)
             if missing:
                 self._instances[module]._disabled = True
-                debug(_('%s module disabled, needs %s') %
-                      (module, ', '.join(missing)))
+                debug(_('%(mod)s module disabled, needs %(missing)s') %
+                      {'mod': module, 'missing': ', '.join(missing)})
 
     def _launcher(self, hook):
         func, args, module, hookname, dependencies = hook
@@ -124,6 +124,41 @@ class Module():
                             self._instances[before]._after.add(module)
             except AttributeError:
                 pass
+            try:
+                if getattr(self._instances[module], 'first'):
+                    deps = (self._instances[module]._depends.union(
+                            self._instances[module]._after))
+                    if deps:
+                        self._instances[module]._disabled = True
+                        debug(_('Cannot execute %(mod)s as %(order)s module, '
+                                'dependencies found: %(deps)s')
+                              % {'mod': module, 'order': 'first',
+                                 'deps': ', '.join(deps)})
+                    else:
+                        for instance in self._instances:
+                            self._instances[instance]._after.add(module)
+            except AttributeError:
+                pass
+            try:
+                if getattr(self._instances[module], 'last'):
+                    deps = [m for m in self._instances
+                            if module in self._instances[m]._after or
+                            module in self._instances[m]._depends]
+                    if deps:
+                        self._instances[module]._disabled = True
+                        debug(_('Cannot execute %(mod)s as %(order)s module, '
+                                'dependencies found: %(deps)s')
+                              % {'mod': module, 'order': 'last',
+                                 'deps': ', '.join(deps)})
+                    else:
+                        for instance in self._instances:
+                            self._instances[module]._after.add(instance)
+            except AttributeError:
+                pass
+            if module in self._instances[module]._depends:
+                self._instances[module]._depend.remove(module)
+            if module in self._instances[module]._after:
+                self._instances[module]._after.remove(module)
 
     def _sort_modules(self):
         modules = {}
@@ -152,7 +187,14 @@ class Module():
                 instance = self._instances[module]
                 for dep in instance._depends.union(instance._after):
                     if dep in self._instances:
-                        dependencies.add(dep)
+                        if (dep in instance._after and
+                                self._instances[dep]._disabled):
+                            continue
+                        try:
+                            if getattr(self._instances[dep], hook):
+                                dependencies.add(dep)
+                        except AttributeError:
+                            continue
                 try:
                     hooks.append((getattr(instance, hook),
                                  args, module, hook, dependencies))
