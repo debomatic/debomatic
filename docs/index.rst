@@ -6,11 +6,11 @@ What is Deb-o-Matic?
 ====================
 
 Deb-o-Matic is an easy to use utility to build Debian source packages, meant
-to help developers to automate the building of their packages with a tool that
+to help developers to automate the building of their packages with a tool thats
 requires limited user interaction and a simple configuration.
 
 It provides some useful features such as automatic chroot update, rebuild of
-source packages, post-build checks, and much more. It is also extendable with
+source packages, post-build checks, and much more. It is also extendible with
 modules that are loaded and executed during the build phases.
 
 Why Deb-o-Matic?
@@ -62,6 +62,7 @@ In order to be able to run Deb-o-Matic, the following packages are required:
 * python3 (>= 3.2)
 * pbuilder or cowbuilder
 * debootstrap or cdebootstrap
+* python3-toposort
 
 To enable additional features, you may want to install these packages:
 
@@ -71,6 +72,8 @@ To enable additional features, you may want to install these packages:
 * lintian
 * piuparts (>= 0.45)
 * debian-archive-keyring and/or ubuntu-keyring
+* apt-utils
+* devscripts
 
 An Internet connection is also required, broadband access is recommended
 because underlying programs will fetch a lot of megabytes from remote locations
@@ -101,20 +104,20 @@ for, you can download a release tarball from `Deb-o-Matic download page`_.
 Unpack the release tarball, enter the new created directory, and launch the
 following command:
 
- *sudo python setup.py install*
+ *sudo python3 setup.py install*
 
 If everything went smoothly, you should be able to launch debomatic from
 your terminal's command line.
 
-Installation of Bazaar snapshots
---------------------------------
+Installation of Git snapshots
+-----------------------------
 
 If you want to test bleeding-edge features, or want to be always up-to-date
-with latest and greatest Deb-o-Matic versions, you can download development
-snapshots directly from upstream `Bazaar`_ repository. Open a terminal and
+with the latest and greatest Deb-o-Matic versions, you can download development
+snapshots directly from upstream `Git`_ repository. Open a terminal and
 launch the following command:
 
- *bzr branch lp:debomatic*
+ *git clone https://github.com/debomatic/debomatic.git*
 
 You can follow the instructions described in the `previous section`_ to install
 Deb-o-Matic on your system.
@@ -133,6 +136,9 @@ related to parameters which can be modified at runtime; ``gpg``, which contains
 the options related to gpg signature checking; ``modules``, which contains the
 options related to module handling; ``internals``, which contains options
 related to Deb-o-Matic implementation details.
+
+Other sections are defined by single modules, details will be discussed in the
+`Modules section`_.
 
 .. CAUTION::
 
@@ -168,8 +174,8 @@ restarted to pick any change to one of these options.
 
 .. CAUTION::
 
- Make sure chosen debootstrap is installed on your system, otherwise Deb-o-Matic
- will not be able to create chroots and build packages.
+ Make sure chosen debootstrap utility is installed on your system, otherwise
+ Deb-o-Matic will not be able to create chroots and build packages.
 
 * ``packagedir``
 
@@ -199,9 +205,9 @@ restarted to pick any change to one of these options.
 
 * ``architecture``
 
- This option indicates the architecture to build package for. To build
- packages for the same architecture of the running system, ``system``
- can be used instead of specifying the exact one.
+ This option indicates the architecture to build package for. To build packages
+ for the same architecture of the running system, ``system`` can be used
+ instead of specifying the exact one.
 
  Suggested value: ``system``
 
@@ -214,7 +220,8 @@ restarted to pick any change to one of these options.
 
  At the moment, Deb-o-Matic provides scripts to disable Internet connection
  within the chroot on Linux systems to avoid accessing remote resources during
- the build phase.
+ the build phase, and two scripts to increase a lot the unpacking of depencency
+ packages in the chroots.
 
  Suggested value: ``/usr/share/debomatic/pbuilderhooks``
 
@@ -227,8 +234,8 @@ restarted to pick any change to one of these options.
 
  This option indicates the maximum concurrent builds that can be executed. If
  more build tasks are scheduled, they will be blocked until a slot becomes
- available again. More concurrent builds require more CPU cycles and disk
- space, so you may want to try different configurations to fit your needs.
+ available again. More concurrent builds require more CPU cycles, so you may
+ want to try different configurations to fit your needs.
 
  ``maxbuilds`` takes an integer as parameter.
 
@@ -241,7 +248,7 @@ restarted to pick any change to one of these options.
  start a new thread according to the requested task.
 
  If ``python-pyinotify`` is not available, Deb-o-Matic will fall back to a
- timer-based method.
+ timer-based method, where new tasks will be analyzed periodically.
 
  ``inotify`` takes 1 or 0 as parameter.
 
@@ -251,7 +258,7 @@ restarted to pick any change to one of these options.
 
  This option indicates the number of seconds between two consecutive checks for
  new packages or commands to process. This option is only useful if inotify
- support is disabled or is not available.
+ support is disabled, or is not available.
 
  ``sleep`` takes an integer as parameter.
 
@@ -275,14 +282,14 @@ gpg section
 ...........
 
 These options are not mandatory, Deb-o-Matic will check whether they are
-defined in the configuration file before trying to use related features. Also,
+defined in the configuration file before trying to use these features. Also,
 Deb-o-Matic needs to be restarted to pick any change to one of these options.
 
 ``gnupg`` package is required for these options to be effective.
 
 * ``gpg``
 
- This option indicates whether to enable signature checking support or not. If
+ This option indicates whether to enable signature checking support, or not. If
  enabled, Deb-o-Matic will delete unsigned files and files with signatures not
  available in its keyring.
 
@@ -293,20 +300,20 @@ Deb-o-Matic needs to be restarted to pick any change to one of these options.
 * ``keyring``
 
  This option indicates the gnupg keyring file in which Deb-o-Matic will look
- for allowed and identified GPG signatures.
+ for allowed and identified GPG keys.
 
  Suggested value: ``/etc/debomatic/debomatic.gpg``
 
 .. CAUTION::
 
- Make sure keyring file exists and is populated with allowed signatures if GPG
+ Make sure keyring file exists and is populated with allowed keys if GPG
  support is enabled, otherwise no tasks will be processed.
 
 modules section
 ...............
 
 These options are not mandatory, Deb-o-Matic will check whether they are
-defined in the configuration file before trying to use related features. Also,
+defined in the configuration file before trying to use these features. Also,
 Deb-o-Matic needs to be restarted to pick any change to one of these options.
 
 More on modules handling will be discussed in the `Modules section`_.
@@ -333,7 +340,7 @@ runtime section
 ...............
 
 These options are not mandatory, Deb-o-Matic will check whether they are
-defined in the configuration file before trying to use related features. As the
+defined in the configuration file before trying to use these features. As the
 section name suggests, these options can be adjusted at runtime, Deb-o-Matic
 will pick the updated value during the build process.
 
@@ -346,7 +353,7 @@ will pick the updated value during the build process.
  Option must define a space-separated distribution names matching the ones
  listed in the `Distribution files section`_.
 
- Suggested value: ``unstable experimental raring``
+ Suggested value: ``(blank field)``
 
 * ``distblacklist``
 
@@ -377,7 +384,7 @@ will pick the updated value during the build process.
  defined by a distribution file (see `Distribution files section`_), can build
  packages on top of another distribution. This is particularly useful to
  indicate distribution aliases (such as ``sid <=> unstable``) or subsets
- (such as ``oneiric-proposed => oneiric``).
+ (such as ``trusty-proposed => trusty``).
 
  Option must define a `Python dictionary`_ where keys are the distributions
  indicated by the packages, and values are the distributions on which build
@@ -433,9 +440,8 @@ Interactive mode
 ................
 
 Deb-o-Matic will try to enter daemon mode automatically. If that is not
-possible (e.g. ``python-daemon`` package is not installed), Deb-o-Matic will
-be executed in interactive mode, and will be bound to the shell that launched
-it, as a regular process.
+possible, Deb-o-Matic will be executed in interactive mode, and will be bound
+to the shell that executed it, as a regular process.
 
 It is also possible to force interactive mode by passing ``-n`` or
 ``--nodaemon`` option while invoking ``debomatic`` command:
@@ -495,14 +501,31 @@ parameters defined in ``/etc/default/debomatic`` file.
 * ``DEBOMATIC_OPTS``
 
  This option allows to pass extra options to Deb-o-Matic.
+ 
+Using systemctl command
+-----------------------
+
+If you installed Deb-o-Matic using Debian package, and your system does use of
+systemd as default init, you could start, stop, and restart Deb-o-Matic with
+the following commands, respectively:
+
+ *sudo systemctl start debomatic*
+
+ *sudo systemctl stop debomatic*
+
+ *sudo systemctl restart debomatic*
+
+systemd unit file is configured to look for ``/etc/debomatic/debomatic.conf``
+as its default configuration file. You can change this path by providing a
+systemd override file.
 
 Prepare source packages
 =======================
 
 Deb-o-Matic will take into account both source only uploads and source plus
 binary uploads, while it will discard binary only uploads. Source only uploads
-are recommended to avoid waste of bandwith, so make sure you create packages by
-passing ``-S`` flag to ``debuild`` or ``dpkg-buildpackage``.
+are recommended to avoid waste of bandwidth, so make sure you create packages
+by passing ``-S`` flag to ``debuild`` or ``dpkg-buildpackage``.
 
 Then, packages must be copied or uploaded into the directory specified by
 ``packagedir`` option in the configuration file to let Deb-o-Matic process
@@ -621,6 +644,62 @@ the package you want to install.
 Modules
 =======
 
+Autopkgtest
+-----------
+
+This module allows adt-run to be executed if source package declares a
+Testsuite against autopkgtest. It creates a report in the same directory of the
+resulting files.
+
+Parameters
+..........
+
+.. CAUTION::
+
+ These parameters must be listed under the ``autopkgtest`` section. Make sure
+ you create it in your configuration file.
+
+* ``options``
+
+This option indicates the extra options to pass to adt-run.
+
+ Suggested value: ``--no-built-binaries``
+
+* ``gpghome``
+
+This option indicates the GPG home directory used by adt-run.
+
+ Suggested value: ``/var/cache/debomatic/autopkgtest``
+
+* ``logging``
+
+This option if set to True indicates that extra information have
+to be stored in logs directory.
+
+ Suggested value: ``True``
+
+Blhc
+----
+
+This module allows blhc to be executed, checking the build log of built
+packages for missing hardening flags.
+
+In order for this module to work properly, ``blhc`` package must be installed.
+
+Parameters
+----------
+
+.. CAUTION::
+
+ These parameters must be listed under the ``blhc`` section. Make sure you
+ create it in your configuration file.
+
+* ``blhcopts``
+
+This option indicates the extra options to pass to blhc.
+
+ Suggested value: ``--all``
+
 Contents
 --------
 
@@ -650,6 +729,11 @@ installed.
 Parameters
 ..........
 
+.. CAUTION::
+
+ These parameters must be listed under the ``lintian`` section. Make sure you
+ create it in your configuration file.
+
 * ``lintopts``
 
 This option indicates the extra options to pass to lintian.
@@ -671,6 +755,11 @@ potential problems.
 
 Parameters
 ..........
+
+.. CAUTION::
+
+ These parameters must be listed under the ``mailer`` section. Make sure you
+ create it in your configuration file.
 
 * ``fromaddr``
 
@@ -726,57 +815,16 @@ installed.
 Parameters
 ..........
 
+.. CAUTION::
+
+ These parameters must be listed under the ``piuparts`` section. Make sure you
+ create it in your configuration file.
+
 * ``piupopts``
 
 This option indicates the extra options to pass to piuparts.
 
  Suggested value: ``--log-level=info``
-
-Autopkgtest
---------
-
-This module allows adt-run to be executed if source package declares a
-Testsuite against autopkgtest and creates a report in the same directory
-of the resulting files.
-
-Parameters
-..........
-
-* ``options``
-
-This option indicates the extra options to pass to adt-run.
-
- Suggested value: ``--no-built-binaries``
-
-* ``gpghome``
-
-This option indicates the GPG home directory used by adt-run.
-
- Suggested value: ``/var/cache/debomatic/autopkgtest``
-
-* ``logging``
-
-This option if set to True indicates that extra information have
-to be stored in logs directory.
-
- Suggested value: ``True``
-
-Blhc
-----
-
-This module allows blhc to be executed, checking the build log of built packages
-for missing hardening flags.
-
-In order for this module to work properly, ``blhc`` package must be installed.
-
-Parameters
-----------
-
-* ``blhcopts``
-
-This option indicates the extra options to pass to blhc.
-
- Suggested value: ``--all``
 
 PrevBuildCleaner
 ----------------
@@ -792,6 +840,7 @@ picking obsolete files by mistake. It currently deletes these files:
 * \*.dsc
 * \*.contents
 * \*.lintian
+* \*.piuparts
 * \*.changes
 * \*.autopkgtest
 * \*.bhlc
@@ -808,6 +857,11 @@ available.
 Parameters
 ..........
 
+.. CAUTION::
+
+ These parameters must be listed under the ``repository`` section. Make sure
+ you create it in your configuration file.
+
 * ``gpgkey``
 
 This option indicates the GPG ID used to sign the Release file of the
@@ -823,12 +877,18 @@ sign the Release file of the repository.
 This option indicates the path where to look for the private GPG key used to
 sign the Release file of the repository.
 
+SourceUpload
+------------
+
+This module allows the creation of a .sourceupload.changes file to be used to
+upload source-only uploads to the Debian archive.
+
 .. Links
 .. _Canonical's PPAs: http://www.ubuntu.com/news/launchpad-ppa
 .. _wanna-build: http://git.debian.org/?p=mirror/wanna-build.git;a=summary
-.. _Deb-o-Matic home page: https://launchpad.net/debomatic
-.. _Deb-o-Matic download page: https://launchpad.net/debomatic/+download
-.. _Bazaar: https://code.launchpad.net/~dktrkranz/debomatic/debomatic.dev
+.. _Deb-o-Matic home page: https://github.com/debomatic/debomatic
+.. _Deb-o-Matic download page: https://github.com/debomatic/debomatic/releases
+.. _Git: https://github.com/debomatic/debomatic
 .. _previous section: #installation-of-the-release-tarball
 .. _Python ConfigParser: http://docs.python.org/library/configparser.html
 .. _Python dictionary: http://docs.python.org/library/stdtypes.html#mapping-types-dict
