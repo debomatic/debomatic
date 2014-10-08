@@ -375,6 +375,7 @@ class Build:
                          base, '%s/%s' % (self.buildpath, self.distribution),
                          '--buildplace', '%s/build' % self.buildpath,
                          '--aptcache', '%s/aptcache' % self.buildpath,
+                         '--autocleanaptcache',
                          '--architecture', architecture,
                          '--logfile', '%s/logs/%s.%s' %
                          (self.buildpath, self.cmd, strftime('%Y%m%d_%H%M%S')),
