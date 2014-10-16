@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-10 14:10+0200\n"
+"POT-Creation-Date: 2014-10-16 21:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,7 +33,8 @@ msgstr ""
 #: Debomatic/build.py:71 Debomatic/build.py:181 Debomatic/build.py:444
 #: Debomatic/build.py:455 Debomatic/build.py:60 Debomatic/build.py:173
 #: Debomatic/build.py:436 Debomatic/build.py:448 Debomatic/build.py:179
-#: Debomatic/build.py:440 Debomatic/build.py:452
+#: Debomatic/build.py:440 Debomatic/build.py:452 Debomatic/build.py:441
+#: Debomatic/build.py:453
 #, python-format
 msgid "File %s added"
 msgstr ""
@@ -84,6 +85,7 @@ msgstr ""
 #: Debomatic/build.py:158 Debomatic/build.py:300 Debomatic/build.py:457
 #: Debomatic/build.py:149 Debomatic/build.py:293 Debomatic/build.py:450
 #: Debomatic/build.py:155 Debomatic/build.py:299 Debomatic/build.py:454
+#: Debomatic/build.py:455
 #, python-format
 msgid "Bad .changes file: %s"
 msgstr ""
@@ -121,7 +123,7 @@ msgstr ""
 
 #: Debomatic/build.py:263 Debomatic/build.py:432 Debomatic/commands.py:70
 #: Debomatic/build.py:255 Debomatic/build.py:424 Debomatic/build.py:261
-#: Debomatic/build.py:428
+#: Debomatic/build.py:428 Debomatic/build.py:429
 #, python-format
 msgid "Unable to fetch %s"
 msgstr ""
@@ -130,6 +132,7 @@ msgstr ""
 #: Debomatic/build.py:450 Debomatic/commands.py:50 Debomatic/build.py:288
 #: Debomatic/build.py:305 Debomatic/build.py:322 Debomatic/build.py:442
 #: Debomatic/build.py:294 Debomatic/build.py:328 Debomatic/build.py:446
+#: Debomatic/build.py:447
 #, python-format
 msgid "Unable to open %s"
 msgstr ""
@@ -152,10 +155,11 @@ msgstr ""
 #: Debomatic/build.py:378 Debomatic/build.py:387 Debomatic/build.py:394
 #: Debomatic/build.py:370 Debomatic/build.py:381 Debomatic/build.py:390
 #: Debomatic/build.py:386 Debomatic/build.py:393 Debomatic/build.py:398
+#: Debomatic/build.py:399
 msgid "Post-chroot maintenance hooks launched"
 msgstr ""
 
-#: Debomatic/build.py:384 Debomatic/build.py:377
+#: Debomatic/build.py:384 Debomatic/build.py:377 Debomatic/build.py:385
 #, python-format
 msgid "%(builder)s %(cmd)s failed"
 msgstr ""
@@ -166,12 +170,13 @@ msgid "Lock released on %s"
 msgstr ""
 
 #: Debomatic/build.py:408 Debomatic/build.py:402 Debomatic/build.py:406
+#: Debomatic/build.py:407
 #, python-format
 msgid "File %s removed"
 msgstr ""
 
 #: Debomatic/build.py:445 Debomatic/commands.py:97 Debomatic/build.py:437
-#: Debomatic/build.py:441
+#: Debomatic/build.py:441 Debomatic/build.py:442
 #, python-format
 msgid "Processing %s"
 msgstr ""
@@ -371,6 +376,7 @@ msgid "Pre-chroot maintenance hooks finished"
 msgstr ""
 
 #: Debomatic/build.py:389 Debomatic/build.py:396 Debomatic/build.py:400
+#: Debomatic/build.py:390 Debomatic/build.py:397 Debomatic/build.py:401
 msgid "Post-chroot maintenance hooks finished"
 msgstr ""
 
