@@ -886,7 +886,7 @@ upload source-only uploads to the Debian archive.
 .. Links
 .. _Canonical's PPAs: http://www.ubuntu.com/news/launchpad-ppa
 .. _wanna-build: http://git.debian.org/?p=mirror/wanna-build.git;a=summary
-.. _Deb-o-Matic home page: https://github.com/debomatic/debomatic
+.. _Deb-o-Matic home page: http://debomatic.github.io/
 .. _Deb-o-Matic download page: https://github.com/debomatic/debomatic/releases
 .. _Git: https://github.com/debomatic/debomatic
 .. _previous section: #installation-of-the-release-tarball
