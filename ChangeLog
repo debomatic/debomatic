@@ -1,6 +1,9 @@
-0.13
+0.13 "mol" (2014-10-16)
 * Improved modules subsystem
-* New Blhc plugin
+* New Autopkgtest module
+* New Blhc module
+* New SourceUpload module
+* Several bugfixes
 
 0.12 "blind" (2014-05-30)
 * Converted to Python 3
@@ -9,7 +12,7 @@
 * Per-packagedir lock files
 * Chroot maintenance hooks
 * Improved logging subsystem
-* Improved Repository plugin
+* Improved Repository module
 * systemd support
 * Several bugfixes
 
