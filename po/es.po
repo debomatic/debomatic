@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2014-05-29 20:42+0200\n"
-"PO-Revision-Date: 2013-07-18 09:52+0000\n"
+"POT-Creation-Date: 2014-10-16 21:25+0200\n"
+"PO-Revision-Date: 2014-08-25 01:11+0000\n"
 "Last-Translator: Adolfo Jayme <fitoschido@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-07-08 05:39+0000\n"
-"X-Generator: Launchpad (build 17086)\n"
+"X-Launchpad-Export-Date: 2014-10-16 20:24+0000\n"
+"X-Generator: Launchpad (build 17196)\n"
 
 #: Debomatic/build.py:62
 #, python-format
@@ -32,10 +32,12 @@ msgstr ""
 
 #: Debomatic/build.py:71 Debomatic/build.py:181 Debomatic/build.py:444
 #: Debomatic/build.py:455 Debomatic/build.py:60 Debomatic/build.py:173
-#: Debomatic/build.py:436 Debomatic/build.py:448
+#: Debomatic/build.py:436 Debomatic/build.py:448 Debomatic/build.py:179
+#: Debomatic/build.py:440 Debomatic/build.py:452 Debomatic/build.py:441
+#: Debomatic/build.py:453
 #, python-format
 msgid "File %s added"
-msgstr ""
+msgstr "Se añadió el archivo %s"
 
 #: Debomatic/build.py:75 Debomatic/build.py:64
 #, python-format
@@ -61,60 +63,67 @@ msgid "Launching %s"
 msgstr ""
 
 #: Debomatic/build.py:134 Debomatic/build.py:355 Debomatic/build.py:393
-#: Debomatic/build.py:125 Debomatic/build.py:388
+#: Debomatic/build.py:125 Debomatic/build.py:388 Debomatic/build.py:129
+#: Debomatic/build.py:392
 #, python-format
 msgid "Unable to launch %s"
 msgstr ""
 
-#: Debomatic/build.py:135 Debomatic/build.py:126
+#: Debomatic/build.py:135 Debomatic/build.py:126 Debomatic/build.py:131
 msgid "Post-build hooks launched"
 msgstr ""
 
-#: Debomatic/build.py:144 Debomatic/build.py:135
+#: Debomatic/build.py:144 Debomatic/build.py:135 Debomatic/build.py:141
 msgid "Post-build hooks finished"
 msgstr ""
 
-#: Debomatic/build.py:146 Debomatic/build.py:137
+#: Debomatic/build.py:146 Debomatic/build.py:137 Debomatic/build.py:143
 #, python-format
 msgid "Build of %s complete"
 msgstr ""
 
 #: Debomatic/build.py:158 Debomatic/build.py:300 Debomatic/build.py:457
 #: Debomatic/build.py:149 Debomatic/build.py:293 Debomatic/build.py:450
+#: Debomatic/build.py:155 Debomatic/build.py:299 Debomatic/build.py:454
+#: Debomatic/build.py:455
 #, python-format
 msgid "Bad .changes file: %s"
 msgstr "Archivo .changes incorrecto: %s"
 
 #: Debomatic/build.py:168 Debomatic/commands.py:64 Debomatic/build.py:160
+#: Debomatic/build.py:166
 #, python-format
 msgid "Requesting URL %s"
 msgstr ""
 
 #: Debomatic/build.py:170 Debomatic/commands.py:66 Debomatic/build.py:162
+#: Debomatic/build.py:168
 #, python-format
 msgid "Downloading missing %s"
 msgstr ""
 
 #: Debomatic/build.py:240 Debomatic/commands.py:86 Debomatic/commands.py:91
-#: Debomatic/build.py:232
+#: Debomatic/build.py:232 Debomatic/build.py:238
 #, python-format
 msgid "%(mapped)s mapped as %(mapper)s"
 msgstr ""
 
 #: Debomatic/build.py:252 Debomatic/build.py:275 Debomatic/build.py:244
-#: Debomatic/build.py:267
+#: Debomatic/build.py:267 Debomatic/build.py:250 Debomatic/build.py:273
 #, python-format
 msgid "%s chroot must be created"
 msgstr ""
 
 #: Debomatic/build.py:256 Debomatic/build.py:265 Debomatic/build.py:279
 #: Debomatic/build.py:248 Debomatic/build.py:257 Debomatic/build.py:271
+#: Debomatic/build.py:254 Debomatic/build.py:263 Debomatic/build.py:277
 #, python-format
 msgid "%s chroot must be updated"
 msgstr ""
 
 #: Debomatic/build.py:263 Debomatic/build.py:432 Debomatic/commands.py:70
-#: Debomatic/build.py:255 Debomatic/build.py:424
+#: Debomatic/build.py:255 Debomatic/build.py:424 Debomatic/build.py:261
+#: Debomatic/build.py:428 Debomatic/build.py:429
 #, python-format
 msgid "Unable to fetch %s"
 msgstr ""
@@ -122,30 +131,35 @@ msgstr ""
 #: Debomatic/build.py:296 Debomatic/build.py:311 Debomatic/build.py:326
 #: Debomatic/build.py:450 Debomatic/commands.py:50 Debomatic/build.py:288
 #: Debomatic/build.py:305 Debomatic/build.py:322 Debomatic/build.py:442
+#: Debomatic/build.py:294 Debomatic/build.py:328 Debomatic/build.py:446
+#: Debomatic/build.py:447
 #, python-format
 msgid "Unable to open %s"
 msgstr "No se pudo abrir %s"
 
 #: Debomatic/build.py:317 Debomatic/build.py:331 Debomatic/commands.py:56
-#: Debomatic/build.py:312 Debomatic/build.py:328
+#: Debomatic/build.py:312 Debomatic/build.py:328 Debomatic/build.py:318
+#: Debomatic/build.py:334
 msgid "Please set %(parm)s in %s(conf)s"
 msgstr "Establezca %(parm)s en %s(conf)s"
 
-#: Debomatic/build.py:338 Debomatic/build.py:342
+#: Debomatic/build.py:338 Debomatic/build.py:342 Debomatic/build.py:348
 msgid "Pre-chroot maintenance hooks launched"
 msgstr ""
 
-#: Debomatic/build.py:367 Debomatic/build.py:358
+#: Debomatic/build.py:367 Debomatic/build.py:358 Debomatic/build.py:372
 #, python-format
 msgid "Launching %(builder)s %(cmd)s"
 msgstr ""
 
 #: Debomatic/build.py:378 Debomatic/build.py:387 Debomatic/build.py:394
 #: Debomatic/build.py:370 Debomatic/build.py:381 Debomatic/build.py:390
+#: Debomatic/build.py:386 Debomatic/build.py:393 Debomatic/build.py:398
+#: Debomatic/build.py:399
 msgid "Post-chroot maintenance hooks launched"
 msgstr ""
 
-#: Debomatic/build.py:384 Debomatic/build.py:377
+#: Debomatic/build.py:384 Debomatic/build.py:377 Debomatic/build.py:385
 #, python-format
 msgid "%(builder)s %(cmd)s failed"
 msgstr "%(builder)s %(cmd)s ha fallado"
@@ -155,29 +169,31 @@ msgstr "%(builder)s %(cmd)s ha fallado"
 msgid "Lock released on %s"
 msgstr ""
 
-#: Debomatic/build.py:408 Debomatic/build.py:402
+#: Debomatic/build.py:408 Debomatic/build.py:402 Debomatic/build.py:406
+#: Debomatic/build.py:407
 #, python-format
 msgid "File %s removed"
-msgstr ""
+msgstr "Se quitó el archivo %s"
 
 #: Debomatic/build.py:445 Debomatic/commands.py:97 Debomatic/build.py:437
+#: Debomatic/build.py:441 Debomatic/build.py:442
 #, python-format
 msgid "Processing %s"
-msgstr ""
+msgstr "Procesando %s"
 
-#: Debomatic/modules.py:60 Debomatic/modules.py:61
+#: Debomatic/modules.py:60 Debomatic/modules.py:61 Debomatic/modules.py:63
 #, python-format
 msgid "Module %s loaded"
-msgstr ""
+msgstr "Se cargó el módulo %s"
 
-#: Debomatic/modules.py:77 Debomatic/modules.py:78
+#: Debomatic/modules.py:77 Debomatic/modules.py:78 Debomatic/modules.py:89
 #, python-format
 msgid "Executing hook %(hook)s from module %(mod)s"
 msgstr ""
 
 #: Debomatic/debomatic.py:56 Debomatic/debomatic.py:51
 msgid "You must run Deb-o-Matic as root"
-msgstr ""
+msgstr "Debe ejecutar Deb-o-Matic como superusuario"
 
 #: Debomatic/debomatic.py:67
 #, python-format
@@ -186,16 +202,17 @@ msgstr ""
 
 #: Debomatic/debomatic.py:71 Debomatic/process.py:135
 #: Debomatic/debomatic.py:74 Debomatic/debomatic.py:77
+#: Debomatic/debomatic.py:76
 msgid "Another instance is running, aborting"
 msgstr ""
 
 #: Debomatic/debomatic.py:75 Debomatic/debomatic.py:68
-#: Debomatic/debomatic.py:71
+#: Debomatic/debomatic.py:71 Debomatic/debomatic.py:70
 msgid "Startup hooks launched"
 msgstr ""
 
 #: Debomatic/debomatic.py:77 Debomatic/debomatic.py:70
-#: Debomatic/debomatic.py:73
+#: Debomatic/debomatic.py:73 Debomatic/debomatic.py:72
 msgid "Startup hooks finished"
 msgstr ""
 
@@ -204,40 +221,41 @@ msgid "Entering daemon mode"
 msgstr ""
 
 #: Debomatic/debomatic.py:95 Debomatic/debomatic.py:82
-#: Debomatic/debomatic.py:85
+#: Debomatic/debomatic.py:85 Debomatic/debomatic.py:84
 msgid "Configuration file has not been specified"
-msgstr "No se ha especificado fichero de configuración"
+msgstr "No se especificó el archivo de configuración"
 
 #: Debomatic/debomatic.py:97 Debomatic/debomatic.py:85
-#: Debomatic/debomatic.py:88
+#: Debomatic/debomatic.py:88 Debomatic/debomatic.py:87
 #, python-format
 msgid "Configuration file %s does not exist"
 msgstr "El archivo de configuración %s no existe"
 
 #: Debomatic/debomatic.py:102 Debomatic/debomatic.py:91
-#: Debomatic/debomatic.py:94
+#: Debomatic/debomatic.py:94 Debomatic/debomatic.py:93
 #, python-format
 msgid "Configuration file is not at version %s"
 msgstr ""
 
 #: Debomatic/debomatic.py:107 Debomatic/debomatic.py:97
-#: Debomatic/debomatic.py:100
+#: Debomatic/debomatic.py:100 Debomatic/debomatic.py:99
 #, python-format
 msgid "Set \"%(opt)s\" in %(conffile)s"
 msgstr "Establezca «%(opt)s» en %(conffile)s"
 
 #: Debomatic/debomatic.py:139 Debomatic/debomatic.py:127
-#: Debomatic/debomatic.py:130
+#: Debomatic/debomatic.py:130 Debomatic/debomatic.py:129
 msgid "Inotify loop started"
 msgstr "Se ha iniciado el bucle Inotify"
 
 #: Debomatic/debomatic.py:143 Debomatic/debomatic.py:131
-#: Debomatic/debomatic.py:134
+#: Debomatic/debomatic.py:134 Debomatic/debomatic.py:133
 msgid "Timer loop started"
 msgstr ""
 
 #: Debomatic/debomatic.py:154 Debomatic/debomatic.py:142
 #: Debomatic/debomatic.py:60 Debomatic/debomatic.py:144
+#: Debomatic/debomatic.py:143
 #, python-format
 msgid "Unable to access %s directory"
 msgstr "No se puede acceder al directorio %s"
@@ -248,12 +266,14 @@ msgstr "No se puede acceder al directorio %s"
 #: Debomatic/commands.py:164 Debomatic/commands.py:184
 #: Debomatic/debomatic.py:149 Debomatic/debomatic.py:154
 #: Debomatic/debomatic.py:151 Debomatic/debomatic.py:156
+#: Debomatic/debomatic.py:150 Debomatic/commands.py:144
+#: Debomatic/commands.py:166 Debomatic/commands.py:187
 #, python-format
 msgid "Thread for %s scheduled"
 msgstr ""
 
 #: Debomatic/debomatic.py:168 Debomatic/debomatic.py:189
-#: Debomatic/process.py:85 Debomatic/process.py:119
+#: Debomatic/process.py:85 Debomatic/process.py:119 Debomatic/process.py:86
 msgid "Waiting for threads to complete..."
 msgstr "Esperando hilos para completar..."
 
@@ -289,18 +309,21 @@ msgid "Performing a package rebuild with extra dependencies"
 msgstr ""
 
 #: Debomatic/commands.py:144 Debomatic/commands.py:146
+#: Debomatic/commands.py:147
 msgid "Performing a porter build"
 msgstr ""
 
-#: Debomatic/commands.py:167
+#: Debomatic/commands.py:167 Debomatic/commands.py:169
 msgid "Performing a package rebuild"
 msgstr ""
 
 #: Debomatic/commands.py:189 Debomatic/commands.py:187
+#: Debomatic/commands.py:190
 msgid "Removing files"
 msgstr ""
 
 #: Debomatic/commands.py:194 Debomatic/commands.py:192
+#: Debomatic/commands.py:195
 #, python-format
 msgid "Removing %s"
 msgstr ""
@@ -313,11 +336,50 @@ msgstr "Anillo de claves no encontrado"
 msgid "No valid signatures found"
 msgstr "No se encontraron firmas válidas"
 
-#: Debomatic/process.py:40
+#: Debomatic/process.py:40 Debomatic/process.py:41
 #, python-format
 msgid "Error entering daemon mode: %s"
 msgstr ""
 
 #: Debomatic/debomatic.py:163 Debomatic/debomatic.py:165
 msgid "Log level not valid, defaulting to \"info\""
+msgstr ""
+
+#: Debomatic/modules.py:69
+#, python-format
+msgid "Modules will be executed in this order: %s"
+msgstr ""
+
+#: Debomatic/modules.py:84
+#, python-format
+msgid "%(mod)s module disabled, needs %(missing)s"
+msgstr ""
+
+#: Debomatic/modules.py:101
+#, python-format
+msgid "Module %s is blacklisted"
+msgstr ""
+
+#: Debomatic/modules.py:133 Debomatic/modules.py:149
+#, python-format
+msgid ""
+"Cannot execute %(mod)s as %(order)s module, dependencies found: %(deps)s"
+msgstr ""
+
+#: Debomatic/modules.py:176
+#, python-format
+msgid "Circular dependencies found, disabled modules: %s"
+msgstr ""
+
+#: Debomatic/build.py:355
+msgid "Pre-chroot maintenance hooks finished"
+msgstr ""
+
+#: Debomatic/build.py:389 Debomatic/build.py:396 Debomatic/build.py:400
+#: Debomatic/build.py:390 Debomatic/build.py:397 Debomatic/build.py:401
+msgid "Post-chroot maintenance hooks finished"
+msgstr ""
+
+#: modules/Blhc.py:57
+msgid "blhc binary is not available"
 msgstr ""
