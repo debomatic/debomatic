@@ -1,4 +1,4 @@
-From: %(fromaddr)s
+From: %(sender)s
 To: %(uploader)s
 Subject: %(package)s has been built successfully
 
@@ -11,4 +11,4 @@ Here is an excerpt from the build log:
 
 Lintian log:
  --
-%(lintlog)s
+%(lintian)s

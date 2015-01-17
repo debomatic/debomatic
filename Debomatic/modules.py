@@ -1,7 +1,7 @@
 # Deb-o-Matic
 #
 # Copyright (C) 2008-2009 David Futcher
-# Copyright (C) 2012-2014 Luca Falavigna
+# Copyright (C) 2012-2015 Luca Falavigna
 #
 # Author: David Futcher <bobbo@ubuntu.com>
 #
@@ -28,16 +28,33 @@ from toposort import toposort_flatten as toposort
 from .process import ModulePool
 
 
+class ModuleArgs():
+
+    def __init__(self, opts):
+        self.opts = opts
+        self.action = None
+        self.architecture = None
+        self.directory = None
+        self.distribution = None
+        self.dists = None
+        self.dsc = None
+        self.files = None
+        self.package = None
+        self.success = False
+        self.uploader = None
+
+
 class Module():
 
     def __init__(self, opts):
-        (self._opts, self._rtopts, self._conffile) = opts
+        self.args = ModuleArgs(opts)
+        self._opts = opts
         self._use_modules = False
         if self._opts.has_option('modules', 'modules'):
-            if self._opts.getint('modules', 'modules'):
+            if self._opts.getboolean('modules', 'modules'):
                 self._use_modules = True
-        if self._opts.has_option('modules', 'modulespath'):
-            mod_path = self._opts.get('modules', 'modulespath')
+        if self._opts.has_option('modules', 'path'):
+            mod_path = self._opts.get('modules', 'path')
             path.append(mod_path)
         else:
             self._use_modules = False
@@ -50,7 +67,6 @@ class Module():
             self._use_modules = False
         if self._use_modules:
             self._instances = {}
-            self._rtopts.read(self._conffile)
             for module in modules:
                 try:
                     _class = 'DebomaticModule_%s' % module
@@ -73,16 +89,26 @@ class Module():
     def _disable_modules(self):
         for module in self._sort_modules():
             missing = set()
+            missing_after = set()
             for dep in self._instances[module]._depends:
                 if dep in self._instances:
                     if self._instances[dep]._disabled:
                         missing.add(dep)
                 else:
                     missing.add(dep)
+            for dep in self._instances[module]._after:
+                if dep in self._instances:
+                    if self._instances[dep]._disabled:
+                        missing_after.add(dep)
+                else:
+                    missing_after.add(dep)
             if missing:
                 self._instances[module]._disabled = True
                 debug(_('%(mod)s module disabled, needs %(missing)s') %
                       {'mod': module, 'missing': ', '.join(missing)})
+            if missing_after:
+                for dep in missing_after:
+                    self._instances[module]._after.remove(dep)
 
     def _launcher(self, hook):
         func, args, module, hookname, dependencies = hook
@@ -92,8 +118,8 @@ class Module():
 
     def _set_blacklisted(self):
         blist = set()
-        if self._rtopts.has_option('runtime', 'modulesblacklist'):
-            _blacklist = self._rtopts.get('runtime', 'modulesblacklist')
+        if self._opts.has_option('modules', 'blacklist'):
+            _blacklist = self._opts.get('modules', 'blacklist')
             blist = set(_blacklist.split())
         for module in self._instances:
             if module in blist:
@@ -177,7 +203,7 @@ class Module():
                   % ', '.join(circular))
             return self._sort_modules()
 
-    def execute_hook(self, hook, args):
+    def execute_hook(self, hook):
         hooks = []
         if self._use_modules:
             for module in self._sort_modules():
@@ -197,14 +223,16 @@ class Module():
                             continue
                 try:
                     hooks.append((getattr(instance, hook),
-                                 args, module, hook, dependencies))
+                                 self.args, module, hook, dependencies))
                 except AttributeError:
                     pass
-            if self._opts.has_option('modules', 'maxthreads'):
-                workers = self._opts.getint('modules', 'maxthreads')
+            if self._opts.has_option('modules', 'threads'):
+                workers = self._opts.getint('modules', 'threads')
             else:
                 workers = 1
+            debug(_('%s hooks launched') % hook)
             modulepool = ModulePool(workers)
             for hk in hooks:
                 modulepool.schedule(self._launcher, hk)
             modulepool.shutdown()
+            debug(_('%s hooks finished') % hook)

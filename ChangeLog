@@ -1,3 +1,7 @@
+0.20
+* sbuild backend instead of pbuilder
+* New binnmu command
+
 0.13 "mol" (2014-10-16)
 * Improved modules subsystem
 * New Autopkgtest module

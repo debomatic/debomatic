@@ -1,7 +1,6 @@
-#!/usr/bin/python3
 # Deb-o-Matic
 #
-# Copyright (C) 2007-2015 Luca Falavigna
+# Copyright (C) 2015 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
 #
@@ -18,8 +17,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from Debomatic import debomatic
+
+class DebomaticConffileError(Exception):
+    pass
 
 
-if __name__ == "__main__":
-    debomatic.Debomatic()
+class DebomaticError(Exception):
+    pass

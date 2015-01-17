@@ -1,6 +1,0 @@
-DISTRIBUTION=oldstable
-MIRRORSITE=http://ftp.debian.org/debian
-OTHERMIRROR="deb http://security.debian.org/ oldstable/updates main contrib non-free | deb http://ftp.debian.org/debian oldstable-updates main contrib non-free"
-COMPONENTS="main contrib non-free"
-DEBOOTSTRAP=debootstrap
-DEBOOTSTRAPOPTS=('--variant=buildd' '--keyring' '/usr/share/keyrings/debian-archive-keyring.gpg')

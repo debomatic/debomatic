@@ -1,9 +1,9 @@
-.TH debomatic 1 2012-01-29 "debomatic"
+.TH debomatic 1 2015-01-15 "debomatic"
 .SH NAME
 debomatic \- Automatic build machine for Debian source packages
 .SH SYNOPSIS
-.B debomatic \fB-c|--config\fR \fIconffile\fR [\fB\-n|--nodaemon\fR]
-[\fB-q|--quit-process\fR]
+.B debomatic \fB-c|--config\fR \fIconffile\fR [\fB\-i|--interactive\fR]
+[\fB-q|--quit\fR]
 .SH DESCRIPTION
 This tool provides a simple build machine for Debian source packages.
 It is designed to be very simple to use and self-sufficient during 
@@ -11,25 +11,25 @@ package build process and chroot updates. It support almost every
 Debian-based distribution, given its repositories follow standard
 Debian repository structure.
 .PP
-pbuilder and an active Internet connection (broadband is suggested)
-are required in order for debomatic to work properly.
+sbuild and an active Internet connection (broadband is suggested) are
+required in order for debomatic to work properly.
 .PP
-You have to run it using root privileges because of pbuilder infrastructure.
+You have to run it using root privileges due to the chroot creation
+process.
 .SH OPTIONS
 .TP
 .B -c, --config\fR \fIconffile\fR
 You have to specify a configuration file for debomatic to work.
-See debomatic.conf(5) for further details.
 .TP
-.B -n, --nodaemon
+.B -i, --interactive
 By default, debomatic runs in full daemon mode and it detaches itself
 from its parent. If you do not want this, you can use this option and
-debomatic will not detach from parent process.
+debomatic will run in interactive mode.
 .TP
-.B -q, --quit-process
+.B -q, --quit
 Terminate running debomatic instance or remove obsolete locks left.
 .SH COPYRIGHT
-This manual page is Copyright 2007-2014 Luca Falavigna <dktrkranz@debian.org>.
+This manual page is Copyright 2007-2015 Luca Falavigna <dktrkranz@debian.org>.
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU General Public License, Version 3 or any later
 version published by the Free Software Foundation.

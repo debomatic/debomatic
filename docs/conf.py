@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2012-2014 Luca Falavigna
+# Copyright (C) 2012-2015 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
 #
@@ -25,9 +25,9 @@ templates_path = ['_templates']
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'Deb-o-Matic'
-copyright = '2007-2014, Luca Falavigna'
-version = '0.13'
-release = '0.13'
+copyright = '2007-2015, Luca Falavigna'
+version = '0.20'
+release = '0.20'
 exclude_patterns = ['_build']
 pygments_style = 'sphinx'
 html_theme = 'default'

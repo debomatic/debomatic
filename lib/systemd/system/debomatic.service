@@ -4,7 +4,7 @@ ConditionPathExists=/etc/debomatic/debomatic.conf
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/debomatic -c /etc/debomatic/debomatic.conf -n
+ExecStart=/usr/bin/debomatic -c /etc/debomatic/debomatic.conf -i
 ExecStop=/usr/bin/debomatic -c /etc/debomatic/debomatic.conf -q
 KillMode=process
 SendSIGKILL=no

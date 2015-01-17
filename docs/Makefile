@@ -1,5 +1,5 @@
 #!/usr/bin/make
-# Copyright (C) 2012-2014 Luca Falavigna
+# Copyright (C) 2012-2015 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
 #

@@ -1,4 +1,4 @@
-From: %(fromaddr)s
+From: %(sender)s
 To: %(uploader)s
 Subject: %(package)s failed to build
 

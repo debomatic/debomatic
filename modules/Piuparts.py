@@ -1,6 +1,7 @@
 # Deb-o-Matic - PiuParts module
 #
 # Copyright (C) 2012 Leo Iannacone
+# Copyright (C) 2015 Luca Falavigna
 #
 # Authors: Leo Iannacone <l3on@ubuntu.com>
 #
@@ -21,7 +22,6 @@
 
 import os
 from subprocess import call
-from re import findall
 
 
 class DebomaticModule_Piuparts:
@@ -30,31 +30,28 @@ class DebomaticModule_Piuparts:
         self.piuparts = '/usr/sbin/piuparts'
 
     def post_build(self, args):
-        if not args['success']:
+        if not args.success:
             return
-        if args['opts'].has_section('piuparts'):
-            piupopts = args['opts'].get('piuparts', 'piupopts').strip().split()
+        if not os.access(self.piuparts, os.X_OK):
+            return
+        if args.opts.has_section('piuparts'):
+            options = args.opts.get('piuparts', 'options').strip().split()
         else:
-            piupopts = []
-        with open(args['cfg'], 'r') as fd:
-            data = fd.read()
-            distribution = findall('[^#]?DISTRIBUTION="?(.*[^"])"?\n', data)[0]
-            mirror = findall('[^#]?MIRRORSITE="?(.*[^"])"?\n', data)[0]
-            components = findall('[^#]?COMPONENTS="?(.*[^"])"?\n', data)[0]
-
-        builder = args['opts'].get('default', 'builder')
-        opt_content = '-e' if builder == 'cowbuilder' else '-b'
-        piupopts += [opt_content, '%(directory)s/%(distribution)s' % args]
-        piupopts += ['-d', '%s' % distribution]
-        piupopts += ['-m', '%s %s' % (mirror, components)]
-        piupopts += ['-D', '%s' % mirror.split('/')[-1]]
-        resultdir = os.path.join(args['directory'], 'pool', args['package'])
+            options = []
+        distribution = args.distribution
+        mirror = args.dists.get(distribution, 'mirror')
+        schroot = '%s-%s-debomatic' % (distribution, args.architecture)
+        resultdir = os.path.join(args.directory, 'pool', args.package)
         for filename in os.listdir(resultdir):
             if filename.endswith('.changes'):
-                piupartsout = os.path.join(resultdir,
-                                           args['package']) + '.piuparts'
-                with open(piupartsout, 'w') as fd:
-                    cmd = [self.piuparts] + piupopts + \
-                          [os.path.join(resultdir, filename)]
+                log = os.path.join(resultdir, args.package) + '.piuparts'
+                with open(log, 'a') as fd:
+                    cmd = [self.piuparts,
+                           '-d', '%s' % distribution,
+                           '-D', '%s' % mirror.split('/')[-1],
+                           '--schroot=chroot:%s' % schroot,
+                           os.path.join(resultdir, filename)]
+                    for option in options:
+                        cmd.insert(-1, option)
                     call(cmd, stdout=fd)
                 break

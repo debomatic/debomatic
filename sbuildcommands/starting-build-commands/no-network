@@ -1,0 +1,14 @@
+#!/bin/sh
+# this forces dpkg-buildpackage to have an independent, empty network namespace
+
+if [ "$(uname -s)" = "Linux" ]
+then
+	apt-get install -y util-linux
+	mv /usr/bin/dpkg-buildpackage /usr/bin/dpkg-buildpackage.bin
+	cat > /usr/bin/dpkg-buildpackage <<- EOF
+		#!/bin/sh
+
+		unshare -n /usr/bin/dpkg-buildpackage.bin $@
+		EOF
+	chmod +x /usr/bin/dpkg-buildpackage
+fi
