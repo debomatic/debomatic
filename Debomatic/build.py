@@ -147,10 +147,11 @@ class Build:
         commandsdir = self.opts.get('chroots', 'commands')
         if os.path.isdir(commandsdir):
             for type in types:
-                for command in os.listdir(os.path.join(commandsdir, type)):
-                    commandfile = os.path.join(commandsdir, type, command)
-                    if os.access(commandfile, os.X_OK):
-                        commands.append('--%s=%s' % (type, commandfile))
+                if os.path.isdir(os.path.join(commandsdir, type)):
+                    for command in os.listdir(os.path.join(commandsdir, type)):
+                        commandfile = os.path.join(commandsdir, type, command)
+                        if os.access(commandfile, os.X_OK):
+                            commands.append('--%s=%s' % (type, commandfile))
         if commands:
             commands.append('--log-external-command-output')
             commands.append('--log-external-command-error')
