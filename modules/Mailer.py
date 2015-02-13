@@ -21,6 +21,7 @@
 # Send a reply to the uploader once the build has finished.
 
 import os
+from glob import glob
 from re import findall, DOTALL
 from smtplib import SMTP
 from email.parser import Parser
@@ -72,8 +73,8 @@ class DebomaticModule_Mailer:
         if not template:
             template = self.failure
         try:
-            bp = '%s/pool/%s/%s_%s.build' % (args.directory, args.package,
-                                             args.package, args.architecture)
+            bp = glob(os.path.join(args.directory, 'pool', args.package,
+                                   '*_%s.build' % args.architecture))[0]
             with open(bp, 'r', encoding='utf8') as fd:
                 if args.success:
                     data = findall('dpkg-buildpackage\n(.*)?\nBuild finished ',

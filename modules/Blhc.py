@@ -21,6 +21,7 @@
 # Stores blhc output on top of the built package in the pool directory.
 
 import os
+from glob import glob
 from logging import error
 from subprocess import call
 from tempfile import NamedTemporaryFile
@@ -39,8 +40,8 @@ class DebomaticModule_Blhc:
         else:
             blhcopts = []
         resultdir = os.path.join(args.directory, 'pool', args.package)
-        buildlog = '%s_%s.build' % (os.path.join(resultdir, args.package),
-                                    args.architecture)
+        buildlog = glob(os.path.join(resultdir, '*_%s.build' %
+                                     args.architecture))[0]
         blhclog = os.path.join(resultdir, args.package) + '.blhc'
         if os.access(buildlog, os.R_OK):
             if os.access(self.blhc, os.X_OK):
