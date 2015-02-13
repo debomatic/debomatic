@@ -6,9 +6,9 @@ then
 	apt-get install -y util-linux
 	mv /usr/bin/dpkg-buildpackage /usr/bin/dpkg-buildpackage.bin
 	cat > /usr/bin/dpkg-buildpackage <<- EOF
-		#!/bin/sh
+		#!/usr/bin/perl
 
-		unshare -n /usr/bin/dpkg-buildpackage.bin $@
+		system("unshare", "-n", "/usr/bin/dpkg-buildpackage.bin", @ARGV);
 		EOF
 	chmod +x /usr/bin/dpkg-buildpackage
 fi
