@@ -124,5 +124,5 @@ class Command():
             for pattern in files.split():
                 pattern = os.path.basename(pattern)
                 for absfile in glob(os.path.join(self.incoming, pattern)):
-                    debug(_('Removing %s') % pattern)
+                    debug(_('Removing %s') % absfile)
                     os.remove(absfile)
