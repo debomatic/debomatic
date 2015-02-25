@@ -108,6 +108,10 @@ class Build:
         if self.binnmu:
             command.insert(-1, '--binNMU=%s' % self.binnmu[0])
             command.insert(-1, '--make-binNMU=%s' % self.binnmu[1])
+            buildlog = '%s+b%s_%s.build' % (packageversion, self.binnmu[0],
+                                            architecture)
+        else:
+            buildlog = '%s_%s.build' % (packageversion, architecture)
         if self.extrabd:
             for extrabd in self.extrabd:
                 command.insert(-1, '--add-depends=%s' % extrabd)
@@ -129,6 +133,10 @@ class Build:
         with open(os.devnull, 'w') as fd:
             try:
                 os.chdir(os.path.join(self.buildpath, 'pool', packageversion))
+                buildlink = '%s.buildlog' % packageversion
+                if os.path.exists(buildlink):
+                    os.unlink(buildlink)
+                os.symlink(buildlog, buildlink)
                 result = call(command, stdout=fd, stderr=fd)
             except OSError:
                 error(_('Invoication of sbuild failed'))
