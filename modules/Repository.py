@@ -47,9 +47,11 @@ class DebomaticModule_Repository:
             secring = args.opts.get('repository', 'secring')
         else:
             return
-        cwd = os.getcwd()
-        if not os.path.isfile(self.af):
+        if not os.access(self.af, os.X_OK):
             return
+        if not os.access(self.gpg, os.X_OK):
+            return
+        cwd = os.getcwd()
         distribution = args.distribution
         arch = args.architecture
         archive = args.directory

@@ -36,6 +36,7 @@ from shutil import rmtree
 class DebomaticModule_AutoPkgTest:
 
     def __init__(self):
+        self.adt = '/usr/bin/adt-run'
         self.options = []
         self.changesfile = None
         self.gpghome = '/var/cache/debomatic/autopkgtest'
@@ -83,6 +84,9 @@ class DebomaticModule_AutoPkgTest:
     def post_build(self, args):
         if not args.success:
             return
+        if not os.access(self.adt, os.X_OK):
+            return
+
         self.resultdir = os.path.join(args.directory, 'pool', args.package)
         self.output = (os.path.join(self.resultdir, args.package) +
                        '.autopkgtest')
@@ -109,7 +113,7 @@ class DebomaticModule_AutoPkgTest:
                         output.write('\n\n')
                 output.flush()
 
-        adt = ['adt-run', '--gnupg-home', self.gpghome,
+        adt = [self.adt, '--gnupg-home', self.gpghome,
                '--summary', os.path.join(self.resultdir_adt, self.summary),
                '--output-dir', self.resultdir_adt,
                self.changesfile, '---', 'schroot',
