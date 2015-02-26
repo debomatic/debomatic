@@ -130,18 +130,19 @@ class Debomatic(Parser, Process):
                 error(_('Unable to access %s directory') % self.incoming)
                 exit(1)
         for filename in filelist:
-            try:
+            if filename.endswith('.changes'):
                 with open(os.path.join(self.incoming, filename)) as fd:
-                    flock(fd, LOCK_EX | LOCK_NB)
-                    if filename.endswith('.changes'):
+                    try:
+                        flock(fd, LOCK_EX | LOCK_NB)
+                        flock(fd, LOCK_UN)
+                    except IOError:
+                        pass
+                    else:
                         b = Build(self.opts, self.dists, changesfile=filename)
                         self.pool.schedule(b.run)
                         debug(_('Thread for %s scheduled') % filename)
-                    elif filename.endswith('.commands'):
-                        Command(self.opts, self.dists, self.pool, filename)
-                    flock(fd, LOCK_UN)
-            except IOError:
-                continue
+            elif filename.endswith('.commands'):
+                Command(self.opts, self.dists, self.pool, filename)
 
     def setlog(self, fmt, level='info'):
         loglevels = {'error': ERROR,
