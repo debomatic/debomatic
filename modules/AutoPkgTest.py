@@ -95,11 +95,10 @@ class DebomaticModule_AutoPkgTest:
 
         output = open(self.output, 'w')
 
-        def write_header(header, symbol='~'):
-            header = '{}{: ^70}{}'.format(symbol, header, symbol)
-            output.write(symbol * len(header) + '\n')
-            output.write(header + '\n')
-            output.write(symbol * len(header) + '\n')
+        def write_header(header):
+            output.write('┌{:─^70}┐\n'.format('─'))
+            output.write('│ {: <69}│\n'.format(header))
+            output.write('└{:─^70}┘\n'.format('─'))
             output.flush()
 
         def append_file(source, new_lines_at_the_end=True):
