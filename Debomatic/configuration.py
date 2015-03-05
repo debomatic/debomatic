@@ -1,0 +1,115 @@
+# Deb-o-Matic
+#
+# Copyright (C) 2015 Luca Falavigna
+#
+# Author: Luca Falavigna <dktrkranz@debian.org>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 3 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
+
+import os
+from ast import literal_eval
+from configparser import NoOptionError
+from logging import error
+
+from .exceptions import DebomaticConffileError
+
+
+core = {'debomatic':
+        {'debootstrap': str, 'incoming': str, 'architecture': str,
+         'threads': int, 'inotify': bool, 'sleep': int,
+         'logfile': str, 'loglevel': str},
+        'distributions': {'list': str, 'blacklist': str, 'mapper': dict},
+        'chroots': {'profile': str, 'commands': str},
+        'gpg': {'gpg': bool, 'keyring': str},
+        'modules': {'modules': bool, 'path': str,
+                    'threads': int, 'blacklist': str}}
+modules = {'autopkgtest': {'options': str, 'gpghome': str},
+           'blhc': {'options': str},
+           'lintian': {'options': str},
+           'mailer': {'sender': str, 'server': str, 'port': int, 'tls': bool,
+                      'authrequired': bool, 'user': str, 'passwd': str,
+                      'success': str, 'failure': str, 'lintian': bool},
+           'piuparts': {'options': str},
+           'repository': {'gpgkey': str, 'pubring': str, 'secring': str}}
+dists = {'suite': str, 'mirror': str, 'components': str,
+         '_extramirrors': str, '_extrapackages': str}
+
+
+class Parser:
+
+    def __init__(self):
+        pass
+
+    def _validate(self, option, section, configtype, element, conffile):
+        if not element.has_option(section, option):
+            if not option.startswith('_'):
+                error(_('Set "%(option)s" in section "%(section)s" '
+                        'in %(conffile)s') % {'option': option.strip('_'),
+                                              'section': section,
+                                              'conffile': conffile})
+                raise DebomaticConffileError
+        fubar = False
+        try:
+            if configtype == int:
+                _option = element.getint(section, option)
+            elif configtype == bool:
+                _option = element.getboolean(section, option)
+            elif configtype == dict:
+                _option = literal_eval(element.get(section, option))
+            else:
+                _option = element.get(section, option)
+            assert(isinstance(_option, configtype))
+        except NoOptionError:
+            if not option.startswith('_'):
+                fubar = True
+        except (AssertionError, ValueError):
+            fubar = True
+        finally:
+            if fubar:
+                error(_('Option "%(option)s" in section "%(section)s" '
+                        'must be %(type)s' % {'option': option,
+                                              'section': section,
+                                              'type': configtype.__name__}))
+                raise DebomaticConffileError
+
+    def parse_configfiles(self):
+        if not self.conffile:
+            error(_('Configuration file has not been specified'))
+            raise DebomaticConffileError
+        if not os.path.isfile(self.conffile):
+            error(_('Configuration file %s does not exist') % self.conffile)
+            raise DebomaticConffileError
+        self.opts.read(self.conffile)
+        for section in core:
+            if not self.opts.has_section(section):
+                error(_('Section "%(section)s" missing in %(conffile)s') %
+                      {'section': section, 'conffile': self.conffile})
+                raise DebomaticConffileError
+            for option in core[section]:
+                self._validate(option, section, core[section][option],
+                               self.opts, self.conffile)
+        for section in modules:
+            if self.opts.has_section(section):
+                for option in modules[section]:
+                    self._validate(option, section, modules[section][option],
+                                   self.opts, self.conffile)
+        distfile = self.opts.get('distributions', 'list')
+        if not os.path.isfile(distfile):
+            error(_('Distribution file %s does not exist') % distfile)
+            raise DebomaticConffileError
+        self.dists.read(distfile)
+        for dist in self.dists.sections():
+            for option in dists:
+                self._validate(option, dist, dists[option],
+                               self.dists, distfile)

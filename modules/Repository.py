@@ -1,6 +1,6 @@
 # Deb-o-Matic - Contents module
 #
-# Copyright (C) 2011-2014 Luca Falavigna
+# Copyright (C) 2011-2015 Luca Falavigna
 #
 # Authors: Luca Falavigna <dktrkranz@debian.org>
 #
@@ -30,29 +30,31 @@ class DebomaticModule_Repository:
         self.af = '/usr/bin/apt-ftparchive'
         self.gpg = '/usr/bin/gpg'
 
+    def pre_build(self, args):
+        self.update_repository(args)
+
     def post_build(self, args):
         self.update_repository(args)
 
     def pre_chroot(self, args):
-        self.update_repository(args)
-
-    def post_chroot(self, args):
-        if args['cmd'] == 'update' and args['success']:
+        if args.action:
             self.update_repository(args)
 
     def update_repository(self, args):
-        if args['opts'].has_section('repository'):
-            gpgkey = args['opts'].get('repository', 'gpgkey')
-            pubring = args['opts'].get('repository', 'pubring')
-            secring = args['opts'].get('repository', 'secring')
+        if args.opts.has_section('repository'):
+            gpgkey = args.opts.get('repository', 'gpgkey')
+            pubring = args.opts.get('repository', 'pubring')
+            secring = args.opts.get('repository', 'secring')
         else:
             return
-        cwd = os.getcwd()
-        if not os.path.isfile(self.af):
+        if not os.access(self.af, os.X_OK):
             return
-        distribution = args['distribution']
-        arch = args['architecture']
-        archive = args['directory']
+        if not os.access(self.gpg, os.X_OK):
+            return
+        cwd = os.getcwd()
+        distribution = args.distribution
+        arch = args.architecture
+        archive = args.directory
         pool = os.path.join(archive, 'pool')
         dists = os.path.join(archive, 'dists', distribution)
         packages = os.path.join(dists, 'main', 'binary-%s' % arch)

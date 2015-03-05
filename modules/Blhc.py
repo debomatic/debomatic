@@ -1,6 +1,7 @@
 # Deb-o-Matic - Blhc module
 #
 # Copyright (C) 2014 Mattia Rizzolo
+# Copyright (C) 2015 Luca Falavigna
 #
 # Authors: Mattia Rizzolo <mattia@mapreri.org>
 #
@@ -20,6 +21,7 @@
 # Stores blhc output on top of the built package in the pool directory.
 
 import os
+from glob import glob
 from logging import error
 from subprocess import call
 from tempfile import NamedTemporaryFile
@@ -32,18 +34,18 @@ class DebomaticModule_Blhc:
         self.blhc = '/usr/bin/blhc'
 
     def post_build(self, args):
-        if args['opts'].has_section('blhc') and \
-           args['opts'].has_option('blhc', 'blhcopts'):
-            blhcopts = args['opts'].get('blhc', 'blhcopts').strip().split()
+        if args.opts.has_section('blhc') and \
+           args.opts.has_option('blhc', 'options'):
+            blhcopts = args.opts.get('blhc', 'options').strip().split()
         else:
             blhcopts = []
-        resultdir = os.path.join(args['directory'], 'pool', args['package'])
-        buildlog = os.path.join(resultdir, args['package']) + '.buildlog'
-        blhclog = os.path.join(resultdir, args['package']) + '.blhc'
+        resultdir = os.path.join(args.directory, 'pool', args.package)
+        buildlog = glob(os.path.join(resultdir, '*_%s.build' %
+                                     args.architecture))[0]
+        blhclog = os.path.join(resultdir, args.package) + '.blhc'
         if os.access(buildlog, os.R_OK):
             if os.access(self.blhc, os.X_OK):
                 cmd = [self.blhc] + blhcopts + [buildlog]
-                # fdtmp, tmpfile = mkstemp()
                 with NamedTemporaryFile() as fd:
                     exitcode = call(cmd, stdout=fd, stderr=fd)
                     # Save bhlc log only if useful information has been

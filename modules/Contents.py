@@ -1,7 +1,7 @@
 # Deb-o-Matic - Contents module
 #
 # Copyright (C) 2009 Alessio Treglia
-# Copyright (C) 2010-2014 Luca Falavigna
+# Copyright (C) 2010-2015 Luca Falavigna
 #
 # Authors: Alessio Treglia <quadrispro@ubuntu.com>
 #          Luca Falavigna <dktrkranz@debian.org>
@@ -31,16 +31,16 @@ class DebomaticModule_Contents:
         self.debc = '/usr/bin/debc'
 
     def post_build(self, args):
-        if not args['success']:
+        if not args.success:
             return
         changes_file = None
-        resultdir = os.path.join(args['directory'], 'pool', args['package'])
-        contents_file = os.path.join(resultdir, args['package']) + '.contents'
+        resultdir = os.path.join(args.directory, 'pool', args.package)
+        contents_file = os.path.join(resultdir, args.package) + '.contents'
         for filename in os.listdir(resultdir):
             if filename.endswith('.changes'):
                 changes_file = os.path.join(resultdir, filename)
                 break
-        if changes_file:
+        if changes_file and os.access(self.debc, os.X_OK):
             with open(contents_file, 'w') as fd:
-                call([self.debc, '-a%s' % args['architecture'], changes_file],
+                call([self.debc, '-a%s' % args.architecture, changes_file],
                      stdout=fd)

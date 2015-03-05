@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # Deb-o-Matic
 #
-# Copyright (C) 2007-2014 Luca Falavigna
+# Copyright (C) 2007-2015 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
 #
@@ -43,7 +43,7 @@ class InstallData(install_data):
         self.install_files('etc')
         self.install_files('lib')
         self.install_files('modules', 'share/debomatic')
-        self.install_files('pbuilderhooks', 'share/debomatic')
+        self.install_files('sbuildcommands', 'share/debomatic')
         self.install_files('locale', 'share')
         install_data.run(self)
 
@@ -68,11 +68,11 @@ class InstallData(install_data):
 
 
 setup(name='debomatic',
-      version='0.13',
+      version='0.20',
       author='Luca Falavigna',
       author_email='dktrkranz@debian.org',
       description='Automatic build machine for Debian source packages',
-      url='https://launchpad.net/debomatic/',
+      url='http://debomatic.github.io',
       license='GNU GPL',
       packages=['Debomatic'],
       scripts=['debomatic'],

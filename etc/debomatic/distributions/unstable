@@ -1,5 +1,0 @@
-DISTRIBUTION=unstable
-MIRRORSITE=http://ftp.debian.org/debian
-COMPONENTS="main contrib non-free"
-DEBOOTSTRAP=debootstrap
-DEBOOTSTRAPOPTS=('--variant=buildd' '--keyring' '/usr/share/keyrings/debian-archive-keyring.gpg')

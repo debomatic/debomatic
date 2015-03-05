@@ -1,6 +1,6 @@
 # Deb-o-Matic - SourceUpload module
 #
-# Copyright (C) 2014 Luca Falavigna
+# Copyright (C) 2014-2015 Luca Falavigna
 #
 # Authors: Luca Falavigna <dktrkranz@debian.org>
 #
@@ -26,21 +26,17 @@ from re import escape, findall, search, sub
 class DebomaticModule_SourceUpload:
 
     def post_build(self, args):
-        if not args['success']:
+        if not args.success:
             return
         dscfile = None
         changesfile = None
-        with open(args['cfg'], 'r') as fd:
-            for line in [line.strip() for line in fd.readlines()]:
-                if 'MIRRORSITE' in line:
-                    try:
-                        profile = line.split('/')[-1].lower()
-                    except IndexError:
-                        profile = None
-                    break
+        mirror = args.dists.get(args.distribution, 'mirror')
+        try:
+            profile = mirror.split('/')[-1]
+        except IndexError:
+            profile = None
         if profile == 'debian':
-            resultdir = os.path.join(args['directory'], 'pool',
-                                     args['package'])
+            resultdir = os.path.join(args.directory, 'pool', args.package)
             for filename in os.listdir(resultdir):
                 if filename.endswith('.dsc'):
                     dscfile = os.path.join(resultdir, filename)
@@ -53,15 +49,17 @@ class DebomaticModule_SourceUpload:
                     with open(changesfile, 'r') as fd:
                         cf = fd.read()
                         arch = findall('Architecture: (.*)', cf)[0].split()
-                        arch = {'source', 'all'}.intersection(arch)
-                        cf = sub('Architecture: .*',
-                                 'Architecture: %s' % ' '.join(arch), cf)
-                        for deb in findall(' .* \S+_\S+_\S+.u?deb', cf):
-                            if (not deb.endswith('_all.deb')
-                                    and not deb.endswith('_all.udeb')):
-                                cf = sub(escape(deb) + '\n', '', cf)
-                    sourcecf = sub('_[^_]+?.changes',
-                                   '_sourceupload.changes', changesfile)
-                    with open(sourcecf, 'w') as fd:
-                        fd.write(cf)
-                        fd.flush()
+                        if 'source' in arch:
+                            arch = {'source', 'all'}.intersection(arch)
+                            cf = sub('Architecture: .*',
+                                     'Architecture: %s' % ' '.join(arch), cf)
+                            for deb in findall(' .* \S+_\S+_\S+.u?deb', cf):
+                                if (not deb.endswith('_all.deb')
+                                        and not deb.endswith('_all.udeb')):
+                                    cf = sub(escape(deb) + '\n', '', cf)
+                            sourcecf = sub('_[^_]+?.changes',
+                                           '_sourceupload.changes',
+                                           changesfile)
+                            with open(sourcecf, 'w') as sourcecf:
+                                sourcecf.write(cf)
+                                sourcecf.flush()

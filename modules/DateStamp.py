@@ -1,7 +1,7 @@
 # Deb-o-Matic - Lintian module
 #
 # Copyright (C) 2008-2009 David Futcher
-# Copyright (C) 2008-2014 Luca Falavigna
+# Copyright (C) 2008-2015 Luca Falavigna
 #
 # Authors: David Futcher <bobbo@ubuntu.com>
 #          Luca Falavigna <dktrkranz@debian.org>
@@ -34,10 +34,11 @@ class DebomaticModule_DateStamp:
         self.uploader = ''
 
     def pre_build(self, args):
-        self.ts = '%(directory)s/pool/%(package)s/%(package)s.datestamp' % args
+        self.ts = ('%(directory)s/pool/%(package)s/%(package)s.datestamp' %
+                   {'directory': args.directory, 'package': args.package})
         with open(self.ts, 'w') as fd:
-            if 'uploader' in args and args['uploader']:
-                self.uploader = args['uploader']
+            if args.uploader:
+                self.uploader = args.uploader
                 fd.write('Uploaded by %s\n' % self.uploader)
             self.begin = gmtime(time())
             now = datetime.now().strftime('%A, %d %B %Y %H:%M')

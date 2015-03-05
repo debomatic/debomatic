@@ -1,6 +1,6 @@
 # Deb-o-Matic
 #
-# Copyright (C) 2011-2014 Luca Falavigna
+# Copyright (C) 2011-2015 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
 #
@@ -27,8 +27,11 @@ from signal import signal, SIGINT, SIGTERM
 from sys import stdin, stdout, stderr
 from time import sleep
 
+from .exceptions import DebomaticError
+
 
 class Process:
+
     def __init__(self):
         pass
 
@@ -62,7 +65,7 @@ class Process:
 
     def _get_pid(self):
         self.pidfile = ('/var/run/debomatic-%s' %
-                        self._sha256(self.packagedir))
+                        self._sha256(self.incoming))
         try:
             with open(self.pidfile, 'r') as fd:
                 self.pid = int(fd.read().strip())
@@ -72,7 +75,7 @@ class Process:
     def _lock(self, wait=False):
         self.fd = None
         self.lockfile = ('/var/run/debomatic-%s.lock' %
-                         self._sha256(self.packagedir))
+                         self._sha256(self.incoming))
         try:
             self.fd = open(self.lockfile, 'w')
             flags = LOCK_EX if wait else LOCK_EX | LOCK_NB
@@ -85,16 +88,14 @@ class Process:
     def _quit(self, signum=None, frame=None):
         info(_('Waiting for threads to complete...'))
         self.pool.shutdown()
-        debug(_('Shutdown hooks launched'))
-        self.mod_sys.execute_hook('on_quit', {})
-        debug(_('Shutdown hooks finished'))
+        self.mod_sys.execute_hook('on_quit')
         self._unlock()
         os.unlink(self.pidfile)
         exit()
 
     def _set_pid(self):
         self.pidfile = ('/var/run/debomatic-%s' %
-                        self._sha256(self.packagedir))
+                        self._sha256(self.incoming))
         pid = str(os.getpid())
         with open(self.pidfile, 'w+') as fd:
             fd.write('%s\n' % pid)
@@ -133,7 +134,7 @@ class Process:
             self._lock()
         except (OSError, IOError):
             error(_('Another instance is running, aborting'))
-            raise RuntimeError
+            raise DebomaticError
         self._set_pid()
         signal(SIGINT, self._quit)
         signal(SIGTERM, self._quit)

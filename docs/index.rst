@@ -6,10 +6,10 @@ What is Deb-o-Matic?
 ====================
 
 Deb-o-Matic is an easy to use utility to build Debian source packages, meant
-to help developers to automate the building of their packages with a tool thats
+to help developers to automate the building of their packages with a tool that
 requires limited user interaction and a simple configuration.
 
-It provides some useful features such as automatic chroot update, rebuild of
+It provides some useful features such as automatic chroot creation, rebuild of
 source packages, post-build checks, and much more. It is also extendible with
 modules that are loaded and executed during the build phases.
 
@@ -27,7 +27,7 @@ A brand new software was created to help building source packages to avoid the
 burden of the compilation, without wasting too much time configuring complex
 softwares to work. Deb-o-Matic was born! A group of Debian and Ubuntu
 developers started to use it as their primary build machine to avoid playing
-with pbuilder and long builds. Some of them still use Deb-o-Matic to build
+with sbuild and long builds. Some of them still use Deb-o-Matic to build
 their packages.
 
 Over time, Deb-o-Matic has been used by some FLOSS projects too. For example,
@@ -60,8 +60,8 @@ Runtime requirements
 In order to be able to run Deb-o-Matic, the following packages are required:
 
 * python3 (>= 3.2)
-* pbuilder or cowbuilder
-* debootstrap or cdebootstrap
+* sbuild (>= 0.64.3-1)
+* debootstrap, cdebootstrap, or qemu-debootstrap
 * python3-toposort
 
 To enable additional features, you may want to install these packages:
@@ -71,6 +71,7 @@ To enable additional features, you may want to install these packages:
 * gnupg
 * lintian
 * piuparts (>= 0.45)
+* blhc
 * debian-archive-keyring and/or ubuntu-keyring
 * apt-utils
 * devscripts
@@ -130,39 +131,40 @@ Configuration file
 
 Deb-o-Matic configuration file is the most important file within Deb-o-Matic
 infrastructure. It defines almost every option needed by Deb-o-Matic.
-It is divided into five sections: ``default``, which contains the mandatory
-options needed for Deb-o-Matic to work; ``runtime``, which contains the options
-related to parameters which can be modified at runtime; ``gpg``, which contains
-the options related to gpg signature checking; ``modules``, which contains the
-options related to module handling; ``internals``, which contains options
-related to Deb-o-Matic implementation details.
+It is divided into five sections: ``debomatic``, which contains the general
+options needed for Deb-o-Matic to work; ``distributions``, which contains all
+the details related to the distributions Deb-o-Matic can build package for;
+``chroots``, which contains the options related to the creation of the chroots
+used to build packages; ``gpg``, which contains the options related to GPG
+signature checking; ``modules``, which contains the options related to module
+handling.
 
-Other sections are defined by single modules, details will be discussed in the
-`Modules section`_.
+Other sections are optionally defined by each single module, their details will
+be discussed in the `Modules section`_.
 
 .. CAUTION::
 
  Configuration file must be formatted with `Python ConfigParser`_ syntax.
 
-default section
-...............
+debomatic section
+.................
 
 These options are mandatory, Deb-o-Matic refuses to start if one of these
-options is missing from configuration file. Also, Deb-o-Matic needs to be
+options is missing from the configuration file. Also, Deb-o-Matic needs to be
 restarted to pick any change to one of these options.
 
-* ``builder``
+* ``incoming``
 
- This option indicates which builder tool is required to perform building of
- the source packages. Deb-o-Matic currently supports pbuilder and cowbuilder.
- cowbuilder is usually faster, but requires more disk space for its chroots.
+ This option indicates the directory where Deb-o-Matic expects to find source
+ packages to build, and in which it will store chroots, build logs, and
+ resulting packages.
 
- Suggested value: ``pbuilder``
+ Suggested value: ``/incoming``
 
 .. CAUTION::
 
- Make sure chosen builder is installed on your system, otherwise Deb-o-Matic
- will not be able to create chroots and build packages.
+ Make sure chosen directory exists before launching Deb-o-Matic, otherwise it
+ will refuse to start.
 
 * ``debootstrap``
 
@@ -177,32 +179,6 @@ restarted to pick any change to one of these options.
  Make sure chosen debootstrap utility is installed on your system, otherwise
  Deb-o-Matic will not be able to create chroots and build packages.
 
-* ``packagedir``
-
- This option indicates the directory where Deb-o-Matic expects to find source
- packages to build, and in which it will save chroots, build logs, and
- resulting packages.
-
- Suggested value: ``/incoming``
-
-.. CAUTION::
-
- Make sure chosen directory exists before launching Deb-o-Matic, otherwise it
- will refuse to start.
-
-* ``configdir``
-
- This option indicates the directory where distribution configuration files are
- stored. More on those files will be discussed in the
- `Distribution files section`_.
-
- Suggested value: ``/etc/debomatic/distributions``
-
-.. CAUTION::
-
- Make sure chosen directory exists before launching Deb-o-Matic, otherwise it
- will not be able to build any package.
-
 * ``architecture``
 
  This option indicates the architecture to build package for. To build packages
@@ -211,48 +187,29 @@ restarted to pick any change to one of these options.
 
  Suggested value: ``system``
 
-* ``pbuilderhooks``
-
- This option indicates the directory where pbuilder hooks are stored. Hooks
- are executable scripts which are processed by pbuilder and cowbuilder during
- various build phases. Please refer to the pbuilder (8) man page for additional
- details about pbuilder hooks.
-
- At the moment, Deb-o-Matic provides scripts to disable Internet connection
- within the chroot on Linux systems to avoid accessing remote resources during
- the build phase, and two scripts to increase a lot the unpacking of depencency
- packages in the chroots.
-
- Suggested value: ``/usr/share/debomatic/pbuilderhooks``
-
-.. CAUTION::
-
- In order to disable pbuilder hooks, you have to declare an existing, empty
- directory in pbuilderhooks option.
-
-* ``maxbuilds``
+* ``threads``
 
  This option indicates the maximum concurrent builds that can be executed. If
  more build tasks are scheduled, they will be blocked until a slot becomes
  available again. More concurrent builds require more CPU cycles, so you may
  want to try different configurations to fit your needs.
 
- ``maxbuilds`` takes an integer as parameter.
+ ``threads`` takes an integer as parameter.
 
  Suggested value: ``3``
 
 * ``inotify``
 
- This option indicates whether to enable inotify support or not. inotify will
+ This option indicates whether to enable inotify support, or not. inotify will
  notify Deb-o-Matic about the availability of a new task, and will immediately
  start a new thread according to the requested task.
 
- If ``python-pyinotify`` is not available, Deb-o-Matic will fall back to a
+ If ``python3-pyinotify`` is not available, Deb-o-Matic will fall back to a
  timer-based method, where new tasks will be analyzed periodically.
 
- ``inotify`` takes 1 or 0 as parameter.
+ ``inotify`` takes True or False as parameter.
 
- Suggested value: ``1``
+ Suggested value: ``True``
 
 * ``sleep``
 
@@ -278,12 +235,94 @@ restarted to pick any change to one of these options.
 
  Suggested value: ``info``
 
+distributions section
+.....................
+
+These options are mandatory, Deb-o-Matic refuses to start if one of these
+options is missing from the configuration file. Also, Deb-o-Matic needs to be
+restarted to pick any change to one of these options.
+
+* ``list``
+
+ This option indicates the path of the distribution configuration file.
+ More on those files will be discussed in the `Distributions file section`_.
+
+ Suggested value: ``/etc/debomatic/distributions``
+
+.. CAUTION::
+
+ Make sure chosen directory exists before launching Deb-o-Matic, otherwise it
+ will refuse to start.
+
+* ``blacklist``
+
+ This option indicates a list of distributions that are not allowed to accept
+ new packages to build. Files targeted for a blacklisted distribution will be
+ automatically deleted.
+
+ Option must define a space-separated distribution names matching the ones
+ listed in the `Distributions file section`_.
+
+ Suggested value: ``(blank field)``
+
+* ``mapper``
+
+ This option indicates a list of distributions that, even if they are not
+ defined by a distribution file (see `Distributions file section`_), can build
+ packages on top of another distribution. This is particularly useful to
+ indicate distribution aliases (such as ``sid <=> unstable``) or subsets
+ (such as ``vivid-proposed => vivid``).
+
+ Option must define a `Python dictionary`_ where keys are the distributions
+ indicated by the packages, and values are the distributions on which build
+ packages upon.
+
+ Suggested value: ``{'sid': 'unstable'}``
+
+chroots section
+...............
+
+These options are mandatory, Deb-o-Matic refuses to start if one of these
+options is missing from the configuration file. Also, Deb-o-Matic needs to be
+restarted to pick any change to one of these options.
+
+* ``profile``
+
+ This option indicates which schroot profile the chroots must adhere to.
+ Profile files must be stored under ``/etc/schroot`` directory.
+
+ Suggested value: ``debomatic`
+
+.. CAUTION::
+
+ Make sure chosen profile exists before launching Deb-o-Matic, otherwise 
+ all chroots will not be created.
+
+* ``commands``
+
+ This option indicates the directory where sbuild commands are stored. Commands
+ are executable scripts which are processed by sbuild during various build
+ phases. Please refer to the sbuild (1) man page for additional details.
+
+ At the moment, Deb-o-Matic provides a script to disable Internet connection
+ within the chroot on Linux systems to avoid accessing remote resources during
+ the build phase, and another one to increase the speed of unpacking of the 
+ depencencies in the chroots.
+
+ Suggested value: ``/usr/share/debomatic/sbuildcommands``
+
+.. CAUTION::
+
+ This directory needs to be bind mounted in the chroot for the scripts to
+ be launched correctly. It is possible to do so by adjusting the schroot
+ profile linked to the chroots used by Deb-o-Matic.
+
 gpg section
 ...........
 
-These options are not mandatory, Deb-o-Matic will check whether they are
-defined in the configuration file before trying to use these features. Also,
-Deb-o-Matic needs to be restarted to pick any change to one of these options.
+These options are mandatory, Deb-o-Matic refuses to start if one of these
+options is missing from the configuration file. Also, Deb-o-Matic needs to be
+restarted to pick any change to one of these options.
 
 ``gnupg`` package is required for these options to be effective.
 
@@ -293,80 +332,54 @@ Deb-o-Matic needs to be restarted to pick any change to one of these options.
  enabled, Deb-o-Matic will delete unsigned files and files with signatures not
  available in its keyring.
 
- ``gpg`` takes 1 or 0 as parameter.
+ ``gpg`` takes True or False as parameter.
 
- Suggested value: ``0``
+ Suggested value: ``False``
 
 * ``keyring``
 
  This option indicates the gnupg keyring file in which Deb-o-Matic will look
- for allowed and identified GPG keys.
+ for valid and trusted GPG keys.
 
  Suggested value: ``/etc/debomatic/debomatic.gpg``
 
 .. CAUTION::
 
- Make sure keyring file exists and is populated with allowed keys if GPG
+ Make sure keyring file exists and is populated with trusted keys if GPG
  support is enabled, otherwise no tasks will be processed.
 
 modules section
 ...............
 
-These options are not mandatory, Deb-o-Matic will check whether they are
-defined in the configuration file before trying to use these features. Also,
-Deb-o-Matic needs to be restarted to pick any change to one of these options.
+These options are mandatory, Deb-o-Matic refuses to start if one of these
+options is missing from the configuration file. Also, Deb-o-Matic needs to be
+restarted to pick any change to one of these options.
 
 More on modules handling will be discussed in the `Modules section`_.
 
 * ``modules``
 
- This option indicates whether to enable module loading or not.
+ This option indicates whether to enable module loading, or not.
 
- Suggested value: ``1``
+ ``modules`` takes True or False as parameter.
 
-* ``modulespath``
+ Suggested value: ``True``
+
+* ``path``
 
  This option indicates the directory where Deb-o-Matic expects to find modules.
 
  Suggested value: ``/usr/share/debomatic/modules``
 
-* ``maxthreads``
+* ``threads``
 
  This option indicates how many modules Deb-o-Matic should launch in parallel.
 
+ ``threads`` takes an integer as parameter.
+
  Suggested value: ``5``
 
-runtime section
-...............
-
-These options are not mandatory, Deb-o-Matic will check whether they are
-defined in the configuration file before trying to use these features. As the
-section name suggests, these options can be adjusted at runtime, Deb-o-Matic
-will pick the updated value during the build process.
-
-* ``alwaysupdate``
-
- This option indicates a list of distributions for which their chroots have to
- be updated before every build, even if repository's Release file has not
- changed.
-
- Option must define a space-separated distribution names matching the ones
- listed in the `Distribution files section`_.
-
- Suggested value: ``(blank field)``
-
-* ``distblacklist``
-
- This option indicates a list of distributions that are not allowed to accept
- new packages to build. Files targeted for a blacklisted distribution will be
- automatically deleted.
-
- Option must define a space-separated distribution names matching the ones
- listed in the `Distribution files section`_.
-
- Suggested value: ``(blank field)``
-
-* ``modulesblacklist``
+* ``blacklist``
 
  This option indicates a list of modules that are not allowed to be executed
  during build process.
@@ -374,52 +387,48 @@ will pick the updated value during the build process.
  Option must define a space-separated module names matching the ones listed in
  the `Modules section`_.
 
- More on module handling will be discussed in the `Modules section`_.
+ Suggested value: ``AutoPkgTest Blhc Lintian Mailer Piuparts``
 
- Suggested value: ``Lintian Mailer Piuparts``
-
-* ``mapper``
-
- This option indicates a list of distributions that, even if they are not
- defined by a distribution file (see `Distribution files section`_), can build
- packages on top of another distribution. This is particularly useful to
- indicate distribution aliases (such as ``sid <=> unstable``) or subsets
- (such as ``trusty-proposed => trusty``).
-
- Option must define a `Python dictionary`_ where keys are the distributions
- indicated by the packages, and values are the distributions on which build
- packages upon.
-
- Suggested value: ``{'sid': 'unstable'}``
-
-internals section
-.................
-
-These options are mandatory, Deb-o-Matic refuses to start if one of these
-options is missing from configuration file. Also, these options should not be
-modified, and must follow this guide thoroughly.
-
-* ``configversion``
-
- This option indicates which version of the configuration file Deb-o-Matic
- expects to find. If it does not match the one needed by Deb-o-Matic, it
- refuses to start.
-
- This option must be set to ``013a``
-
-Distribution files
+Distributions file
 ------------------
 
-These files are pbuilder configuration files that define the basic settings of
-a pbuilder environment to build packages upon. A comprehensive list of the
-options that can be defined can be found in the ``pbuilderrc (5) man page``.
+This file is populated by sections, each of them named after a distribution
+to build packages for. Every section can define five options.
 
-Here are the mandatory options Deb-o-Matic will check for their existence:
+* ``suite``
 
-* ``DISTRIBUTION``: indicates the default distribution to use.
-* ``MIRRORSITE``: indicates the mirror site which contains the package archive.
-* ``COMPONENTS``: space-delimited list of distribution components to use.
-* ``DEBOOTSTRAP``: indicates which implementation of debootstrap to use.
+ This option indicates the base suite to create the chroot for. Normally, it is
+ equal to its distribution, but there are some exceptions (for instance,
+ experimental's suite is unstable).
+
+ This option is mandatory.
+
+* ``mirror``
+
+ This option indicates the mirror site which contains the primary package
+ archive of the distribution.
+
+ This option is mandatory.
+
+* ``components``
+
+ This option contains a space-delimited list of components to use.
+
+ This option is mandatory.
+
+* ``extramirrors``
+
+ This option indicates additional mirrors to add in the chroot. More than one
+ additional mirror can be defined, separated by a newline.
+
+ This option is optional.
+
+* ``extrapackages``
+
+ This option contains a space-delimited list of additional packages to install
+ in the chroot during its creation.
+
+ This option is optional.
 
 Run Deb-o-Matic
 ===============
@@ -443,23 +452,24 @@ Deb-o-Matic will try to enter daemon mode automatically. If that is not
 possible, Deb-o-Matic will be executed in interactive mode, and will be bound
 to the shell that executed it, as a regular process.
 
-It is also possible to force interactive mode by passing ``-n`` or
-``--nodaemon`` option while invoking ``debomatic`` command:
+It is also possible to force interactive mode by passing ``-i`` or
+``--interactive`` option while invoking ``debomatic`` command:
 
- *sudo debomatic -c debomatic.conf -n*
+ *sudo debomatic -c debomatic.conf -i*
 
 This is particularly useful for debugging purposes.
 
 Stop Deb-o-Matic
 ----------------
 
-In order to stop Deb-o-Matic, you should pass ``q`` or ``--quit-process``
-options to ``debomatic``:
+In order to stop Deb-o-Matic, you should pass ``-q`` or ``--quit`` option to
+``debomatic``:
 
  *sudo debomatic -c debomatic.conf -q*
 
-Deb-o-Matic will not terminate child processes, but will wait for them to end
-first, so it could take a while to completely stop Deb-o-Matic instance.
+Deb-o-Matic will not terminate child processes immediately, but will wait for
+them to end first, so it could take a while to completely stop a Deb-o-Matic
+instance.
 
 .. CAUTION::
 
@@ -522,13 +532,13 @@ systemd override file.
 Prepare source packages
 =======================
 
-Deb-o-Matic will take into account both source only uploads and source plus
+Deb-o-Matic will take into account both source only uploads and source and
 binary uploads, while it will discard binary only uploads. Source only uploads
 are recommended to avoid waste of bandwidth, so make sure you create packages
 by passing ``-S`` flag to ``debuild`` or ``dpkg-buildpackage``.
 
-Then, packages must be copied or uploaded into the directory specified by
-``packagedir`` option in the configuration file to let Deb-o-Matic process
+Then, packages must be copied or uploaded into the directory specified by the
+``incoming`` option in the configuration file to let Deb-o-Matic process
 them.
 
 In order to save bandwidth while uploading your packages, you could want to
@@ -544,10 +554,10 @@ Prepare command files
 =====================
 
 Deb-o-Matic provides an interface to perform specific tasks into the
-Deb-o-Matic ``packagedir`` directory such as removing uploaded files or
+Deb-o-Matic ``incoming`` directory such as removing uploaded files or
 rebuilding packages. These operations are handled by commands stored in
-``.commands`` files, and uploaded into Deb-o-Matic ``packagedir`` by using
-``dcut`` utility, or by hand.
+``.commands`` files, and uploaded into Deb-o-Matic ``incoming`` directory by
+using ``dcut`` utility, or by hand.
 
 Using dcut is usually simpler, just launch the following command:
 
@@ -568,8 +578,9 @@ usually safer to issue a single command per file.
 Remove packages
 ---------------
 
-It could happen some files are kept into Deb-o-Matic ``packagedir`` and you
-need to remove them. In order to do so, you must use the ``rm`` command:
+It could happen some files are kept into Deb-o-Matic ``incoming`` directory,
+and you would like to remove them. In order to do so, you must use the ``rm``
+command:
 
  *echo "rm foo\*" > foo.commands*
 
@@ -610,13 +621,37 @@ architecture dependent binaries only. Additional information can be found in
 
 In order to do so, you must use the ``porter`` command:
 
- *echo "porter foo_version dist Joe Doe <j.doe@acme.com>" > foo.commands*
+ *echo "porter foo_version dist John Doe <jdoe@debian.org>" > foo.commands*
 
 where foo is the name of the source package you want to rebuild, version is
 the version of the package you want to rebuild, dist is the distribution which
-rebuild package for, and the element between quotes is the address to be used
-as maintainer field, which is usually the developer who is preparing the
-upload.
+rebuild package for, and the rest of the string is the address to be used as
+maintainer field, which is usually the developer who is preparing the upload.
+
+.. CAUTION::
+
+ Make sure packages are available in the distribution mirrors, otherwise they
+ cannot be downloaded and processed by Deb-o-Matic.
+
+Binary NMU uploads
+------------------
+
+You could want to prepare a binary NMU (or binNMU) upload, a binary-only upload
+which generates architecture dependent binaries only, together with a
+changelog entry describing why the upload was needed. Additional information
+can be found in `Debian Developer's Reference`_.
+
+In order to do so, you must use the ``binnmu`` command:
+
+ *echo "binnmu foo_version dist binNMU_version \"changelog\"
+  John Doe <jdoe@debian.org>" > foo.commands*
+
+where foo is the name of the source package you want to rebuild, version is
+the version of the package you want to rebuild, dist is the distribution which
+rebuild package for, binNMU_version is the progressive binNMU number, changelog
+is the reason why the upload was prepared (enclosed in quotation marks), and
+the rest of the string is the address to be used as maintainer field, which is
+usually the developer who is preparing the upload.
 
 .. CAUTION::
 
@@ -630,11 +665,13 @@ You could want to rebuild a package already in the mirrors also adding a
 specific build-dependency to see whether it compiles with a newer library
 version. In order to do so, you must use the ``builddep`` command:
 
- *echo "builddep foo_version dist extrapackage=packageversion" > foo.commands*
+ *echo "builddep foo_version dist extrapackage (>= packageversion)"*
+ *> foo.commands*
 
 where ``extrapackage`` is the name of the package you want to install before
 the compilation takes place, and ``packageversion`` is the optional version of
-the package you want to install.
+the package you want to install. More than one package can be defined,
+separated by commas.
 
 .. CAUTION::
 
@@ -671,13 +708,6 @@ This option indicates the GPG home directory used by adt-run.
 
  Suggested value: ``/var/cache/debomatic/autopkgtest``
 
-* ``logging``
-
-This option if set to True indicates that extra information have
-to be stored in logs directory.
-
- Suggested value: ``True``
-
 Blhc
 ----
 
@@ -694,7 +724,7 @@ Parameters
  These parameters must be listed under the ``blhc`` section. Make sure you
  create it in your configuration file.
 
-* ``blhcopts``
+* ``options``
 
 This option indicates the extra options to pass to blhc.
 
@@ -734,7 +764,7 @@ Parameters
  These parameters must be listed under the ``lintian`` section. Make sure you
  create it in your configuration file.
 
-* ``lintopts``
+* ``options``
 
 This option indicates the extra options to pass to lintian.
 
@@ -761,31 +791,31 @@ Parameters
  These parameters must be listed under the ``mailer`` section. Make sure you
  create it in your configuration file.
 
-* ``fromaddr``
+* ``sender``
 
 This option indicates the email address used to send the emails from.
 
-* ``smtphost``
+* ``server``
 
 This option indicates the SMTP server used to send the emails.
 
-* ``smtpport``
+* ``port``
 
 This option indicates the SMTP port on which the SMTP server listens to.
 
 * ``tls``
 
-This option indicates whether to enable TLS mode or not.
+This option indicates whether to enable TLS mode, or not.
 
 * ``authrequired``
 
-This option indicates whether the SMTP server requires authentication or not.
+This option indicates whether the SMTP server requires authentication, or not.
 
-* ``smtpuser``
+* ``user``
 
 This option indicates the user name to be passed to the SMTP server.
 
-* ``smtppass``
+* ``pass``
 
 This option indicates the password to be passed to the SMTP server.
 
@@ -797,10 +827,10 @@ This option indicates the template to be used to report successful builds.
 
 This option indicates the template to be used to report failed builds.
 
-* ``lintlog``
+* ``lintian``
 
 This option indicates whether the lintian log is to be attached after the build
-log or not.
+log, or not.
 
 Piuparts
 --------
@@ -820,7 +850,7 @@ Parameters
  These parameters must be listed under the ``piuparts`` section. Make sure you
  create it in your configuration file.
 
-* ``piupopts``
+* ``options``
 
 This option indicates the extra options to pass to piuparts.
 
@@ -838,6 +868,7 @@ picking obsolete files by mistake. It currently deletes these files:
 * \*.bz2
 * \*.xz
 * \*.dsc
+* \*.build
 * \*.contents
 * \*.lintian
 * \*.piuparts
@@ -892,7 +923,7 @@ upload source-only uploads to the Debian archive.
 .. _previous section: #installation-of-the-release-tarball
 .. _Python ConfigParser: http://docs.python.org/library/configparser.html
 .. _Python dictionary: http://docs.python.org/library/stdtypes.html#mapping-types-dict
-.. _Distribution files section: #distribution-files
+.. _Distributions file section: #distribution-files
 .. _Modules section: #modules
 .. _Configuration section: #configuration
 .. _Debian Developer's Reference: http://www.debian.org/doc/manuals/developers-reference/pkgs.html#porter-guidelines
