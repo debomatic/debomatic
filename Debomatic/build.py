@@ -414,7 +414,7 @@ class Build:
                     except DebomaticError:
                         self._remove_files()
                         error(_('Build of %s failed') % self.changesfile)
-            except IOError:
+            except (IOError, DebomaticError):
                 pass
         else:
             try:
