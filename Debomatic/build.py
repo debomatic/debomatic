@@ -313,13 +313,17 @@ class Build:
             logfile = ('%s/logs/%s.%s' %
                        (self.buildpath, self.distribution,
                         strftime('%Y%m%d_%H%M%S')))
+            target = self.dists.get(self.distribution, 'suite')
+            if target == self.distribution:
+                pattern = '%s-%s-debomatic' % (self.distribution, architecture)
+            else:
+                pattern = '%s-%s-%s-debomatic' % (target, architecture,
+                                                  self.distribution)
             with open(logfile, 'w') as fd:
                 try:
-                    debug(_('Creating chroot %(dist)s-%(arch)s-debomatic')
-                          % {'dist': self.distribution, 'arch': architecture})
+                    debug(_('Creating chroot %s') % pattern)
                     components = ','.join(self.dists.get(self.distribution,
                                                          'components').split())
-                    target = self.dists.get(self.distribution, 'suite')
                     command = ['sbuild-createchroot',
                                '--arch=%s' % architecture,
                                '--chroot-suffix=-debomatic',
@@ -351,11 +355,6 @@ class Build:
                                        'etc/apt/sources.list'), 'a') as fd:
                     fd.write(self.dists.get(self.distribution, 'extramirrors'))
             chroots = '/etc/schroot/chroot.d'
-            if target == self.distribution:
-                pattern = '%s-%s-debomatic' % (self.distribution, architecture)
-            else:
-                pattern = '%s-%s-%s-debomatic' % (target, architecture,
-                                                  self.distribution)
             for file in os.listdir(chroots):
                 if file.startswith(pattern):
                     with NamedTemporaryFile(mode='w+', delete=False) as tmp:
@@ -365,6 +364,9 @@ class Build:
                                     tmp.write('[%s-%s-debomatic]\n' %
                                               (self.distribution,
                                                architecture))
+                                elif line.startswith('description'):
+                                    tmp.write(line.replace(target,
+                                              self.distribution))
                                 elif line.startswith('profile'):
                                     tmp.write('profile=%s\n' % profile)
                                 else:
