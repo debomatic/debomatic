@@ -105,6 +105,10 @@ class Build:
                                findall(' \S+ \((\S+)\) \S+; ', data)[-1])
             except IndexError:
                 pass
+        suite = self.dists.get(self.distribution, 'suite')
+        if not (self.distribution == suite or
+                self.distribution.startswith(suite)):
+            command.insert(-1, '--build-dep-resolver=aptitude')
         if self.binnmu:
             command.insert(-1, '--binNMU=%s' % self.binnmu[0])
             command.insert(-1, '--make-binNMU=%s' % self.binnmu[1])
