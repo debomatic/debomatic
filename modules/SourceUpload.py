@@ -42,6 +42,11 @@ class DebomaticModule_SourceUpload:
                     dscfile = os.path.join(resultdir, filename)
                 if filename.endswith('.changes'):
                     changesfile = os.path.join(resultdir, filename)
+                    with open(changesfile) as fd:
+                        arch = set(findall('Architecture: (.*)',
+                                   fd.read())[0].split())
+                        if arch.issubset({'source', 'all'}):
+                            changesfile = None
             if dscfile and changesfile:
                 with open(dscfile, 'r') as fd:
                     dsc = fd.read()
