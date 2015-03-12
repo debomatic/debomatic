@@ -21,8 +21,9 @@ import os
 from argparse import ArgumentParser
 from configparser import ConfigParser
 from fcntl import flock, LOCK_EX, LOCK_NB, LOCK_UN
-from logging import basicConfig as log, debug, error, getLogger, warning
+from logging import basicConfig as log, debug, error, getLogger, info, warning
 from logging import ERROR, WARNING, INFO, DEBUG
+from subprocess import check_call as call, CalledProcessError
 from time import sleep
 
 from .build import Build
@@ -76,9 +77,12 @@ class Debomatic(Parser, Process):
         try:
             gpg.check_keys()
         except DebomaticError:
-            error(gpg.error())
-            error(_('Launch "sbuild-update --keygen" to create valid keys'))
-            exit(1)
+            info(_('Creating sbuild keys'))
+            try:
+                call(['sbuild-update', '--keygen'])
+            except CalledProcessError:
+                error(_('Failed to create sbuild keys'))
+                exit(1)
         self.mod_sys = Module(self.opts)
         self.mod_sys.execute_hook('on_start')
         try:
