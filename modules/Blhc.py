@@ -55,5 +55,3 @@ class DebomaticModule_Blhc:
                     if exitcode not in [0, 1]:
                         copyfile(fd.name, blhclog)
                         return
-            else:
-                error(_('blhc binary is not available'))
