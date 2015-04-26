@@ -1,4 +1,4 @@
-0.20
+0.20 "dayafter" (2015-04-26)
 * sbuild backend instead of pbuilder
 * New binnmu command
 
