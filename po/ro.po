@@ -7,379 +7,273 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2014-10-16 21:25+0200\n"
+"POT-Creation-Date: 2015-03-15 10:40+0100\n"
 "PO-Revision-Date: 2010-10-13 21:38+0000\n"
 "Last-Translator: Lucian Adrian Grijincu <lucian.grijincu@gmail.com>\n"
 "Language-Team: Romanian <ro@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-10-16 20:24+0000\n"
-"X-Generator: Launchpad (build 17196)\n"
+"X-Launchpad-Export-Date: 2015-04-26 08:56+0000\n"
+"X-Generator: Launchpad (build 17430)\n"
 
-#: Debomatic/build.py:62
-#, python-format
-msgid "Lock acquired on %s"
-msgstr ""
-
-#: Debomatic/build.py:66 Debomatic/build.py:55
-msgid "Full build routine launched"
-msgstr ""
-
-#: Debomatic/build.py:68 Debomatic/build.py:57
-msgid "Simple build routine launched"
-msgstr ""
-
-#: Debomatic/build.py:71 Debomatic/build.py:181 Debomatic/build.py:444
-#: Debomatic/build.py:455 Debomatic/build.py:60 Debomatic/build.py:173
-#: Debomatic/build.py:436 Debomatic/build.py:448 Debomatic/build.py:179
-#: Debomatic/build.py:440 Debomatic/build.py:452 Debomatic/build.py:441
-#: Debomatic/build.py:453
-#, python-format
-msgid "File %s added"
-msgstr ""
-
-#: Debomatic/build.py:75 Debomatic/build.py:64
+#: Debomatic/build.py:59
 #, python-format
 msgid "Distribution %s is disabled"
 msgstr "Distribuția %s este dezactivată"
 
-#: Debomatic/build.py:89 Debomatic/build.py:79
+#: Debomatic/build.py:91
 #, python-format
 msgid "Building %s"
 msgstr ""
 
-#: Debomatic/build.py:94 Debomatic/build.py:89
-msgid "Pre-build hooks launched"
+#: Debomatic/build.py:146
+msgid "Invoication of sbuild failed"
 msgstr ""
 
-#: Debomatic/build.py:102 Debomatic/build.py:98
-msgid "Pre-build hooks finished"
-msgstr ""
-
-#: Debomatic/build.py:118 Debomatic/build.py:109
-#, python-format
-msgid "Launching %s"
-msgstr ""
-
-#: Debomatic/build.py:134 Debomatic/build.py:355 Debomatic/build.py:393
-#: Debomatic/build.py:125 Debomatic/build.py:388 Debomatic/build.py:129
-#: Debomatic/build.py:392
-#, python-format
-msgid "Unable to launch %s"
-msgstr ""
-
-#: Debomatic/build.py:135 Debomatic/build.py:126 Debomatic/build.py:131
-msgid "Post-build hooks launched"
-msgstr ""
-
-#: Debomatic/build.py:144 Debomatic/build.py:135 Debomatic/build.py:141
-msgid "Post-build hooks finished"
-msgstr ""
-
-#: Debomatic/build.py:146 Debomatic/build.py:137 Debomatic/build.py:143
+#: Debomatic/build.py:152
 #, python-format
 msgid "Build of %s complete"
 msgstr ""
 
-#: Debomatic/build.py:158 Debomatic/build.py:300 Debomatic/build.py:457
-#: Debomatic/build.py:149 Debomatic/build.py:293 Debomatic/build.py:450
-#: Debomatic/build.py:155 Debomatic/build.py:299 Debomatic/build.py:454
-#: Debomatic/build.py:455
-#, python-format
-msgid "Bad .changes file: %s"
-msgstr "Fișier .changes greșit: %s"
-
-#: Debomatic/build.py:168 Debomatic/commands.py:64 Debomatic/build.py:160
-#: Debomatic/build.py:166
+#: Debomatic/build.py:179
 #, python-format
 msgid "Requesting URL %s"
 msgstr ""
 
-#: Debomatic/build.py:170 Debomatic/commands.py:66 Debomatic/build.py:162
-#: Debomatic/build.py:168
+#: Debomatic/build.py:197 Debomatic/build.py:267 Debomatic/build.py:402
+#, python-format
+msgid "Bad .changes file: %s"
+msgstr "Fișier .changes greșit: %s"
+
+#: Debomatic/build.py:204 Debomatic/build.py:271 Debomatic/build.py:275
+#, python-format
+msgid "Distribution %s not configured"
+msgstr ""
+
+#: Debomatic/build.py:208 Debomatic/build.py:225
 #, python-format
 msgid "Downloading missing %s"
 msgstr ""
 
-#: Debomatic/build.py:240 Debomatic/commands.py:86 Debomatic/commands.py:91
-#: Debomatic/build.py:232 Debomatic/build.py:238
+#: Debomatic/build.py:217 Debomatic/build.py:237 Debomatic/build.py:388
+#: Debomatic/build.py:400
 #, python-format
-msgid "%(mapped)s mapped as %(mapper)s"
+msgid "File %s added"
 msgstr ""
 
-#: Debomatic/build.py:252 Debomatic/build.py:275 Debomatic/build.py:244
-#: Debomatic/build.py:267 Debomatic/build.py:250 Debomatic/build.py:273
-#, python-format
-msgid "%s chroot must be created"
-msgstr ""
-
-#: Debomatic/build.py:256 Debomatic/build.py:265 Debomatic/build.py:279
-#: Debomatic/build.py:248 Debomatic/build.py:257 Debomatic/build.py:271
-#: Debomatic/build.py:254 Debomatic/build.py:263 Debomatic/build.py:277
-#, python-format
-msgid "%s chroot must be updated"
-msgstr ""
-
-#: Debomatic/build.py:263 Debomatic/build.py:432 Debomatic/commands.py:70
-#: Debomatic/build.py:255 Debomatic/build.py:424 Debomatic/build.py:261
-#: Debomatic/build.py:428 Debomatic/build.py:429
+#: Debomatic/build.py:219 Debomatic/build.py:239
 #, python-format
 msgid "Unable to fetch %s"
 msgstr ""
 
-#: Debomatic/build.py:296 Debomatic/build.py:311 Debomatic/build.py:326
-#: Debomatic/build.py:450 Debomatic/commands.py:50 Debomatic/build.py:288
-#: Debomatic/build.py:305 Debomatic/build.py:322 Debomatic/build.py:442
-#: Debomatic/build.py:294 Debomatic/build.py:328 Debomatic/build.py:446
-#: Debomatic/build.py:447
+#: Debomatic/build.py:250
+#, python-format
+msgid "%(mapped)s mapped as %(mapper)s"
+msgstr ""
+
+#: Debomatic/build.py:261 Debomatic/build.py:394
 #, python-format
 msgid "Unable to open %s"
 msgstr "Nu s-a putut deschide %s"
 
-#: Debomatic/build.py:317 Debomatic/build.py:331 Debomatic/commands.py:56
-#: Debomatic/build.py:312 Debomatic/build.py:328 Debomatic/build.py:318
-#: Debomatic/build.py:334
-msgid "Please set %(parm)s in %s(conf)s"
-msgstr ""
-
-#: Debomatic/build.py:338 Debomatic/build.py:342 Debomatic/build.py:348
-msgid "Pre-chroot maintenance hooks launched"
-msgstr ""
-
-#: Debomatic/build.py:367 Debomatic/build.py:358 Debomatic/build.py:372
-#, python-format
-msgid "Launching %(builder)s %(cmd)s"
-msgstr ""
-
-#: Debomatic/build.py:378 Debomatic/build.py:387 Debomatic/build.py:394
-#: Debomatic/build.py:370 Debomatic/build.py:381 Debomatic/build.py:390
-#: Debomatic/build.py:386 Debomatic/build.py:393 Debomatic/build.py:398
-#: Debomatic/build.py:399
-msgid "Post-chroot maintenance hooks launched"
-msgstr ""
-
-#: Debomatic/build.py:384 Debomatic/build.py:377 Debomatic/build.py:385
-#, python-format
-msgid "%(builder)s %(cmd)s failed"
-msgstr "%(builder)s %(cmd)s a eșuat"
-
-#: Debomatic/build.py:402
-#, python-format
-msgid "Lock released on %s"
-msgstr ""
-
-#: Debomatic/build.py:408 Debomatic/build.py:402 Debomatic/build.py:406
-#: Debomatic/build.py:407
+#: Debomatic/build.py:284
 #, python-format
 msgid "File %s removed"
 msgstr ""
 
-#: Debomatic/build.py:445 Debomatic/commands.py:97 Debomatic/build.py:437
-#: Debomatic/build.py:441 Debomatic/build.py:442
+#: Debomatic/build.py:315
+#, python-format
+msgid "schroot profile %s not found"
+msgstr ""
+
+#: Debomatic/build.py:328
+#, python-format
+msgid "Creating chroot %s"
+msgstr ""
+
+#: Debomatic/build.py:348
+#, python-format
+msgid "Failed creating %(dist)s-%(arch)s-debomatic"
+msgstr ""
+
+#: Debomatic/build.py:354
+msgid "Unable to launch sbuild-createchroot"
+msgstr ""
+
+#: Debomatic/build.py:389 Debomatic/commands.py:41
 #, python-format
 msgid "Processing %s"
 msgstr ""
 
-#: Debomatic/modules.py:60 Debomatic/modules.py:61 Debomatic/modules.py:63
+#: Debomatic/build.py:416 Debomatic/build.py:424
+#, python-format
+msgid "Build of %s failed"
+msgstr ""
+
+#: Debomatic/modules.py:79
 #, python-format
 msgid "Module %s loaded"
 msgstr ""
 
-#: Debomatic/modules.py:77 Debomatic/modules.py:78 Debomatic/modules.py:89
-#, python-format
-msgid "Executing hook %(hook)s from module %(mod)s"
-msgstr ""
-
-#: Debomatic/debomatic.py:56 Debomatic/debomatic.py:51
-msgid "You must run Deb-o-Matic as root"
-msgstr ""
-
-#: Debomatic/debomatic.py:67
-#, python-format
-msgid "Lockfile is %s"
-msgstr ""
-
-#: Debomatic/debomatic.py:71 Debomatic/process.py:135
-#: Debomatic/debomatic.py:74 Debomatic/debomatic.py:77
-#: Debomatic/debomatic.py:76
-msgid "Another instance is running, aborting"
-msgstr ""
-
-#: Debomatic/debomatic.py:75 Debomatic/debomatic.py:68
-#: Debomatic/debomatic.py:71 Debomatic/debomatic.py:70
-msgid "Startup hooks launched"
-msgstr ""
-
-#: Debomatic/debomatic.py:77 Debomatic/debomatic.py:70
-#: Debomatic/debomatic.py:73 Debomatic/debomatic.py:72
-msgid "Startup hooks finished"
-msgstr ""
-
-#: Debomatic/debomatic.py:84
-msgid "Entering daemon mode"
-msgstr ""
-
-#: Debomatic/debomatic.py:95 Debomatic/debomatic.py:82
-#: Debomatic/debomatic.py:85 Debomatic/debomatic.py:84
-msgid "Configuration file has not been specified"
-msgstr ""
-
-#: Debomatic/debomatic.py:97 Debomatic/debomatic.py:85
-#: Debomatic/debomatic.py:88 Debomatic/debomatic.py:87
-#, python-format
-msgid "Configuration file %s does not exist"
-msgstr "Fișierul de configurare %s nu există"
-
-#: Debomatic/debomatic.py:102 Debomatic/debomatic.py:91
-#: Debomatic/debomatic.py:94 Debomatic/debomatic.py:93
-#, python-format
-msgid "Configuration file is not at version %s"
-msgstr ""
-
-#: Debomatic/debomatic.py:107 Debomatic/debomatic.py:97
-#: Debomatic/debomatic.py:100 Debomatic/debomatic.py:99
-#, python-format
-msgid "Set \"%(opt)s\" in %(conffile)s"
-msgstr ""
-
-#: Debomatic/debomatic.py:139 Debomatic/debomatic.py:127
-#: Debomatic/debomatic.py:130 Debomatic/debomatic.py:129
-msgid "Inotify loop started"
-msgstr ""
-
-#: Debomatic/debomatic.py:143 Debomatic/debomatic.py:131
-#: Debomatic/debomatic.py:134 Debomatic/debomatic.py:133
-msgid "Timer loop started"
-msgstr ""
-
-#: Debomatic/debomatic.py:154 Debomatic/debomatic.py:142
-#: Debomatic/debomatic.py:60 Debomatic/debomatic.py:144
-#: Debomatic/debomatic.py:143
-#, python-format
-msgid "Unable to access %s directory"
-msgstr "Nu s-a putut accesa dosarul %s"
-
-#: Debomatic/debomatic.py:160 Debomatic/debomatic.py:165
-#: Debomatic/commands.py:140 Debomatic/commands.py:163
-#: Debomatic/commands.py:185 Debomatic/commands.py:143
-#: Debomatic/commands.py:164 Debomatic/commands.py:184
-#: Debomatic/debomatic.py:149 Debomatic/debomatic.py:154
-#: Debomatic/debomatic.py:151 Debomatic/debomatic.py:156
-#: Debomatic/debomatic.py:150 Debomatic/commands.py:144
-#: Debomatic/commands.py:166 Debomatic/commands.py:187
-#, python-format
-msgid "Thread for %s scheduled"
-msgstr ""
-
-#: Debomatic/debomatic.py:168 Debomatic/debomatic.py:189
-#: Debomatic/process.py:85 Debomatic/process.py:119 Debomatic/process.py:86
-msgid "Waiting for threads to complete..."
-msgstr ""
-
-#: Debomatic/debomatic.py:171 Debomatic/process.py:88
-msgid "Shutdown hooks launched"
-msgstr ""
-
-#: Debomatic/debomatic.py:173 Debomatic/process.py:90
-msgid "Shutdown hooks finished"
-msgstr ""
-
-#: Debomatic/debomatic.py:195
-msgid "Obsolete lock removed"
-msgstr ""
-
-#: Debomatic/threadpool.py:60
-#, python-format
-msgid "Scheduling %(func)s with parameter %(parm)s"
-msgstr ""
-
-#: Debomatic/threadpool.py:64
-#, python-format
-msgid "Queue size: %d"
-msgstr ""
-
-#: Debomatic/threadpool.py:66
-#, python-format
-msgid "   -> function %(func)s with parameter %(parm)s"
-msgstr ""
-
-#: Debomatic/commands.py:121 Debomatic/commands.py:125
-msgid "Performing a package rebuild with extra dependencies"
-msgstr ""
-
-#: Debomatic/commands.py:144 Debomatic/commands.py:146
-#: Debomatic/commands.py:147
-msgid "Performing a porter build"
-msgstr ""
-
-#: Debomatic/commands.py:167 Debomatic/commands.py:169
-msgid "Performing a package rebuild"
-msgstr ""
-
-#: Debomatic/commands.py:189 Debomatic/commands.py:187
-#: Debomatic/commands.py:190
-msgid "Removing files"
-msgstr ""
-
-#: Debomatic/commands.py:194 Debomatic/commands.py:192
-#: Debomatic/commands.py:195
-#, python-format
-msgid "Removing %s"
-msgstr ""
-
-#: Debomatic/gpg.py:46 Debomatic/gpg.py:52
-msgid "Keyring not found"
-msgstr "Inelul de chei nu a fost găsit"
-
-#: Debomatic/gpg.py:54 Debomatic/gpg.py:60
-msgid "No valid signatures found"
-msgstr "Nu s-a găsit nicio semnătură validă"
-
-#: Debomatic/process.py:40 Debomatic/process.py:41
-#, python-format
-msgid "Error entering daemon mode: %s"
-msgstr ""
-
-#: Debomatic/debomatic.py:163 Debomatic/debomatic.py:165
-msgid "Log level not valid, defaulting to \"info\""
-msgstr ""
-
-#: Debomatic/modules.py:69
+#: Debomatic/modules.py:85
 #, python-format
 msgid "Modules will be executed in this order: %s"
 msgstr ""
 
-#: Debomatic/modules.py:84
+#: Debomatic/modules.py:107
 #, python-format
 msgid "%(mod)s module disabled, needs %(missing)s"
 msgstr ""
 
-#: Debomatic/modules.py:101
+#: Debomatic/modules.py:115
+#, python-format
+msgid "Executing hook %(hook)s from module %(mod)s"
+msgstr ""
+
+#: Debomatic/modules.py:127
 #, python-format
 msgid "Module %s is blacklisted"
 msgstr ""
 
-#: Debomatic/modules.py:133 Debomatic/modules.py:149
+#: Debomatic/modules.py:159 Debomatic/modules.py:175
 #, python-format
 msgid ""
 "Cannot execute %(mod)s as %(order)s module, dependencies found: %(deps)s"
 msgstr ""
 
-#: Debomatic/modules.py:176
+#: Debomatic/modules.py:202
 #, python-format
 msgid "Circular dependencies found, disabled modules: %s"
 msgstr ""
 
-#: Debomatic/build.py:355
-msgid "Pre-chroot maintenance hooks finished"
+#: Debomatic/modules.py:233
+#, python-format
+msgid "%s hooks launched"
 msgstr ""
 
-#: Debomatic/build.py:389 Debomatic/build.py:396 Debomatic/build.py:400
-#: Debomatic/build.py:390 Debomatic/build.py:397 Debomatic/build.py:401
-msgid "Post-chroot maintenance hooks finished"
+#: Debomatic/modules.py:238
+#, python-format
+msgid "%s hooks finished"
 msgstr ""
 
-#: modules/Blhc.py:57
-msgid "blhc binary is not available"
+#: Debomatic/debomatic.py:55
+msgid "You must run Deb-o-Matic as root"
+msgstr ""
+
+#: Debomatic/debomatic.py:67 Debomatic/debomatic.py:134
+#, python-format
+msgid "Unable to access %s directory"
+msgstr "Nu s-a putut accesa dosarul %s"
+
+#: Debomatic/debomatic.py:80
+msgid "Creating sbuild keys"
+msgstr ""
+
+#: Debomatic/debomatic.py:84
+msgid "Failed to create sbuild keys"
+msgstr ""
+
+#: Debomatic/debomatic.py:91 Debomatic/process.py:136
+msgid "Another instance is running, aborting"
+msgstr ""
+
+#: Debomatic/debomatic.py:120
+msgid "Inotify loop started"
+msgstr ""
+
+#: Debomatic/debomatic.py:124
+msgid "Timer loop started"
+msgstr ""
+
+#: Debomatic/debomatic.py:147 Debomatic/commands.py:83
+#: Debomatic/commands.py:95 Debomatic/commands.py:107
+#: Debomatic/commands.py:119
+#, python-format
+msgid "Thread for %s scheduled"
+msgstr ""
+
+#: Debomatic/debomatic.py:158
+msgid "Log level not valid, defaulting to \"info\""
+msgstr ""
+
+#: Debomatic/configuration.py:57
+#, python-format
+msgid "Set \"%(option)s\" in section \"%(section)s\" in %(conffile)s"
+msgstr ""
+
+#: Debomatic/configuration.py:80
+#, python-format
+msgid "Option \"%(option)s\" in section \"%(section)s\" must be %(type)s"
+msgstr ""
+
+#: Debomatic/configuration.py:88
+msgid "Configuration file has not been specified"
+msgstr ""
+
+#: Debomatic/configuration.py:91
+#, python-format
+msgid "Configuration file %s does not exist"
+msgstr "Fișierul de configurare %s nu există"
+
+#: Debomatic/configuration.py:96
+#, python-format
+msgid "Section \"%(section)s\" missing in %(conffile)s"
+msgstr ""
+
+#: Debomatic/configuration.py:109
+#, python-format
+msgid "Distribution file %s does not exist"
+msgstr ""
+
+#: Debomatic/commands.py:72
+msgid "Performing a binNMU build"
+msgstr ""
+
+#: Debomatic/commands.py:86
+msgid "Performing a package rebuild with extra dependencies"
+msgstr ""
+
+#: Debomatic/commands.py:98
+msgid "Performing a porter build"
+msgstr ""
+
+#: Debomatic/commands.py:110
+msgid "Performing a package rebuild"
+msgstr ""
+
+#: Debomatic/commands.py:122
+msgid "Removing files"
+msgstr ""
+
+#: Debomatic/commands.py:127
+#, python-format
+msgid "Removing %s"
+msgstr ""
+
+#: Debomatic/process.py:44
+#, python-format
+msgid "Error entering daemon mode: %s"
+msgstr ""
+
+#: Debomatic/process.py:89 Debomatic/process.py:120
+msgid "Waiting for threads to complete..."
+msgstr ""
+
+#: Debomatic/gpg.py:54
+msgid "Keyring not found"
+msgstr "Inelul de chei nu a fost găsit"
+
+#: Debomatic/gpg.py:62
+msgid "No valid signatures found"
+msgstr "Nu s-a găsit nicio semnătură validă"
+
+#: Debomatic/gpg.py:97 Debomatic/gpg.py:107
+#, python-format
+msgid "%s not found"
+msgstr ""
+
+#: Debomatic/gpg.py:100 Debomatic/gpg.py:110
+#, python-format
+msgid "%s is not a valid GPG key"
 msgstr ""
