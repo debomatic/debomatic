@@ -119,6 +119,7 @@ class Build:
         if self.extrabd:
             for extrabd in self.extrabd:
                 command.insert(-1, '--add-depends=%s' % extrabd)
+                command.insert(-1, '--build-dep-resolver=aptitude')
         if self.maintainer:
             command.remove('-A')
             command.remove('-s')
