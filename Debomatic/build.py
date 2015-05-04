@@ -22,7 +22,7 @@ import os
 from ast import literal_eval
 from logging import debug, error, info
 from re import findall, search, sub
-from shutil import copymode, move
+from shutil import copy, copymode, move
 from subprocess import call, check_output
 from tempfile import NamedTemporaryFile
 from time import strftime
@@ -359,6 +359,11 @@ class Build:
                 with open(os.path.join(self.buildpath, self.distribution,
                                        'etc/apt/sources.list'), 'a') as fd:
                     fd.write(self.dists.get(self.distribution, 'extramirrors'))
+            if self.opts.has_option('repository', 'pubring'):
+                if os.path.isfile(self.opts.get('repository', 'pubring')):
+                    copy(self.opts.get('repository', 'pubring'),
+                         os.path.join(self.buildpath, self.distribution,
+                                      'etc/apt/trusted.gpg.d/debomatic.gpg'))
             chroots = '/etc/schroot/chroot.d'
             for file in os.listdir(chroots):
                 if file.startswith(pattern):
