@@ -30,6 +30,13 @@ components: main contrib non-free
 extramirrors: deb http://security.debian.org/ oldstable/updates main contrib non-free
               deb http://ftp.debian.org/debian oldstable-updates main contrib non-free
 
+[squeeze-lts]
+suite: squeeze-lts
+mirror: http://ftp.debian.org/debian
+components: main contrib non-free
+extramirrors: deb http://security.debian.org/ squeeze/updates main contrib non-free
+              deb http://ftp.debian.org/debian squeeze-updates main contrib non-free
+
 [wheezy-backports]
 suite: stable
 mirror: http://ftp.debian.org/debian
