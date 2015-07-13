@@ -35,6 +35,7 @@ core = {'debomatic':
         'gpg': {'gpg': bool, 'keyring': str},
         'modules': {'modules': bool, 'path': str,
                     'threads': int, 'blacklist': str}}
+optional = {'crossbuild': {'crossbuild': bool, 'architecture': str}}
 modules = {'autopkgtest': {'options': str, 'gpghome': str},
            'blhc': {'options': str},
            'lintian': {'options': str},
@@ -99,7 +100,12 @@ class Parser:
                 raise DebomaticConffileError
             for option in core[section]:
                 self._validate(option, section, core[section][option],
-                               dom.opts, self.conffile)
+                               self.opts, self.conffile)
+        for section in optional:
+            if dom.opts.has_section(section):
+                for option in optional[section]:
+                    self._validate(option, section, optional[section][option],
+                                   dom.opts, self.conffile)
         for section in modules:
             if dom.opts.has_section(section):
                 for option in modules[section]:

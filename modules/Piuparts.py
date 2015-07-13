@@ -34,6 +34,8 @@ class DebomaticModule_Piuparts:
             return
         if not os.access(self.piuparts, os.X_OK):
             return
+        if args.xarchitecture:
+            return
         if args.opts.has_section('piuparts'):
             options = args.opts.get('piuparts', 'options').strip().split()
         else:

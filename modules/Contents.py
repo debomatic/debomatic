@@ -36,11 +36,15 @@ class DebomaticModule_Contents:
         changes_file = None
         resultdir = os.path.join(args.directory, 'pool', args.package)
         contents_file = os.path.join(resultdir, args.package) + '.contents'
+        if args.xarchitecture:
+            architecture = args.xarchitecture
+        else:
+            architecture = args.architecture
         for filename in os.listdir(resultdir):
             if filename.endswith('.changes'):
                 changes_file = os.path.join(resultdir, filename)
                 break
         if changes_file and os.access(self.debc, os.X_OK):
             with open(contents_file, 'w') as fd:
-                call([self.debc, '-a%s' % args.architecture, changes_file],
+                call([self.debc, '-a%s' % architecture, changes_file],
                      stdout=fd)

@@ -73,8 +73,12 @@ class DebomaticModule_Mailer:
         if not template:
             template = self.failure
         try:
+            if args.xarchitecture:
+                architecture = args.xarchitecture
+            else:
+                architecture = args.architecture
             bp = glob(os.path.join(args.directory, 'pool', args.package,
-                                   '*_%s.build' % args.architecture))[0]
+                                   '*_%s.build' % architecture))[0]
             with open(bp, 'r', encoding='utf8') as fd:
                 if args.success:
                     data = findall('dpkg-buildpackage\n(.*)?\nBuild finished ',
