@@ -36,8 +36,8 @@ class DebomaticModule_Contents:
         changes_file = None
         resultdir = os.path.join(args.directory, 'pool', args.package)
         contents_file = os.path.join(resultdir, args.package) + '.contents'
-        if args.xarchitecture:
-            architecture = args.xarchitecture
+        if args.hostarchitecture:
+            architecture = args.hostarchitecture
         else:
             architecture = args.architecture
         for filename in os.listdir(resultdir):

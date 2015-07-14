@@ -43,7 +43,7 @@ class ModuleArgs():
         self.package = None
         self.success = False
         self.uploader = None
-        self.xarchitecture = None
+        self.hostarchitecture = None
 
 
 class Module():

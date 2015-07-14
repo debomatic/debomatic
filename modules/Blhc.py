@@ -39,8 +39,8 @@ class DebomaticModule_Blhc:
             blhcopts = args.opts.get('blhc', 'options').strip().split()
         else:
             blhcopts = []
-        if args.xarchitecture:
-            architecture = args.xarchitecture
+        if args.hostarchitecture:
+            architecture = args.hostarchitecture
         else:
             architecture = args.architecture
         resultdir = os.path.join(args.directory, 'pool', args.package)

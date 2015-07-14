@@ -53,8 +53,8 @@ class DebomaticModule_Repository:
             return
         cwd = os.getcwd()
         distribution = args.distribution
-        if args.xarchitecture:
-            arch = args.xarchitecture
+        if args.hostarchitecture:
+            arch = args.hostarchitecture
         else:
             arch = args.architecture
         archive = args.directory

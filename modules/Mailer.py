@@ -73,8 +73,8 @@ class DebomaticModule_Mailer:
         if not template:
             template = self.failure
         try:
-            if args.xarchitecture:
-                architecture = args.xarchitecture
+            if args.hostarchitecture:
+                architecture = args.hostarchitecture
             else:
                 architecture = args.architecture
             bp = glob(os.path.join(args.directory, 'pool', args.package,
