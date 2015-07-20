@@ -34,13 +34,49 @@ from .modules import Module
 from .exceptions import DebomaticError
 
 
+class BuildTask:
+
+    def __init__(self, build, package, version, distribution, queue):
+        self._build = build
+        self._package = package
+        self._version = version
+        self._distribution = distribution
+        self._queue = queue
+
+    def __enter__(self):
+        for task in self._queue:
+            if (self._package == task._package
+                and self._version == task._version
+                and self._distribution == task._distribution):
+                info(_('Build already scheduled for package %s_%s in %s') %
+                     (self._package, self._version, self._distribution))
+                self._skip_removal()
+                raise DebomaticError
+        self._queue.append(self)
+        return self
+
+    def __exit__(self, type, value, tb):
+        if self in self._queue:
+            self._queue.remove(self)
+
+    def _skip_removal(self):
+        for pkgfile in set(self._build.files):
+            if os.path.isfile(pkgfile):
+                for build in [x._build for x in self._queue
+                              if x._build != self]:
+                    if pkgfile in build.files:
+                        self._build.files.remove(pkgfile)
+                        debug(_('Skipping removal of file %s') % pkgfile)
+
+
 class Build:
 
-    def __init__(self, opts, dists, changesfile=None, package=None,
+    def __init__(self, opts, dists, buildqueue, changesfile=None, package=None,
                  distribution=None, binnmu=None, extrabd=None, maintainer=None,
                  origin=None, uploader=None):
         self.opts = opts
         self.dists = dists
+        self.buildqueue = buildqueue
         self.changesfile = changesfile
         self.package = package
         self.distribution = distribution
@@ -59,12 +95,18 @@ class Build:
             error(_('Distribution %s is disabled') % self.distribution)
             raise DebomaticError
         try:
-            self._fetch_files()
-            self._setup_chroot()
+            if self.changesfile:
+                package = os.path.basename(self.changesfile).split('_')[0]
+                version = os.path.basename(self.changesfile).split('_')[1]
+            else:
+                package, version = self.package
+            with BuildTask(self, package, version, self.distribution,
+                           self.buildqueue) as bt:
+                self._fetch_files()
+                self._setup_chroot()
+                self._build_package()
         except DebomaticError:
             self._remove_files()
-        else:
-            self._build_package()
 
     def _build_package(self):
         uploader_email = ''

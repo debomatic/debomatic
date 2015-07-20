@@ -67,6 +67,7 @@ class Debomatic(Parser, Process):
             error(_('Unable to access %s directory') % self.incoming)
             exit(1)
         self.pool = ThreadPool(self.opts.getint('debomatic', 'threads'))
+        self.buildqueue = []
         self.logfile = self.opts.get('debomatic', 'logfile')
         if args.quit:
             self.shutdown()
@@ -142,11 +143,13 @@ class Debomatic(Parser, Process):
                     except IOError:
                         pass
                     else:
-                        b = Build(self.opts, self.dists, changesfile=filename)
+                        b = Build(self.opts, self.dists, self.buildqueue,
+                                  changesfile=filename)
                         self.pool.schedule(b.run)
                         debug(_('Thread for %s scheduled') % filename)
             elif filename.endswith('.commands'):
-                Command(self.opts, self.dists, self.pool, filename)
+                Command(self.opts, self.dists, self.pool,
+                        self.buildqueue, filename)
 
     def setlog(self, fmt, level='info'):
         loglevels = {'error': ERROR,

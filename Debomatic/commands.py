@@ -29,10 +29,11 @@ from .gpg import GPG
 
 class Command():
 
-    def __init__(self, opts, dists, pool, commandfile):
+    def __init__(self, opts, dists, pool, buildqueue, commandfile):
         self.opts = opts
         self.dists = dists
         self.pool = pool
+        self.buildqueue = buildqueue
         self.incoming = self.opts.get('debomatic', 'incoming')
         self.cmdfile = os.path.join(self.incoming, commandfile)
         self._process_command()
@@ -76,7 +77,7 @@ class Command():
             binnmu = _package[2]
             changelog = _package[3]
             maintainer = _package[4]
-            b = Build(self.opts, self.dists, package=package,
+            b = Build(self.opts, self.dists, self.buildqueue, package=package,
                       distribution=distribution, binnmu=(binnmu, changelog),
                       maintainer=maintainer, uploader=self.uploader)
             if self.pool.schedule(b.run):
@@ -88,7 +89,7 @@ class Command():
             package = _package[0].split('_')
             distribution = _package[1]
             extrabd = [x.strip() for x in _package[2].split(',')]
-            b = Build(self.opts, self.dists, package=package,
+            b = Build(self.opts, self.dists, self.buildqueue, package=package,
                       distribution=distribution, extrabd=extrabd,
                       uploader=self.uploader)
             if self.pool.schedule(b.run):
@@ -100,7 +101,7 @@ class Command():
             package = _package[0].split('_')
             distribution = _package[1]
             maintainer = _package[2]
-            b = Build(self.opts, self.dists, package=package,
+            b = Build(self.opts, self.dists, self.buildqueue, package=package,
                       distribution=distribution, maintainer=maintainer,
                       uploader=self.uploader)
             if self.pool.schedule(b.run):
@@ -112,7 +113,7 @@ class Command():
             package = _package[0].split('_')
             distribution = _package[1]
             origin = _package[2] if _package[2] else distribution
-            b = Build(self.opts, self.dists, package=package,
+            b = Build(self.opts, self.dists, self.buildqueue, package=package,
                       distribution=distribution, origin=origin,
                       uploader=self.uploader)
             if self.pool.schedule(b.run):
