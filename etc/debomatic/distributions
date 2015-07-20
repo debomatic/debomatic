@@ -55,14 +55,6 @@ extramirrors: deb http://archive.ubuntu.com/ubuntu/ vivid-updates main restricte
               deb http://security.ubuntu.com/ubuntu vivid-security main restricted universe multiverse
 extrapackages: pkgbinarymangler pkg-create-dbgsym
 
-[utopic]
-suite: utopic
-mirror: http://archive.ubuntu.com/ubuntu
-components: main restricted universe multiverse
-extramirrors: deb http://archive.ubuntu.com/ubuntu/ utopic-updates main restricted universe multiverse
-              deb http://security.ubuntu.com/ubuntu utopic-security main restricted universe multiverse
-extrapackages: pkgbinarymangler pkg-create-dbgsym
-
 [trusty]
 suite: trusty
 mirror: http://archive.ubuntu.com/ubuntu
