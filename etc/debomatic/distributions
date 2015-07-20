@@ -2,47 +2,47 @@
 
 [unstable]
 suite: unstable
-mirror: http://ftp.debian.org/debian
+mirror: http://httpredir.debian.org/debian
 components: main contrib non-free
 
 [experimental]
 suite: unstable
-mirror: http://ftp.debian.org/debian
+mirror: http://httpredir.debian.org/debian
 components: main contrib non-free
-extramirrors: deb http://ftp.debian.org/debian/ experimental main contrib non-free
+extramirrors: deb http://httpredir.debian.org/debian/ experimental main contrib non-free
 
 [testing]
 suite: testing
-mirror: http://ftp.debian.org/debian
+mirror: http://httpredir.debian.org/debian
 components: main contrib non-free
 
 [stable]
 suite: stable
-mirror: http://ftp.debian.org/debian
+mirror: http://httpredir.debian.org/debian
 components: main contrib non-free
 extramirrors: deb http://security.debian.org/ stable/updates main contrib non-free
-              deb http://ftp.debian.org/debian stable-updates main contrib non-free
+              deb http://httpredir.debian.org/debian stable-updates main contrib non-free
 
 [oldstable]
 suite: oldstable
-mirror: http://ftp.debian.org/debian
+mirror: http://httpredir.debian.org/debian
 components: main contrib non-free
 extramirrors: deb http://security.debian.org/ oldstable/updates main contrib non-free
-              deb http://ftp.debian.org/debian oldstable-updates main contrib non-free
+              deb http://httpredir.debian.org/debian oldstable-updates main contrib non-free
 
 [wheezy-backports]
 suite: stable
-mirror: http://ftp.debian.org/debian
+mirror: http://httpredir.debian.org/debian
 components: main contrib non-free
 extramirrors: deb http://security.debian.org/ stable/updates main contrib non-free
-              deb http://ftp.debian.org/debian stable-updates main contrib non-free
-              deb http://ftp.debian.org/debian wheezy-backports main contrib non-free
+              deb http://httpredir.debian.org/debian stable-updates main contrib non-free
+              deb http://httpredir.debian.org/debian wheezy-backports main contrib non-free
 
 [squeeze-lts]
 suite: squeeze
-mirror: http://ftp.debian.org/debian
+mirror: http://httpredir.debian.org/debian
 components: main contrib non-free
-extramirrors: deb http://ftp.debian.org/debian squeeze-lts main contrib non-free
+extramirrors: deb http://httpredir.debian.org/debian squeeze-lts main contrib non-free
 
 
 # Ubuntu
