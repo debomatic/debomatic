@@ -20,10 +20,11 @@
 
 import os
 from ast import literal_eval
+from contextlib import contextmanager
 from logging import debug, error, info
 from re import findall, search, sub
 from shutil import copy, copymode, move
-from subprocess import call, check_output
+from subprocess import Popen, check_output
 from tempfile import NamedTemporaryFile
 from time import strftime
 from urllib.request import Request, urlopen
@@ -42,12 +43,13 @@ class BuildTask:
         self._version = version
         self._distribution = distribution
         self._queue = queue
+        self._pid = 0
 
     def __enter__(self):
         for task in self._queue:
             if (self._package == task._package
-                and self._version == task._version
-                and self._distribution == task._distribution):
+               and self._version == task._version
+               and self._distribution == task._distribution):
                 info(_('Build already scheduled for package %s_%s in %s') %
                      (self._package, self._version, self._distribution))
                 self._skip_removal()
@@ -68,6 +70,23 @@ class BuildTask:
                         self._build.files.remove(pkgfile)
                         debug(_('Skipping removal of file %s') % pkgfile)
 
+    def get_pid(self):
+        return self._pid
+
+    @contextmanager
+    def set_pid(self, pid):
+        self._pid = pid
+        try:
+            yield
+        finally:
+            self._pid = 0
+
+    def match(self, package, version, distribution):
+        if (self._package == package
+           and self._version == version
+           and self._distribution == distribution):
+            return self
+
 
 class Build:
 
@@ -77,6 +96,7 @@ class Build:
         self.opts = opts
         self.dists = dists
         self.buildqueue = buildqueue
+        self.buildtask = None
         self.changesfile = changesfile
         self.package = package
         self.distribution = distribution
@@ -102,6 +122,7 @@ class Build:
                 package, version = self.package
             with BuildTask(self, package, version, self.distribution,
                            self.buildqueue) as bt:
+                self.buildtask = bt
                 self._fetch_files()
                 self._setup_chroot()
                 self._build_package()
@@ -184,11 +205,12 @@ class Build:
                 if os.path.exists(buildlink):
                     os.unlink(buildlink)
                 os.symlink(buildlog, buildlink)
-                result = call(command, stdout=fd, stderr=fd)
+                process = Popen(command, stdout=fd, stderr=fd)
+                with self.buildtask.set_pid(process.pid):
+                    process.wait()
             except OSError:
                 error(_('Invoication of sbuild failed'))
-                result = -1
-        if result == 0:
+        if process.returncode == 0:
             mod.args.success = True
         mod.execute_hook('post_build')
         self._remove_files()
@@ -387,7 +409,10 @@ class Build:
                                                   'extrapackages').split()
                         command.insert(-3, '--include=%s' % ','.join(packages))
                         packages = '--include=%s' % ','.join(packages)
-                    if call(command, stdout=fd, stderr=fd):
+                    process = Popen(command, stdout=fd, stderr=fd)
+                    with self.buildtask.set_pid(process.pid):
+                        process.wait()
+                    if process.returncode:
                         error(_('Failed creating %(dist)s-%(arch)s-debomatic')
                               % {'dist': self.distribution,
                                  'arch': architecture})

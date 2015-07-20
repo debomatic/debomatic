@@ -21,6 +21,7 @@ import os
 from glob import glob
 from logging import debug, error, info
 from re import findall
+from signal import SIGTERM
 
 from .build import Build
 from .exceptions import DebomaticError
@@ -55,6 +56,7 @@ class Command():
         os.remove(self.cmdfile)
         cmd_nmu = findall('\s?binnmu\s+(\S+_\S+) (\S+) (\d+) "(.*)" (.*)', cmd)
         cmd_builddep = findall('\s?builddep\s+(\S+_\S+) (\S+) (.*)', cmd)
+        cmd_kill = findall('\s?kill\s+(\S+_\S+) (\S+)', cmd)
         cmd_porter = findall('\s?porter\s+(\S+_\S+) (\S+) (.*)', cmd)
         cmd_rebuild = findall('\s?rebuild\s+(\S+_\S+) (\S+) ?(\S*)', cmd)
         cmd_rm = findall('\s?rm\s+(.*)', cmd)
@@ -62,12 +64,14 @@ class Command():
             self._process_binnmu(cmd_nmu)
         if cmd_builddep:
             self._process_builddep(cmd_builddep)
-        if cmd_rm:
-            self._process_rm(cmd_rm)
+        if cmd_kill:
+            self._process_kill(cmd_kill)
         if cmd_porter:
             self._process_porter(cmd_porter)
         if cmd_rebuild:
             self._process_rebuild(cmd_rebuild)
+        if cmd_rm:
+            self._process_rm(cmd_rm)
 
     def _process_binnmu(self, packages):
         debug(_('Performing a binNMU build'))
@@ -94,6 +98,19 @@ class Command():
                       uploader=self.uploader)
             if self.pool.schedule(b.run):
                 debug(_('Thread for %s scheduled') % '_'.join(package))
+
+    def _process_kill(self, builds):
+        debug(_('Killing build task'))
+        for _build in builds:
+            package, version = _build[0].split('_')
+            distribution = _build[1]
+            for task in self.buildqueue:
+                if task.match(package, version, distribution):
+                    pid = task.get_pid()
+                    if pid:
+                        os.kill(pid, SIGTERM)
+                        debug(_('Build killed for %s_%s in %s') %
+                              (package, version, distribution))
 
     def _process_porter(self, packages):
         debug(_('Performing a porter build'))

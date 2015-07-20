@@ -678,6 +678,20 @@ separated by commas.
  Make sure packages are available in the distribution mirrors, otherwise they
  cannot be downloaded and processed by Deb-o-Matic.
 
+Killing builds
+--------------
+
+You could want to terminate a build you erroneously uploaded, or you do not
+want it to complete to avoid wasting too many resources.
+
+In order to do so, you must use the ``kill`` command:
+
+ *echo "kill foo_version dist " > foo.commands*
+
+where foo is the name of the source package you want to terminate its build,
+version is its versiond, and dist is the distribution the package is being
+built for.
+
 Modules
 =======
 
