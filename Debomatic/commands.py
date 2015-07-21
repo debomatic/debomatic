@@ -23,6 +23,7 @@ from logging import debug, error, info
 from re import findall
 from signal import SIGTERM
 
+from Debomatic import dom
 from .build import Build
 from .exceptions import DebomaticError
 from .gpg import GPG
@@ -30,19 +31,15 @@ from .gpg import GPG
 
 class Command():
 
-    def __init__(self, opts, dists, pool, buildqueue, commandfile):
-        self.opts = opts
-        self.dists = dists
-        self.pool = pool
-        self.buildqueue = buildqueue
-        self.incoming = self.opts.get('debomatic', 'incoming')
+    def __init__(self, commandfile):
+        self.incoming = dom.opts.get('debomatic', 'incoming')
         self.cmdfile = os.path.join(self.incoming, commandfile)
         self._process_command()
 
     def _process_command(self):
         info(_('Processing %s') % os.path.basename(self.cmdfile))
         try:
-            with GPG(self.opts, self.cmdfile) as gpg:
+            with GPG(self.cmdfile) as gpg:
                 try:
                     self.uploader = gpg.check()
                 except DebomaticError:
@@ -81,10 +78,10 @@ class Command():
             binnmu = _package[2]
             changelog = _package[3]
             maintainer = _package[4]
-            b = Build(self.opts, self.dists, self.buildqueue, package=package,
-                      distribution=distribution, binnmu=(binnmu, changelog),
-                      maintainer=maintainer, uploader=self.uploader)
-            if self.pool.schedule(b.run):
+            b = Build(package=package, distribution=distribution,
+                      binnmu=(binnmu, changelog), maintainer=maintainer,
+                      uploader=self.uploader)
+            if dom.pool.schedule(b.run):
                 debug(_('Thread for %s scheduled') % '_'.join(package))
 
     def _process_builddep(self, packages):
@@ -93,10 +90,9 @@ class Command():
             package = _package[0].split('_')
             distribution = _package[1]
             extrabd = [x.strip() for x in _package[2].split(',')]
-            b = Build(self.opts, self.dists, self.buildqueue, package=package,
-                      distribution=distribution, extrabd=extrabd,
-                      uploader=self.uploader)
-            if self.pool.schedule(b.run):
+            b = Build(package=package, distribution=distribution,
+                      extrabd=extrabd, uploader=self.uploader)
+            if dom.pool.schedule(b.run):
                 debug(_('Thread for %s scheduled') % '_'.join(package))
 
     def _process_kill(self, builds):
@@ -104,7 +100,7 @@ class Command():
         for _build in builds:
             package, version = _build[0].split('_')
             distribution = _build[1]
-            for task in self.buildqueue:
+            for task in dom.buildqueue:
                 if task.match(package, version, distribution):
                     pid = task.get_pid()
                     if pid:
@@ -118,10 +114,9 @@ class Command():
             package = _package[0].split('_')
             distribution = _package[1]
             maintainer = _package[2]
-            b = Build(self.opts, self.dists, self.buildqueue, package=package,
-                      distribution=distribution, maintainer=maintainer,
-                      uploader=self.uploader)
-            if self.pool.schedule(b.run):
+            b = Build(package=package, distribution=distribution,
+                      maintainer=maintainer, uploader=self.uploader)
+            if dom.pool.schedule(b.run):
                 debug(_('Thread for %s scheduled') % '_'.join(package))
 
     def _process_rebuild(self, packages):
@@ -130,10 +125,9 @@ class Command():
             package = _package[0].split('_')
             distribution = _package[1]
             origin = _package[2] if _package[2] else distribution
-            b = Build(self.opts, self.dists, self.buildqueue, package=package,
-                      distribution=distribution, origin=origin,
-                      uploader=self.uploader)
-            if self.pool.schedule(b.run):
+            b = Build(package=package, distribution=distribution,
+                      origin=origin, uploader=self.uploader)
+            if dom.pool.schedule(b.run):
                 debug(_('Thread for %s scheduled') % '_'.join(package))
 
     def _process_rm(self, filesets):

@@ -25,13 +25,14 @@ from re import findall
 from sys import path
 from toposort import toposort_flatten as toposort
 
+from Debomatic import dom
 from .process import ModulePool
 
 
 class ModuleArgs():
 
-    def __init__(self, opts):
-        self.opts = opts
+    def __init__(self):
+        self.opts = dom.opts
         self.action = None
         self.architecture = None
         self.directory = None
@@ -46,15 +47,14 @@ class ModuleArgs():
 
 class Module():
 
-    def __init__(self, opts):
-        self.args = ModuleArgs(opts)
-        self._opts = opts
+    def __init__(self):
+        self.args = ModuleArgs()
         self._use_modules = False
-        if self._opts.has_option('modules', 'modules'):
-            if self._opts.getboolean('modules', 'modules'):
+        if dom.opts.has_option('modules', 'modules'):
+            if dom.opts.getboolean('modules', 'modules'):
                 self._use_modules = True
-        if self._opts.has_option('modules', 'path'):
-            mod_path = self._opts.get('modules', 'path')
+        if dom.opts.has_option('modules', 'path'):
+            mod_path = dom.opts.get('modules', 'path')
             path.append(mod_path)
         else:
             self._use_modules = False
@@ -118,8 +118,8 @@ class Module():
 
     def _set_blacklisted(self):
         blist = set()
-        if self._opts.has_option('modules', 'blacklist'):
-            _blacklist = self._opts.get('modules', 'blacklist')
+        if dom.opts.has_option('modules', 'blacklist'):
+            _blacklist = dom.opts.get('modules', 'blacklist')
             blist = set(_blacklist.split())
         for module in self._instances:
             if module in blist:
@@ -226,8 +226,8 @@ class Module():
                                  self.args, module, hook, dependencies))
                 except AttributeError:
                     pass
-            if self._opts.has_option('modules', 'threads'):
-                workers = self._opts.getint('modules', 'threads')
+            if dom.opts.has_option('modules', 'threads'):
+                workers = dom.opts.getint('modules', 'threads')
             else:
                 workers = 1
             debug(_('%s hooks launched') % hook)

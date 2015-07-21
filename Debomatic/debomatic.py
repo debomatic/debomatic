@@ -26,6 +26,7 @@ from logging import ERROR, WARNING, INFO, DEBUG
 from subprocess import check_call as call, CalledProcessError
 from time import sleep
 
+from Debomatic import dom
 from .build import Build
 from .commands import Command
 from .configuration import Parser
@@ -41,8 +42,8 @@ class Debomatic(Parser, Process):
         self.daemonize = True
         self.setlog('%(levelname)s: %(message)s')
         self.conffile = None
-        self.opts = ConfigParser()
-        self.dists = ConfigParser()
+        dom.opts = ConfigParser()
+        dom.dists = ConfigParser()
         parser = ArgumentParser()
         parser.add_argument('-c', '--configfile', metavar='file', type=str,
                             nargs=1, help='configuration file for Deb-o-Matic')
@@ -62,18 +63,18 @@ class Debomatic(Parser, Process):
             self.parse_configfiles()
         except DebomaticConffileError:
             exit(1)
-        self.incoming = self.opts.get('debomatic', 'incoming')
+        self.incoming = dom.opts.get('debomatic', 'incoming')
         if not os.path.isdir(self.incoming):
             error(_('Unable to access %s directory') % self.incoming)
             exit(1)
-        self.pool = ThreadPool(self.opts.getint('debomatic', 'threads'))
-        self.buildqueue = []
-        self.logfile = self.opts.get('debomatic', 'logfile')
+        dom.pool = ThreadPool(dom.opts.getint('debomatic', 'threads'))
+        dom.buildqueue = []
+        self.logfile = dom.opts.get('debomatic', 'logfile')
         if args.quit:
             self.shutdown()
             exit()
         self.setlog('%(levelname)s: %(message)s',
-                    self.opts.get('debomatic', 'loglevel'))
+                    dom.opts.get('debomatic', 'loglevel'))
         gpg = GPGKeys()
         try:
             gpg.check_keys()
@@ -84,7 +85,7 @@ class Debomatic(Parser, Process):
             except CalledProcessError:
                 error(_('Failed to create sbuild keys'))
                 exit(1)
-        self.mod_sys = Module(self.opts)
+        self.mod_sys = Module()
         self.mod_sys.execute_hook('on_start')
         try:
             self.startup()
@@ -94,7 +95,7 @@ class Debomatic(Parser, Process):
 
     def launcher(self):
         self.queue_files()
-        if self.opts.getboolean('debomatic', 'inotify'):
+        if dom.opts.getboolean('debomatic', 'inotify'):
             try:
                 self.launcher_inotify()
             except ImportError:
@@ -124,7 +125,7 @@ class Debomatic(Parser, Process):
     def launcher_timer(self):
         debug(_('Timer loop started'))
         while True:
-            sleep(self.opts.getint('debomatic', 'sleep'))
+            sleep(dom.opts.getint('debomatic', 'sleep'))
             self.queue_files()
 
     def queue_files(self, filelist=None):
@@ -143,13 +144,11 @@ class Debomatic(Parser, Process):
                     except IOError:
                         pass
                     else:
-                        b = Build(self.opts, self.dists, self.buildqueue,
-                                  changesfile=filename)
-                        self.pool.schedule(b.run)
+                        b = Build(changesfile=filename)
+                        dom.pool.schedule(b.run)
                         debug(_('Thread for %s scheduled') % filename)
             elif filename.endswith('.commands'):
-                Command(self.opts, self.dists, self.pool,
-                        self.buildqueue, filename)
+                Command(filename)
 
     def setlog(self, fmt, level='info'):
         loglevels = {'error': ERROR,

@@ -30,6 +30,7 @@ from time import strftime
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 
+from Debomatic import dom
 from .gpg import GPG
 from .modules import Module
 from .exceptions import DebomaticError
@@ -90,12 +91,9 @@ class BuildTask:
 
 class Build:
 
-    def __init__(self, opts, dists, buildqueue, changesfile=None, package=None,
-                 distribution=None, binnmu=None, extrabd=None, maintainer=None,
-                 origin=None, uploader=None):
-        self.opts = opts
-        self.dists = dists
-        self.buildqueue = buildqueue
+    def __init__(self, changesfile=None, package=None, distribution=None,
+                 binnmu=None, extrabd=None, maintainer=None, origin=None,
+                 uploader=None):
         self.buildtask = None
         self.changesfile = changesfile
         self.package = package
@@ -106,11 +104,11 @@ class Build:
         self.origin = origin
         self.uploader = uploader
         self.files = set()
-        self.incoming = self.opts.get('debomatic', 'incoming')
+        self.incoming = dom.opts.get('debomatic', 'incoming')
 
     def _build(self):
         self._parse_distribution()
-        if self.distribution in self.opts.get('distributions', 'blacklist'):
+        if self.distribution in dom.opts.get('distributions', 'blacklist'):
             self._remove_files()
             error(_('Distribution %s is disabled') % self.distribution)
             raise DebomaticError
@@ -121,7 +119,7 @@ class Build:
             else:
                 package, version = self.package
             with BuildTask(self, package, version, self.distribution,
-                           self.buildqueue) as bt:
+                           dom.buildqueue) as bt:
                 self.buildtask = bt
                 self._fetch_files()
                 self._setup_chroot()
@@ -137,15 +135,15 @@ class Build:
             os.mkdir(builddir)
         if self.uploader:
             uploader_email = self.uploader[1].decode('utf-8')
-        architecture = self.opts.get('debomatic', 'architecture')
+        architecture = dom.opts.get('debomatic', 'architecture')
         if architecture == 'system':
             b_arch = check_output(['dpkg-architecture', '-qDEB_BUILD_ARCH'])
             architecture = b_arch.strip().decode('utf-8')
-        mod = Module(self.opts)
+        mod = Module()
         mod.args.architecture = architecture
         mod.args.directory = self.buildpath
         mod.args.distribution = self.distribution
-        mod.args.dists = self.dists
+        mod.args.dists = dom.dists
         mod.args.dsc = self.dscfile
         mod.args.files = self.files
         mod.args.package = packageversion
@@ -168,7 +166,7 @@ class Build:
                                findall(' \S+ \((\S+)\) \S+; ', data)[-1])
             except IndexError:
                 pass
-        suite = self.dists.get(self.distribution, 'suite')
+        suite = dom.dists.get(self.distribution, 'suite')
         if not (self.distribution == suite or
                 self.distribution.startswith(suite)):
             command.insert(-1, '--build-dep-resolver=aptitude')
@@ -221,7 +219,7 @@ class Build:
         types = ('pre-build-commands', 'chroot-setup-commands',
                  'starting-build-commands', 'finished-build-commands',
                  'chroot-cleanup-commands', 'post-build-commands')
-        commandsdir = self.opts.get('chroots', 'commands')
+        commandsdir = dom.opts.get('chroots', 'commands')
         if os.path.isdir(commandsdir):
             for type in types:
                 if os.path.isdir(os.path.join(commandsdir, type)):
@@ -249,7 +247,7 @@ class Build:
                 pass
 
         dscfile = None
-        components = self.dists.get(self.origin, 'components').split()
+        components = dom.dists.get(self.origin, 'components').split()
         if self.changesfile:
             package = os.path.basename(self.changesfile).split('_')[0]
             for filename in self.files:
@@ -265,14 +263,14 @@ class Build:
             package = self.package[0]
             version = sub('^\d+\:', '', self.package[1])
             dscfile = '%s_%s.dsc' % (package, version)
-            if not self.dists.has_section(self.origin):
+            if not dom.dists.has_section(self.origin):
                 error(_('Distribution %s not configured') % self.distribution)
                 raise DebomaticError
             self.dscfile = os.path.join(self.incoming, dscfile)
             if not os.path.isfile(self.dscfile):
                 debug(_('Downloading missing %s') % dscfile)
                 for component in components:
-                    _download_files(self.dists.get(self.origin, 'mirror'),
+                    _download_files(dom.dists.get(self.origin, 'mirror'),
                                     component, package,
                                     dscfile, self.dscfile)
                     if os.path.isfile(self.dscfile):
@@ -288,9 +286,9 @@ class Build:
         for entry in findall('\s\w{32}\s\d+\s(\S+)', data):
             if not os.path.isfile(os.path.join(self.incoming, entry)):
                 debug(_('Downloading missing %s') % entry)
-                for component in self.dists.get(self.origin,
+                for component in dom.dists.get(self.origin,
                                                 'components').split():
-                    _download_files(self.dists.get(self.origin, 'mirror'),
+                    _download_files(dom.dists.get(self.origin, 'mirror'),
                                     component, package, entry,
                                     os.path.join(self.incoming, entry))
                     if os.path.isfile(os.path.join(self.incoming, entry)):
@@ -305,9 +303,9 @@ class Build:
                 raise DebomaticError
 
     def _map_distribution(self):
-        if self.opts.has_option('distributions', 'mapper'):
+        if dom.opts.has_option('distributions', 'mapper'):
             try:
-                mapper = literal_eval(self.opts.get('distributions', 'mapper'))
+                mapper = literal_eval(dom.opts.get('distributions', 'mapper'))
             except SyntaxError:
                 pass
             else:
@@ -332,11 +330,11 @@ class Build:
                 error(_('Bad .changes file: %s') % self.upload)
                 raise DebomaticError
         self._map_distribution()
-        if not self.dists.has_section(self.distribution):
+        if not dom.dists.has_section(self.distribution):
             error(_('Distribution %s not configured') % self.distribution)
             raise DebomaticError
         if self.origin:
-            if not self.dists.has_section(self.origin):
+            if not dom.dists.has_section(self.origin):
                 error(_('Distribution %s not configured') % self.distribution)
                 raise DebomaticError
         else:
@@ -353,36 +351,36 @@ class Build:
         self.buildpath = os.path.join(self.incoming, self.distribution)
         if not os.path.exists(os.path.join(self.buildpath)):
             os.mkdir(os.path.join(self.buildpath))
-        architecture = self.opts.get('debomatic', 'architecture')
+        architecture = dom.opts.get('debomatic', 'architecture')
         if architecture == 'system':
             b_arch = check_output(['dpkg-architecture', '-qDEB_BUILD_ARCH'])
             architecture = b_arch.strip().decode('utf-8')
-        debootstrap = self.opts.get('debomatic', 'debootstrap')
+        debootstrap = dom.opts.get('debomatic', 'debootstrap')
         with open(os.devnull, 'w') as fd:
             chroots = check_output(['schroot', '-l'], stderr=fd)
         if not search('chroot:%s-%s-debomatic' % (self.distribution,
                                                   architecture),
                       chroots.decode()):
             action = 'create'
-        mod = Module(self.opts)
+        mod = Module()
         mod.args.architecture = architecture
         mod.args.action = action
         mod.args.directory = self.buildpath
         mod.args.distribution = self.distribution
-        mod.args.dists = self.dists
+        mod.args.dists = dom.dists
         mod.execute_hook('pre_chroot')
         for d in ('logs', 'pool'):
             if not os.path.exists(os.path.join(self.buildpath, d)):
                 os.mkdir(os.path.join(self.buildpath, d))
         if action:
-            profile = self.opts.get('chroots', 'profile')
+            profile = dom.opts.get('chroots', 'profile')
             if not os.path.isdir(os.path.join('/etc/schroot', profile)):
                 error(_('schroot profile %s not found') % profile)
                 raise DebomaticError
             logfile = ('%s/logs/%s.%s' %
                        (self.buildpath, self.distribution,
                         strftime('%Y%m%d_%H%M%S')))
-            target = self.dists.get(self.distribution, 'suite')
+            target = dom.dists.get(self.distribution, 'suite')
             if target == self.distribution:
                 pattern = '%s-%s-debomatic' % (self.distribution, architecture)
             else:
@@ -391,7 +389,7 @@ class Build:
             with open(logfile, 'w') as fd:
                 try:
                     debug(_('Creating chroot %s') % pattern)
-                    components = ','.join(self.dists.get(self.distribution,
+                    components = ','.join(dom.dists.get(self.distribution,
                                                          'components').split())
                     command = ['sbuild-createchroot',
                                '--arch=%s' % architecture,
@@ -399,13 +397,13 @@ class Build:
                                '--debootstrap=%s' % debootstrap,
                                '--components=%s' % components, target,
                                os.path.join(self.buildpath, self.distribution),
-                               self.dists.get(self.distribution, 'mirror')]
+                               dom.dists.get(self.distribution, 'mirror')]
                     if target != self.distribution:
                         command[2] = ('--chroot-suffix=-%s-debomatic' %
                                       self.distribution)
-                    if self.dists.has_option(self.distribution,
+                    if dom.dists.has_option(self.distribution,
                                              'extrapackages'):
-                        packages = self.dists.get(self.distribution,
+                        packages = dom.dists.get(self.distribution,
                                                   'extrapackages').split()
                         command.insert(-3, '--include=%s' % ','.join(packages))
                         packages = '--include=%s' % ','.join(packages)
@@ -422,13 +420,13 @@ class Build:
                     error(_('Unable to launch sbuild-createchroot'))
                     mod.execute_hook('post_chroot')
                     raise DebomaticError
-            if self.dists.has_option(self.distribution, 'extramirrors'):
+            if dom.dists.has_option(self.distribution, 'extramirrors'):
                 with open(os.path.join(self.buildpath, self.distribution,
                                        'etc/apt/sources.list'), 'a') as fd:
-                    fd.write(self.dists.get(self.distribution, 'extramirrors'))
-            if self.opts.has_option('repository', 'pubring'):
-                if os.path.isfile(self.opts.get('repository', 'pubring')):
-                    copy(self.opts.get('repository', 'pubring'),
+                    fd.write(dom.dists.get(self.distribution, 'extramirrors'))
+            if dom.opts.has_option('repository', 'pubring'):
+                if os.path.isfile(dom.opts.get('repository', 'pubring')):
+                    copy(dom.opts.get('repository', 'pubring'),
                          os.path.join(self.buildpath, self.distribution,
                                       'etc/apt/trusted.gpg.d/debomatic.gpg'))
             chroots = '/etc/schroot/chroot.d'
@@ -475,7 +473,7 @@ class Build:
                 error(_('Bad .changes file: %s') % self.upload)
                 raise DebomaticError
             try:
-                with GPG(self.opts, self.upload) as gpg:
+                with GPG(self.upload) as gpg:
                     try:
                         self.uploader = gpg.check()
                     except DebomaticError:

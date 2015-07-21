@@ -22,17 +22,17 @@ from fcntl import flock, LOCK_EX, LOCK_NB, LOCK_UN
 from re import findall, match, DOTALL
 from subprocess import check_output, Popen, PIPE, CalledProcessError
 
+from Debomatic import dom
 from .exceptions import DebomaticError
 
 
 class GPG:
 
-    def __init__(self, opts, file):
-        self._opts = opts
+    def __init__(self, file):
         self._file = file
         self._error = None
-        if self._opts.has_option('gpg', 'gpg'):
-            self._gpg = self._opts.getboolean('gpg', 'gpg')
+        if dom.opts.has_option('gpg', 'gpg'):
+            self._gpg = dom.opts.getboolean('gpg', 'gpg')
         else:
             self._gpg = False
         self._sig = None
@@ -47,8 +47,8 @@ class GPG:
         self._fd.close()
 
     def _check_signature(self):
-        if self._opts.has_option('gpg', 'keyring'):
-            self._keyring = self._opts.get('gpg', 'keyring')
+        if dom.opts.has_option('gpg', 'keyring'):
+            self._keyring = dom.opts.get('gpg', 'keyring')
             if not os.path.isfile(self._keyring):
                 self._keyring = None
                 self._error = _('Keyring not found')

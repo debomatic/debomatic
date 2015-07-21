@@ -27,6 +27,7 @@ from signal import signal, SIGINT, SIGTERM
 from sys import stdin, stdout, stderr
 from time import sleep
 
+from Debomatic import dom
 from .exceptions import DebomaticError
 
 
@@ -87,7 +88,7 @@ class Process:
 
     def _quit(self, signum=None, frame=None):
         info(_('Waiting for threads to complete...'))
-        self.pool.shutdown()
+        dom.pool.shutdown()
         self.mod_sys.execute_hook('on_quit')
         self._unlock()
         os.unlink(self.pidfile)

@@ -22,6 +22,7 @@ from ast import literal_eval
 from configparser import NoOptionError
 from logging import error
 
+from Debomatic import dom
 from .exceptions import DebomaticConffileError
 
 
@@ -90,26 +91,26 @@ class Parser:
         if not os.path.isfile(self.conffile):
             error(_('Configuration file %s does not exist') % self.conffile)
             raise DebomaticConffileError
-        self.opts.read(self.conffile)
+        dom.opts.read(self.conffile)
         for section in core:
-            if not self.opts.has_section(section):
+            if not dom.opts.has_section(section):
                 error(_('Section "%(section)s" missing in %(conffile)s') %
                       {'section': section, 'conffile': self.conffile})
                 raise DebomaticConffileError
             for option in core[section]:
                 self._validate(option, section, core[section][option],
-                               self.opts, self.conffile)
+                               dom.opts, self.conffile)
         for section in modules:
-            if self.opts.has_section(section):
+            if dom.opts.has_section(section):
                 for option in modules[section]:
                     self._validate(option, section, modules[section][option],
-                                   self.opts, self.conffile)
-        distfile = self.opts.get('distributions', 'list')
+                                   dom.opts, self.conffile)
+        distfile = dom.opts.get('distributions', 'list')
         if not os.path.isfile(distfile):
             error(_('Distribution file %s does not exist') % distfile)
             raise DebomaticConffileError
-        self.dists.read(distfile)
-        for dist in self.dists.sections():
+        dom.dists.read(distfile)
+        for dist in dom.dists.sections():
             for option in dists:
                 self._validate(option, dist, dists[option],
-                               self.dists, distfile)
+                               dom.dists, distfile)
