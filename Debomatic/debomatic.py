@@ -69,6 +69,7 @@ class Debomatic(Parser, Process):
             exit(1)
         dom.pool = ThreadPool(dom.opts.getint('debomatic', 'threads'))
         dom.buildqueue = []
+        dom.chroots = {}
         self.logfile = dom.opts.get('debomatic', 'logfile')
         if args.quit:
             self.shutdown()

@@ -26,6 +26,7 @@ from re import findall, search, sub
 from shutil import copy, copymode, move
 from subprocess import Popen, check_output
 from tempfile import NamedTemporaryFile
+from threading import Semaphore
 from time import strftime
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
@@ -302,6 +303,11 @@ class Build:
                 error(_('Unable to fetch %s') % entry)
                 raise DebomaticError
 
+    def _lock_chroot(self, chrootname):
+        if chrootname not in dom.chroots:
+            dom.chroots[chrootname] = Semaphore()
+        dom.chroots[chrootname].acquire()
+
     def _map_distribution(self):
         if dom.opts.has_option('distributions', 'mapper'):
             try:
@@ -356,11 +362,11 @@ class Build:
             b_arch = check_output(['dpkg-architecture', '-qDEB_BUILD_ARCH'])
             architecture = b_arch.strip().decode('utf-8')
         debootstrap = dom.opts.get('debomatic', 'debootstrap')
+        chrootname = '%s-%s-debomatic' % (self.distribution, architecture)
+        self._lock_chroot(chrootname)
         with open(os.devnull, 'w') as fd:
             chroots = check_output(['schroot', '-l'], stderr=fd)
-        if not search('chroot:%s-%s-debomatic' % (self.distribution,
-                                                  architecture),
-                      chroots.decode()):
+        if not search('chroot:%s' % chrootname, chroots.decode()):
             action = 'create'
         mod = Module()
         mod.args.architecture = architecture
@@ -376,6 +382,7 @@ class Build:
             profile = dom.opts.get('chroots', 'profile')
             if not os.path.isdir(os.path.join('/etc/schroot', profile)):
                 error(_('schroot profile %s not found') % profile)
+                self._unlock_chroot(chrootname)
                 raise DebomaticError
             logfile = ('%s/logs/%s.%s' %
                        (self.buildpath, self.distribution,
@@ -415,10 +422,12 @@ class Build:
                               % {'dist': self.distribution,
                                  'arch': architecture})
                         mod.execute_hook('post_chroot')
+                        self._unlock_chroot(chrootname)
                         raise DebomaticError
                 except OSError:
                     error(_('Unable to launch sbuild-createchroot'))
                     mod.execute_hook('post_chroot')
+                    self._unlock_chroot(chrootname)
                     raise DebomaticError
             if dom.dists.has_option(self.distribution, 'extramirrors'):
                 with open(os.path.join(self.buildpath, self.distribution,
@@ -451,6 +460,11 @@ class Build:
                     move(tmp.name, fd.name)
             mod.args.success = True
             mod.execute_hook('post_chroot')
+        self._unlock_chroot(chrootname)
+
+    def _unlock_chroot(self, chrootname):
+        if chrootname in dom.chroots:
+            dom.chroots[chrootname].release()
 
     def run(self):
         if self.changesfile:
