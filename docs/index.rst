@@ -317,6 +317,27 @@ restarted to pick any change to one of these options.
  be launched correctly. It is possible to do so by adjusting the schroot
  profile linked to the chroots used by Deb-o-Matic.
 
+crossbuild section
+..................
+
+This section is optional, Deb-o-Matic will start normally if this section is
+missing in the configuration file. Also, Deb-o-Matic needs to be restarted
+to pick any change to one of these options.
+
+* ``crossbuild``
+
+ This option indicates whether to enable cross-build support, or not.
+
+* ``hostarchitecture``
+
+ This option indicates which host architecture to use when building source
+ packages.
+
+.. CAUTION::
+
+ The architecture must have cross-compilation at compiler lever, otherwise
+ it will not be possible to cross-compile source packages.
+
 gpg section
 ...........
 
