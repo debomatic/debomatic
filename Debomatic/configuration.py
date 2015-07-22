@@ -100,7 +100,7 @@ class Parser:
                 raise DebomaticConffileError
             for option in core[section]:
                 self._validate(option, section, core[section][option],
-                               self.opts, self.conffile)
+                               dom.opts, self.conffile)
         for section in optional:
             if dom.opts.has_section(section):
                 for option in optional[section]:
