@@ -86,6 +86,13 @@ class Process:
                 self.fd.close()
             raise ex
 
+    def _notify_systemd(self):
+        try:
+            import systemd.daemon
+            systemd.daemon.notify('READY=1')
+        except (ImportError, SystemError):
+            pass
+
     def _quit(self, signum=None, frame=None):
         info(_('Waiting for threads to complete...'))
         dom.pool.shutdown()
@@ -141,6 +148,7 @@ class Process:
         signal(SIGTERM, self._quit)
         if self.daemonize:
             self._daemonize()
+        self._notify_systemd()
         self.launcher()
 
 

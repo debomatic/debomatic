@@ -3,7 +3,7 @@ Description=Automatic build machine for Debian source package
 ConditionPathExists=/etc/debomatic/debomatic.conf
 
 [Service]
-Type=simple
+Type=notify
 ExecStart=/usr/bin/debomatic -c /etc/debomatic/debomatic.conf -i
 ExecStop=/usr/bin/debomatic -c /etc/debomatic/debomatic.conf -q
 KillMode=process
