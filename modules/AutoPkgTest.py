@@ -86,6 +86,8 @@ class DebomaticModule_AutoPkgTest:
             return
         if not os.access(self.adt, os.X_OK):
             return
+        if args.hostarchitecture:
+            return
 
         self.resultdir = os.path.join(args.directory, 'pool', args.package)
         self.output = (os.path.join(self.resultdir, args.package) +

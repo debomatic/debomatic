@@ -53,7 +53,10 @@ class DebomaticModule_Repository:
             return
         cwd = os.getcwd()
         distribution = args.distribution
-        arch = args.architecture
+        if args.hostarchitecture:
+            arch = args.hostarchitecture
+        else:
+            arch = args.architecture
         archive = args.directory
         pool = os.path.join(archive, 'pool')
         dists = os.path.join(archive, 'dists', distribution)

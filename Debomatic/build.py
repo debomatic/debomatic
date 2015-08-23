@@ -106,6 +106,7 @@ class Build:
         self.uploader = uploader
         self.files = set()
         self.incoming = dom.opts.get('debomatic', 'incoming')
+        self.hostarchitecture = None
 
     def _build(self):
         self._parse_distribution()
@@ -113,6 +114,10 @@ class Build:
             self._remove_files()
             error(_('Distribution %s is disabled') % self.distribution)
             raise DebomaticError
+        if dom.opts.has_section('crossbuild'):
+            if dom.opts.get('crossbuild', 'crossbuild'):
+                self.hostarchitecture = dom.opts.get('crossbuild',
+                                                     'hostarchitecture')
         try:
             if self.changesfile:
                 package = os.path.basename(self.changesfile).split('_')[0]
@@ -149,12 +154,15 @@ class Build:
         mod.args.files = self.files
         mod.args.package = packageversion
         mod.args.uploader = uploader_email
+        mod.args.hostarchitecture = self.hostarchitecture
         mod.execute_hook('pre_build')
         info(_('Building %s') % os.path.basename(self.dscfile))
         command = ['sbuild', '-A', '-s', '-d', self.distribution,
                    '--arch=%s' % architecture, '-c',
                    '%s-%s-debomatic' % (self.distribution, architecture),
                    self.dscfile]
+        if self.hostarchitecture:
+            command.insert(6, '--host=%s' % self.hostarchitecture)
         if self.changesfile:
             with open(self.upload, 'r') as fd:
                 data = fd.read()
@@ -178,6 +186,9 @@ class Build:
                                             architecture)
         else:
             buildlog = '%s_%s.build' % (packageversion, architecture)
+        if self.hostarchitecture:
+            buildlog = sub('(.*_)\S+(\.build)',
+                           '\\1%s\\2' % self.hostarchitecture, buildlog)
         if self.extrabd:
             for extrabd in self.extrabd:
                 command.insert(-1, '--add-depends=%s' % extrabd)
@@ -197,6 +208,10 @@ class Build:
                         pass
         for sbuildcommand in self._commands():
             command.insert(-1, sbuildcommand)
+        if self.hostarchitecture:
+            command.insert(-1, '--chroot-setup-commands=%s' %
+                           ('dpkg --add-architecture %s' %
+                            self.hostarchitecture))
         with open(os.devnull, 'w') as fd:
             try:
                 os.chdir(os.path.join(self.buildpath, 'pool', packageversion))
@@ -395,9 +410,10 @@ class Build:
                                                   self.distribution)
             with open(logfile, 'w') as fd:
                 try:
-                    debug(_('Creating chroot %s') % pattern)
+                    debug(_('Creating chroot %s-%s-debomatic') %
+                          (self.distribution, architecture))
                     components = ','.join(dom.dists.get(self.distribution,
-                                                         'components').split())
+                                                        'components').split())
                     command = ['sbuild-createchroot',
                                '--arch=%s' % architecture,
                                '--chroot-suffix=-debomatic',

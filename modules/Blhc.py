@@ -39,9 +39,13 @@ class DebomaticModule_Blhc:
             blhcopts = args.opts.get('blhc', 'options').strip().split()
         else:
             blhcopts = []
+        if args.hostarchitecture:
+            architecture = args.hostarchitecture
+        else:
+            architecture = args.architecture
         resultdir = os.path.join(args.directory, 'pool', args.package)
         buildlog = glob(os.path.join(resultdir, '*_%s.build' %
-                                     args.architecture))[0]
+                                     architecture))[0]
         blhclog = os.path.join(resultdir, args.package) + '.blhc'
         if os.access(buildlog, os.R_OK):
             if os.access(self.blhc, os.X_OK):
