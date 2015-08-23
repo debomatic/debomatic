@@ -142,8 +142,8 @@ class DebomaticModule_AutoPkgTest:
 
         # then the others
         all_files = [f for f in os.listdir(self.resultdir_adt) if
-                     os.path.isfile(os.path.join(self.resultdir_adt, f))
-                     and f not in ['log', self.summary]]
+                     os.path.isfile(os.path.join(self.resultdir_adt, f)) and
+                     f not in ['log', self.summary]]
         for curr_file in all_files:
             write_header('File: %s' % curr_file)
             append_file(curr_file, curr_file != all_files[-1])

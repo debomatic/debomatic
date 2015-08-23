@@ -22,7 +22,6 @@
 
 import os
 from glob import glob
-from logging import error
 from subprocess import call
 from tempfile import NamedTemporaryFile
 from shutil import copyfile

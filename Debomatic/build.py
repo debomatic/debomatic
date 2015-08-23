@@ -49,9 +49,9 @@ class BuildTask:
 
     def __enter__(self):
         for task in self._queue:
-            if (self._package == task._package
-               and self._version == task._version
-               and self._distribution == task._distribution):
+            if (self._package == task._package and
+               self._version == task._version and
+               self._distribution == task._distribution):
                 info(_('Build already scheduled for package %s_%s in %s') %
                      (self._package, self._version, self._distribution))
                 self._skip_removal()
@@ -84,9 +84,9 @@ class BuildTask:
             self._pid = 0
 
     def match(self, package, version, distribution):
-        if (self._package == package
-           and self._version == version
-           and self._distribution == distribution):
+        if (self._package == package and
+           self._version == version and
+           self._distribution == distribution):
             return self
 
 
@@ -303,7 +303,7 @@ class Build:
             if not os.path.isfile(os.path.join(self.incoming, entry)):
                 debug(_('Downloading missing %s') % entry)
                 for component in dom.dists.get(self.origin,
-                                                'components').split():
+                                               'components').split():
                     _download_files(dom.dists.get(self.origin, 'mirror'),
                                     component, package, entry,
                                     os.path.join(self.incoming, entry))
@@ -425,9 +425,9 @@ class Build:
                         command[2] = ('--chroot-suffix=-%s-debomatic' %
                                       self.distribution)
                     if dom.dists.has_option(self.distribution,
-                                             'extrapackages'):
+                                            'extrapackages'):
                         packages = dom.dists.get(self.distribution,
-                                                  'extrapackages').split()
+                                                 'extrapackages').split()
                         command.insert(-3, '--include=%s' % ','.join(packages))
                         packages = '--include=%s' % ','.join(packages)
                     process = Popen(command, stdout=fd, stderr=fd)

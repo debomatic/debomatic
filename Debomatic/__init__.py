@@ -21,5 +21,6 @@ from gettext import install
 
 install("debomatic")
 
+
 class dom:
     pass

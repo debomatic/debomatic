@@ -59,8 +59,8 @@ class DebomaticModule_SourceUpload:
                             cf = sub('Architecture: .*',
                                      'Architecture: %s' % ' '.join(arch), cf)
                             for deb in findall(' .* \S+_\S+_\S+.u?deb', cf):
-                                if (not deb.endswith('_all.deb')
-                                        and not deb.endswith('_all.udeb')):
+                                if (not deb.endswith('_all.deb') and
+                                   not deb.endswith('_all.udeb')):
                                     cf = sub(escape(deb) + '\n', '', cf)
                             sourcecf = sub('_[^_]+?.changes',
                                            '_sourceupload.changes',
