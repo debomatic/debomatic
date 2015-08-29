@@ -105,8 +105,10 @@ class Command():
                     pid = task.get_pid()
                     if pid:
                         os.kill(pid, SIGTERM)
-                        debug(_('Build killed for %s_%s in %s') %
-                              (package, version, distribution))
+                        debug(_('Build killed for %(package)s_'
+                                '%(version)s in %(dist)s') %
+                              {'package': package, 'version': version,
+                               'distribution': distribution})
 
     def _process_porter(self, packages):
         debug(_('Performing a porter build'))

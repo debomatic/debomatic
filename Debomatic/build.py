@@ -52,8 +52,10 @@ class BuildTask:
             if (self._package == task._package and
                self._version == task._version and
                self._distribution == task._distribution):
-                info(_('Build already scheduled for package %s_%s in %s') %
-                     (self._package, self._version, self._distribution))
+                info(_('Build already scheduled for '
+                       'package %(package)s_%(version)s in %(dist)s') %
+                     {'package': self._package, 'version': self._version,
+                      'dist': self._distribution})
                 self._skip_removal()
                 raise DebomaticError
         self._queue.append(self)
@@ -410,8 +412,8 @@ class Build:
                                                   self.distribution)
             with open(logfile, 'w') as fd:
                 try:
-                    debug(_('Creating chroot %s-%s-debomatic') %
-                          (self.distribution, architecture))
+                    debug(_('Creating chroot %(dist)s-%(arch)s-debomatic') %
+                          {'dist': self.distribution, 'arch': architecture})
                     components = ','.join(dom.dists.get(self.distribution,
                                                         'components').split())
                     command = ['sbuild-createchroot',
