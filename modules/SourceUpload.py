@@ -20,7 +20,7 @@
 # Allows uploading source-only packages to Debian archive
 
 import os
-from re import escape, findall, search, sub
+from re import match, sub
 
 
 class DebomaticModule_SourceUpload:
@@ -28,43 +28,24 @@ class DebomaticModule_SourceUpload:
     def post_build(self, args):
         if not args.success:
             return
-        dscfile = None
+        lines = []
         changesfile = None
-        mirror = args.dists.get(args.distribution, 'mirror')
-        try:
-            profile = mirror.split('/')[-1]
-        except IndexError:
-            profile = None
-        if profile == 'debian':
-            resultdir = os.path.join(args.directory, 'pool', args.package)
-            for filename in os.listdir(resultdir):
-                if filename.endswith('.dsc'):
-                    dscfile = os.path.join(resultdir, filename)
-                if filename.endswith('.changes'):
-                    changesfile = os.path.join(resultdir, filename)
-                    with open(changesfile) as fd:
-                        arch = set(findall('Architecture: (.*)',
-                                   fd.read())[0].split())
-                        if arch.issubset({'source', 'all'}):
-                            changesfile = None
-            if dscfile and changesfile:
-                with open(dscfile, 'r') as fd:
-                    dsc = fd.read()
-                if search('Package-List:', dsc):
-                    with open(changesfile, 'r') as fd:
-                        cf = fd.read()
-                        arch = findall('Architecture: (.*)', cf)[0].split()
-                        if 'source' in arch:
-                            arch = {'source', 'all'}.intersection(arch)
-                            cf = sub('Architecture: .*',
-                                     'Architecture: %s' % ' '.join(arch), cf)
-                            for deb in findall(' .* \S+_\S+_\S+.u?deb', cf):
-                                if (not deb.endswith('_all.deb') and
-                                   not deb.endswith('_all.udeb')):
-                                    cf = sub(escape(deb) + '\n', '', cf)
-                            sourcecf = sub('_[^_]+?.changes',
-                                           '_sourceupload.changes',
-                                           changesfile)
-                            with open(sourcecf, 'w') as sourcecf:
-                                sourcecf.write(cf)
-                                sourcecf.flush()
+        resultdir = os.path.join(args.directory, 'pool', args.package)
+        for filename in os.listdir(resultdir):
+            if filename.endswith('.changes'):
+                changesfile = os.path.join(resultdir, filename)
+                break
+        if changesfile:
+            with open(changesfile, 'r') as fd:
+                cf = fd.read()
+            for line in cf.split('\n'):
+                if match('.*?\S+_\S+_\S+\.u?deb', line):
+                    continue
+                elif line.startswith('Architecture: '):
+                    lines.append('Architecture: source')
+                else:
+                    lines.append(line)
+            sourcecf = sub('_[^_]+?.changes',
+                           '_sourceupload.changes', changesfile)
+            with open(sourcecf, 'w') as sourcecf:
+                sourcecf.write('\n'.join(lines))
