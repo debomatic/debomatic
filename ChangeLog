@@ -1,3 +1,8 @@
+0.21 "criss-cross" (2015-10-07)
+* Cross-build support
+* New kill command
+* Several bugfixes
+
 0.20 "dayafter" (2015-04-26)
 * sbuild backend instead of pbuilder
 * New binnmu command
