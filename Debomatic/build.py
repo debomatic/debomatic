@@ -178,8 +178,7 @@ class Build:
             except IndexError:
                 pass
         suite = dom.dists.get(self.distribution, 'suite')
-        if not (self.distribution == suite or
-                self.distribution.startswith(suite)):
+        if self.distribution != suite:
             command.insert(-1, '--build-dep-resolver=aptitude')
         if self.binnmu:
             command.insert(-1, '--binNMU=%s' % self.binnmu[0])
