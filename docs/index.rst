@@ -60,7 +60,7 @@ Runtime requirements
 In order to be able to run Deb-o-Matic, the following packages are required:
 
 * python3 (>= 3.2)
-* sbuild (>= 0.64.3-1)
+* sbuild (>= 0.66.0)
 * debootstrap, cdebootstrap, or qemu-debootstrap
 * python3-toposort
 
