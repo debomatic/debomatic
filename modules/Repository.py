@@ -22,6 +22,7 @@
 import os
 from datetime import datetime
 from subprocess import call, PIPE
+from time import sleep
 
 
 class DebomaticModule_Repository:
@@ -29,6 +30,7 @@ class DebomaticModule_Repository:
     def __init__(self):
         self.af = '/usr/bin/apt-ftparchive'
         self.gpg = '/usr/bin/gpg'
+        self.lockdir = '/var/lib/sbuild/build/.debomatic'
 
     def pre_build(self, args):
         self.update_repository(args)
@@ -57,6 +59,15 @@ class DebomaticModule_Repository:
             arch = args.hostarchitecture
         else:
             arch = args.architecture
+        if not os.path.exists(self.lockdir):
+            os.makedirs(self.lockdir)
+        lockfile = os.path.join(self.lockdir, '%s.%s.apt.lock' %
+                                (distribution, arch))
+        while True:
+            if not os.listdir(self.lockdir):
+                open(lockfile, 'w+').close()
+                break
+            sleep(5)
         archive = args.directory
         pool = os.path.join(archive, 'pool')
         dists = os.path.join(archive, 'dists', distribution)
@@ -99,4 +110,5 @@ class DebomaticModule_Repository:
         call([self.gpg, '--no-default-keyring', '--keyring', pubring,
               '--secret-keyring', secring, '-u', gpgkey, '--yes', '-a',
               '-o', inrelease_gpg, '--clearsign', release_file])
+        os.unlink(lockfile)
         os.chdir(cwd)

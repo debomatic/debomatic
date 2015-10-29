@@ -1,0 +1,6 @@
+#!/bin/sh
+# This releases lock acquired during chroot setup
+
+LOCKDIR=/build/.debomatic
+LOCKFILE=$LOCKDIR/$1-$2.$3.apt.lock
+rm -f $LOCKFILE

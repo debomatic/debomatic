@@ -207,7 +207,8 @@ class Build:
                                        ext[os.path.splitext(file)[1]])
                     except IndexError:
                         pass
-        for sbuildcommand in self._commands():
+        for sbuildcommand in self._commands(self.distribution, architecture,
+                                            packageversion):
             command.insert(-1, sbuildcommand)
         if self.hostarchitecture:
             command.insert(-1, '--chroot-setup-commands=%s' %
@@ -231,7 +232,7 @@ class Build:
         self._remove_files()
         info(_('Build of %s complete') % os.path.basename(self.dscfile))
 
-    def _commands(self):
+    def _commands(self, distribution, architecture, packageversion):
         commands = []
         types = ('pre-build-commands', 'chroot-setup-commands',
                  'starting-build-commands', 'finished-build-commands',
@@ -243,7 +244,10 @@ class Build:
                     for command in os.listdir(os.path.join(commandsdir, type)):
                         commandfile = os.path.join(commandsdir, type, command)
                         if os.access(commandfile, os.X_OK):
-                            commands.append('--%s=%s' % (type, commandfile))
+                            commands.append('--%s=%s %s %s %s' %
+                                            (type, commandfile,
+                                             packageversion, distribution,
+                                             architecture))
         if commands:
             commands.append('--log-external-command-output')
             commands.append('--log-external-command-error')
