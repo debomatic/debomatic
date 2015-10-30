@@ -235,7 +235,8 @@ class Build:
     def _commands(self, distribution, architecture, packageversion):
         commands = []
         types = ('pre-build-commands', 'chroot-setup-commands',
-                 'starting-build-commands', 'finished-build-commands',
+                 'build-deps-failed-commands', 'starting-build-commands',
+                 'build-failed-commands', 'finished-build-commands',
                  'chroot-cleanup-commands', 'post-build-commands')
         commandsdir = dom.opts.get('chroots', 'commands')
         if os.path.isdir(commandsdir):
