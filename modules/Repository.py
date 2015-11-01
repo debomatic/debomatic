@@ -22,6 +22,7 @@
 import os
 from datetime import datetime
 from fcntl import flock, LOCK_EX, LOCK_UN
+from stat import S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH
 from subprocess import call, PIPE
 from tempfile import NamedTemporaryFile
 
@@ -96,6 +97,7 @@ class DebomaticModule_Repository:
         with self.Lock(distribution, arch):
             with NamedTemporaryFile('w', dir=packages, delete=False) as fd:
                 call([self.af, 'packages', 'pool'], stdout=fd, stderr=PIPE)
+                os.chmod(fd.name S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH)
                 packages_file_tmp = fd.name
             with NamedTemporaryFile('w', dir=packages, delete=False) as fd:
                 fd.write('Origin: Deb-O-Matic\n')
@@ -103,6 +105,7 @@ class DebomaticModule_Repository:
                 fd.write('Archive: %s\n' % distribution)
                 fd.write('Component: main\n')
                 fd.write('Architecture: %s\n' % arch)
+                os.chmod(fd.name S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH)
                 arch_release_file_tmp = fd.name
             with NamedTemporaryFile('w', dir=packages, delete=False) as fd:
                 date = datetime.now().strftime('%A, %d %B %Y %H:%M:%S')
@@ -116,6 +119,7 @@ class DebomaticModule_Repository:
                       '-o', '%sComponents=main' % afstring,
                       'release', 'dists/%s' % distribution],
                      stdout=fd, stderr=PIPE)
+                os.chmod(fd.name S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH)
                 release_file_tmp = fd.name
             with open(release_file_tmp, 'r+') as fd:
                 data = fd.read()
@@ -125,11 +129,13 @@ class DebomaticModule_Repository:
                 call([self.gpg, '--no-default-keyring', '--keyring', pubring,
                       '--secret-keyring', secring, '-u', gpgkey, '--yes',
                       '-a', '-o', fd.name, '-s', release_file_tmp])
+                os.chmod(fd.name S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH)
                 release_gpg_tmp = fd.name
             with NamedTemporaryFile('w', dir=packages, delete=False) as fd:
                 call([self.gpg, '--no-default-keyring', '--keyring', pubring,
                       '--secret-keyring', secring, '-u', gpgkey, '--yes',
                       '-a', '-o', fd.name, '--clearsign', release_file])
+                os.chmod(fd.name S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH)
                 inrelease_gpg_tmp = fd.name
             os.rename(packages_file_tmp, packages_file)
             os.rename(arch_release_file_tmp, arch_release_file)
