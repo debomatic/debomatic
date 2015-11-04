@@ -216,21 +216,26 @@ class Build:
                             self.hostarchitecture))
         with open(os.devnull, 'w') as fd:
             try:
-                os.chdir(os.path.join(self.buildpath, 'pool', packageversion))
-                buildlink = '%s.buildlog' % packageversion
+                bpath = os.path.join(self.buildpath, 'pool', packageversion)
+                buildlink = os.path.join(bpath, '%s.buildlog' % packageversion)
                 if os.path.exists(buildlink):
                     os.unlink(buildlink)
                 os.symlink(buildlog, buildlink)
-                process = Popen(command, stdout=fd, stderr=fd)
+                process = Popen(command, stdout=fd, stderr=fd, cwd=bpath)
                 with self.buildtask.set_pid(process.pid):
                     process.wait()
+                if process.returncode:
+                    info(_("Build of %s failed") %
+                         os.path.basename(self.dscfile))
+                else:
+                    info(_("Build of %s successful") %
+                         os.path.basename(self.dscfile))
+                    mod.args.success = True
             except OSError:
                 error(_('Invoication of sbuild failed'))
-        if process.returncode == 0:
-            mod.args.success = True
         mod.execute_hook('post_build')
         self._remove_files()
-        info(_('Build of %s complete') % os.path.basename(self.dscfile))
+        debug(_('Build of %s complete') % os.path.basename(self.dscfile))
 
     def _commands(self, distribution, architecture, packageversion):
         commands = []
