@@ -23,7 +23,7 @@
 
 import os
 from shutil import copyfile
-from subprocess import call
+from subprocess import call, PIPE
 
 
 class DebomaticModule_Lintian:
@@ -64,6 +64,6 @@ class DebomaticModule_Lintian:
                 fd.write('Options: %s\n\n' % lintopts)
                 fd.flush()
                 cmd = [self.lintian] + lintopts.split() + [changesfile]
-                call(cmd, stdout=fd)
+                call(cmd, stdout=fd, stderr=PIPE)
         for file in tempfiles:
             os.remove(file)
