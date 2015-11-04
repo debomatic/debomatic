@@ -177,6 +177,10 @@ class Build:
                                findall(' \S+ \((\S+)\) \S+; ', data)[-1])
             except IndexError:
                 pass
+            with open(os.path.join(self.incoming, self.changesfile)) as fd:
+                data = fd.read()
+            for resolver in findall('Debomatic-Resolver: (\S+)', data):
+                command.insert(-1, '--build-dep-resolver=%s' % resolver)
         suite = dom.dists.get(self.distribution, 'suite')
         if self.distribution != suite:
             command.insert(-1, '--build-dep-resolver=aptitude')

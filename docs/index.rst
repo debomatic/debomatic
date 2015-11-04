@@ -571,6 +571,20 @@ for you. In order to do so, you have to pass ``-sd`` flag to ``debuild`` or
 Multiple uploads of the same packages are allowed, Deb-o-Matic will overwrite
 previous builds with new, fresh files.
 
+User-defined fields
+-------------------
+
+sbuild uses several resolvers to determine and install build-dependencies
+inside the chroots. Sometimes it is desirable to override the default resolver
+to perform some advanced tasks (e.g. using a specific version of a package
+which apt-based resolver cannot pick automatically.
+
+In order to do so, you must define the ``XC-Debomatic-Resolver`` in the source
+stanza of your ``control file``. For instance, if you want to use the aptitude
+resolver, you must use the following syntax:
+
+ *XC-Debomatic-Resolver: aptitude*
+
 Prepare command files
 =====================
 
