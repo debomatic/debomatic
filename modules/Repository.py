@@ -21,10 +21,11 @@
 
 import os
 from datetime import datetime
-from fcntl import flock, LOCK_EX, LOCK_UN
-from stat import S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH
-from subprocess import call, PIPE
-from tempfile import NamedTemporaryFile
+from fcntl import flock, LOCK_EX, LOCK_NB, LOCK_SH, LOCK_UN
+from shutil import rmtree
+from stat import S_IRWXU, S_IRGRP, S_IXGRP, S_IROTH, S_IXOTH
+from subprocess import Popen, PIPE
+from tempfile import mkdtemp, mkstemp
 
 
 class DebomaticModule_Repository:
@@ -49,15 +50,23 @@ class DebomaticModule_Repository:
         def __init__(self, distribution, architecture):
             self._file = ('/var/run/debomatic-%s-%s.apt.lock' %
                           (distribution, architecture))
+            self._skip = False
 
         def __enter__(self):
             self._fd = open(self._file, 'w')
-            flock(self._fd, LOCK_EX)
+            try:
+                flock(self._fd, LOCK_EX | LOCK_NB)
+            except IOError:
+                flock(self._fd, LOCK_SH)
+                self._skip = True
             return self
 
         def __exit__(self, exc_type, exc_value, traceback):
             flock(self._fd, LOCK_UN)
             self._fd.close()
+
+        def skip(self):
+            return self._skip
 
     def update_repository(self, args):
         if args.opts.has_section('repository'):
@@ -70,7 +79,6 @@ class DebomaticModule_Repository:
             return
         if not os.access(self.gpg, os.X_OK):
             return
-        cwd = os.getcwd()
         distribution = args.distribution
         if args.hostarchitecture:
             arch = args.hostarchitecture
@@ -78,68 +86,69 @@ class DebomaticModule_Repository:
             arch = args.architecture
         archive = args.directory
         pool = os.path.join(archive, 'pool')
-        dists = os.path.join(archive, 'dists', distribution)
+        distslink = os.path.join(archive, 'dists', distribution)
+        if not os.path.islink(distslink):
+            if not os.path.isdir(os.path.join(archive, 'dists')):
+                os.makedirs(os.path.join(archive, 'dists'))
+            tmpdir = mkdtemp(prefix='.', dir=os.path.join(archive, 'dists'))
+            os.symlink(tmpdir, distslink)
+        dists = mkdtemp(prefix='.', dir=os.path.join(archive, 'dists'))
         packages = os.path.join(dists, 'main', 'binary-%s' % arch)
         packages_file = os.path.join(packages, 'Packages')
-        packages_file_tmp = os.devnull
         arch_release_file = os.path.join(packages, 'Release')
-        arch_release_file_tmp = os.devnull
         release_file = os.path.join(dists, 'Release')
-        release_file_tmp = os.devnull
         release_gpg = os.path.join(dists, 'Release.gpg')
-        release_gpg_tmp = os.devnull
         inrelease_gpg = os.path.join(dists, 'InRelease')
-        inrelease_gpg_tmp = os.devnull
-        for dir in (pool, dists, packages):
+        for dir in (pool, packages):
             if not os.path.isdir(dir):
                 os.makedirs(dir)
-        os.chdir(archive)
-        with self.Lock(distribution, arch):
-            with NamedTemporaryFile('w', dir=packages, delete=False) as fd:
-                call([self.af, 'packages', 'pool'], stdout=fd, stderr=PIPE)
-                os.chmod(fd.name S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH)
-                packages_file_tmp = fd.name
-            with NamedTemporaryFile('w', dir=packages, delete=False) as fd:
-                fd.write('Origin: Deb-O-Matic\n')
-                fd.write('Label: Deb-O-Matic\n')
-                fd.write('Archive: %s\n' % distribution)
-                fd.write('Component: main\n')
-                fd.write('Architecture: %s\n' % arch)
-                os.chmod(fd.name S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH)
-                arch_release_file_tmp = fd.name
-            with NamedTemporaryFile('w', dir=packages, delete=False) as fd:
-                date = datetime.now().strftime('%A, %d %B %Y %H:%M:%S')
-                afstring = 'APT::FTPArchive::Release::'
-                call([self.af, '-qq',
-                      '-o', '%sOrigin=Deb-o-Matic' % afstring,
-                      '-o', '%sLabel=Deb-o-Matic' % afstring,
-                      '-o', '%sSuite=%s' % (afstring, distribution),
-                      '-o', '%sDate=%s' % (afstring, date),
-                      '-o', '%sArchitectures=%s' % (afstring, arch),
-                      '-o', '%sComponents=main' % afstring,
-                      'release', 'dists/%s' % distribution],
-                     stdout=fd, stderr=PIPE)
-                os.chmod(fd.name S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH)
-                release_file_tmp = fd.name
-            with open(release_file_tmp, 'r+') as fd:
-                data = fd.read()
-                fd.seek(0)
-                fd.write(data.replace('MD5Sum', 'NotAutomatic: yes\nMD5Sum'))
-            with NamedTemporaryFile('w', dir=packages, delete=False) as fd:
-                call([self.gpg, '--no-default-keyring', '--keyring', pubring,
-                      '--secret-keyring', secring, '-u', gpgkey, '--yes',
-                      '-a', '-o', fd.name, '-s', release_file_tmp])
-                os.chmod(fd.name S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH)
-                release_gpg_tmp = fd.name
-            with NamedTemporaryFile('w', dir=packages, delete=False) as fd:
-                call([self.gpg, '--no-default-keyring', '--keyring', pubring,
-                      '--secret-keyring', secring, '-u', gpgkey, '--yes',
-                      '-a', '-o', fd.name, '--clearsign', release_file])
-                os.chmod(fd.name S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH)
-                inrelease_gpg_tmp = fd.name
-            os.rename(packages_file_tmp, packages_file)
-            os.rename(arch_release_file_tmp, arch_release_file)
-            os.rename(release_file_tmp, release_file)
-            os.rename(release_gpg_tmp, release_gpg)
-            os.rename(inrelease_gpg_tmp, inrelease_gpg)
-        os.chdir(cwd)
+        with self.Lock(distribution, arch) as lock:
+            if lock.skip():
+                rmtree(dists)
+            else:
+                with open(packages_file, 'w') as fd:
+                    Popen([self.af, 'packages', 'pool'],
+                          stdout=fd, stderr=PIPE, cwd=archive).wait()
+                with open(arch_release_file, 'w') as fd:
+                    fd.write('Origin: Deb-O-Matic\n')
+                    fd.write('Label: Deb-O-Matic\n')
+                    fd.write('Archive: %s\n' % distribution)
+                    fd.write('Component: main\n')
+                    fd.write('Architecture: %s\n' % arch)
+                with open(release_file, 'w') as fd:
+                    date = datetime.now().strftime('%A, %d %B %Y %H:%M:%S')
+                    afstring = 'APT::FTPArchive::Release::'
+                    Popen([self.af, '-qq',
+                           '-o', '%sOrigin=Deb-o-Matic' % afstring,
+                           '-o', '%sLabel=Deb-o-Matic' % afstring,
+                           '-o', '%sSuite=%s' % (afstring, distribution),
+                           '-o', '%sDate=%s' % (afstring, date),
+                           '-o', '%sArchitectures=%s' % (afstring, arch),
+                           '-o', '%sComponents=main' % afstring,
+                           'release', 'dists/%s' % os.path.basename(dists)],
+                          stdout=fd, stderr=PIPE, cwd=archive).wait()
+                with open(release_file, 'r+') as fd:
+                    data = fd.read()
+                    fd.seek(0)
+                    fd.write(data.replace('MD5Sum',
+                             'NotAutomatic: yes\nMD5Sum'))
+                with open(release_gpg, 'w') as fd:
+                    Popen([self.gpg, '--no-default-keyring', '--keyring',
+                           pubring, '--secret-keyring', secring,
+                           '-u', gpgkey, '--yes', '-a', '-o', fd.name,
+                           '-s', release_file], cwd=archive).wait()
+                with open(inrelease_gpg, 'w') as fd:
+                    Popen([self.gpg, '--no-default-keyring', '--keyring',
+                           pubring, '--secret-keyring', secring,
+                           '-u', gpgkey, '--yes', '-a', '-o', fd.name,
+                           '--clearsign', release_file], cwd=archive).wait()
+                olddists = os.readlink(distslink)
+                (tmp, tmplink) = mkstemp(prefix='.',
+                                         dir=os.path.dirname(olddists))
+                os.close(tmp)
+                os.unlink(tmplink)
+                os.symlink(dists, tmplink)
+                os.chmod(dists, S_IRWXU | S_IRGRP | S_IXGRP |
+                         S_IROTH | S_IXOTH)
+                os.rename(tmplink, distslink)
+                rmtree(olddists)
