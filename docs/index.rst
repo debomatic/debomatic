@@ -68,14 +68,15 @@ To enable additional features, you may want to install these packages:
 
 * python3-pyinotify (>= 0.8.6)
 * gpgv
-* gnupg
+* debian-archive-keyring
+* ubuntu-keyring
 * lintian
 * piuparts (>= 0.45)
-* blhc
-* debian-archive-keyring and/or ubuntu-keyring
-* apt-utils
-* devscripts
 * autopkgtest (>= 3.16)
+* blhc
+* devscripts
+* apt-utils
+* gnupg
 
 An Internet connection is also required, broadband access is recommended
 because underlying programs will fetch a lot of megabytes from remote locations
