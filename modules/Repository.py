@@ -33,7 +33,6 @@ class DebomaticModule_Repository:
     def __init__(self):
         self.af = '/usr/bin/apt-ftparchive'
         self.gpg = '/usr/bin/gpg'
-        self.lockdir = '/var/lib/sbuild/build/.debomatic'
 
     def pre_build(self, args):
         self.update_repository(args)
