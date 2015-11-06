@@ -75,6 +75,7 @@ To enable additional features, you may want to install these packages:
 * debian-archive-keyring and/or ubuntu-keyring
 * apt-utils
 * devscripts
+* autopkgtest (>= 3.16)
 
 An Internet connection is also required, broadband access is recommended
 because underlying programs will fetch a lot of megabytes from remote locations
@@ -750,12 +751,6 @@ Parameters
 This option indicates the extra options to pass to adt-run.
 
  Suggested value: ``--no-built-binaries``
-
-* ``gpghome``
-
-This option indicates the GPG home directory used by adt-run.
-
- Suggested value: ``/var/cache/debomatic/autopkgtest``
 
 Blhc
 ----

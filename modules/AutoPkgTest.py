@@ -25,7 +25,6 @@
 #
 # [autopkgtest]
 # options: [adt-run options]
-# gpghome: /path/to/gnupg-home # set the gnupg home for adt-run
 #
 
 import os
@@ -39,7 +38,6 @@ class DebomaticModule_AutoPkgTest:
         self.adt = '/usr/bin/adt-run'
         self.options = []
         self.changesfile = None
-        self.gpghome = '/var/cache/debomatic/autopkgtest'
 
     def _set_up_testbed(self, args):
         """Performs:
@@ -67,13 +65,6 @@ class DebomaticModule_AutoPkgTest:
         if args.opts.has_section('autopkgtest'):
             if args.opts.has_section('autopkgtest'):
                 self.opts = args.opts.get('autopkgtest', 'options').split()
-                gpghome = args.opts.get('autopkgtest', 'gpghome')
-            if gpghome:
-                self.gpghome = gpghome
-
-        # check whether gpghome exists, and eventually create it
-        if not os.path.isdir(self.gpghome):
-            os.makedirs(self.gpghome)
 
         # set up atd-run output dir
         self.resultdir_adt = os.path.join(self.resultdir, 'adt_out_dir')
@@ -114,9 +105,8 @@ class DebomaticModule_AutoPkgTest:
                         output.write('\n\n')
                 output.flush()
 
-        adt = [self.adt, '--gnupg-home', self.gpghome,
+        adt = [self.adt, '--output-dir', self.resultdir_adt,
                '--summary', os.path.join(self.resultdir_adt, self.summary),
-               '--output-dir', self.resultdir_adt,
                self.changesfile, '---', 'schroot',
                '%s-%s-debomatic' % (args.distribution, args.architecture)]
         if self.options:
