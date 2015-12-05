@@ -214,10 +214,6 @@ class Build:
         for sbuildcommand in self._commands(self.distribution, architecture,
                                             packageversion):
             command.insert(-1, sbuildcommand)
-        if self.hostarchitecture:
-            command.insert(-1, '--chroot-setup-commands=%s' %
-                           ('dpkg --add-architecture %s' %
-                            self.hostarchitecture))
         with open(os.devnull, 'w') as fd:
             try:
                 bpath = os.path.join(self.buildpath, 'pool', packageversion)
