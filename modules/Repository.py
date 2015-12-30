@@ -135,7 +135,7 @@ class DebomaticModule_Repository:
                     Popen([self.gpg, '--no-default-keyring', '--keyring',
                            pubring, '--secret-keyring', secring,
                            '-u', gpgkey, '--yes', '-a', '-o', fd.name,
-                           '-s', release_file], cwd=archive).wait()
+                           '-b', release_file], cwd=archive).wait()
                 with open(inrelease_gpg, 'w') as fd:
                     Popen([self.gpg, '--no-default-keyring', '--keyring',
                            pubring, '--secret-keyring', secring,
