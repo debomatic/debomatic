@@ -13,4 +13,10 @@ tmpfs		/dev/shm	tmpfs	defaults	0	0
 
 # Mount commands directory to execute commands in the chroot
 # Directory name must be the same defined in debomatic.conf
-# /usr/share/debomatic/sbuildcommands	/usr/share/debomatic/sbuildcommands	none	ro,bind		0	0
+/usr/share/debomatic/sbuildcommands	/usr/share/debomatic/sbuildcommands	none	ro,bind		0	0
+
+# If you enable this line, the APT cache will be shared between
+# the chroot and the host system, thus making package installation
+# faster
+#/var/cache/apt/archives			/var/cache/apt/archives			none	rw,bind		0	0
+
