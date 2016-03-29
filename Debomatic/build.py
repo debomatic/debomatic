@@ -482,7 +482,6 @@ class Build:
                                     tmp.write('profile=%s\n' % profile)
                                 else:
                                     tmp.write(line)
-                        tmp.write('union-type=aufs')
                     copymode(fd.name, tmp.name)
                     move(tmp.name, fd.name)
             mod.args.success = True
