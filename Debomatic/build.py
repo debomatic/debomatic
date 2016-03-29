@@ -117,7 +117,7 @@ class Build:
             error(_('Distribution %s is disabled') % self.distribution)
             raise DebomaticError
         if dom.opts.has_section('crossbuild'):
-            if dom.opts.get('crossbuild', 'crossbuild'):
+            if dom.opts.getboolean('crossbuild', 'crossbuild'):
                 self.hostarchitecture = dom.opts.get('crossbuild',
                                                      'hostarchitecture')
         try:
