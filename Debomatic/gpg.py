@@ -80,35 +80,3 @@ class GPG:
 
     def error(self):
         return self._error
-
-
-class GPGKeys:
-
-    def __init__(self):
-        self._private = '/var/lib/sbuild/apt-keys/sbuild-key.sec'
-        self._public = '/var/lib/sbuild/apt-keys/sbuild-key.pub'
-
-    def check_keys(self):
-        try:
-            with open(os.devnull, 'w') as fd:
-                gpgresult = check_output(['gpg', '--with-fingerprint',
-                                         self._private], stderr=fd)
-        except CalledProcessError:
-            self._error = _('%s not found') % self._private
-            raise DebomaticError
-        if not match(b'sec\s+\d+\S/\S{8}', gpgresult):
-            self._error = _('%s is not a valid GPG key') % self._private
-            raise DebomaticError
-        try:
-            with open(os.devnull, 'w') as fd:
-                gpgresult = check_output(['gpg', '--with-fingerprint',
-                                         self._public], stderr=fd)
-        except CalledProcessError:
-            self._error = _('%s not found') % self._public
-            raise DebomaticError
-        if not match(b'pub\s+\d+\S/\S{8}', gpgresult):
-            self._error = _('%s is not a valid GPG key') % self._public
-            raise DebomaticError
-
-    def error(self):
-        return self._error

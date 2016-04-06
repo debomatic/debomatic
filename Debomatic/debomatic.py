@@ -31,7 +31,6 @@ from .build import Build
 from .commands import Command
 from .configuration import Parser
 from .exceptions import DebomaticConffileError, DebomaticError
-from .gpg import GPGKeys
 from .modules import Module
 from .process import Process, ThreadPool
 
@@ -76,16 +75,6 @@ class Debomatic(Parser, Process):
             exit()
         self.setlog('%(levelname)s: %(message)s',
                     dom.opts.get('debomatic', 'loglevel'))
-        gpg = GPGKeys()
-        try:
-            gpg.check_keys()
-        except DebomaticError:
-            info(_('Creating sbuild keys'))
-            try:
-                call(['sbuild-update', '--keygen'])
-            except CalledProcessError:
-                error(_('Failed to create sbuild keys'))
-                exit(1)
         self.mod_sys = Module()
         self.mod_sys.execute_hook('on_start')
         try:
