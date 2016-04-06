@@ -49,7 +49,6 @@ class DebomaticModule_Piuparts:
                 log = os.path.join(resultdir, args.package) + '.piuparts'
                 with open(log, 'a') as fd:
                     cmd = [self.piuparts,
-                           '-I', '/sys/fs/aufs/.*',
                            '-I', '/build/.*',
                            '-d', '%s' % distribution,
                            '-D', '%s' % mirror.split('/')[-1],
