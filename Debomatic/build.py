@@ -164,7 +164,8 @@ class Build:
                    '%s-%s-debomatic' % (self.distribution, architecture),
                    self.dscfile]
         if self.hostarchitecture:
-            command.insert(6, '--host=%s' % self.hostarchitecture)
+            command.pop(5)
+            command.insert(5, '--host=%s' % self.hostarchitecture)
         if self.changesfile:
             with open(self.upload, 'r') as fd:
                 data = fd.read()
