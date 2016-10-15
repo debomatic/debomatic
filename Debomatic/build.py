@@ -232,7 +232,7 @@ class Build:
                          os.path.basename(self.dscfile))
                     mod.args.success = True
             except OSError:
-                error(_('Invoication of sbuild failed'))
+                error(_('Invocation of sbuild failed'))
         mod.execute_hook('post_build')
         self._remove_files()
         debug(_('Build of %s complete') % os.path.basename(self.dscfile))
