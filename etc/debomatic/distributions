@@ -38,16 +38,16 @@ extramirrors: deb http://security.debian.org/ stable/updates main contrib non-fr
               deb http://httpredir.debian.org/debian stable-updates main contrib non-free
               deb http://httpredir.debian.org/debian jessie-backports main contrib non-free
 
-[wheezy-backports]
-suite: oldstable
-mirror: http://httpredir.debian.org/debian
-components: main contrib non-free
-extramirrors: deb http://security.debian.org/ stable/updates main contrib non-free
-              deb http://httpredir.debian.org/debian stable-updates main contrib non-free
-              deb http://httpredir.debian.org/debian wheezy-backports main contrib non-free
-
 
 # Ubuntu
+
+[zesty]
+suite: zesty
+mirror: http://archive.ubuntu.com/ubuntu
+components: main restricted universe multiverse
+extramirrors: deb http://archive.ubuntu.com/ubuntu/ zesty-updates main restricted universe multiverse
+              deb http://security.ubuntu.com/ubuntu zesty-security main restricted universe multiverse
+extrapackages: pkgbinarymangler pkg-create-dbgsym
 
 [yakkety]
 suite: yakkety
