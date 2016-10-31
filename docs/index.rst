@@ -483,6 +483,16 @@ It is also possible to force interactive mode by passing ``-i`` or
 
 This is particularly useful for debugging purposes.
 
+Oneshot mode
+............
+
+Deb-o-Matic will try to build all files found in the incoming directory.
+Alternatively, it is possible to attempt to build a sinle file by passing
+``-o`` or ``--oneshot`` option while invoking ``debomatic`` command, following
+by the file name of the package to build:
+
+ *sudo debomatic -c debomatic.conf -o package_version_source.changes*
+
 Stop Deb-o-Matic
 ----------------
 

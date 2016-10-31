@@ -48,6 +48,8 @@ class Debomatic(Parser, Process):
                             nargs=1, help='configuration file for Deb-o-Matic')
         parser.add_argument('-i', '--interactive', action='store_true',
                             help='launch Deb-o-Matic in interactive mode')
+        parser.add_argument('-o', '--oneshot', metavar='file', type=str,
+                            nargs=1, help='launch Deb-o-Matic for one build')
         parser.add_argument('-q', '--quit', action='store_true',
                             help='terminate Deb-o-Matic processes')
         args = parser.parse_args()
@@ -58,6 +60,8 @@ class Debomatic(Parser, Process):
             self.conffile = args.configfile[0]
         if args.interactive:
             self.daemonize = False
+        if args.oneshot:
+            self.oneshot = args.oneshot[0]
         try:
             self.parse_configfiles()
         except DebomaticConffileError:
@@ -84,14 +88,19 @@ class Debomatic(Parser, Process):
             exit(1)
 
     def launcher(self):
-        self.queue_files()
-        if dom.opts.getboolean('debomatic', 'inotify'):
-            try:
-                self.launcher_inotify()
-            except ImportError:
-                self.launcher_timer()
+        if self.oneshot:
+            if not os.path.isabs(self.oneshot):
+                self.oneshot = os.path.join(os.getcwd(), self.oneshot)
+            self.queue_files([self.oneshot])
         else:
-            self.launcher_timer()
+            self.queue_files()
+            if dom.opts.getboolean('debomatic', 'inotify'):
+                try:
+                    self.launcher_inotify()
+                except ImportError:
+                    self.launcher_timer()
+            else:
+                self.launcher_timer()
 
     def launcher_inotify(self):
         import pyinotify
@@ -139,6 +148,8 @@ class Debomatic(Parser, Process):
                         debug(_('Thread for %s scheduled') % filename)
             elif filename.endswith('.commands'):
                 Command(filename)
+        if self.oneshot:
+            self.shutdown()
 
     def setlog(self, fmt, level='info'):
         loglevels = {'error': ERROR,
