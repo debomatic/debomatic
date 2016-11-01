@@ -39,6 +39,7 @@ class Debomatic(Parser, Process):
 
     def __init__(self):
         self.daemonize = True
+        self.oneshot = False
         self.setlog('%(levelname)s: %(message)s')
         self.conffile = None
         dom.opts = ConfigParser()
