@@ -107,7 +107,7 @@ class DebomaticModule_AutoPkgTest:
 
         adt = [self.adt, '--output-dir', self.resultdir_adt,
                '--summary', os.path.join(self.resultdir_adt, self.summary),
-               self.changesfile, '---', 'schroot',
+               ' --apt-upgrade', self.changesfile, '---', 'schroot',
                '%s-%s-debomatic' % (args.distribution, args.architecture)]
         if self.options:
             adt.insert(-4, self.options)
