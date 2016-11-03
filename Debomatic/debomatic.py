@@ -21,9 +21,8 @@ import os
 from argparse import ArgumentParser
 from configparser import ConfigParser
 from fcntl import flock, LOCK_EX, LOCK_NB, LOCK_UN
-from logging import basicConfig as log, debug, error, getLogger, info, warning
+from logging import basicConfig as log, debug, error, getLogger, warning
 from logging import ERROR, WARNING, INFO, DEBUG
-from subprocess import check_call as call, CalledProcessError
 from time import sleep
 
 from Debomatic import dom

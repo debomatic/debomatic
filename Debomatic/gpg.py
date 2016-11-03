@@ -19,8 +19,8 @@
 
 import os
 from fcntl import flock, LOCK_EX, LOCK_NB, LOCK_UN
-from re import findall, match, DOTALL
-from subprocess import check_output, Popen, PIPE, CalledProcessError
+from re import findall, DOTALL
+from subprocess import Popen, PIPE
 
 from Debomatic import dom
 from .exceptions import DebomaticError
