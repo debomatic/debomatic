@@ -90,8 +90,6 @@ class Debomatic(Parser, Process):
 
     def launcher(self):
         if self.oneshot:
-            if not os.path.isabs(self.oneshot):
-                self.oneshot = os.path.join(os.getcwd(), self.oneshot)
             self.queue_files([self.oneshot])
         else:
             self.queue_files()
@@ -129,7 +127,13 @@ class Debomatic(Parser, Process):
             self.queue_files()
 
     def queue_files(self, filelist=None):
-        if not filelist:
+        if filelist:
+            filelist = [os.path.join(self.incoming, os.path.basename(f))
+                        for f in filelist]
+            for f in filelist:
+                if not os.path.isfile(f):
+                    filelist.remove(f)
+        else:
             try:
                 filelist = os.listdir(self.incoming)
             except OSError:
