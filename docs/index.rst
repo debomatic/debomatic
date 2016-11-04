@@ -73,7 +73,7 @@ To enable additional features, you may want to install these packages:
 * ubuntu-keyring
 * lintian
 * piuparts (>= 0.45)
-* autopkgtest (>= 3.16)
+* autopkgtest (>= 4.0)
 * blhc
 * devscripts
 * apt-utils

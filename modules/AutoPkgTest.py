@@ -35,7 +35,7 @@ from shutil import rmtree
 class DebomaticModule_AutoPkgTest:
 
     def __init__(self):
-        self.adt = '/usr/bin/adt-run'
+        self.adt = '/usr/bin/autopkgtest'
         self.options = []
         self.changesfile = None
 
@@ -105,9 +105,9 @@ class DebomaticModule_AutoPkgTest:
                         output.write('\n\n')
                 output.flush()
 
-        adt = [self.adt, '--output-dir', self.resultdir_adt,
+        adt = [self.adt, '--apt-upgrade', '--output-dir', self.resultdir_adt,
                '--summary', os.path.join(self.resultdir_adt, self.summary),
-               ' --apt-upgrade', self.changesfile, '---', 'schroot',
+               self.changesfile, '--', 'schroot',
                '%s-%s-debomatic' % (args.distribution, args.architecture)]
         if self.options:
             adt.insert(-4, self.options)
