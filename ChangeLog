@@ -1,3 +1,8 @@
+0.22 "onekill" (2016-11-08)
+* Oneshot mode
+* Improved local repository handling
+* Several bugfixes
+
 0.21 "criss-cross" (2015-10-07)
 * Cross-build support
 * New kill command
