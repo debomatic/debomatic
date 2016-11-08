@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-15 10:27+0200\n"
+"POT-Creation-Date: 2016-11-08 11:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -176,11 +176,13 @@ msgid "%s hooks finished"
 msgstr ""
 
 #: Debomatic/debomatic.py:56 Debomatic/debomatic.py:55
+#: Debomatic/debomatic.py:57
 msgid "You must run Deb-o-Matic as root"
 msgstr ""
 
 #: Debomatic/debomatic.py:68 Debomatic/debomatic.py:137
 #: Debomatic/debomatic.py:67 Debomatic/debomatic.py:126
+#: Debomatic/debomatic.py:71 Debomatic/debomatic.py:139
 #, python-format
 msgid "Unable to access %s directory"
 msgstr ""
@@ -193,26 +195,31 @@ msgstr ""
 msgid "Failed to create sbuild keys"
 msgstr ""
 
-#: Debomatic/debomatic.py:94 Debomatic/process.py:144 Debomatic/debomatic.py:83
+#: Debomatic/debomatic.py:94 Debomatic/process.py:144
+#: Debomatic/debomatic.py:83 Debomatic/debomatic.py:87
 msgid "Another instance is running, aborting"
 msgstr ""
 
 #: Debomatic/debomatic.py:123 Debomatic/debomatic.py:112
+#: Debomatic/debomatic.py:119
 msgid "Inotify loop started"
 msgstr ""
 
 #: Debomatic/debomatic.py:127 Debomatic/debomatic.py:116
+#: Debomatic/debomatic.py:123
 msgid "Timer loop started"
 msgstr ""
 
-#: Debomatic/debomatic.py:150 Debomatic/commands.py:85 Debomatic/commands.py:96
-#: Debomatic/commands.py:122 Debomatic/commands.py:133
-#: Debomatic/debomatic.py:139
+#: Debomatic/debomatic.py:150 Debomatic/commands.py:85
+#: Debomatic/commands.py:96 Debomatic/commands.py:122
+#: Debomatic/commands.py:133 Debomatic/debomatic.py:139
+#: Debomatic/debomatic.py:152
 #, python-format
 msgid "Thread for %s scheduled"
 msgstr ""
 
 #: Debomatic/debomatic.py:161 Debomatic/debomatic.py:150
+#: Debomatic/debomatic.py:165
 msgid "Log level not valid, defaulting to \"info\""
 msgstr ""
 
