@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2015-08-29 15:07+0200\n"
+"POT-Creation-Date: 2016-11-08 11:18+0100\n"
 "PO-Revision-Date: 2010-04-12 16:44+0000\n"
 "Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-10-07 18:52+0000\n"
-"X-Generator: Launchpad (build 17802)\n"
+"X-Launchpad-Export-Date: 2016-11-08 14:56+0000\n"
+"X-Generator: Launchpad (build 18246)\n"
 
 #: Debomatic/build.py:55
 #, python-format
@@ -38,88 +38,96 @@ msgstr ""
 msgid "Building %s"
 msgstr ""
 
-#: Debomatic/build.py:228
-msgid "Invoication of sbuild failed"
+#: Debomatic/build.py:232 Debomatic/build.py:532 Debomatic/build.py:540
+#: Debomatic/build.py:229 Debomatic/build.py:528 Debomatic/build.py:536
+#, python-format
+msgid "Build of %s failed"
 msgstr ""
 
-#: Debomatic/build.py:233
+#: Debomatic/build.py:235 Debomatic/build.py:232
+#, python-format
+msgid "Build of %s successful"
+msgstr ""
+
+#: Debomatic/build.py:242 Debomatic/build.py:239
 #, python-format
 msgid "Build of %s complete"
 msgstr ""
 
-#: Debomatic/build.py:260
+#: Debomatic/build.py:273 Debomatic/build.py:270
 #, python-format
 msgid "Requesting URL %s"
 msgstr ""
 
-#: Debomatic/build.py:278 Debomatic/build.py:353 Debomatic/build.py:505
+#: Debomatic/build.py:291 Debomatic/build.py:366 Debomatic/build.py:518
+#: Debomatic/build.py:288 Debomatic/build.py:363 Debomatic/build.py:514
 #, python-format
 msgid "Bad .changes file: %s"
 msgstr "קובץ ה־‎.changes לא תקין: %s"
 
-#: Debomatic/build.py:285 Debomatic/build.py:357 Debomatic/build.py:361
+#: Debomatic/build.py:298 Debomatic/build.py:370 Debomatic/build.py:374
+#: Debomatic/build.py:295 Debomatic/build.py:367 Debomatic/build.py:371
 #, python-format
 msgid "Distribution %s not configured"
 msgstr ""
 
-#: Debomatic/build.py:289 Debomatic/build.py:306
+#: Debomatic/build.py:302 Debomatic/build.py:319 Debomatic/build.py:299
+#: Debomatic/build.py:316
 #, python-format
 msgid "Downloading missing %s"
 msgstr ""
 
-#: Debomatic/build.py:298 Debomatic/build.py:318 Debomatic/build.py:491
-#: Debomatic/build.py:503
+#: Debomatic/build.py:311 Debomatic/build.py:331 Debomatic/build.py:504
+#: Debomatic/build.py:516 Debomatic/build.py:308 Debomatic/build.py:328
+#: Debomatic/build.py:500 Debomatic/build.py:512
 #, python-format
 msgid "File %s added"
 msgstr ""
 
-#: Debomatic/build.py:300 Debomatic/build.py:320
+#: Debomatic/build.py:313 Debomatic/build.py:333 Debomatic/build.py:310
+#: Debomatic/build.py:330
 #, python-format
 msgid "Unable to fetch %s"
 msgstr ""
 
-#: Debomatic/build.py:336
+#: Debomatic/build.py:349 Debomatic/build.py:346
 #, python-format
 msgid "%(mapped)s mapped as %(mapper)s"
 msgstr ""
 
-#: Debomatic/build.py:347 Debomatic/build.py:497
+#: Debomatic/build.py:360 Debomatic/build.py:510 Debomatic/build.py:357
+#: Debomatic/build.py:506
 #, python-format
 msgid "Unable to open %s"
 msgstr "לא ניתן לפתוח את %s"
 
-#: Debomatic/build.py:370
+#: Debomatic/build.py:383 Debomatic/build.py:380
 #, python-format
 msgid "File %s removed"
 msgstr ""
 
-#: Debomatic/build.py:401
+#: Debomatic/build.py:414 Debomatic/build.py:411
 #, python-format
 msgid "schroot profile %s not found"
 msgstr ""
 
-#: Debomatic/build.py:415
+#: Debomatic/build.py:428 Debomatic/build.py:425
 #, python-format
 msgid "Creating chroot %(dist)s-%(arch)s-debomatic"
 msgstr ""
 
-#: Debomatic/build.py:439
+#: Debomatic/build.py:452 Debomatic/build.py:449
 #, python-format
 msgid "Failed creating %(dist)s-%(arch)s-debomatic"
 msgstr ""
 
-#: Debomatic/build.py:446
+#: Debomatic/build.py:459 Debomatic/build.py:456
 msgid "Unable to launch sbuild-createchroot"
 msgstr ""
 
-#: Debomatic/build.py:492 Debomatic/commands.py:40
+#: Debomatic/build.py:505 Debomatic/commands.py:40 Debomatic/build.py:501
 #, python-format
 msgid "Processing %s"
-msgstr ""
-
-#: Debomatic/build.py:519 Debomatic/build.py:527
-#, python-format
-msgid "Build of %s failed"
 msgstr ""
 
 #: Debomatic/modules.py:80
@@ -168,11 +176,14 @@ msgstr ""
 msgid "%s hooks finished"
 msgstr ""
 
-#: Debomatic/debomatic.py:56
+#: Debomatic/debomatic.py:56 Debomatic/debomatic.py:55
+#: Debomatic/debomatic.py:57
 msgid "You must run Deb-o-Matic as root"
 msgstr ""
 
 #: Debomatic/debomatic.py:68 Debomatic/debomatic.py:137
+#: Debomatic/debomatic.py:67 Debomatic/debomatic.py:126
+#: Debomatic/debomatic.py:71 Debomatic/debomatic.py:139
 #, python-format
 msgid "Unable to access %s directory"
 msgstr "לא ניתן לגשת אל התיקייה %s"
@@ -186,24 +197,30 @@ msgid "Failed to create sbuild keys"
 msgstr ""
 
 #: Debomatic/debomatic.py:94 Debomatic/process.py:144
+#: Debomatic/debomatic.py:83 Debomatic/debomatic.py:87
 msgid "Another instance is running, aborting"
 msgstr ""
 
-#: Debomatic/debomatic.py:123
+#: Debomatic/debomatic.py:123 Debomatic/debomatic.py:112
+#: Debomatic/debomatic.py:119
 msgid "Inotify loop started"
 msgstr ""
 
-#: Debomatic/debomatic.py:127
+#: Debomatic/debomatic.py:127 Debomatic/debomatic.py:116
+#: Debomatic/debomatic.py:123
 msgid "Timer loop started"
 msgstr ""
 
-#: Debomatic/debomatic.py:150 Debomatic/commands.py:85 Debomatic/commands.py:96
-#: Debomatic/commands.py:122 Debomatic/commands.py:133
+#: Debomatic/debomatic.py:150 Debomatic/commands.py:85
+#: Debomatic/commands.py:96 Debomatic/commands.py:122
+#: Debomatic/commands.py:133 Debomatic/debomatic.py:139
+#: Debomatic/debomatic.py:152
 #, python-format
 msgid "Thread for %s scheduled"
 msgstr ""
 
-#: Debomatic/debomatic.py:161
+#: Debomatic/debomatic.py:161 Debomatic/debomatic.py:150
+#: Debomatic/debomatic.py:165
 msgid "Log level not valid, defaulting to \"info\""
 msgstr ""
 
@@ -295,4 +312,8 @@ msgstr ""
 #: Debomatic/gpg.py:100 Debomatic/gpg.py:110
 #, python-format
 msgid "%s is not a valid GPG key"
+msgstr ""
+
+#: Debomatic/build.py:236
+msgid "Invocation of sbuild failed"
 msgstr ""

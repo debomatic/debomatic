@@ -2,220 +2,240 @@
 # Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
 # This file is distributed under the same license as the debomatic package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
-#
+# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2012—2016.
 msgid ""
 msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2015-08-29 15:07+0200\n"
-"PO-Revision-Date: 2012-04-13 22:11+0000\n"
-"Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
-"Language-Team: Serbian <sr@li.org>\n"
+"POT-Creation-Date: 2016-11-08 11:18+0100\n"
+"PO-Revision-Date: 2016-10-15 08:43+0000\n"
+"Last-Translator: Luca Falavigna <dktrkranz@ubuntu.com>\n"
+"Language-Team: Serbian <gnom@prevod.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-10-07 18:52+0000\n"
-"X-Generator: Launchpad (build 17802)\n"
+"X-Launchpad-Export-Date: 2016-11-08 14:56+0000\n"
+"X-Generator: Launchpad (build 18246)\n"
+"Language: sr\n"
 
 #: Debomatic/build.py:55
 #, python-format
 msgid ""
 "Build already scheduled for package %(package)s_%(version)s in %(dist)s"
-msgstr ""
+msgstr "Изградња је већ заказана за пакет %(package)s %(version)s у %(dist)s"
 
 #: Debomatic/build.py:75
 #, python-format
 msgid "Skipping removal of file %s"
-msgstr ""
+msgstr "Прескачем уклањање датотеке „%s“"
 
 #: Debomatic/build.py:117
 #, python-format
 msgid "Distribution %s is disabled"
-msgstr "Дистрибуција %s искључена"
+msgstr "Дистрибуција „%s“ је искључена"
 
 #: Debomatic/build.py:161
 #, python-format
 msgid "Building %s"
-msgstr "Изграђујем %s"
+msgstr "Изграђујем „%s“"
 
-#: Debomatic/build.py:228
-msgid "Invoication of sbuild failed"
-msgstr ""
+#: Debomatic/build.py:232 Debomatic/build.py:532 Debomatic/build.py:540
+#: Debomatic/build.py:229 Debomatic/build.py:528 Debomatic/build.py:536
+#, python-format
+msgid "Build of %s failed"
+msgstr "Нисам успео да изградим „%s“"
 
-#: Debomatic/build.py:233
+#: Debomatic/build.py:235 Debomatic/build.py:232
+#, python-format
+msgid "Build of %s successful"
+msgstr "Успео сам да изградим „%s“"
+
+#: Debomatic/build.py:242 Debomatic/build.py:239
 #, python-format
 msgid "Build of %s complete"
-msgstr ""
+msgstr "Завршена је изградња „%s“"
 
-#: Debomatic/build.py:260
+#: Debomatic/build.py:273 Debomatic/build.py:270
 #, python-format
 msgid "Requesting URL %s"
-msgstr ""
+msgstr "Потражујем адресу „%s“"
 
-#: Debomatic/build.py:278 Debomatic/build.py:353 Debomatic/build.py:505
+#: Debomatic/build.py:291 Debomatic/build.py:366 Debomatic/build.py:518
+#: Debomatic/build.py:288 Debomatic/build.py:363 Debomatic/build.py:514
 #, python-format
 msgid "Bad .changes file: %s"
 msgstr "Лоша датотека измена (.changes): %s"
 
-#: Debomatic/build.py:285 Debomatic/build.py:357 Debomatic/build.py:361
+#: Debomatic/build.py:298 Debomatic/build.py:370 Debomatic/build.py:374
+#: Debomatic/build.py:295 Debomatic/build.py:367 Debomatic/build.py:371
 #, python-format
 msgid "Distribution %s not configured"
-msgstr ""
+msgstr "Дистрибуција „%s“ није подешена"
 
-#: Debomatic/build.py:289 Debomatic/build.py:306
+#: Debomatic/build.py:302 Debomatic/build.py:319 Debomatic/build.py:299
+#: Debomatic/build.py:316
 #, python-format
 msgid "Downloading missing %s"
-msgstr ""
+msgstr "Преузимам недостајуће „%s“"
 
-#: Debomatic/build.py:298 Debomatic/build.py:318 Debomatic/build.py:491
-#: Debomatic/build.py:503
+#: Debomatic/build.py:311 Debomatic/build.py:331 Debomatic/build.py:504
+#: Debomatic/build.py:516 Debomatic/build.py:308 Debomatic/build.py:328
+#: Debomatic/build.py:500 Debomatic/build.py:512
 #, python-format
 msgid "File %s added"
-msgstr ""
+msgstr "Датотека „%s“ је додата"
 
-#: Debomatic/build.py:300 Debomatic/build.py:320
+#: Debomatic/build.py:313 Debomatic/build.py:333 Debomatic/build.py:310
+#: Debomatic/build.py:330
 #, python-format
 msgid "Unable to fetch %s"
-msgstr "Не могу да довучем %s"
+msgstr "Не могу да довучем „%s“"
 
-#: Debomatic/build.py:336
+#: Debomatic/build.py:349 Debomatic/build.py:346
 #, python-format
 msgid "%(mapped)s mapped as %(mapper)s"
-msgstr ""
+msgstr "%(mapped)s је мапирано као %(mapper)s"
 
-#: Debomatic/build.py:347 Debomatic/build.py:497
+#: Debomatic/build.py:360 Debomatic/build.py:510 Debomatic/build.py:357
+#: Debomatic/build.py:506
 #, python-format
 msgid "Unable to open %s"
 msgstr "Не могу да отворим „%s“"
 
-#: Debomatic/build.py:370
+#: Debomatic/build.py:383 Debomatic/build.py:380
 #, python-format
 msgid "File %s removed"
-msgstr ""
+msgstr "Датотека „%s“ је уклоњена"
 
-#: Debomatic/build.py:401
+#: Debomatic/build.py:414 Debomatic/build.py:411
 #, python-format
 msgid "schroot profile %s not found"
-msgstr ""
+msgstr "Нисам нашао „schroot“ профил %s"
 
-#: Debomatic/build.py:415
+#: Debomatic/build.py:428 Debomatic/build.py:425
 #, python-format
 msgid "Creating chroot %(dist)s-%(arch)s-debomatic"
-msgstr ""
+msgstr "Правим „chroot %(dist)s-%(arch)s-debomatic“"
 
-#: Debomatic/build.py:439
+#: Debomatic/build.py:452 Debomatic/build.py:449
 #, python-format
 msgid "Failed creating %(dist)s-%(arch)s-debomatic"
-msgstr ""
+msgstr "Нисам успео да направим „%(dist)s-%(arch)s-debomatic“"
 
-#: Debomatic/build.py:446
+#: Debomatic/build.py:459 Debomatic/build.py:456
 msgid "Unable to launch sbuild-createchroot"
-msgstr ""
+msgstr "Не могу да покренем „sbuild-createchroot“"
 
-#: Debomatic/build.py:492 Debomatic/commands.py:40
+#: Debomatic/build.py:505 Debomatic/commands.py:40 Debomatic/build.py:501
 #, python-format
 msgid "Processing %s"
-msgstr "Обрађујем %s"
-
-#: Debomatic/build.py:519 Debomatic/build.py:527
-#, python-format
-msgid "Build of %s failed"
-msgstr ""
+msgstr "Обрађујем „%s“"
 
 #: Debomatic/modules.py:80
 #, python-format
 msgid "Module %s loaded"
-msgstr ""
+msgstr "Модул „%s“ је учитан"
 
 #: Debomatic/modules.py:86
 #, python-format
 msgid "Modules will be executed in this order: %s"
-msgstr ""
+msgstr "Модули ће бити извршени овим редом: %s"
 
 #: Debomatic/modules.py:108
 #, python-format
 msgid "%(mod)s module disabled, needs %(missing)s"
-msgstr ""
+msgstr "Модул „%(mod)s“ је искључен, потребан је „%(missing)s“"
 
 #: Debomatic/modules.py:116
 #, python-format
 msgid "Executing hook %(hook)s from module %(mod)s"
-msgstr ""
+msgstr "Извршавам предворје „%(hook)s“ за модул „%(mod)s“"
 
 #: Debomatic/modules.py:128
 #, python-format
 msgid "Module %s is blacklisted"
-msgstr ""
+msgstr "Модул „%s“ је на списку забрана"
 
 #: Debomatic/modules.py:160 Debomatic/modules.py:176
 #, python-format
 msgid ""
 "Cannot execute %(mod)s as %(order)s module, dependencies found: %(deps)s"
 msgstr ""
+"Не могу да извршим „%(mod)s“ као „%(order)s“ модул, нађох зависности: "
+"%(deps)s"
 
 #: Debomatic/modules.py:203
 #, python-format
 msgid "Circular dependencies found, disabled modules: %s"
-msgstr ""
+msgstr "Нађох кружне зависности, искључени модули: %s"
 
 #: Debomatic/modules.py:234
 #, python-format
 msgid "%s hooks launched"
-msgstr ""
+msgstr "„%s“ предворје је покренуто"
 
 #: Debomatic/modules.py:239
 #, python-format
 msgid "%s hooks finished"
-msgstr ""
+msgstr "„%s“ предворје је завршено"
 
-#: Debomatic/debomatic.py:56
+#: Debomatic/debomatic.py:56 Debomatic/debomatic.py:55
+#: Debomatic/debomatic.py:57
 msgid "You must run Deb-o-Matic as root"
-msgstr ""
+msgstr "Морате покренути Деб-о-Матик као администратор"
 
 #: Debomatic/debomatic.py:68 Debomatic/debomatic.py:137
+#: Debomatic/debomatic.py:67 Debomatic/debomatic.py:126
+#: Debomatic/debomatic.py:71 Debomatic/debomatic.py:139
 #, python-format
 msgid "Unable to access %s directory"
 msgstr "Не могу да приступим директоријуму „%s“"
 
 #: Debomatic/debomatic.py:83
 msgid "Creating sbuild keys"
-msgstr ""
+msgstr "Правим кључеве сбилд-а"
 
 #: Debomatic/debomatic.py:87
 msgid "Failed to create sbuild keys"
-msgstr ""
+msgstr "Нисам успео да направим кључеве сбилд-а"
 
 #: Debomatic/debomatic.py:94 Debomatic/process.py:144
+#: Debomatic/debomatic.py:83 Debomatic/debomatic.py:87
 msgid "Another instance is running, aborting"
-msgstr ""
+msgstr "Још један примерак је покренут, прекидам"
 
-#: Debomatic/debomatic.py:123
+#: Debomatic/debomatic.py:123 Debomatic/debomatic.py:112
+#: Debomatic/debomatic.py:119
 msgid "Inotify loop started"
-msgstr ""
+msgstr "Покренута је петља и-обавештајца"
 
-#: Debomatic/debomatic.py:127
+#: Debomatic/debomatic.py:127 Debomatic/debomatic.py:116
+#: Debomatic/debomatic.py:123
 msgid "Timer loop started"
-msgstr ""
+msgstr "Покренута је петља одбројавача"
 
-#: Debomatic/debomatic.py:150 Debomatic/commands.py:85 Debomatic/commands.py:96
-#: Debomatic/commands.py:122 Debomatic/commands.py:133
+#: Debomatic/debomatic.py:150 Debomatic/commands.py:85
+#: Debomatic/commands.py:96 Debomatic/commands.py:122
+#: Debomatic/commands.py:133 Debomatic/debomatic.py:139
+#: Debomatic/debomatic.py:152
 #, python-format
 msgid "Thread for %s scheduled"
-msgstr ""
+msgstr "Нит за „%s“ је заказана"
 
-#: Debomatic/debomatic.py:161
+#: Debomatic/debomatic.py:161 Debomatic/debomatic.py:150
+#: Debomatic/debomatic.py:165
 msgid "Log level not valid, defaulting to \"info\""
-msgstr ""
+msgstr "Ниво дневника није исправан, подразумевам „info“"
 
 #: Debomatic/configuration.py:59
 #, python-format
 msgid "Set \"%(option)s\" in section \"%(section)s\" in %(conffile)s"
-msgstr ""
+msgstr "Постављам „%(option)s“ у одељку „%(section)s“ у %(conffile)s"
 
 #: Debomatic/configuration.py:82
 #, python-format
 msgid "Option \"%(option)s\" in section \"%(section)s\" must be %(type)s"
-msgstr ""
+msgstr "Опција „%(option)s“ у одељку „%(section)s“ мора бити „%(type)s“"
 
 #: Debomatic/configuration.py:90
 msgid "Configuration file has not been specified"
@@ -229,51 +249,51 @@ msgstr "Датотека подешавања „%s“ не постоји"
 #: Debomatic/configuration.py:98
 #, python-format
 msgid "Section \"%(section)s\" missing in %(conffile)s"
-msgstr ""
+msgstr "Одељак „%(section)s“ недостаје у „%(conffile)s“"
 
 #: Debomatic/configuration.py:116
 #, python-format
 msgid "Distribution file %s does not exist"
-msgstr ""
+msgstr "Датотека дистрибуције „%s“ не постоји"
 
 #: Debomatic/commands.py:74
 msgid "Performing a binNMU build"
-msgstr ""
+msgstr "Извршавам изградњу „binNMU“-а"
 
 #: Debomatic/commands.py:88
 msgid "Performing a package rebuild with extra dependencies"
-msgstr ""
+msgstr "Извршавам поновну изградњу пакета са додатним зависностима"
 
 #: Debomatic/commands.py:99
 msgid "Killing build task"
-msgstr ""
+msgstr "Убијам задатак изградње"
 
 #: Debomatic/commands.py:108
 #, python-format
 msgid "Build killed for %(package)s_%(version)s in %(dist)s"
-msgstr ""
+msgstr "Изградња је убијена за „%(package)s_%(version)s“ у %(dist)s"
 
 #: Debomatic/commands.py:114
 msgid "Performing a porter build"
-msgstr ""
+msgstr "Извршавам изградњу носача"
 
 #: Debomatic/commands.py:125
 msgid "Performing a package rebuild"
-msgstr ""
+msgstr "Извршавам поновну изградњу пакета"
 
 #: Debomatic/commands.py:136
 msgid "Removing files"
-msgstr ""
+msgstr "Уклањам датотеке"
 
 #: Debomatic/commands.py:141
 #, python-format
 msgid "Removing %s"
-msgstr ""
+msgstr "Уклањам „%s“"
 
 #: Debomatic/process.py:45
 #, python-format
 msgid "Error entering daemon mode: %s"
-msgstr ""
+msgstr "Грешка уласка у режим услужника: %s"
 
 #: Debomatic/process.py:97 Debomatic/process.py:128
 msgid "Waiting for threads to complete..."
@@ -285,14 +305,18 @@ msgstr "Нисам нашао привезак кључева"
 
 #: Debomatic/gpg.py:62
 msgid "No valid signatures found"
-msgstr "Не могу да нађем исправан потпис"
+msgstr "Нисам нашао исправан потпис"
 
 #: Debomatic/gpg.py:97 Debomatic/gpg.py:107
 #, python-format
 msgid "%s not found"
-msgstr ""
+msgstr "Нисам нашао „%s“"
 
 #: Debomatic/gpg.py:100 Debomatic/gpg.py:110
 #, python-format
 msgid "%s is not a valid GPG key"
-msgstr ""
+msgstr "„%s“ није исправан ГПГ кључ"
+
+#: Debomatic/build.py:236
+msgid "Invocation of sbuild failed"
+msgstr "Нисам успео да призовем „sbuild“"
