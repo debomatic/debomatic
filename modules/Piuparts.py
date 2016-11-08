@@ -1,7 +1,7 @@
 # Deb-o-Matic - PiuParts module
 #
 # Copyright (C) 2012 Leo Iannacone
-# Copyright (C) 2015 Luca Falavigna
+# Copyright (C) 2015-2016 Luca Falavigna
 #
 # Authors: Leo Iannacone <l3on@ubuntu.com>
 #

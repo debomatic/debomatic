@@ -1,6 +1,6 @@
 # Deb-o-Matic - Contents module
 #
-# Copyright (C) 2011-2015 Luca Falavigna
+# Copyright (C) 2011-2016 Luca Falavigna
 #
 # Authors: Luca Falavigna <dktrkranz@debian.org>
 #
