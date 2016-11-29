@@ -26,8 +26,9 @@ class DebomaticModule_BuildCleaner:
 
     def pre_build(self, args):
         exts_to_clean = ['.deb', '.ddeb', '.gz', '.bz2', '.xz', '.dsc',
-                         '.changes', '.build', '.buildlog', '.contents',
-                         '.lintian', '.piuparts', '.blhc', '.autopkgtest']
+                         '.changes', '.build', '.buildlog', '.buildinfo',
+                         '.contents', '.lintian', '.piuparts', '.blhc',
+                         '.autopkgtest']
         pkg_build_path = ('%(directory)s/pool/%(package)s' %
                           {'directory': args.directory,
                            'package': args.package})
