@@ -70,7 +70,7 @@ To enable additional features, you may want to install these packages:
 * python3-pyinotify (>= 0.8.6)
 * gpgv
 * debian-archive-keyring
-* ubuntu-keyring
+* ubuntu-archive-keyring or ubuntu-keyring
 * lintian
 * piuparts (>= 0.45)
 * autopkgtest (>= 4.0)
