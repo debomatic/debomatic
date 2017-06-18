@@ -2,41 +2,49 @@
 
 [unstable]
 suite: unstable
-mirror: http://httpredir.debian.org/debian
+mirror: http://deb.debian.org/debian
 components: main contrib non-free
 
 [experimental]
 suite: unstable
-mirror: http://httpredir.debian.org/debian
+mirror: http://deb.debian.org/debian
 components: main contrib non-free
-extramirrors: deb http://httpredir.debian.org/debian/ experimental main contrib non-free
+extramirrors: deb http://deb.debian.org/debian/ experimental main contrib non-free
 
 [testing]
 suite: testing
-mirror: http://httpredir.debian.org/debian
+mirror: http://deb.debian.org/debian
 components: main contrib non-free
 
 [stable]
 suite: stable
-mirror: http://httpredir.debian.org/debian
+mirror: http://deb.debian.org/debian
 components: main contrib non-free
 extramirrors: deb http://security.debian.org/ stable/updates main contrib non-free
-              deb http://httpredir.debian.org/debian stable-updates main contrib non-free
+              deb http://deb.debian.org/debian stable-updates main contrib non-free
 
 [oldstable]
 suite: oldstable
-mirror: http://httpredir.debian.org/debian
+mirror: http://deb.debian.org/debian
 components: main contrib non-free
 extramirrors: deb http://security.debian.org/ oldstable/updates main contrib non-free
-              deb http://httpredir.debian.org/debian oldstable-updates main contrib non-free
+              deb http://deb.debian.org/debian oldstable-updates main contrib non-free
+
+[stretch-backports]
+suite: stretch
+mirror: http://deb.debian.org/debian
+components: main contrib non-free
+extramirrors: deb http://security.debian.org/ stretch/updates main contrib non-free
+              deb http://deb.debian.org/debian stretch-updates main contrib non-free
+              deb http://deb.debian.org/debian stretch-backports main contrib non-free
 
 [jessie-backports]
-suite: stable
-mirror: http://httpredir.debian.org/debian
+suite: jessie
+mirror: http://deb.debian.org/debian
 components: main contrib non-free
-extramirrors: deb http://security.debian.org/ stable/updates main contrib non-free
-              deb http://httpredir.debian.org/debian stable-updates main contrib non-free
-              deb http://httpredir.debian.org/debian jessie-backports main contrib non-free
+extramirrors: deb http://security.debian.org/ jessie/updates main contrib non-free
+              deb http://deb.debian.org/debian jessie-updates main contrib non-free
+              deb http://deb.debian.org/debian jessie-backports main contrib non-free
 
 
 # Ubuntu
