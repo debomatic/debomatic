@@ -1,3 +1,4 @@
+.. include:: introduction.rst
 
 .. toctree::
    :hidden:
