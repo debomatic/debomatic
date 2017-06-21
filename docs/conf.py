@@ -36,7 +36,7 @@ html_use_index = True
 htmlhelp_basename = 'Deb-o-Maticdoc'
 latex_documents = [
     ('index', 'Deb-o-Matic.tex', 'Deb-o-Matic Documentation',
-     'Luca Falavigna', 'manual')]
+     'Luca Falavigna', 'manual', 'True')]
 latex_elements = {
     'classoptions': ',oneside',
     'babel': '\\usepackage[english]{babel}'}
