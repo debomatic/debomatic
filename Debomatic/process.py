@@ -22,7 +22,7 @@ from concurrent.futures import as_completed, ThreadPoolExecutor
 from atexit import register as on_exit
 from fcntl import flock, LOCK_EX, LOCK_NB, LOCK_UN
 from hashlib import sha256
-from logging import basicConfig as log, debug, error, getLogger, info
+from logging import basicConfig as log, error, getLogger, info
 from signal import signal, SIGINT, SIGTERM
 from sys import stdin, stdout, stderr
 from time import sleep
@@ -196,7 +196,7 @@ class ThreadPool:
             if e:
                 raise e
         except Exception as e:
-            debug(str(e), exc_info=True)
+            error(str(e), exc_info=True)
 
     def schedule(self, func):
         job = self._pool.submit(func)
