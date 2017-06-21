@@ -1,5 +1,5 @@
-Introduction
-============
+Deb-o-Matic
+===========
 
 What is Deb-o-Matic?
 ---------------------
