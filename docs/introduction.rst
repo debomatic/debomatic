@@ -24,7 +24,7 @@ relatively simple workflows.
 
 A brand new software was created to help building source packages to avoid the
 burden of the compilation, without wasting too much time configuring complex
-softwares to work. Deb-o-Matic was born! A group of Debian and Ubuntu
+software to work. Deb-o-Matic was born! A group of Debian and Ubuntu
 developers started to use it as their primary build machine to avoid playing
 with sbuild and long builds. Some of them still use Deb-o-Matic to build
 their packages.

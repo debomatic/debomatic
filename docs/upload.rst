@@ -175,7 +175,7 @@ In order to do so, you must use the ``kill`` command:
  *echo "kill foo_version dist " > foo.commands*
 
 where foo is the name of the source package you want to terminate its build,
-version is its versiond, and dist is the distribution the package is being
+version is its version, and dist is the distribution the package is being
 built for.
 
 .. Links

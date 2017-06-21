@@ -44,7 +44,7 @@ restarted to pick any change to one of these options.
 * ``debootstrap``
 
  This option indicates which debootstrap tool is required to create the chroot
- to build source packags from. Deb-o-Matic currently supports debootstrap,
+ to build source packages from. Deb-o-Matic currently supports debootstrap,
  cdebootstrap, and qemu-debootstrap.
 
  Suggested value: ``debootstrap``
@@ -182,7 +182,7 @@ restarted to pick any change to one of these options.
  At the moment, Deb-o-Matic provides a script to disable Internet connection
  within the chroot on Linux systems to avoid accessing remote resources during
  the build phase, and another one to increase the speed of unpacking of the 
- depencencies in the chroots.
+ dependencies in the chroots.
 
  Suggested value: ``/usr/share/debomatic/sbuildcommands``
 

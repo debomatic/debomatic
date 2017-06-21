@@ -31,7 +31,7 @@ Oneshot mode
 ............
 
 Deb-o-Matic will try to build all files found in the ``incoming`` directory.
-Alternatively, it is possible to attempt to build a sinle file by passing
+Alternatively, it is possible to attempt to build a single file by passing
 ``-o`` or ``--oneshot`` option while invoking ``debomatic`` command, following
 by the file name of the package to build, which must be located in the
 ``incoming`` directory:
