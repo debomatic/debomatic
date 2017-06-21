@@ -86,6 +86,12 @@ class DebomaticModule_AutoPkgTest:
         if not self._set_up_testbed(args):
             return
 
+        for pkgfile in args.files:
+            target = os.path.join(self.resultdir, os.path.basename(pkgfile))
+            if '.orig.' in target:
+                if not os.path.exists(target):
+                    os.symlink(pkgfile, target)
+
         output = open(self.output, 'w')
 
         def write_header(header):
