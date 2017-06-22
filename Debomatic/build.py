@@ -166,6 +166,16 @@ class Build:
         if self.hostarchitecture:
             command.pop(5)
             command.insert(5, '--host=%s' % self.hostarchitecture)
+        suite = dom.dists.get(self.distribution, 'suite')
+        if self.distribution != suite:
+            command.insert(-1, '--build-dep-resolver=aspcud')
+            command.insert(-1, ('--aspcud-criteria=-removed,-changed,-new,'
+                                '-count(solution,APT-Release:=/%s/)' %
+                                self.distribution))
+        if self.extrabd:
+            for extrabd in self.extrabd:
+                command.insert(-1, '--add-depends=%s' % extrabd)
+                command.insert(-1, '--build-dep-resolver=aspcud')
         if self.changesfile:
             with open(self.upload, 'r') as fd:
                 data = fd.read()
@@ -182,9 +192,6 @@ class Build:
                 data = fd.read()
             for resolver in findall('Debomatic-Resolver: (\S+)', data):
                 command.insert(-1, '--build-dep-resolver=%s' % resolver)
-        suite = dom.dists.get(self.distribution, 'suite')
-        if self.distribution != suite:
-            command.insert(-1, '--build-dep-resolver=aptitude')
         if self.binnmu:
             command.insert(-1, '--binNMU=%s' % self.binnmu[0])
             command.insert(-1, '--make-binNMU=%s' % self.binnmu[1])
@@ -195,10 +202,6 @@ class Build:
         if self.hostarchitecture:
             buildlog = sub('(.*_)\S+(\.build)',
                            '\\1%s\\2' % self.hostarchitecture, buildlog)
-        if self.extrabd:
-            for extrabd in self.extrabd:
-                command.insert(-1, '--add-depends=%s' % extrabd)
-                command.insert(-1, '--build-dep-resolver=aptitude')
         if self.maintainer:
             command.remove('-A')
             command.remove('-s')
