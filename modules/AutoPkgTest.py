@@ -29,7 +29,7 @@
 
 import os
 from subprocess import call
-from shutil import rmtree
+from shutil import copyfile, rmtree
 
 
 class DebomaticModule_AutoPkgTest:
@@ -86,11 +86,12 @@ class DebomaticModule_AutoPkgTest:
         if not self._set_up_testbed(args):
             return
 
+        tempfiles = set()
         for pkgfile in args.files:
             target = os.path.join(self.resultdir, os.path.basename(pkgfile))
-            if '.orig.' in target:
-                if not os.path.exists(target):
-                    os.symlink(pkgfile, target)
+            if not os.path.exists(target):
+                copyfile(pkgfile, target)
+                tempfiles.add(target)
 
         output = open(self.output, 'w')
 
@@ -149,3 +150,5 @@ class DebomaticModule_AutoPkgTest:
         # clean up the system
         if (os.path.isdir(self.resultdir_adt)):
             rmtree(self.resultdir_adt)
+        for pkgfile in tempfiles:
+            os.remove(pkgfile)
