@@ -38,6 +38,7 @@ class DebomaticModule_AutoPkgTest:
         self.adt = '/usr/bin/autopkgtest'
         self.options = []
         self.changesfile = None
+        self.after = ['Lintian']
 
     def _set_up_testbed(self, args):
         """Performs:
