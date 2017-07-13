@@ -1,5 +1,6 @@
 [Unit]
 Description=Automatic build machine for Debian source package
+Documentation=https://deb-o-matic.readthedocs.io/
 ConditionPathExists=/etc/debomatic/debomatic.conf
 
 [Service]
