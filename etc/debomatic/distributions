@@ -65,14 +65,6 @@ extramirrors: deb http://archive.ubuntu.com/ubuntu/ zesty-updates main restricte
               deb http://security.ubuntu.com/ubuntu zesty-security main restricted universe multiverse
 extrapackages: pkgbinarymangler pkg-create-dbgsym
 
-[yakkety]
-suite: yakkety
-mirror: http://archive.ubuntu.com/ubuntu
-components: main restricted universe multiverse
-extramirrors: deb http://archive.ubuntu.com/ubuntu/ yakkety-updates main restricted universe multiverse
-              deb http://security.ubuntu.com/ubuntu yakkety-security main restricted universe multiverse
-extrapackages: pkgbinarymangler pkg-create-dbgsym
-
 [xenial]
 suite: xenial
 mirror: http://archive.ubuntu.com/ubuntu
