@@ -20,7 +20,6 @@
 # Generate local repository of built packages
 
 import os
-from datetime import datetime
 from fcntl import flock, LOCK_EX, LOCK_NB, LOCK_SH, LOCK_UN
 from shutil import rmtree
 from stat import S_IRWXU, S_IRGRP, S_IXGRP, S_IROTH, S_IXOTH
@@ -115,13 +114,11 @@ class DebomaticModule_Repository:
                     fd.write('Component: main\n')
                     fd.write('Architecture: %s\n' % arch)
                 with open(release_file, 'w') as fd:
-                    date = datetime.now().strftime('%A, %d %B %Y %H:%M:%S')
                     afstring = 'APT::FTPArchive::Release::'
                     Popen([self.af, '-qq',
                            '-o', '%sOrigin=Deb-o-Matic' % afstring,
                            '-o', '%sLabel=Deb-o-Matic' % afstring,
                            '-o', '%sSuite=%s' % (afstring, distribution),
-                           '-o', '%sDate=%s' % (afstring, date),
                            '-o', '%sArchitectures=%s' % (afstring, arch),
                            '-o', '%sComponents=main' % afstring,
                            'release', 'dists/%s' % os.path.basename(dists)],
