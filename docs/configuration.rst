@@ -24,7 +24,7 @@ be discussed in the :doc:`modules` section.
 debomatic section
 .................
 
-These options are mandatory, Deb-o-Matic refuses to start if one of these
+This section is mandatory, Deb-o-Matic refuses to start if one of these
 options is missing from the configuration file. Also, Deb-o-Matic needs to be
 restarted to pick any change to one of these options.
 
@@ -113,7 +113,7 @@ restarted to pick any change to one of these options.
 distributions section
 .....................
 
-These options are mandatory, Deb-o-Matic refuses to start if one of these
+This section is mandatory, Deb-o-Matic refuses to start if one of these
 options is missing from the configuration file. Also, Deb-o-Matic needs to be
 restarted to pick any change to one of these options.
 
@@ -157,7 +157,7 @@ restarted to pick any change to one of these options.
 chroots section
 ...............
 
-These options are mandatory, Deb-o-Matic refuses to start if one of these
+This section is mandatory, Deb-o-Matic refuses to start if one of these
 options is missing from the configuration file. Also, Deb-o-Matic needs to be
 restarted to pick any change to one of these options.
 
@@ -213,10 +213,38 @@ to pick any change to one of these options.
  The architecture must have cross-compilation at compiler lever, otherwise
  it will not be possible to cross-compile source packages.
 
+dpr section
+...........
+
+This section is optional, Deb-o-Matic will start normally if this section is
+missing in the configuration file. Also, Deb-o-Matic needs to be restarted
+to pick any change to one of these options.
+
+* ``dpr``
+
+ This option indicates whether to enable private repositories, or not.
+
+ Suggested value: ``False``
+
+* ``prefix``
+
+ This option indicates the common prefix of all private repositories.
+
+ Suggested value: ``dpr``
+
+* ``repository``
+
+ This option indicates the APT string of a local APT repository which is
+ added at build time, useful in combination with the Repository module. The
+ string must contain two ``%%(dist)s`` arguments which allows to specify
+ dynamically the private repository name, for example:
+
+ *deb http://debomatic.repository/debomatic/%%(dist)s %%(dist)s main*
+
 gpg section
 ...........
 
-These options are mandatory, Deb-o-Matic refuses to start if one of these
+This section is mandatory, Deb-o-Matic refuses to start if one of these
 options is missing from the configuration file. Also, Deb-o-Matic needs to be
 restarted to pick any change to one of these options.
 
@@ -247,7 +275,7 @@ restarted to pick any change to one of these options.
 modules section
 ...............
 
-These options are mandatory, Deb-o-Matic refuses to start if one of these
+This section is mandatory, Deb-o-Matic refuses to start if one of these
 options is missing from the configuration file. Also, Deb-o-Matic needs to be
 restarted to pick any change to one of these options.
 

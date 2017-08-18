@@ -109,10 +109,11 @@ In order to do so, you must use the ``porter`` command:
 
  *echo "porter foo_version dist John Doe <jdoe@debian.org>" > foo.commands*
 
-where foo is the name of the source package you want to rebuild, version is
-the version of the package you want to rebuild, dist is the distribution which
-rebuild package for, and the rest of the string is the address to be used as
-maintainer field, which is usually the developer who is preparing the upload.
+where ``foo`` is the name of the source package you want to rebuild,
+``version`` is the version of the package you want to rebuild, ``dist`` is the
+distribution which rebuild package for, and the rest of the string is the
+address to be used as maintainer field, which is usually the developer who is
+preparing the upload.
 
 .. CAUTION::
 
@@ -132,12 +133,13 @@ In order to do so, you must use the ``binnmu`` command:
  *echo "binnmu foo_version dist binNMU_version \"changelog\"
   John Doe <jdoe@debian.org>" > foo.commands*
 
-where foo is the name of the source package you want to rebuild, version is
-the version of the package you want to rebuild, dist is the distribution which
-rebuild package for, binNMU_version is the progressive binNMU number, changelog
-is the reason why the upload was prepared (enclosed in quotation marks), and
-the rest of the string is the address to be used as maintainer field, which is
-usually the developer who is preparing the upload.
+where ``foo`` is the name of the source package you want to rebuild,
+``version`` is the version of the package you want to rebuild, ``dist`` is the
+distribution which rebuild package for, ``binNMU_version`` is the progressive
+binNMU number, ``changelog`` is the reason why the upload was prepared
+(enclosed in quotation marks), and the rest of the string is the address to be
+used as maintainer field, which is usually the developer who is preparing the
+upload.
 
 .. CAUTION::
 
@@ -174,9 +176,26 @@ In order to do so, you must use the ``kill`` command:
 
  *echo "kill foo_version dist " > foo.commands*
 
-where foo is the name of the source package you want to terminate its build,
-version is its version, and dist is the distribution the package is being
-built for.
+where ``foo`` is the name of the source package you want to terminate its
+build, ``version`` is its version, and ``dist`` is the distribution the
+package is being built for.
+
+Private repositories
+--------------------
+
+Deb-o-Matic can create private repositories, separated from the standard
+suites, to be able to upload packages in an isolated environment without
+risking to pollute builds with other packages, or to create specialized
+repositories for specific purposes.
+
+Deb-o-Matic Private Repositories can be created dynamically by uploading
+a package or a command file for a specific suite which has this syntax:
+
+ *prefix-name-distribution*
+
+where ``prefix`` is the defined prefix name, ``name`` is an arbitrary name
+chosen by the uploader, and ``distribution`` is the target distribution to
+build packages from.
 
 .. Links
 .. _Debian Developer's Reference: https://www.debian.org/doc/manuals/developers-reference/pkgs.html#porter-guidelines

@@ -35,7 +35,8 @@ core = {'debomatic':
         'gpg': {'gpg': bool, 'keyring': str},
         'modules': {'modules': bool, 'path': str,
                     'threads': int, 'blacklist': str}}
-optional = {'crossbuild': {'crossbuild': bool, 'hostarchitecture': str}}
+optional = {'crossbuild': {'crossbuild': bool, 'hostarchitecture': str},
+            'dpr': {'dpr': str, 'prefix': str, 'repository': str}}
 modules = {'autopkgtest': {'options': str},
            'blhc': {'options': str},
            'lintian': {'options': str},

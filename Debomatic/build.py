@@ -22,7 +22,7 @@ import os
 from ast import literal_eval
 from contextlib import contextmanager
 from logging import debug, error, info
-from re import findall, search, sub
+from re import findall, match, search, sub
 from shutil import copy, copymode, move
 from subprocess import Popen, check_output
 from tempfile import NamedTemporaryFile
@@ -100,6 +100,7 @@ class Build:
         self.buildtask = None
         self.changesfile = changesfile
         self.package = package
+        self.suite = None
         self.distribution = distribution
         self.binnmu = binnmu
         self.extrabd = extrabd
@@ -109,6 +110,7 @@ class Build:
         self.files = set()
         self.incoming = dom.opts.get('debomatic', 'incoming')
         self.hostarchitecture = None
+        self.dpr = False
 
     def _build(self):
         self._parse_distribution()
@@ -126,7 +128,7 @@ class Build:
                 version = os.path.basename(self.changesfile).split('_')[1]
             else:
                 package, version = self.package
-            with BuildTask(self, package, version, self.distribution,
+            with BuildTask(self, package, version, self.suite,
                            dom.buildqueue) as bt:
                 self.buildtask = bt
                 self._fetch_files()
@@ -138,9 +140,9 @@ class Build:
     def _build_package(self):
         uploader_email = ''
         packageversion = os.path.splitext(os.path.basename(self.dscfile))[0]
-        builddir = os.path.join(self.buildpath, 'pool', packageversion)
+        builddir = os.path.join(self.poolpath, 'pool', packageversion)
         if not os.path.exists(builddir):
-            os.mkdir(builddir)
+            os.makedirs(builddir)
         if self.uploader:
             uploader_email = self.uploader[1].decode('utf-8')
         architecture = dom.opts.get('debomatic', 'architecture')
@@ -149,7 +151,7 @@ class Build:
             architecture = b_arch.strip().decode('utf-8')
         mod = Module()
         mod.args.architecture = architecture
-        mod.args.directory = self.buildpath
+        mod.args.directory = self.poolpath
         mod.args.distribution = self.distribution
         mod.args.dists = dom.dists
         mod.args.dsc = self.dscfile
@@ -172,10 +174,15 @@ class Build:
             command.insert(-1, ('--aspcud-criteria=-removed,-changed,-new,'
                                 '-count(solution,APT-Release:=/%s/)' %
                                 self.distribution))
+        if self.distribution != self.suite:
+            command.insert(-1, '--build-dep-resolver=aspcud')
+            command.insert(-1, ('--aspcud-criteria=-removed,-changed,-new,'
+                                '-count(solution,APT-Release:=/%s/)' %
+                                self.suite))
         if self.extrabd:
             for extrabd in self.extrabd:
                 command.insert(-1, '--add-depends=%s' % extrabd)
-                command.insert(-1, '--build-dep-resolver=aspcud')
+            command.insert(-1, '--build-dep-resolver=aspcud')
         if self.changesfile:
             with open(self.upload, 'r') as fd:
                 data = fd.read()
@@ -218,14 +225,19 @@ class Build:
         for sbuildcommand in self._commands(self.distribution, architecture,
                                             packageversion):
             command.insert(-1, sbuildcommand)
+        if self.dpr:
+            if dom.opts.get('dpr', 'repository'):
+                command.insert(-1, '--extra-repository=%s' %
+                               (dom.opts.get('dpr', 'repository') %
+                                {'dist': os.path.basename(self.poolpath)}))
         with open(os.devnull, 'w') as fd:
             try:
-                bpath = os.path.join(self.buildpath, 'pool', packageversion)
-                buildlink = os.path.join(bpath, '%s.buildlog' % packageversion)
+                ppath = os.path.join(self.poolpath, 'pool', packageversion)
+                buildlink = os.path.join(ppath, '%s.buildlog' % packageversion)
                 if os.path.exists(buildlink):
                     os.unlink(buildlink)
                 os.symlink(buildlog, buildlink)
-                process = Popen(command, stdout=fd, stderr=fd, cwd=bpath)
+                process = Popen(command, stdout=fd, stderr=fd, cwd=ppath)
                 with self.buildtask.set_pid(process.pid):
                     process.wait()
                 if process.returncode:
@@ -350,6 +362,16 @@ class Build:
                           {'mapped': self.distribution,
                            'mapper': mapper[self.distribution]})
                     self.distribution = mapper[self.distribution]
+        if dom.opts.has_section('dpr'):
+            if dom.opts.getboolean('dpr', 'dpr'):
+                self.suite = self.distribution
+                if match('%s-\S+-\S+' %
+                         dom.opts.get('dpr', 'prefix'), self.suite):
+                    self.dpr = True
+                    self.distribution = '-'.join(
+                        self.distribution.split('-')[2:])
+                    if self.origin == self.suite:
+                        self.origin = self.distribution
 
     def _parse_distribution(self):
         if not self.distribution:
@@ -365,6 +387,7 @@ class Build:
             except IndexError:
                 error(_('Bad .changes file: %s') % self.upload)
                 raise DebomaticError
+        self.poolpath = os.path.join(self.incoming, self.distribution)
         self._map_distribution()
         if not dom.dists.has_section(self.distribution):
             error(_('Distribution %s not configured') % self.distribution)
@@ -375,6 +398,8 @@ class Build:
                 raise DebomaticError
         else:
             self.origin = self.distribution
+        if not self.suite:
+            self.suite = self.distribution
 
     def _remove_files(self):
         for pkgfile in self.files:
@@ -385,8 +410,10 @@ class Build:
     def _setup_chroot(self):
         action = None
         self.buildpath = os.path.join(self.incoming, self.distribution)
-        if not os.path.exists(os.path.join(self.buildpath)):
-            os.mkdir(os.path.join(self.buildpath))
+        if not os.path.exists(self.buildpath):
+            os.makedirs(self.buildpath)
+        if not os.path.exists(self.poolpath):
+            os.makedirs(self.poolpath)
         architecture = dom.opts.get('debomatic', 'architecture')
         if architecture == 'system':
             b_arch = check_output(['dpkg-architecture', '-qDEB_BUILD_ARCH'])
@@ -407,7 +434,7 @@ class Build:
         mod.execute_hook('pre_chroot')
         for d in ('logs', 'pool'):
             if not os.path.exists(os.path.join(self.buildpath, d)):
-                os.mkdir(os.path.join(self.buildpath, d))
+                os.makedirs(os.path.join(self.buildpath, d))
         if action:
             profile = dom.opts.get('chroots', 'profile')
             if not os.path.isdir(os.path.join('/etc/schroot', profile)):

@@ -77,7 +77,7 @@ class DebomaticModule_Repository:
             return
         if not os.access(self.gpg, os.X_OK):
             return
-        distribution = args.distribution
+        distribution = os.path.basename(args.directory)
         if args.hostarchitecture:
             arch = args.hostarchitecture
         else:
