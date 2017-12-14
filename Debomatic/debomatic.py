@@ -170,3 +170,6 @@ class Debomatic(Parser, Process):
             for handler in old_log.handlers:
                 old_log.removeHandler(handler)
         log(level=self.loglevel, format=fmt)
+
+    def periodic_event(self):
+        self.mod_sys.execute_hook('periodic')

@@ -25,6 +25,7 @@ from hashlib import sha256
 from logging import basicConfig as log, error, getLogger, info
 from signal import signal, SIGINT, SIGTERM
 from sys import stdin, stdout, stderr
+from threading import Timer as _Timer
 from time import sleep
 
 from Debomatic import dom
@@ -95,6 +96,7 @@ class Process:
 
     def _quit(self, signum=None, frame=None):
         info(_('Waiting for threads to complete...'))
+        self._periodic_event.cancel()
         dom.pool.shutdown()
         self.mod_sys.execute_hook('on_quit')
         self._unlock()
@@ -127,6 +129,7 @@ class Process:
             return
         info(_('Waiting for threads to complete...'))
         try:
+            self._periodic_event.cancel()
             os.kill(self.pid, SIGTERM)
             self._lock(wait=True)
         except OSError as err:
@@ -149,6 +152,9 @@ class Process:
         if self.daemonize:
             self._daemonize()
         self._notify_systemd()
+        self._periodic_event = Timer(dom.opts.getint('debomatic', 'interval'),
+                                     self.periodic_event)
+        self._periodic_event.start()
         self.launcher()
 
 
@@ -207,3 +213,13 @@ class ThreadPool:
         for job in as_completed(self._jobs):
             job.result()
         self._pool.shutdown()
+
+
+class Timer(_Timer):
+
+    def run(self):
+        while not self.finished.is_set():
+            self.finished.wait(self.interval)
+            if not self.finished.is_set():
+                self.function(*self.args, **self.kwargs)
+        self.finished.set()

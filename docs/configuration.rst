@@ -96,6 +96,15 @@ restarted to pick any change to one of these options.
 
  Suggested value: ``60``
 
+* ``interval``
+
+ This option indicates the number of seconds between two consecutive triggers
+ for scheduled actions performed by modules.
+
+ ``interval`` takes an integer as parameter.
+
+ Suggested value: ``3600``
+
 * ``logfile``
 
  This option indicates which file will be used to store information and warning

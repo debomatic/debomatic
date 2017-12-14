@@ -28,7 +28,7 @@ from .exceptions import DebomaticConffileError
 
 core = {'debomatic':
         {'debootstrap': str, 'incoming': str, 'architecture': str,
-         'threads': int, 'inotify': bool, 'sleep': int,
+         'threads': int, 'inotify': bool, 'sleep': int, 'interval': int,
          'logfile': str, 'loglevel': str},
         'distributions': {'list': str, 'blacklist': str, 'mapper': dict},
         'chroots': {'profile': str, 'commands': str},
@@ -36,7 +36,7 @@ core = {'debomatic':
         'modules': {'modules': bool, 'path': str,
                     'threads': int, 'blacklist': str}}
 optional = {'crossbuild': {'crossbuild': bool, 'hostarchitecture': str},
-            'dpr': {'dpr': str, 'prefix': str, 'repository': str}}
+            'dpr': {'dpr': bool, 'prefix': str, 'repository': str}}
 modules = {'autopkgtest': {'options': str},
            'blhc': {'options': str},
            'lintian': {'options': str},
