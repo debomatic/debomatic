@@ -190,6 +190,24 @@ picking obsolete files by mistake. It currently deletes these files:
 * \*.autopkgtest
 * \*.bhlc
 
+RemovePackages
+--------------
+
+This module allows to remove built packages after a certain amount of days.
+
+Parameters
+..........
+
+.. CAUTION::
+
+ These parameters must be listed under the ``removepackages`` section. Make
+ sure you create it in your configuration file.
+
+* ``days``
+
+This option indicates the number of days after which build packages are
+removed from the pool directory.
+
 Repository
 ----------
 

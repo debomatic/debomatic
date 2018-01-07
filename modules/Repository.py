@@ -1,4 +1,4 @@
-# Deb-o-Matic - Contents module
+# Deb-o-Matic - Repository module
 #
 # Copyright (C) 2011-2016 Luca Falavigna
 #

@@ -172,4 +172,6 @@ class Debomatic(Parser, Process):
         log(level=self.loglevel, format=fmt)
 
     def periodic_event(self):
+        self.mod_sys.args.opts = dom.opts
+        self.mod_sys.args.directory = self.incoming
         self.mod_sys.execute_hook('periodic')
