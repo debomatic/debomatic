@@ -31,7 +31,7 @@ from .commands import Command
 from .configuration import Parser
 from .exceptions import DebomaticConffileError, DebomaticError
 from .modules import Module
-from .process import Process, ThreadPool
+from .process import Process, ThreadPool, Timer
 
 
 class Debomatic(Parser, Process):
@@ -71,6 +71,8 @@ class Debomatic(Parser, Process):
             error(_('Unable to access %s directory') % self.incoming)
             exit(1)
         dom.pool = ThreadPool(dom.opts.getint('debomatic', 'threads'))
+        dom.periodic_event = Timer(dom.opts.getint('debomatic', 'interval'),
+                                   self.periodic_event)
         dom.buildqueue = []
         dom.chroots = {}
         self.logfile = dom.opts.get('debomatic', 'logfile')

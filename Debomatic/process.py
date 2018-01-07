@@ -96,7 +96,7 @@ class Process:
 
     def _quit(self, signum=None, frame=None):
         info(_('Waiting for threads to complete...'))
-        self._periodic_event.cancel()
+        dom.periodic_event.cancel()
         dom.pool.shutdown()
         self.mod_sys.execute_hook('on_quit')
         self._unlock()
@@ -129,7 +129,7 @@ class Process:
             return
         info(_('Waiting for threads to complete...'))
         try:
-            self._periodic_event.cancel()
+            dom.periodic_event.cancel()
             os.kill(self.pid, SIGTERM)
             self._lock(wait=True)
         except OSError as err:
@@ -152,9 +152,7 @@ class Process:
         if self.daemonize:
             self._daemonize()
         self._notify_systemd()
-        self._periodic_event = Timer(dom.opts.getint('debomatic', 'interval'),
-                                     self.periodic_event)
-        self._periodic_event.start()
+        dom.periodic_event.start()
         self.launcher()
 
 
