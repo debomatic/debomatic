@@ -1,7 +1,7 @@
 # Deb-o-Matic - Date stamp module
 #
 # Copyright (C) 2008-2009 David Futcher
-# Copyright (C) 2008-2016 Luca Falavigna
+# Copyright (C) 2008-2018 Luca Falavigna
 #
 # Authors: David Futcher <bobbo@ubuntu.com>
 #          Luca Falavigna <dktrkranz@debian.org>
