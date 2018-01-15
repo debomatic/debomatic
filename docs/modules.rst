@@ -190,6 +190,23 @@ picking obsolete files by mistake. It currently deletes these files:
 * \*.autopkgtest
 * \*.bhlc
 
+RemoveChroots
+-------------
+
+This module allows to remove chroots after a certain amount of days.
+
+Parameters
+..........
+
+.. CAUTION::
+
+ These parameters must be listed under the ``removechroots`` section. Make
+ sure you create it in your configuration file.
+
+* ``days``
+
+This option indicates the number of days after which chroots are removed.
+
 RemovePackages
 --------------
 
