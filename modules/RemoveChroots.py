@@ -59,5 +59,3 @@ class DebomaticModule_RemoveChroots:
                     ptime = os.stat(chroot).st_mtime
                     if ptime + delta < ctime:
                         self.__purge_chroot(distribution, args.directory)
-
-

@@ -43,4 +43,3 @@ class DebomaticModule_RemovePackages:
                                 ptime = os.stat(package).st_mtime
                                 if ptime + delta < ctime:
                                     rmtree(package)
-
