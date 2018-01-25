@@ -23,7 +23,7 @@ from ast import literal_eval
 from contextlib import contextmanager
 from logging import debug, error, info
 from re import findall, match, search, sub
-from shutil import copy, copymode, move
+from shutil import copy, copymode, move, rmtree
 from subprocess import Popen, check_output
 from tempfile import NamedTemporaryFile
 from threading import Semaphore
@@ -450,6 +450,8 @@ class Build:
             else:
                 pattern = '%s-%s-%s-debomatic' % (target, architecture,
                                                   self.distribution)
+            if os.path.isdir(os.path.join(self.buildpath, self.distribution)):
+                rmtree(os.path.join(self.buildpath, self.distribution))
             with open(logfile, 'w') as fd:
                 try:
                     debug(_('Creating chroot %(dist)s-%(arch)s-debomatic') %
