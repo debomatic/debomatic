@@ -249,12 +249,7 @@ repository.
 
 * ``pubring``
 
-This option indicates the path where to look for the public GPG key used to
-sign the Release file of the repository.
-
-* ``secring``
-
-This option indicates the path where to look for the private GPG key used to
+This option indicates the path where to look for the GPG keyring used to
 sign the Release file of the repository.
 
 SourceUpload

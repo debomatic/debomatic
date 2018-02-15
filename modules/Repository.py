@@ -70,7 +70,6 @@ class DebomaticModule_Repository:
         if args.opts.has_section('repository'):
             gpgkey = args.opts.get('repository', 'gpgkey')
             pubring = args.opts.get('repository', 'pubring')
-            secring = args.opts.get('repository', 'secring')
         else:
             return
         if not os.access(self.af, os.X_OK):
@@ -130,13 +129,11 @@ class DebomaticModule_Repository:
                              'NotAutomatic: yes\nMD5Sum'))
                 with open(release_gpg, 'w') as fd:
                     Popen([self.gpg, '--no-default-keyring', '--keyring',
-                           pubring, '--secret-keyring', secring,
-                           '-u', gpgkey, '--yes', '-a', '-o', fd.name,
+                           pubring, '-u', gpgkey, '--yes', '-a', '-o', fd.name,
                            '-b', release_file], cwd=archive).wait()
                 with open(inrelease_gpg, 'w') as fd:
                     Popen([self.gpg, '--no-default-keyring', '--keyring',
-                           pubring, '--secret-keyring', secring,
-                           '-u', gpgkey, '--yes', '-a', '-o', fd.name,
+                           pubring, '-u', gpgkey, '--yes', '-a', '-o', fd.name,
                            '--clearsign', release_file], cwd=archive).wait()
                 olddists = os.readlink(distslink)
                 (tmp, tmplink) = mkstemp(prefix='.',

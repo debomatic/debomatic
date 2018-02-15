@@ -31,7 +31,7 @@ In order to be able to run Deb-o-Matic, the following packages are required:
 To enable additional features, you may want to install these packages:
 
 * python3-pyinotify (>= 0.8.6)
-* gpgv
+* gpgv (>= 2.1)
 * debian-archive-keyring
 * ubuntu-archive-keyring or ubuntu-keyring
 * lintian
@@ -40,7 +40,7 @@ To enable additional features, you may want to install these packages:
 * blhc
 * devscripts
 * apt-utils
-* gnupg
+* gnupg (>= 2.1)
 
 An Internet connection is also required, broadband access is recommended
 because underlying programs will fetch a lot of megabytes from remote locations
