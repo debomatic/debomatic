@@ -54,7 +54,8 @@ class DebomaticModule_Lintian:
                 changesfile = os.path.join(resultdir, filename)
                 break
         tempfiles = set()
-        for file in [f for f in args.files if not f.endswith('.changes')]:
+        for file in [f for f in args.files if not f.endswith('.changes') and
+                     not f.endswith('.buildinfo')]:
             if not os.path.basename(file) in files:
                 copyfile(file, os.path.join(resultdir, os.path.basename(file)))
                 tempfiles.add(os.path.join(resultdir, os.path.basename(file)))
