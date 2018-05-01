@@ -91,8 +91,11 @@ class DebomaticModule_AutoPkgTest:
         for pkgfile in args.files:
             target = os.path.join(self.resultdir, os.path.basename(pkgfile))
             if not os.path.exists(target):
-                copyfile(pkgfile, target)
-                tempfiles.add(target)
+                try:
+                    copyfile(pkgfile, target)
+                    tempfiles.add(target)
+                except (IOError, OSError):
+                    pass
 
         output = open(self.output, 'w')
 
