@@ -1,3 +1,11 @@
+0.23 "Mogendorf" (2018-05-01)
+* Private repositories
+* Periodic trigger of modules
+* New RemovePackages module
+* New RemoveChroots module
+* New UpdateChroots module
+* Several bugfixes
+
 0.22 "onekill" (2016-11-08)
 * Oneshot mode
 * Improved local repository handling
