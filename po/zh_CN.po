@@ -8,21 +8,20 @@ msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2016-11-08 11:18+0100\n"
-"PO-Revision-Date: 2017-07-30 10:37+0000\n"
-"Last-Translator: Mo Zhou <cdluminate@gmail.com>\n"
+"PO-Revision-Date: 2017-08-11 09:15+0000\n"
+"Last-Translator: Zhou Mo <Unknown>\n"
 "Language-Team: Chinese (Simplified) <zh_CN@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-11-08 14:56+0000\n"
-"X-Generator: Launchpad (build 18246)\n"
+"X-Launchpad-Export-Date: 2018-05-01 20:40+0000\n"
+"X-Generator: Launchpad (build 18623)\n"
 
 #: Debomatic/build.py:55
 #, python-format
 msgid ""
 "Build already scheduled for package %(package)s_%(version)s in %(dist)s"
-msgstr ""
-"软件包 %(package)s_%(version)s 已经存在于 %(dist)s 的编译队列中"
+msgstr "软件包 %(package)s_%(version)s 已经存在于 %(dist)s 的编译队列中"
 
 #: Debomatic/build.py:75
 #, python-format
@@ -160,8 +159,7 @@ msgstr "模块 %s 在黑名单中"
 #, python-format
 msgid ""
 "Cannot execute %(mod)s as %(order)s module, dependencies found: %(deps)s"
-msgstr ""
-"无法执行 %(mod)s 作为 %(order)s 模块，为此找到的依赖: %(deps)s"
+msgstr "无法执行 %(mod)s 作为 %(order)s 模块，为此找到的依赖: %(deps)s"
 
 #: Debomatic/modules.py:203
 #, python-format
