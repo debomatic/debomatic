@@ -49,6 +49,14 @@ extramirrors: deb http://deb.debian.org/debian-security jessie/updates main cont
 
 # Ubuntu
 
+[cosmic]
+suite: cosmic
+mirror: http://archive.ubuntu.com/ubuntu
+components: main restricted universe multiverse
+extramirrors: deb http://archive.ubuntu.com/ubuntu/ cosmic-updates main restricted universe multiverse
+              deb http://security.ubuntu.com/ubuntu cosmic-security main restricted universe multiverse
+extrapackages: pkgbinarymangler
+
 [bionic]
 suite: bionic
 mirror: http://archive.ubuntu.com/ubuntu
