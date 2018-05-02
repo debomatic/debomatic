@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ "$(uname -s)" = "Linux" ]
+then
+	if [ -f /usr/bin/fakeroot.original ]
+	then
+		rm /usr/bin/fakeroot.wrapper
+		mv /usr/bin/fakeroot.original /usr/bin/fakeroot
+		apt-get --purge autoremove -y net-tools util-linux
+	fi
+fi
