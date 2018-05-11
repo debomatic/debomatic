@@ -1,0 +1,10 @@
+#!/bin/sh
+# reference: https://wiki.debian.org/BuilddSetup
+
+cat << EOF > /etc/apt/apt.conf.d/99debomatic
+APT::Install-Recommends 0;
+Acquire::PDiffs "false";
+Acquire::Languages "none";
+DPkg::Options {"--force-unsafe-io";};
+Acquire::CompressionTypes::Order { "gz"; "bz2"; }
+EOF
