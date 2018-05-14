@@ -162,7 +162,7 @@ class Build:
         mod.execute_hook('pre_build')
         info(_('Building %s') % os.path.basename(self.dscfile))
         command = ['sbuild', '-A', '-s', '-d', self.distribution,
-                   '--arch=%s' % architecture, '-c',
+                   '--arch=%s' % architecture, '--no-run-lintian', '-c',
                    '%s-%s-debomatic' % (self.distribution, architecture),
                    self.dscfile]
         if self.hostarchitecture:
