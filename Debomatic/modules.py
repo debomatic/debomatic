@@ -56,7 +56,8 @@ class Module():
                 self._use_modules = True
         if dom.opts.has_option('modules', 'path'):
             mod_path = dom.opts.get('modules', 'path')
-            path.append(mod_path)
+            for p in mod_path.split(':'):
+                path.append(p)
         else:
             self._use_modules = False
         try:

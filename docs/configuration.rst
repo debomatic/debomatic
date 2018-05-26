@@ -301,6 +301,7 @@ More on modules handling will be discussed in the :doc:`modules` section.
 * ``path``
 
  This option indicates the directory where Deb-o-Matic expects to find modules.
+ Multiple directories can be listed, separated with a colon (``:``).
 
  Suggested value: ``/usr/share/debomatic/modules``
 
