@@ -177,6 +177,7 @@ This modules deletes obsolete files created during previous builds to avoid
 picking obsolete files by mistake. It currently deletes these files:
 
 * \*.deb
+* \*.udeb
 * \*.ddeb
 * \*.gz
 * \*.bz2
