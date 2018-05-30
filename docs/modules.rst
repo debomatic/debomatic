@@ -170,7 +170,7 @@ This option indicates the extra options to pass to piuparts.
 
  Suggested value: ``--log-level=info``
 
-PrevBuildCleaner
+BuildCleaner
 ----------------
 
 This modules deletes obsolete files created during previous builds to avoid
