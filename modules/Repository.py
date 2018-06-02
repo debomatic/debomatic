@@ -77,10 +77,6 @@ class DebomaticModule_Repository:
         if not os.access(self.gpg, os.X_OK):
             return
         distribution = os.path.basename(args.directory)
-        if args.hostarchitecture:
-            arch = args.hostarchitecture
-        else:
-            arch = args.architecture
         archive = args.directory
         pool = os.path.join(archive, 'pool')
         distslink = os.path.join(archive, 'dists', distribution)
@@ -90,43 +86,44 @@ class DebomaticModule_Repository:
             tmpdir = mkdtemp(prefix='.', dir=os.path.join(archive, 'dists'))
             os.symlink(tmpdir, distslink)
         dists = mkdtemp(prefix='.', dir=os.path.join(archive, 'dists'))
-        packages = os.path.join(dists, 'main', 'binary-%s' % arch)
-        packages_file = os.path.join(packages, 'Packages')
-        arch_release_file = os.path.join(packages, 'Release')
-        release_file = os.path.join(dists, 'Release')
-        release_gpg = os.path.join(dists, 'Release.gpg')
-        inrelease_gpg = os.path.join(dists, 'InRelease')
-        for dir in (pool, packages):
-            if not os.path.isdir(dir):
-                os.makedirs(dir)
-        with self.Lock(distribution, arch) as lock:
-            if lock.skip():
-                rmtree(dists)
-            else:
-                with open(packages_file, 'w') as fd:
-                    Popen([self.af, 'packages', 'pool'],
-                          stdout=fd, stderr=PIPE, cwd=archive).wait()
-                with open(arch_release_file, 'w') as fd:
-                    fd.write('Origin: Deb-O-Matic\n')
-                    fd.write('Label: Deb-O-Matic\n')
-                    fd.write('Archive: %s\n' % distribution)
-                    fd.write('Component: main\n')
-                    fd.write('Architecture: %s\n' % arch)
-                with open(release_file, 'w') as fd:
-                    afstring = 'APT::FTPArchive::Release::'
-                    Popen([self.af, '-qq',
-                           '-o', '%sOrigin=Deb-o-Matic' % afstring,
-                           '-o', '%sLabel=Deb-o-Matic' % afstring,
-                           '-o', '%sSuite=%s' % (afstring, distribution),
-                           '-o', '%sArchitectures=%s' % (afstring, arch),
-                           '-o', '%sComponents=main' % afstring,
-                           'release', 'dists/%s' % os.path.basename(dists)],
-                          stdout=fd, stderr=PIPE, cwd=archive).wait()
-                with open(release_file, 'r+') as fd:
-                    data = fd.read()
-                    fd.seek(0)
-                    fd.write(data.replace('MD5Sum',
-                             'NotAutomatic: yes\nMD5Sum'))
+        for arch in [a for a in (args.architecture,
+                                 args.hostarchitecture) if a is not None]:
+            packages = os.path.join(dists, 'main', 'binary-%s' % arch)
+            packages_file = os.path.join(packages, 'Packages')
+            arch_release_file = os.path.join(packages, 'Release')
+            release_file = os.path.join(dists, 'Release')
+            release_gpg = os.path.join(dists, 'Release.gpg')
+            inrelease_gpg = os.path.join(dists, 'InRelease')
+            for dir in (pool, packages):
+                if not os.path.isdir(dir):
+                    os.makedirs(dir)
+            with self.Lock(distribution, arch) as lock:
+                if not lock.skip():
+                    with open(packages_file, 'w') as fd:
+                        Popen([self.af, '-a', arch, 'packages', 'pool'],
+                              stdout=fd, stderr=PIPE, cwd=archive).wait()
+                    with open(arch_release_file, 'w') as fd:
+                        fd.write('Origin: Deb-O-Matic\n')
+                        fd.write('Label: Deb-O-Matic\n')
+                        fd.write('Archive: %s\n' % distribution)
+                        fd.write('Component: main\n')
+                        fd.write('Architecture: %s\n' % arch)
+                    with open(release_file, 'w') as fd:
+                        afstring = 'APT::FTPArchive::Release::'
+                        Popen([self.af, '-qq',
+                               '-o', '%sOrigin=Deb-o-Matic' % afstring,
+                               '-o', '%sLabel=Deb-o-Matic' % afstring,
+                               '-o', '%sSuite=%s' % (afstring, distribution),
+                               '-o', '%sArchitectures=%s' % (afstring, arch),
+                               '-o', '%sComponents=main' % afstring,
+                               'release',
+                               'dists/%s' % os.path.basename(dists)],
+                              stdout=fd, stderr=PIPE, cwd=archive).wait()
+                    with open(release_file, 'r+') as fd:
+                        data = fd.read()
+                        fd.seek(0)
+                        fd.write(data.replace('MD5Sum',
+                                 'NotAutomatic: yes\nMD5Sum'))
                 with open(release_gpg, 'w') as fd:
                     Popen([self.gpg, '--no-default-keyring', '--keyring',
                            pubring, '-u', gpgkey, '--yes', '-a', '-o', fd.name,
@@ -135,13 +132,16 @@ class DebomaticModule_Repository:
                     Popen([self.gpg, '--no-default-keyring', '--keyring',
                            pubring, '-u', gpgkey, '--yes', '-a', '-o', fd.name,
                            '--clearsign', release_file], cwd=archive).wait()
-                olddists = os.readlink(distslink)
-                (tmp, tmplink) = mkstemp(prefix='.',
-                                         dir=os.path.dirname(olddists))
-                os.close(tmp)
-                os.unlink(tmplink)
-                os.symlink(dists, tmplink)
-                os.chmod(dists, S_IRWXU | S_IRGRP | S_IXGRP |
-                         S_IROTH | S_IXOTH)
-                os.rename(tmplink, distslink)
-                rmtree(olddists)
+        olddists = os.readlink(distslink)
+        (tmp, tmplink) = mkstemp(prefix='.',
+                                 dir=os.path.dirname(olddists))
+        os.close(tmp)
+        os.unlink(tmplink)
+        os.symlink(dists, tmplink)
+        os.chmod(dists, S_IRWXU | S_IRGRP | S_IXGRP |
+                 S_IROTH | S_IXOTH)
+        os.rename(tmplink, distslink)
+        try:
+            rmtree(olddists)
+        except FileNotFoundError:
+            pass
