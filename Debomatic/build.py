@@ -168,6 +168,8 @@ class Build:
         if self.hostarchitecture:
             command.pop(5)
             command.insert(5, '--host=%s' % self.hostarchitecture)
+            command.insert(6, '--add-depends=libc6-dev:%s' %
+                           self.hostarchitecture)
         suite = dom.dists.get(self.distribution, 'suite')
         if self.distribution != suite:
             command.insert(-1, '--build-dep-resolver=aspcud')
