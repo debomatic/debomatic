@@ -39,6 +39,7 @@ optional = {'crossbuild': {'crossbuild': bool, 'hostarchitecture': str},
             'dpr': {'dpr': bool, 'prefix': str, 'repository': str}}
 modules = {'autopkgtest': {'options': str},
            'blhc': {'options': str},
+           'buildcleaner': {'testbuild': bool},
            'lintian': {'options': str},
            'mailer': {'sender': str, 'server': str, 'port': int, 'tls': bool,
                       'authrequired': bool, 'user': str, 'passwd': str,

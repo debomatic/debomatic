@@ -31,7 +31,7 @@ packages for missing hardening flags.
 In order for this module to work properly, ``blhc`` package must be installed.
 
 Parameters
-----------
+..........
 
 .. CAUTION::
 
@@ -43,6 +43,43 @@ Parameters
 This option indicates the extra options to pass to blhc.
 
  Suggested value: ``--all``
+
+BuildCleaner
+------------
+
+This modules deletes obsolete files created during previous builds to avoid
+picking obsolete files by mistake. It currently deletes these files:
+
+* \*.deb
+* \*.udeb
+* \*.ddeb
+* \*.gz
+* \*.bz2
+* \*.xz
+* \*.dsc
+* \*.build
+* \*.contents
+* \*.lintian
+* \*.piuparts
+* \*.changes
+* \*.autopkgtest
+* \*.bhlc
+
+Parameters
+..........
+
+.. CAUTION::
+
+ These parameters must be listed under the ``buildcleaner`` section.
+ Make sure you create it in your configuration file.
+
+* ``testbuild``
+
+This option indicates whether to remove binary packages immediately after
+build has completed. Useful for test builds, where it is not important to
+keeo binaries for a long period of time.
+
+ Suggested value: ``False``
 
 Contents
 --------
@@ -169,27 +206,6 @@ Parameters
 This option indicates the extra options to pass to piuparts.
 
  Suggested value: ``--log-level=info``
-
-BuildCleaner
-----------------
-
-This modules deletes obsolete files created during previous builds to avoid
-picking obsolete files by mistake. It currently deletes these files:
-
-* \*.deb
-* \*.udeb
-* \*.ddeb
-* \*.gz
-* \*.bz2
-* \*.xz
-* \*.dsc
-* \*.build
-* \*.contents
-* \*.lintian
-* \*.piuparts
-* \*.changes
-* \*.autopkgtest
-* \*.bhlc
 
 RemoveChroots
 -------------

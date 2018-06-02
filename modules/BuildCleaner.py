@@ -1,6 +1,7 @@
 # Deb-o-Matic - Package build path cleaner
 #
 # Copyright (C) 2009 Alessio Treglia
+# Copyright (C) 2009-2018 Luca Falavigna
 #
 # Authors: Alessio Treglia <quadrispro@ubuntu.com>
 #
@@ -24,6 +25,10 @@ import os
 
 class DebomaticModule_BuildCleaner:
 
+    def __init__(self):
+        self.after = ['Lintian', 'Piuparts']
+        self.before = ['Repository']
+
     def pre_build(self, args):
         exts_to_clean = ['.deb', '.ddeb', '.gz', '.bz2', '.xz', '.dsc',
                          '.changes', '.build', '.buildlog', '.buildinfo',
@@ -36,3 +41,16 @@ class DebomaticModule_BuildCleaner:
             name, ext = os.path.splitext(filename)
             if ext in exts_to_clean:
                 os.remove(os.path.join(pkg_build_path, filename))
+
+    def post_build(self, args):
+        exts_to_clean = ['.deb', '.ddeb', '.udeb', '.changes',
+                         '.gz', '.bz2', '.xz', '.dsc']
+        pkg_build_path = ('%(directory)s/pool/%(package)s' %
+                          {'directory': args.directory,
+                           'package': args.package})
+        if args.opts.has_section('buildcleaner'):
+            if args.opts.getboolean('buildcleaner', 'testbuild'):
+                for filename in os.listdir(pkg_build_path):
+                    name, ext = os.path.splitext(filename)
+                    if ext in exts_to_clean:
+                        os.remove(os.path.join(pkg_build_path, filename))
