@@ -30,6 +30,9 @@ class DebomaticModule_BuildCleaner:
         self.before = ['Repository']
 
     def pre_build(self, args):
+        if args.opts.has_section('buildcleaner'):
+            if args.opts.getboolean('buildcleaner', 'testbuild'):
+                return
         exts_to_clean = ['.deb', '.ddeb', '.gz', '.bz2', '.xz', '.dsc',
                          '.changes', '.build', '.buildlog', '.buildinfo',
                          '.contents', '.lintian', '.piuparts', '.blhc',
