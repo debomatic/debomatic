@@ -204,6 +204,7 @@ class Build:
         if self.binnmu:
             command.insert(-1, '--binNMU=%s' % self.binnmu[0])
             command.insert(-1, '--make-binNMU=%s' % self.binnmu[1])
+            command.insert(-1, '--no-arch-all')
             buildlog = '%s+b%s_%s.build' % (packageversion, self.binnmu[0],
                                             architecture)
         else:
