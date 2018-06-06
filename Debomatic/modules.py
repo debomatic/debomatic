@@ -60,9 +60,11 @@ class Module():
                 path.append(p)
         else:
             self._use_modules = False
+        modules = set()
         try:
-            modules = set([os.path.splitext(os.path.basename(m))[0] for m in
-                           glob(os.path.join(mod_path, '*.py'))])
+            for p in mod_path.split(':'):
+                modules |= set([os.path.splitext(os.path.basename(m))[0] for m in
+                               glob(os.path.join(p, '*.py'))])
         except OSError:
             self._use_modules = False
         if not modules:
