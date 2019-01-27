@@ -16,6 +16,7 @@ The following packages are required to install documentation and translations:
 * texlive-fonts-recommended
 * texlive-latex-extra
 * gettext
+* latexmk
 
 Runtime requirements
 --------------------
