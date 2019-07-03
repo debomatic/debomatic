@@ -30,6 +30,14 @@ components: main contrib non-free
 extramirrors: deb http://deb.debian.org/debian-security oldstable/updates main contrib non-free
               deb http://deb.debian.org/debian oldstable-updates main contrib non-free
 
+[buster-backports]
+suite: buster
+mirror: http://deb.debian.org/debian
+components: main contrib non-free
+extramirrors: deb http://deb.debian.org/debian-security buster/updates main contrib non-free
+              deb http://deb.debian.org/debian buster-updates main contrib non-free
+              deb http://deb.debian.org/debian buster-backports main contrib non-free
+
 [stretch-backports]
 suite: stretch
 mirror: http://deb.debian.org/debian
@@ -49,20 +57,20 @@ extramirrors: deb http://deb.debian.org/debian-security jessie/updates main cont
 
 # Ubuntu
 
+[eoan]
+suite: eoan
+mirror: http://archive.ubuntu.com/ubuntu
+components: main restricted universe multiverse
+extramirrors: deb http://archive.ubuntu.com/ubuntu/ eoan-updates main restricted universe multiverse
+              deb http://security.ubuntu.com/ubuntu eoan-security main restricted universe multiverse
+extrapackages: pkgbinarymangler
+
 [disco]
 suite: disco
 mirror: http://archive.ubuntu.com/ubuntu
 components: main restricted universe multiverse
 extramirrors: deb http://archive.ubuntu.com/ubuntu/ disco-updates main restricted universe multiverse
               deb http://security.ubuntu.com/ubuntu disco-security main restricted universe multiverse
-extrapackages: pkgbinarymangler
-
-[cosmic]
-suite: cosmic
-mirror: http://archive.ubuntu.com/ubuntu
-components: main restricted universe multiverse
-extramirrors: deb http://archive.ubuntu.com/ubuntu/ cosmic-updates main restricted universe multiverse
-              deb http://security.ubuntu.com/ubuntu cosmic-security main restricted universe multiverse
 extrapackages: pkgbinarymangler
 
 [bionic]
