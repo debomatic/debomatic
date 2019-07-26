@@ -27,9 +27,9 @@ from .exceptions import DebomaticConffileError
 
 
 core = {'debomatic':
-        {'debootstrap': str, 'incoming': str, 'architecture': str,
-         'threads': int, 'inotify': bool, 'sleep': int, 'interval': int,
-         'logfile': str, 'loglevel': str},
+        {'builduser': str, 'debootstrap': str, 'incoming': str,
+         'architecture': str, 'threads': int, 'inotify': bool, 'sleep': int,
+         'interval': int, 'logfile': str, 'loglevel': str},
         'distributions': {'list': str, 'blacklist': str, 'mapper': dict},
         'chroots': {'profile': str, 'commands': str},
         'gpg': {'gpg': bool, 'keyring': str},

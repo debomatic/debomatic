@@ -28,6 +28,17 @@ This section is mandatory, Deb-o-Matic refuses to start if one of these
 options is missing from the configuration file. Also, Deb-o-Matic needs to be
 restarted to pick any change to one of these options.
 
+* ``builduser``
+
+ This option indicates the user Deb-o-Matic will build packages under.
+
+ Suggested value: ``sbuild``
+
+.. CAUTION::
+
+ Make sure chosen user exists before launching Deb-o-Matic and is part of
+ ``sbuild`` group, otherwise packages will not be built.
+
 * ``incoming``
 
  This option indicates the directory where Deb-o-Matic expects to find source

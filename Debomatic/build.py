@@ -22,8 +22,9 @@ import os
 from ast import literal_eval
 from contextlib import contextmanager
 from logging import debug, error, info
+from pwd import getpwnam
 from re import findall, match, search, sub
-from shutil import copy, copymode, move, rmtree
+from shutil import chown, copy, copymode, move, rmtree
 from subprocess import Popen, check_output
 from tempfile import NamedTemporaryFile
 from threading import Semaphore
@@ -97,6 +98,8 @@ class Build:
     def __init__(self, changesfile=None, package=None, distribution=None,
                  binnmu=None, extrabd=None, maintainer=None, origin=None,
                  uploader=None):
+        self.uid = None
+        self.gid = None
         self.buildtask = None
         self.changesfile = changesfile
         self.package = package
@@ -113,6 +116,12 @@ class Build:
         self.dpr = False
 
     def _build(self):
+        try:
+            self.uid = getpwnam(dom.opts.get('debomatic', 'builduser')).pw_uid
+            self.gid = getpwnam('sbuild').pw_gid
+        except KeyError:
+            self.uid = 0
+            self.gid = 0
         self._parse_distribution()
         if self.distribution in dom.opts.get('distributions', 'blacklist'):
             self._remove_files()
@@ -141,8 +150,7 @@ class Build:
         uploader_email = ''
         packageversion = os.path.splitext(os.path.basename(self.dscfile))[0]
         builddir = os.path.join(self.poolpath, 'pool', packageversion)
-        if not os.path.exists(builddir):
-            os.makedirs(builddir)
+        self._makedirs(builddir, True)
         if self.uploader:
             uploader_email = self.uploader[1].decode('utf-8')
         architecture = dom.opts.get('debomatic', 'architecture')
@@ -240,7 +248,9 @@ class Build:
                 if os.path.exists(buildlink):
                     os.unlink(buildlink)
                 os.symlink(buildlog, buildlink)
-                process = Popen(command, stdout=fd, stderr=fd, cwd=ppath)
+                process = Popen(command, stdout=fd, stderr=fd, cwd=ppath,
+                                preexec_fn=self._demote(),
+                                start_new_session=True)
                 with self.buildtask.set_pid(process.pid):
                     process.wait()
                 if process.returncode:
@@ -277,6 +287,12 @@ class Build:
             commands.append('--log-external-command-output')
             commands.append('--log-external-command-error')
         return commands
+
+    def _demote(self):
+        def result():
+            os.setgid(self.gid)
+            os.setuid(self.uid)
+        return result
 
     def _fetch_files(self):
 
@@ -376,6 +392,19 @@ class Build:
                     if self.origin == self.suite:
                         self.origin = self.distribution
 
+    def _makedirs(self, directory, change_owner=False):
+        os.makedirs(directory, exist_ok=True)
+        if change_owner:
+            chown(directory, user=self.uid)
+            for root, dirs, files in os.walk(directory):
+                try:
+                    for name in dirs:
+                        chown(os.path.join(root, name), user=self.uid)
+                    for name in files:
+                        chown(os.path.join(root, name), user=self.uid)
+                except FileNotFoundError:
+                    continue
+
     def _parse_distribution(self):
         if not self.distribution:
             try:
@@ -413,10 +442,8 @@ class Build:
     def _setup_chroot(self):
         action = None
         self.buildpath = os.path.join(self.incoming, self.distribution)
-        if not os.path.exists(self.buildpath):
-            os.makedirs(self.buildpath)
-        if not os.path.exists(self.poolpath):
-            os.makedirs(self.poolpath)
+        self._makedirs(self.buildpath)
+        self._makedirs(self.poolpath)
         architecture = dom.opts.get('debomatic', 'architecture')
         if architecture == 'system':
             b_arch = check_output(['dpkg-architecture', '-qDEB_BUILD_ARCH'])
@@ -436,8 +463,7 @@ class Build:
         mod.args.dists = dom.dists
         mod.execute_hook('pre_chroot')
         for d in ('logs', 'pool'):
-            if not os.path.exists(os.path.join(self.buildpath, d)):
-                os.makedirs(os.path.join(self.buildpath, d))
+            self._makedirs(os.path.join(self.buildpath, d))
         if action:
             profile = dom.opts.get('chroots', 'profile')
             if not os.path.isdir(os.path.join('/etc/schroot', profile)):
