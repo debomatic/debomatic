@@ -1,21 +1,51 @@
 #!/bin/sh
-# this forces fakeroot to have an independent, empty network namespace
+# this forces dpkg-buildpackage to have an independent, empty network namespace
 
 if [ "$(uname -s)" = "Linux" ]
 then
 	apt-get install -y net-tools util-linux
-	mv /usr/bin/fakeroot /usr/bin/fakeroot.original
-	cat > /usr/bin/fakeroot <<- EOF
-		#!/usr/bin/perl
+	cat > unshare-debomatic-wrapper.c <<- EOF
+		#include <stdio.h>
+		#include <stdlib.h>
+		#include <unistd.h>
 
-		system("unshare", "-n", "/usr/bin/fakeroot.wrapper", @ARGV);
+		int main (int argc, char *argv[], char *envp[]) {
+		        char uid[5] = {0};
+		        sprintf(uid, "%d", getuid());
+		        char **args = (char **)calloc(argc + 5, sizeof(char *));
+		        args[0] = "/usr/bin/unshare";
+		        args[1] = "-n";
+		        args[2] = "/usr/bin/dpkg-buildpackage-debomatic-wrapper";
+		        args[3] = uid;
+		        args[argc + 3] = NULL;
+
+		        for (int i = 1, j = 4; i < argc; i++, j++)
+		                args[j] = argv[i];
+
+		        setuid(0);
+		        execve(args[0], args, envp);
+
+		        free(args);
+		        return 0;
+		}
 		EOF
-	cat > /usr/bin/fakeroot.wrapper <<- EOF
+	cat > dpkg-buildpackage-debomatic-wrapper.pl <<- EOF
 		#!/usr/bin/perl
 
+		use POSIX qw(setsid);
+		@params = @ARGV;
+		\$uid = shift(@params);
 		system("/sbin/ifconfig", "lo", "up");
-		system("/usr/bin/fakeroot.original", @ARGV);
+		POSIX::setuid(\$uid);
+		system("/usr/bin/dpkg-buildpackage-debomatic-original", @params) == 0 or die exit 1;
 		EOF
-	chmod +x /usr/bin/fakeroot
-	chmod +x /usr/bin/fakeroot.wrapper
+	gcc -Wall -o unshare-debomatic-wrapper unshare-debomatic-wrapper.c
+	mv /usr/bin/dpkg-buildpackage /usr/bin/dpkg-buildpackage-debomatic-original
+	mv unshare-debomatic-wrapper /usr/bin/dpkg-buildpackage
+	mv dpkg-buildpackage-debomatic-wrapper.pl /usr/bin/dpkg-buildpackage-debomatic-wrapper
+	chown 0.0 /usr/bin/dpkg-buildpackage
+	chmod 4755 /usr/bin/dpkg-buildpackage
+	chown 0.0 /usr/bin/dpkg-buildpackage-debomatic-wrapper
+	chmod 0755 /usr/bin/dpkg-buildpackage-debomatic-wrapper
+	rm unshare-debomatic-wrapper.c
 fi

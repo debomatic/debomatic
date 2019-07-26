@@ -2,10 +2,10 @@
 
 if [ "$(uname -s)" = "Linux" ]
 then
-	if [ -f /usr/bin/fakeroot.original ]
+	if [ -f /usr/bin/dpkg-buildpackage-debomatic-original ]
 	then
-		rm /usr/bin/fakeroot.wrapper
-		mv /usr/bin/fakeroot.original /usr/bin/fakeroot
+		mv /usr/bin/dpkg-buildpackage-debomatic-original /usr/bin/dpkg-buildpackage
+		rm /usr/bin/dpkg-buildpackage-debomatic-wrapper
 		apt-get --purge autoremove -y net-tools
 	fi
 fi
