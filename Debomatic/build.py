@@ -196,18 +196,18 @@ class Build:
         if self.changesfile:
             with open(self.upload, 'r') as fd:
                 data = fd.read()
-            for file in findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)', data):
+            for file in findall(r'\s\w{32}\s\d+\s\S+\s\S+\s(.*)', data):
                 if '.orig.' in file:
                     command.insert(-1, '--force-orig-source')
                     break
             try:
                 command.insert(-1, '--debbuildopt=-v%s~' %
-                               findall(' \S+ \((\S+)\) \S+; ', data)[-1])
+                               findall(r' \S+ \((\S+)\) \S+; ', data)[-1])
             except IndexError:
                 pass
             with open(os.path.join(self.incoming, self.changesfile)) as fd:
                 data = fd.read()
-            for resolver in findall('Debomatic-Resolver: (\S+)', data):
+            for resolver in findall(r'Debomatic-Resolver: (\S+)', data):
                 command.insert(-1, '--build-dep-resolver=%s' % resolver)
         if self.binnmu:
             command.insert(-1, '--binNMU=%s' % self.binnmu[0])
@@ -218,7 +218,7 @@ class Build:
         else:
             buildlog = '%s_%s.build' % (packageversion, architecture)
         if self.hostarchitecture:
-            buildlog = sub('(.*_)\S+(\.build)',
+            buildlog = sub(r'(.*_)\S+(\.build)',
                            '\\1%s\\2' % self.hostarchitecture, buildlog)
         if self.maintainer:
             command.remove('-A')
@@ -227,7 +227,7 @@ class Build:
         ext = {'.gz': 'gzip', '.bz2': 'bzip2', '.xz': 'xz'}
         for file in self.files:
             if os.path.isfile(file):
-                if findall('(.*\.debian\..*)', file):
+                if findall(r'(.*\.debian\..*)', file):
                     try:
                         command.insert(-1, '--debbuildopt=-Z%s' %
                                        ext[os.path.splitext(file)[1]])
@@ -298,7 +298,7 @@ class Build:
 
         def _download_files(mirror, component, package, file, filepath):
             request = Request('%s/pool/%s/%s/%s/%s' % (mirror, component,
-                              findall('^lib\S|^\S', package)[0],
+                              findall(r'^lib\S|^\S', package)[0],
                               package, file))
             try:
                 debug(_('Requesting URL %s') % request.get_full_url())
@@ -323,7 +323,7 @@ class Build:
                 raise DebomaticError
         else:
             package = self.package[0]
-            version = sub('^\d+\:', '', self.package[1])
+            version = sub(r'^\d+\:', '', self.package[1])
             dscfile = '%s_%s.dsc' % (package, version)
             if not dom.dists.has_section(self.origin):
                 error(_('Distribution %s not configured') % self.distribution)
@@ -345,7 +345,7 @@ class Build:
             raise DebomaticError
         with open(self.dscfile, 'r') as fd:
             data = fd.read()
-        for entry in findall('\s\w{32}\s\d+\s(\S+)', data):
+        for entry in findall(r'\s\w{32}\s\d+\s(\S+)', data):
             if not os.path.isfile(os.path.join(self.incoming, entry)):
                 debug(_('Downloading missing %s') % entry)
                 for component in dom.dists.get(self.origin,
@@ -384,7 +384,7 @@ class Build:
         if dom.opts.has_section('dpr'):
             if dom.opts.getboolean('dpr', 'dpr'):
                 self.suite = self.distribution
-                if match('%s-\S+-\S+' %
+                if match(r'%s-\S+-\S+' %
                          dom.opts.get('dpr', 'prefix'), self.suite):
                     self.dpr = True
                     self.distribution = '-'.join(
@@ -414,7 +414,7 @@ class Build:
                 error(_('Unable to open %s') % self.upload)
                 raise DebomaticError
             try:
-                dist = findall('Distribution:\s+(\S+)', data)[0]
+                dist = findall(r'Distribution:\s+(\S+)', data)[0]
                 self.distribution = dist.lower()
             except IndexError:
                 error(_('Bad .changes file: %s') % self.upload)
@@ -567,7 +567,7 @@ class Build:
                 error(_('Unable to open %s') % self.upload)
                 raise DebomaticError
             try:
-                for entry in findall('\s\w{32}\s\d+\s\S+\s\S+\s(.*)', data):
+                for entry in findall(r'\s\w{32}\s\d+\s\S+\s\S+\s(.*)', data):
                     entry = os.path.join(self.incoming, entry)
                     self.files.add(entry)
                     debug(_('File %s added') % entry)

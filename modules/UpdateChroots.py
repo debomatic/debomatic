@@ -65,12 +65,12 @@ class DebomaticModule_UpdateChroots:
             delta = args.opts.getint('updatechroots', 'days') * 24 * 60 * 60
             chroots = call(['/usr/bin/schroot', '--all-chroots', '-l'])
             arch = self.__architecture(args)
-            chroots = findall('chroot:(\S+?-{0}-debomatic)\n?'.format(arch),
+            chroots = findall(r'chroot:(\S+?-{0}-debomatic)\n?'.format(arch),
                               chroots.decode('utf-8'))
             for chroot in glob('/etc/schroot/chroot.d/*-debomatic-*'):
                 with open(chroot) as fd:
                     content = fd.read()
-                (name, path) = findall('\[(\S+?)\].*directory=(\S+)',
+                (name, path) = findall(r'\[(\S+?)\].*directory=(\S+)',
                                        content, DOTALL)[0]
                 if name in chroots:
                     tag = os.path.join(path, '.debomatic')

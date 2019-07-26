@@ -51,12 +51,13 @@ class Command():
         with open(self.cmdfile, 'r') as fd:
             cmd = fd.read()
         os.remove(self.cmdfile)
-        cmd_nmu = findall('\s?binnmu\s+(\S+_\S+) (\S+) (\d+) "(.*)" (.*)', cmd)
-        cmd_builddep = findall('\s?builddep\s+(\S+_\S+) (\S+) (.*)', cmd)
-        cmd_kill = findall('\s?kill\s+(\S+_\S+) (\S+)', cmd)
-        cmd_porter = findall('\s?porter\s+(\S+_\S+) (\S+) (.*)', cmd)
-        cmd_rebuild = findall('\s?rebuild\s+(\S+_\S+) (\S+) ?(\S*)', cmd)
-        cmd_rm = findall('\s?rm\s+(.*)', cmd)
+        cmd_nmu = findall(r'\s?binnmu\s+(\S+_\S+) (\S+) (\d+) "(.*)" (.*)',
+                          cmd)
+        cmd_builddep = findall(r'\s?builddep\s+(\S+_\S+) (\S+) (.*)', cmd)
+        cmd_kill = findall(r'\s?kill\s+(\S+_\S+) (\S+)', cmd)
+        cmd_porter = findall(r'\s?porter\s+(\S+_\S+) (\S+) (.*)', cmd)
+        cmd_rebuild = findall(r'\s?rebuild\s+(\S+_\S+) (\S+) ?(\S*)', cmd)
+        cmd_rm = findall(r'\s?rm\s+(.*)', cmd)
         if cmd_nmu:
             self._process_binnmu(cmd_nmu)
         if cmd_builddep:

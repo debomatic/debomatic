@@ -63,8 +63,8 @@ class Module():
         modules = set()
         try:
             for p in mod_path.split(':'):
-                modules |= set([os.path.splitext(os.path.basename(m))[0] for m in
-                               glob(os.path.join(p, '*.py'))])
+                modules |= set([os.path.splitext(os.path.basename(m))[0]
+                               for m in glob(os.path.join(p, '*.py'))])
         except OSError:
             self._use_modules = False
         if not modules:
@@ -200,7 +200,7 @@ class Module():
         try:
             return [m for m in toposort(modules) if m in self._instances]
         except ValueError as e:
-            circular = findall('.*?\(\'?(\S+?)\'?,', e.args[0])
+            circular = findall(r'.*?\(\'?(\S+?)\'?,', e.args[0])
             for instance in circular:
                 self._instances[instance]._disabled = True
             debug(_('Circular dependencies found, disabled modules: %s')

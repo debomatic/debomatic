@@ -39,7 +39,7 @@ class DebomaticModule_SourceUpload:
             with open(changesfile, 'r') as fd:
                 cf = fd.read()
             for line in cf.split('\n'):
-                if match('.*?\S+_\S+_\S+\.u?deb', line):
+                if match(r'.*?\S+_\S+_\S+\.u?deb', line):
                     continue
                 elif line.startswith('Architecture: '):
                     lines.append('Architecture: source')
