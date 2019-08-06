@@ -33,6 +33,8 @@ class DebomaticModule_Blhc:
         self.blhc = '/usr/bin/blhc'
 
     def post_build(self, args):
+        if not args.success:
+            return
         if args.opts.has_section('blhc') and \
            args.opts.has_option('blhc', 'options'):
             blhcopts = args.opts.get('blhc', 'options').strip().split()
