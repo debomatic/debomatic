@@ -49,6 +49,14 @@ extramirrors: deb http://deb.debian.org/debian-security stretch/updates main con
 
 # Ubuntu
 
+[hirsute]
+suite: hirsute
+mirror: http://archive.ubuntu.com/ubuntu
+components: main restricted universe multiverse
+extramirrors: deb http://archive.ubuntu.com/ubuntu/ hirsute-updates main restricted universe multiverse
+              deb http://security.ubuntu.com/ubuntu hirsute-security main restricted universe multiverse
+extrapackages: pkgbinarymangler
+
 [groovy]
 suite: groovy
 mirror: http://archive.ubuntu.com/ubuntu
@@ -63,14 +71,6 @@ mirror: http://archive.ubuntu.com/ubuntu
 components: main restricted universe multiverse
 extramirrors: deb http://archive.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse
               deb http://security.ubuntu.com/ubuntu focal-security main restricted universe multiverse
-extrapackages: pkgbinarymangler
-
-[eoan]
-suite: eoan
-mirror: http://archive.ubuntu.com/ubuntu
-components: main restricted universe multiverse
-extramirrors: deb http://archive.ubuntu.com/ubuntu/ eoan-updates main restricted universe multiverse
-              deb http://security.ubuntu.com/ubuntu eoan-security main restricted universe multiverse
 extrapackages: pkgbinarymangler
 
 [bionic]
