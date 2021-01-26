@@ -68,7 +68,7 @@ class InstallData(install_data):
 
 
 setup(name='debomatic',
-      version='0.24',
+      version='0.25',
       author='Luca Falavigna',
       author_email='dktrkranz@debian.org',
       description='Automatic build machine for Debian source packages',

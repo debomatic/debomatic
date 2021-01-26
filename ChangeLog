@@ -1,3 +1,7 @@
+0.25 "lockdown" (2021-01-26)
+* Allow to build packages with a different user than root
+* Several bugfixes
+
 0.24 "novemberrain" (2018-11-04)
 * Several bugfixes
 
