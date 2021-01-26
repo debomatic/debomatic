@@ -30,6 +30,14 @@ components: main contrib non-free
 extramirrors: deb http://deb.debian.org/debian-security oldstable/updates main contrib non-free
               deb http://deb.debian.org/debian oldstable-updates main contrib non-free
 
+[bullseye-backports]
+suite: bullseye
+mirror: http://deb.debian.org/debian
+components: main contrib non-free
+extramirrors: deb http://deb.debian.org/debian-security bullseye/updates main contrib non-free
+              deb http://deb.debian.org/debian bullseye-updates main contrib non-free
+              deb http://deb.debian.org/debian bullseye-backports main contrib non-free
+
 [buster-backports]
 suite: buster
 mirror: http://deb.debian.org/debian
@@ -38,13 +46,6 @@ extramirrors: deb http://deb.debian.org/debian-security buster/updates main cont
               deb http://deb.debian.org/debian buster-updates main contrib non-free
               deb http://deb.debian.org/debian buster-backports main contrib non-free
 
-[stretch-backports]
-suite: stretch
-mirror: http://deb.debian.org/debian
-components: main contrib non-free
-extramirrors: deb http://deb.debian.org/debian-security stretch/updates main contrib non-free
-              deb http://deb.debian.org/debian stretch-updates main contrib non-free
-              deb http://deb.debian.org/debian stretch-backports main contrib non-free
 
 
 # Ubuntu
