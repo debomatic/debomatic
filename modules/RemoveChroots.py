@@ -1,6 +1,6 @@
 # Deb-o-Matic - RemoveChroots module
 #
-# Copyright (C) 2018 Luca Falavigna
+# Copyright (C) 2018-2021 Luca Falavigna
 #
 # Authors: Luca Falavigna <dktrkranz@debian.org>
 #

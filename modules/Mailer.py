@@ -1,7 +1,7 @@
 # Deb-o-Matic - Mailer module
 #
 # Copyright (C) 2010 Alessio Treglia
-# Copyright (C) 2015-2018 Luca Falavigna
+# Copyright (C) 2015-2021 Luca Falavigna
 #
 # Authors: Alessio Treglia <quadrispro@ubuntu.com>
 #

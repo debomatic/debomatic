@@ -1,6 +1,6 @@
 # Deb-o-Matic - Repository module
 #
-# Copyright (C) 2011-2018 Luca Falavigna
+# Copyright (C) 2011-2021 Luca Falavigna
 #
 # Authors: Luca Falavigna <dktrkranz@debian.org>
 #

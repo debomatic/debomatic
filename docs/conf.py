@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2012-2018 Luca Falavigna
+# Copyright (C) 2012-2021 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
 #
