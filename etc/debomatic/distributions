@@ -50,20 +50,20 @@ extramirrors: deb http://deb.debian.org/debian-security buster/updates main cont
 
 # Ubuntu
 
+[impish]
+suite: impish
+mirror: http://archive.ubuntu.com/ubuntu
+components: main restricted universe multiverse
+extramirrors: deb http://archive.ubuntu.com/ubuntu/ impish-updates main restricted universe multiverse
+              deb http://security.ubuntu.com/ubuntu impish-security main restricted universe multiverse
+extrapackages: pkgbinarymangler
+
 [hirsute]
 suite: hirsute
 mirror: http://archive.ubuntu.com/ubuntu
 components: main restricted universe multiverse
 extramirrors: deb http://archive.ubuntu.com/ubuntu/ hirsute-updates main restricted universe multiverse
               deb http://security.ubuntu.com/ubuntu hirsute-security main restricted universe multiverse
-extrapackages: pkgbinarymangler
-
-[groovy]
-suite: groovy
-mirror: http://archive.ubuntu.com/ubuntu
-components: main restricted universe multiverse
-extramirrors: deb http://archive.ubuntu.com/ubuntu/ groovy-updates main restricted universe multiverse
-              deb http://security.ubuntu.com/ubuntu groovy-security main restricted universe multiverse
 extrapackages: pkgbinarymangler
 
 [focal]
