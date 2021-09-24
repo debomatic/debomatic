@@ -35,6 +35,34 @@ for po in glob(os.path.join('po', '*.po')):
     call(['msgfmt', '-o', mo, po])
 
 
+class SbuildCommands():
+
+    def __init__(self):
+        self.directories = ('build-deps-failed-commands',
+                            'build-failed-commands',
+                            'chroot-cleanup-commands',
+                            'chroot-setup-commands',
+                            'finished-build-commands',
+                            'post-build-commands',
+                            'pre-build-commands',
+                            'starting-build-commands')
+
+    def __enter__(self):
+        for directory in self.directories:
+            try:
+                os.mkdir(os.path.join('sbuildcommands', directory))
+            except FileExistsError:
+                pass
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        for directory in self.directories:
+            try:
+                os.rmdir(os.path.join('sbuildcommands', directory))
+            except OSError:
+                pass
+
+
 class InstallData(install_data):
 
     def run(self):
@@ -44,17 +72,18 @@ class InstallData(install_data):
         self.install_files('etc')
         self.install_files('lib')
         self.install_files('modules', 'share/debomatic')
-        self.install_files('sbuildcommands', 'share/debomatic')
+        with SbuildCommands() as sb:
+            self.install_files('sbuildcommands', 'share/debomatic', True)
         self.install_files('locale', 'share')
         install_data.run(self)
 
-    def install_files(self, rootdir, prefix=''):
+    def install_files(self, rootdir, prefix='', empty=False):
         filelist = []
         for root, subFolders, files in os.walk(rootdir):
             dirlist = []
             for file in files:
                 dirlist.append(os.path.join(root, file))
-            if dirlist:
+            if dirlist or empty:
                 filelist.append((os.path.join(prefix, root), dirlist))
         if not prefix:
             orig_prefix = self.install_dir
