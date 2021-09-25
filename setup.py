@@ -22,6 +22,8 @@
 import os
 from distutils.core import setup
 from distutils.command.install_data import install_data
+from distutils.dir_util import mkpath
+from distutils.file_util import copy_file
 from glob import glob
 from re import sub
 from subprocess import call
@@ -72,10 +74,20 @@ class InstallData(install_data):
         self.install_files('etc')
         self.install_files('usr')
         self.install_files('modules', 'share/debomatic')
-        with SbuildCommands() as sb:
+        with SbuildCommands():
             self.install_files('sbuildcommands', 'share/debomatic', True)
         self.install_files('locale', 'share')
         install_data.run(self)
+        mkpath(os.path.join(self.install_dir, 'sbin'))
+        if os.path.isabs(self.install_dir):
+            install_dir = self.install_dir
+        else:
+            install_dir = os.path.join(os.getcwd(), self.install_dir)
+        dstlink = os.path.join(install_dir, 'sbin/debomatic')
+        if os.path.islink(dstlink):
+            os.remove(dstlink)
+        copy_file(os.path.join(install_dir, 'share/debomatic/debomatic'),
+                  dstlink, link='sym')
 
     def install_files(self, rootdir, prefix='', empty=False):
         filelist = []
@@ -105,6 +117,6 @@ setup(name='debomatic',
       url='http://debomatic.github.io',
       license='GNU GPL',
       packages=['Debomatic'],
-      scripts=['debomatic'],
-      data_files=[('share/man/man1', ['docs/debomatic.1'])],
+      data_files=[('share/debomatic', ['debomatic']),
+                  ('share/man/man1', ['docs/debomatic.1'])],
       cmdclass={'install_data': InstallData})

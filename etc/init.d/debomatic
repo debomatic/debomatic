@@ -13,7 +13,7 @@ NAME=debomatic
 
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME
 
-DAEMON=/usr/bin/debomatic
+DAEMON=/usr/sbin/debomatic
 DAEMON_ARGS="-c $DEBOMATIC_CONFIG_FILE $DEBOMATIC_OPTS"
 SCRIPTNAME=/etc/init.d/$NAME
 
@@ -67,7 +67,7 @@ case "$1" in
 	esac
 	;;
   status)
-	status_of_proc /usr/bin/$NAME $NAME
+	status_of_proc /usr/sbin/$NAME $NAME
 	;;
   *)
 	echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
