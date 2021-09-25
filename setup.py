@@ -70,7 +70,7 @@ class InstallData(install_data):
         self.data_files.extend([('share/doc/debomatic',
                                  ['docs/_build/latex/Deb-o-Matic.pdf'])])
         self.install_files('etc')
-        self.install_files('lib')
+        self.install_files('usr')
         self.install_files('modules', 'share/debomatic')
         with SbuildCommands() as sb:
             self.install_files('sbuildcommands', 'share/debomatic', True)
