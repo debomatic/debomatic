@@ -51,9 +51,7 @@ class BuildTask:
 
     def __enter__(self):
         for task in self._queue:
-            if (self._package == task._package and
-               self._version == task._version and
-               self._distribution == task._distribution):
+            if self.match(task._package, task._version, task._distribution):
                 info(_('Build already scheduled for '
                        'package %(package)s_%(version)s in %(dist)s') %
                      {'package': self._package, 'version': self._version,
@@ -88,10 +86,9 @@ class BuildTask:
             self._pid = 0
 
     def match(self, package, version, distribution):
-        if (self._package == package and
+        return (self._package == package and
            self._version == version and
-           self._distribution == distribution):
-            return self
+           self._distribution == distribution)
 
 
 class Build:
