@@ -368,6 +368,16 @@ class Build:
         dom.chroots[chrootname].acquire()
 
     def _map_distribution(self):
+        if dom.opts.has_section('dpr'):
+            if dom.opts.getboolean('dpr', 'dpr'):
+                self.suite = self.distribution
+                if match(r'%s-\S+-\S+' %
+                         dom.opts.get('dpr', 'prefix'), self.suite):
+                    self.dpr = True
+                    self.distribution = '-'.join(
+                        self.distribution.split('-')[2:])
+                    if self.origin == self.suite:
+                        self.origin = self.distribution
         if dom.opts.has_option('distributions', 'mapper'):
             try:
                 mapper = literal_eval(dom.opts.get('distributions', 'mapper'))
@@ -379,16 +389,11 @@ class Build:
                           {'mapped': self.distribution,
                            'mapper': mapper[self.distribution]})
                     self.distribution = mapper[self.distribution]
-        if dom.opts.has_section('dpr'):
-            if dom.opts.getboolean('dpr', 'dpr'):
-                self.suite = self.distribution
-                if match(r'%s-\S+-\S+' %
-                         dom.opts.get('dpr', 'prefix'), self.suite):
-                    self.dpr = True
-                    self.distribution = '-'.join(
-                        self.distribution.split('-')[2:])
-                    if self.origin == self.suite:
-                        self.origin = self.distribution
+                if self.origin and self.origin in mapper:
+                    debug(_('%(mapped)s mapped as %(mapper)s') %
+                          {'mapped': self.origin,
+                           'mapper': mapper[self.origin]})
+                    self.origin = mapper[self.origin]
 
     def _makedirs(self, directory, change_owner=False):
         os.makedirs(directory, exist_ok=True)
@@ -424,7 +429,7 @@ class Build:
             raise DebomaticError
         if self.origin:
             if not dom.dists.has_section(self.origin):
-                error(_('Distribution %s not configured') % self.distribution)
+                error(_('Distribution %s not configured') % self.origin)
                 raise DebomaticError
         else:
             self.origin = self.distribution
