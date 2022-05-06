@@ -9,7 +9,7 @@ components: main contrib non-free
 suite: unstable
 mirror: http://deb.debian.org/debian
 components: main contrib non-free
-extramirrors: deb http://deb.debian.org/debian/ experimental main contrib non-free
+extramirrors: deb http://deb.debian.org/debian experimental main contrib non-free
 
 [testing]
 suite: testing
@@ -20,7 +20,7 @@ components: main contrib non-free
 suite: stable
 mirror: http://deb.debian.org/debian
 components: main contrib non-free
-extramirrors: deb http://deb.debian.org/debian-security stable/updates main contrib non-free
+extramirrors: deb http://deb.debian.org/debian-security stable-security main contrib non-free
               deb http://deb.debian.org/debian stable-updates main contrib non-free
 
 [oldstable]
@@ -30,62 +30,85 @@ components: main contrib non-free
 extramirrors: deb http://deb.debian.org/debian-security oldstable/updates main contrib non-free
               deb http://deb.debian.org/debian oldstable-updates main contrib non-free
 
-[bullseye-backports]
-suite: bullseye
+[oldoldstable]
+suite: oldoldstable
 mirror: http://deb.debian.org/debian
 components: main contrib non-free
-extramirrors: deb http://deb.debian.org/debian-security bullseye/updates main contrib non-free
-              deb http://deb.debian.org/debian bullseye-updates main contrib non-free
-              deb http://deb.debian.org/debian bullseye-backports main contrib non-free
+extramirrors: deb http://deb.debian.org/debian-security oldoldstable/updates main contrib non-free
+              deb http://deb.debian.org/debian oldoldstable-updates main contrib non-free
 
-[buster-backports]
-suite: buster
+[stable-backports]
+suite: stable
 mirror: http://deb.debian.org/debian
 components: main contrib non-free
-extramirrors: deb http://deb.debian.org/debian-security buster/updates main contrib non-free
-              deb http://deb.debian.org/debian buster-updates main contrib non-free
-              deb http://deb.debian.org/debian buster-backports main contrib non-free
+extramirrors: deb http://deb.debian.org/debian-security stable-security main contrib non-free
+              deb http://deb.debian.org/debian stable-updates main contrib non-free
+              deb http://deb.debian.org/debian stable-backports main contrib non-free
+
+[oldstable-backports]
+suite: oldstable
+mirror: http://deb.debian.org/debian
+components: main contrib non-free
+extramirrors: deb http://deb.debian.org/debian-security oldstable/updates main contrib non-free
+              deb http://deb.debian.org/debian oldstable-updates main contrib non-free
+              deb http://deb.debian.org/debian oldstable-backports main contrib non-free
+
+[oldoldstable-backports]
+suite: oldoldstable
+mirror: http://deb.debian.org/debian
+components: main contrib non-free
+extramirrors: deb http://deb.debian.org/debian-security oldoldstable/updates main contrib non-free
+              deb http://deb.debian.org/debian oldoldstable-updates main contrib non-free
+              deb http://deb.debian.org/debian oldoldstable-backports main contrib non-free
+
 
 
 
 # Ubuntu
 
+[kinetic]
+suite: kinetic
+mirror: http://archive.ubuntu.com/ubuntu
+components: main restricted universe multiverse
+extramirrors: deb http://debomatic-amd64.debian.net/debomatic/kinetic kinetic main
+extrapackages: pkgbinarymangler
+
+[jammy]
+suite: jammy
+mirror: http://archive.ubuntu.com/ubuntu
+components: main restricted universe multiverse
+extramirrors: deb http://archive.ubuntu.com/ubuntu jammy-updates main restricted universe multiverse
+              deb http://archive.ubuntu.com/ubuntu jammy-security main restricted universe multiverse
+extrapackages: pkgbinarymangler
+
 [impish]
 suite: impish
 mirror: http://archive.ubuntu.com/ubuntu
 components: main restricted universe multiverse
-extramirrors: deb http://archive.ubuntu.com/ubuntu/ impish-updates main restricted universe multiverse
-              deb http://security.ubuntu.com/ubuntu impish-security main restricted universe multiverse
-extrapackages: pkgbinarymangler
-
-[hirsute]
-suite: hirsute
-mirror: http://archive.ubuntu.com/ubuntu
-components: main restricted universe multiverse
-extramirrors: deb http://archive.ubuntu.com/ubuntu/ hirsute-updates main restricted universe multiverse
-              deb http://security.ubuntu.com/ubuntu hirsute-security main restricted universe multiverse
+extramirrors: deb http://archive.ubuntu.com/ubuntu impish-updates main restricted universe multiverse
+              deb http://archive.ubuntu.com/ubuntu impish-security main restricted universe multiverse
 extrapackages: pkgbinarymangler
 
 [focal]
 suite: focal
 mirror: http://archive.ubuntu.com/ubuntu
 components: main restricted universe multiverse
-extramirrors: deb http://archive.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse
-              deb http://security.ubuntu.com/ubuntu focal-security main restricted universe multiverse
+extramirrors: deb http://archive.ubuntu.com/ubuntu focal-updates main restricted universe multiverse
+              deb http://archive.ubuntu.com/ubuntu focal-security main restricted universe multiverse
 extrapackages: pkgbinarymangler
 
 [bionic]
 suite: bionic
 mirror: http://archive.ubuntu.com/ubuntu
 components: main restricted universe multiverse
-extramirrors: deb http://archive.ubuntu.com/ubuntu/ bionic-updates main restricted universe multiverse
-              deb http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse
+extramirrors: deb http://archive.ubuntu.com/ubuntu bionic-updates main restricted universe multiverse
+              deb http://archive.ubuntu.com/ubuntu bionic-security main restricted universe multiverse
 extrapackages: pkgbinarymangler
 
 [xenial]
 suite: xenial
 mirror: http://archive.ubuntu.com/ubuntu
 components: main restricted universe multiverse
-extramirrors: deb http://archive.ubuntu.com/ubuntu/ xenial-updates main restricted universe multiverse
-              deb http://security.ubuntu.com/ubuntu xenial-security main restricted universe multiverse
+extramirrors: deb http://archive.ubuntu.com/ubuntu xenial-updates main restricted universe multiverse
+              deb http://archive.ubuntu.com/ubuntu xenial-security main restricted universe multiverse
 extrapackages: pkgbinarymangler pkg-create-dbgsym
