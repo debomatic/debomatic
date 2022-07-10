@@ -1,3 +1,6 @@
+0.26 "melting" (2022-07-10)
+* Several bugfixes
+
 0.25 "lockdown" (2021-01-26)
 * Allow to build packages with a different user than root
 * Several bugfixes
