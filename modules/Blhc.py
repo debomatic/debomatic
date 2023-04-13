@@ -1,7 +1,7 @@
 # Deb-o-Matic - Blhc module
 #
 # Copyright (C) 2014 Mattia Rizzolo
-# Copyright (C) 2015-2022 Luca Falavigna
+# Copyright (C) 2015-2023 Luca Falavigna
 #
 # Authors: Mattia Rizzolo <mattia@mapreri.org>
 #

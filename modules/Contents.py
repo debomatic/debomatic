@@ -1,7 +1,7 @@
 # Deb-o-Matic - Contents module
 #
 # Copyright (C) 2009 Alessio Treglia
-# Copyright (C) 2010-2022 Luca Falavigna
+# Copyright (C) 2010-2023 Luca Falavigna
 #
 # Authors: Alessio Treglia <quadrispro@ubuntu.com>
 #          Luca Falavigna <dktrkranz@debian.org>

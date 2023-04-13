@@ -1,7 +1,7 @@
 # Deb-o-Matic - AutoPkgTest module
 #
 # Copyright (C) 2014 Leo Iannacone
-# Copyright (C) 2015-2022 Luca Falavigna
+# Copyright (C) 2015-2023 Luca Falavigna
 #
 # Authors: Leo Iannacone <l3on@ubuntu.com>
 #

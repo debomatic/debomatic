@@ -1,6 +1,6 @@
 # Deb-o-Matic - RemovePackages module
 #
-# Copyright (C) 2018-2022 Luca Falavigna
+# Copyright (C) 2018-2023 Luca Falavigna
 #
 # Authors: Luca Falavigna <dktrkranz@debian.org>
 #
