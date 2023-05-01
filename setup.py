@@ -20,93 +20,49 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import os
-from distutils.core import setup
-from distutils.command.install_data import install_data
-from distutils.dir_util import mkpath
-from distutils.file_util import copy_file
 from glob import glob
-from re import sub
+from setuptools import setup
+from setuptools.command.build import build
+from setuptools.command.install import install
 from subprocess import call
 
 
-for po in glob(os.path.join('po', '*.po')):
-    mo = os.path.join('locale', os.path.splitext(os.path.basename(po))[0],
-                      'LC_MESSAGES/debomatic.mo')
-    if not os.path.isdir(os.path.dirname(mo)):
-        os.makedirs(os.path.dirname(mo))
-    call(['msgfmt', '-o', mo, po])
+data_files = []
 
 
-class SbuildCommands():
-
-    def __init__(self):
-        self.directories = ('build-deps-failed-commands',
-                            'build-failed-commands',
-                            'chroot-cleanup-commands',
-                            'chroot-setup-commands',
-                            'finished-build-commands',
-                            'post-build-commands',
-                            'pre-build-commands',
-                            'starting-build-commands')
-
-    def __enter__(self):
-        for directory in self.directories:
-            try:
-                os.mkdir(os.path.join('sbuildcommands', directory))
-            except FileExistsError:
-                pass
-        return self
-
-    def __exit__(self, exc_type, exc_value, exc_traceback):
-        for directory in self.directories:
-            try:
-                os.rmdir(os.path.join('sbuildcommands', directory))
-            except OSError:
-                pass
-
-
-class InstallData(install_data):
+class Build(build, object):
 
     def run(self):
+        super(Build, self).run()
+        for po in glob(os.path.join('po', '*.po')):
+            mo = os.path.join('locale',
+                              os.path.splitext(os.path.basename(po))[0],
+                              'LC_MESSAGES/debomatic.mo')
+            if not os.path.isdir(os.path.dirname(mo)):
+                os.makedirs(os.path.dirname(mo))
+            call(['msgfmt', '-o', mo, po])
         call(['make', '-C', 'docs', 'latexpdf'])
-        self.data_files.extend([('share/doc/debomatic',
-                                 ['docs/_build/latex/Deb-o-Matic.pdf'])])
-        self.install_files('etc')
-        self.install_files('usr')
-        self.install_files('modules', 'share/debomatic')
-        with SbuildCommands():
-            self.install_files('sbuildcommands', 'share/debomatic', True)
-        self.install_files('locale', 'share')
-        install_data.run(self)
-        mkpath(os.path.join(self.install_dir, 'sbin'))
-        if os.path.isabs(self.install_dir):
-            install_dir = self.install_dir
-        else:
-            install_dir = os.path.join(os.getcwd(), self.install_dir)
-        dstlink = os.path.join(install_dir, 'sbin/debomatic')
-        if os.path.islink(dstlink):
-            os.remove(dstlink)
-        copy_file(os.path.join(install_dir, 'share/debomatic/debomatic'),
-                  dstlink, link='sym')
 
-    def install_files(self, rootdir, prefix='', empty=False):
-        filelist = []
+
+class Install(install, object):
+
+    def run(self):
+        data_files.append(('share/debomatic', ['debomatic']))
+        data_files.append(('share/man/man1', ['docs/debomatic.1']))
+        data_files.append(('share/doc/debomatic',
+                           ['docs/_build/latex/Deb-o-Matic.pdf']))
+        self.add_content('modules', 'share/debomatic')
+        self.add_content('etc', '/')
+        self.add_content('usr', '/')
+        self.add_content('sbuildcommands', 'share/debomatic')
+        self.add_content('locale', 'share')
+        super(Install, self).run()
+
+    def add_content(self, rootdir, prefix):
         for root, subFolders, files in os.walk(rootdir):
-            dirlist = []
             for file in files:
-                dirlist.append(os.path.join(root, file))
-            if dirlist or empty:
-                filelist.append((os.path.join(prefix, root), dirlist))
-        if not prefix:
-            orig_prefix = self.install_dir
-            orig_data_files = self.data_files
-            self.install_dir = sub('/*usr/*$', '/', self.install_dir)
-            self.data_files = filelist
-            install_data.run(self)
-            self.install_dir = orig_prefix
-            self.data_files = orig_data_files
-        else:
-            self.data_files.extend(filelist)
+                data_files.append((os.path.join(prefix, root),
+                                   [os.path.join(root, file)]))
 
 
 setup(name='debomatic',
@@ -117,6 +73,6 @@ setup(name='debomatic',
       url='http://debomatic.github.io',
       license='GNU GPL',
       packages=['Debomatic'],
-      data_files=[('share/debomatic', ['debomatic']),
-                  ('share/man/man1', ['docs/debomatic.1'])],
-      cmdclass={'install_data': InstallData})
+      data_files=data_files,
+      cmdclass={'build': Build,
+                'install': Install})
