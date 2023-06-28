@@ -3,25 +3,25 @@
 [unstable]
 suite: unstable
 mirror: http://deb.debian.org/debian
-components: main contrib non-free
+components: main contrib non-free non-free-firmware
 
 [experimental]
 suite: unstable
 mirror: http://deb.debian.org/debian
-components: main contrib non-free
-extramirrors: deb http://deb.debian.org/debian experimental main contrib non-free
+components: main contrib non-free non-free-firmware
+extramirrors: deb http://deb.debian.org/debian experimental main contrib non-free non-free-firmware
 
 [testing]
 suite: testing
 mirror: http://deb.debian.org/debian
-components: main contrib non-free
+components: main contrib non-free non-free-firmware
 
 [stable]
 suite: stable
 mirror: http://deb.debian.org/debian
-components: main contrib non-free
-extramirrors: deb http://deb.debian.org/debian-security stable-security main contrib non-free
-              deb http://deb.debian.org/debian stable-updates main contrib non-free
+components: main contrib non-free non-free-firmware
+extramirrors: deb http://deb.debian.org/debian-security stable-security main contrib non-free non-free-firmware
+              deb http://deb.debian.org/debian stable-updates main contrib non-free non-free-firmware
 
 [oldstable]
 suite: oldstable
@@ -40,10 +40,10 @@ extramirrors: deb http://deb.debian.org/debian-security oldoldstable/updates mai
 [stable-backports]
 suite: stable
 mirror: http://deb.debian.org/debian
-components: main contrib non-free
-extramirrors: deb http://deb.debian.org/debian-security stable-security main contrib non-free
-              deb http://deb.debian.org/debian stable-updates main contrib non-free
-              deb http://deb.debian.org/debian stable-backports main contrib non-free
+components: main contrib non-free non-free-firmware
+extramirrors: deb http://deb.debian.org/debian-security stable-security main contrib non-free non-free-firmware
+              deb http://deb.debian.org/debian stable-updates main contrib non-free non-free-firmware
+              deb http://deb.debian.org/debian stable-backports main contrib non-free non-free-firmware
 
 [oldstable-backports]
 suite: oldstable
@@ -66,27 +66,28 @@ extramirrors: deb http://deb.debian.org/debian-security oldoldstable/updates mai
 
 # Ubuntu
 
+[mantic]
+suite: mantic
+mirror: http://archive.ubuntu.com/ubuntu
+components: main restricted universe multiverse
+extramirrors: deb http://debomatic-amd64.debian.net/debomatic/kinetic mantic main
+extrapackages: pkgbinarymangler
+
+
+[lunar]
+suite: lunar
+mirror: http://archive.ubuntu.com/ubuntu
+components: main restricted universe multiverse
+extramirrors: deb http://archive.ubuntu.com/ubuntu lunar-updates main restricted universe multiverse
+              deb http://archive.ubuntu.com/ubuntu lunar-security main restricted universe multiverse
+extrapackages: pkgbinarymangler
+
 [kinetic]
 suite: kinetic
 mirror: http://archive.ubuntu.com/ubuntu
 components: main restricted universe multiverse
-extramirrors: deb http://debomatic-amd64.debian.net/debomatic/kinetic kinetic main
-extrapackages: pkgbinarymangler
-
-[jammy]
-suite: jammy
-mirror: http://archive.ubuntu.com/ubuntu
-components: main restricted universe multiverse
-extramirrors: deb http://archive.ubuntu.com/ubuntu jammy-updates main restricted universe multiverse
-              deb http://archive.ubuntu.com/ubuntu jammy-security main restricted universe multiverse
-extrapackages: pkgbinarymangler
-
-[impish]
-suite: impish
-mirror: http://archive.ubuntu.com/ubuntu
-components: main restricted universe multiverse
-extramirrors: deb http://archive.ubuntu.com/ubuntu impish-updates main restricted universe multiverse
-              deb http://archive.ubuntu.com/ubuntu impish-security main restricted universe multiverse
+extramirrors: deb http://archive.ubuntu.com/ubuntu kinetic-updates main restricted universe multiverse
+              deb http://archive.ubuntu.com/ubuntu kinetic-security main restricted universe multiverse
 extrapackages: pkgbinarymangler
 
 [focal]
