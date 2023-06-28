@@ -70,7 +70,7 @@ extramirrors: deb http://deb.debian.org/debian-security oldoldstable/updates mai
 suite: mantic
 mirror: http://archive.ubuntu.com/ubuntu
 components: main restricted universe multiverse
-extramirrors: deb http://debomatic-amd64.debian.net/debomatic/kinetic mantic main
+extramirrors: deb http://debomatic-amd64.debian.net/debomatic/mantic mantic main
 extrapackages: pkgbinarymangler
 
 
@@ -80,14 +80,6 @@ mirror: http://archive.ubuntu.com/ubuntu
 components: main restricted universe multiverse
 extramirrors: deb http://archive.ubuntu.com/ubuntu lunar-updates main restricted universe multiverse
               deb http://archive.ubuntu.com/ubuntu lunar-security main restricted universe multiverse
-extrapackages: pkgbinarymangler
-
-[kinetic]
-suite: kinetic
-mirror: http://archive.ubuntu.com/ubuntu
-components: main restricted universe multiverse
-extramirrors: deb http://archive.ubuntu.com/ubuntu kinetic-updates main restricted universe multiverse
-              deb http://archive.ubuntu.com/ubuntu kinetic-security main restricted universe multiverse
 extrapackages: pkgbinarymangler
 
 [focal]
