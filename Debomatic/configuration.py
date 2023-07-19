@@ -46,6 +46,7 @@ modules = {'autopkgtest': {'options': str},
                       'authrequired': bool, 'user': str, 'passwd': str,
                       'success': str, 'failure': str, 'lintian': bool},
            'piuparts': {'options': str},
+           'reprepro': {'_binary': str, '_basedir': str, 'dists': str},
            'repository': {'gpgkey': str, 'pubring': str}}
 dists = {'suite': str, 'mirror': str, 'components': str,
          '_extramirrors': str, '_extrapackages': str}
