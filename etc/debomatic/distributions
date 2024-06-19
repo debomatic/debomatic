@@ -30,13 +30,6 @@ components: main contrib non-free
 extramirrors: deb http://deb.debian.org/debian-security oldstable/updates main contrib non-free
               deb http://deb.debian.org/debian oldstable-updates main contrib non-free
 
-[oldoldstable]
-suite: oldoldstable
-mirror: http://deb.debian.org/debian
-components: main contrib non-free
-extramirrors: deb http://deb.debian.org/debian-security oldoldstable/updates main contrib non-free
-              deb http://deb.debian.org/debian oldoldstable-updates main contrib non-free
-
 [stable-backports]
 suite: stable
 mirror: http://deb.debian.org/debian
@@ -53,33 +46,31 @@ extramirrors: deb http://deb.debian.org/debian-security oldstable/updates main c
               deb http://deb.debian.org/debian oldstable-updates main contrib non-free
               deb http://deb.debian.org/debian oldstable-backports main contrib non-free
 
-[oldoldstable-backports]
-suite: oldoldstable
-mirror: http://deb.debian.org/debian
-components: main contrib non-free
-extramirrors: deb http://deb.debian.org/debian-security oldoldstable/updates main contrib non-free
-              deb http://deb.debian.org/debian oldoldstable-updates main contrib non-free
-              deb http://deb.debian.org/debian oldoldstable-backports main contrib non-free
-
-
 
 
 # Ubuntu
 
-[mantic]
-suite: mantic
+[oracular]
+suite: oracular
 mirror: http://archive.ubuntu.com/ubuntu
 components: main restricted universe multiverse
-extramirrors: deb http://debomatic-amd64.debian.net/debomatic/mantic mantic main
 extrapackages: pkgbinarymangler
 
 
-[lunar]
-suite: lunar
+[noble]
+suite: noble
 mirror: http://archive.ubuntu.com/ubuntu
 components: main restricted universe multiverse
-extramirrors: deb http://archive.ubuntu.com/ubuntu lunar-updates main restricted universe multiverse
-              deb http://archive.ubuntu.com/ubuntu lunar-security main restricted universe multiverse
+extramirrors: deb http://archive.ubuntu.com/ubuntu noble-updates main restricted universe multiverse
+              deb http://archive.ubuntu.com/ubuntu noble-security main restricted universe multiverse
+extrapackages: pkgbinarymangler
+
+[jammy]
+suite: jammy
+mirror: http://archive.ubuntu.com/ubuntu
+components: main restricted universe multiverse
+extramirrors: deb http://archive.ubuntu.com/ubuntu jammy-updates main restricted universe multiverse
+              deb http://archive.ubuntu.com/ubuntu jammy-security main restricted universe multiverse
 extrapackages: pkgbinarymangler
 
 [focal]
