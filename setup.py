@@ -53,7 +53,7 @@ class Install(install, object):
                            ['docs/_build/latex/Deb-o-Matic.pdf']))
         self.add_content('modules', 'share/debomatic')
         self.add_content('etc', '/')
-        self.add_content('lib', '/')
+        self.add_content('usr', '/')
         self.add_content('sbuildcommands', 'share/debomatic')
         self.add_content('locale', 'share')
         super(Install, self).run()
