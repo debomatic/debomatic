@@ -42,7 +42,7 @@ You can follow the instructions described in the `previous section`_ to install
 Deb-o-Matic on your system.
 
 .. Links
-.. _Deb-o-Matic home page: http://debomatic.github.io/
+.. _Deb-o-Matic home page: https://debomatic.github.io/
 .. _Deb-o-Matic download page: https://github.com/debomatic/debomatic/releases
 .. _Git: https://github.com/debomatic/debomatic
 .. _previous section: #installation-of-the-release-tarball
