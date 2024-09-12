@@ -269,6 +269,33 @@ repository.
 This option indicates the path where to look for the GPG keyring used to
 sign the Release file of the repository.
 
+Retry
+-----
+
+This module allows automatically rescheduling a failed build on a
+different distribution.
+
+The primary use case for this is regression testing, where we want
+to see if a set of packages causes build failures that do not happen
+without them.
+
+Having two distributions that differ only in these packages, we can
+automatically trigger a retry on the 'base' distribution if there's a
+failure on the 'modified' one.
+
+This module does nothing unless the ``dists`` configuration item is
+defined.
+
+Parameters
+..........
+
+* ``dists``
+
+A mapping of distributions where rescheduling should be done. The keys
+in this dict are the distribution names where failures should trigger
+a retry, and the values are the distribution names where the build
+should be retried. Make sure not to configure a build retry loop!
+
 SourceUpload
 ------------
 
