@@ -6,7 +6,7 @@ Build and installation requirements
 
 In order to build and install Deb-o-Matic, the following packages are required:
 
-* python3 (>= 3.2)
+* python3 (>= 3.9)
 
 The following packages are required to install documentation and translations:
 
@@ -23,11 +23,10 @@ Runtime requirements
 
 In order to be able to run Deb-o-Matic, the following packages are required:
 
-* python3 (>= 3.2)
+* python3 (>= 3.9)
 * sbuild (>= 0.67.0-1)
 * schroot (>= 1.6.10-2)
 * debootstrap, cdebootstrap, or qemu-debootstrap
-* python3-toposort
 
 To enable additional features, you may want to install these packages:
 

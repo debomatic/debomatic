@@ -24,7 +24,7 @@ from glob import glob
 from logging import debug
 from re import findall
 from sys import path
-from toposort import toposort_flatten as toposort
+from graphlib import TopologicalSorter as TS, CycleError
 
 from Debomatic import dom
 from .process import ModulePool
@@ -199,9 +199,9 @@ class Module():
                 _afters = self._instances[instance]._after
                 modules[instance] = _deps.union(_afters)
         try:
-            return [m for m in toposort(modules) if m in self._instances]
-        except ValueError as e:
-            circular = findall(r'.*?\(\'?(\S+?)\'?,', e.args[0])
+            return [m for m in TS(modules).static_order() if m in self._instances]
+        except CycleError as e:
+            circular = set(e.args[1])
             for instance in circular:
                 self._instances[instance]._disabled = True
             debug(_('Circular dependencies found, disabled modules: %s')
