@@ -1,6 +1,6 @@
 # Deb-o-Matic - SourceUpload module
 #
-# Copyright (C) 2014-2023 Luca Falavigna
+# Copyright (C) 2014-2024 Luca Falavigna
 #
 # Authors: Luca Falavigna <dktrkranz@debian.org>
 #

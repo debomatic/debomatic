@@ -1,6 +1,6 @@
 # Deb-o-Matic
 #
-# Copyright (C) 2007-2023 Luca Falavigna
+# Copyright (C) 2007-2024 Luca Falavigna
 #
 # Author: Luca Falavigna <dktrkranz@debian.org>
 #
