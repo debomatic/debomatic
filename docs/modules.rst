@@ -269,6 +269,36 @@ repository.
 This option indicates the path where to look for the GPG keyring used to
 sign the Release file of the repository.
 
+Reprepro
+--------
+
+This is an alternative to the ```Repository``` module, using the
+```reprepro``` tool to manage package repositories. The main
+advantage over ```Repository``` is being able to handle different
+repositories for different distributions.
+
+Parameters
+..........
+
+* ```binary```
+
+The path name of the ```reprepro``` executable. The default is
+```/usr/bin/reprepro```.
+
+* ```basedir```
+
+The base ```reprepro``` directory in case that needs to be passed
+on the command line (the ```-b``` option).
+
+* ```dists```
+
+A list of distributions where this module should get triggered.
+If this list is not configured, nothing will be done.
+
+The built packages will be stored in the ```reprepro``` distribution
+with the same name as the build distribution, and ```reprepro```
+should be preconfigured to have these.
+
 SourceUpload
 ------------
 
