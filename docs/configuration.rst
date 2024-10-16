@@ -259,7 +259,7 @@ to pick any change to one of these options.
  string must contain two ``%%(dist)s`` arguments which allows to specify
  dynamically the private repository name, for example:
 
- *deb https://debomatic.repository/debomatic/%%(dist)s %%(dist)s main*
+ *deb http://debomatic.repository/debomatic/%%(dist)s %%(dist)s main*
 
 gpg section
 ...........
