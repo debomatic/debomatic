@@ -5,6 +5,7 @@ ConditionPathExists=/etc/debomatic/debomatic.conf
 
 [Service]
 Type=notify
+User=sbuild
 ExecStart=/usr/sbin/debomatic -c /etc/debomatic/debomatic.conf -i
 ExecStop=/usr/sbin/debomatic -c /etc/debomatic/debomatic.conf -q
 KillMode=process

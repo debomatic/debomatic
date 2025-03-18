@@ -67,8 +67,8 @@ class Process:
         self._set_pid()
 
     def _get_pid(self):
-        self.pidfile = ('/var/run/debomatic-%s' %
-                        self._sha256(self.incoming))
+        self.pidfile = (
+            f'/tmp/debomatic-{self._sha256(self.incoming)}')
         try:
             with open(self.pidfile, 'r') as fd:
                 self.pid = int(fd.read().strip())
@@ -77,8 +77,8 @@ class Process:
 
     def _lock(self, wait=False):
         self.fd = None
-        self.lockfile = ('/var/run/debomatic-%s.lock' %
-                         self._sha256(self.incoming))
+        self.lockfile = (
+            f'/tmp/debomatic-{self._sha256(self.incoming)}.lock')
         try:
             self.fd = open(self.lockfile, 'w')
             flags = LOCK_EX if wait else LOCK_EX | LOCK_NB
@@ -105,8 +105,8 @@ class Process:
         exit()
 
     def _set_pid(self):
-        self.pidfile = ('/var/run/debomatic-%s' %
-                        self._sha256(self.incoming))
+        self.pidfile = (
+            f'/tmp/debomatic-{self._sha256(self.incoming)}')
         pid = str(os.getpid())
         with open(self.pidfile, 'w+') as fd:
             fd.write('%s\n' % pid)

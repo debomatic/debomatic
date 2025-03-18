@@ -25,8 +25,7 @@ In order to be able to run Deb-o-Matic, the following packages are required:
 
 * python3 (>= 3.9)
 * sbuild (>= 0.67.0-1)
-* schroot (>= 1.6.10-2)
-* debootstrap, cdebootstrap, or qemu-debootstrap
+* mmdebstrap
 
 To enable additional features, you may want to install these packages:
 
@@ -35,7 +34,7 @@ To enable additional features, you may want to install these packages:
 * debian-archive-keyring
 * ubuntu-archive-keyring or ubuntu-keyring
 * lintian
-* piuparts (>= 0.45)
+* piuparts (>= 1.5.0)
 * autopkgtest (>= 4.0)
 * blhc
 * devscripts

@@ -54,9 +54,6 @@ class Debomatic(Parser, Process):
         parser.add_argument('-q', '--quit', action='store_true',
                             help='terminate Deb-o-Matic processes')
         args = parser.parse_args()
-        if os.getuid():
-            error(_('You must run Deb-o-Matic as root'))
-            exit(1)
         if args.configfile:
             self.conffile = args.configfile[0]
         if args.interactive:

@@ -28,11 +28,10 @@ from .exceptions import DebomaticConffileError
 
 
 core = {'debomatic':
-        {'builduser': str, 'debootstrap': str, 'incoming': str,
-         'architecture': str, 'threads': int, 'inotify': bool, 'sleep': int,
-         'interval': int, 'logfile': str, 'loglevel': str},
+        {'incoming': str, 'architecture': str, 'threads': int, 'inotify': bool,
+         'sleep': int, 'interval': int, 'logfile': str, 'loglevel': str},
         'distributions': {'list': str, 'blacklist': str, 'mapper': dict},
-        'chroots': {'profile': str, 'commands': str},
+        'chroots': {'commands': str},
         'gpg': {'gpg': bool, 'keyring': str},
         'modules': {'modules': bool, 'path': str,
                     'threads': int, 'blacklist': str}}
@@ -46,7 +45,7 @@ modules = {'autopkgtest': {'options': str},
                       'authrequired': bool, 'user': str, 'passwd': str,
                       'success': str, 'failure': str, 'lintian': bool},
            'piuparts': {'options': str},
-           'repository': {'gpgkey': str, 'pubring': str}}
+           'repository': {'gpgkey': str, 'keyring': str}}
 dists = {'suite': str, 'mirror': str, 'components': str,
          '_extramirrors': str, '_extrapackages': str}
 
@@ -74,7 +73,7 @@ class Parser:
                 _option = literal_eval(element.get(section, option))
             else:
                 _option = element.get(section, option)
-            assert(isinstance(_option, configtype))
+            assert isinstance(_option, configtype)
         except NoOptionError:
             if not option.startswith('_'):
                 fubar = True

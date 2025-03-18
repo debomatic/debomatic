@@ -47,7 +47,7 @@ class DebomaticModule_Repository:
     class Lock:
 
         def __init__(self, distribution, architecture):
-            self._file = ('/var/run/debomatic-%s-%s.apt.lock' %
+            self._file = ('/tmp/debomatic-%s-%s.apt.lock' %
                           (distribution, architecture))
             self._skip = False
 
@@ -70,7 +70,7 @@ class DebomaticModule_Repository:
     def update_repository(self, args):
         if args.opts.has_section('repository'):
             gpgkey = args.opts.get('repository', 'gpgkey')
-            pubring = args.opts.get('repository', 'pubring')
+            keyring = args.opts.get('repository', 'keyring')
         else:
             return
         if not os.access(self.af, os.X_OK):
@@ -126,12 +126,12 @@ class DebomaticModule_Repository:
                         fd.write(data.replace('MD5Sum',
                                  'NotAutomatic: yes\nMD5Sum'))
                 with open(release_gpg, 'w') as fd:
-                    Popen([self.gpg, '--no-default-keyring', '--keyring',
-                           pubring, '-u', gpgkey, '--yes', '-a', '-o', fd.name,
+                    Popen([self.gpg, '--no-default-keyring', '--homedir',
+                           keyring, '-u', gpgkey, '--yes', '-a', '-o', fd.name,
                            '-b', release_file], cwd=archive).wait()
                 with open(inrelease_gpg, 'w') as fd:
-                    Popen([self.gpg, '--no-default-keyring', '--keyring',
-                           pubring, '-u', gpgkey, '--yes', '-a', '-o', fd.name,
+                    Popen([self.gpg, '--no-default-keyring', '--homedir',
+                           keyring, '-u', gpgkey, '--yes', '-a', '-o', fd.name,
                            '--clearsign', release_file], cwd=archive).wait()
         olddists = os.readlink(distslink)
         (tmp, tmplink) = mkstemp(prefix='.',

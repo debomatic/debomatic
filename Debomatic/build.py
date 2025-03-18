@@ -23,11 +23,8 @@ import os
 from ast import literal_eval
 from contextlib import contextmanager
 from logging import debug, error, info
-from pwd import getpwnam
-from re import findall, match, search, sub
-from shutil import chown, copy, copymode, move, rmtree
+from re import findall, match, sub
 from subprocess import Popen, check_output
-from tempfile import NamedTemporaryFile
 from threading import Semaphore
 from time import strftime
 from urllib.request import Request, urlopen
@@ -87,8 +84,8 @@ class BuildTask:
 
     def match(self, package, version, distribution):
         return (self._package == package and
-           self._version == version and
-           self._distribution == distribution)
+                self._version == version and
+                self._distribution == distribution)
 
 
 class Build:
@@ -96,8 +93,6 @@ class Build:
     def __init__(self, changesfile=None, package=None, distribution=None,
                  binnmu=None, extrabd=None, maintainer=None, origin=None,
                  uploader=None):
-        self.uid = None
-        self.gid = None
         self.buildtask = None
         self.changesfile = changesfile
         self.package = package
@@ -114,12 +109,6 @@ class Build:
         self.dpr = False
 
     def _build(self):
-        try:
-            self.uid = getpwnam(dom.opts.get('debomatic', 'builduser')).pw_uid
-            self.gid = getpwnam('sbuild').pw_gid
-        except KeyError:
-            self.uid = 0
-            self.gid = 0
         self._parse_distribution()
         if self.distribution in dom.opts.get('distributions', 'blacklist'):
             self._remove_files()
@@ -148,7 +137,7 @@ class Build:
         uploader_email = ''
         packageversion = os.path.splitext(os.path.basename(self.dscfile))[0]
         builddir = os.path.join(self.poolpath, 'pool', packageversion)
-        self._makedirs(builddir, True)
+        os.makedirs(builddir, exist_ok=True)
         if self.uploader:
             uploader_email = self.uploader[1].decode('utf-8')
         architecture = dom.opts.get('debomatic', 'architecture')
@@ -167,15 +156,13 @@ class Build:
         mod.args.hostarchitecture = self.hostarchitecture
         mod.execute_hook('pre_build')
         info(_('Building %s') % os.path.basename(self.dscfile))
-        command = ['sbuild', '-A', '-s', '-d', self.distribution,
-                   '--arch=%s' % architecture, '--no-run-lintian', '-c',
-                   '%s-%s-debomatic' % (self.distribution, architecture),
-                   self.dscfile]
+        command = ['sbuild', '--chroot-mode=unshare', '-A', '-s',
+                   '-d', self.distribution, f'--arch={architecture}',
+                   '-c', f'{self.distribution}-{architecture}-debomatic',
+                   '--no-run-lintian', self.dscfile]
         if self.hostarchitecture:
-            command.pop(5)
-            command.insert(5, '--host=%s' % self.hostarchitecture)
-            command.insert(6, '--add-depends=libc6-dev:%s' %
-                           self.hostarchitecture)
+            command.pop(6)
+            command.insert(6, '--host=%s' % self.hostarchitecture)
         suite = dom.dists.get(self.distribution, 'suite')
         if self.distribution != suite:
             command.insert(-1, '--build-dep-resolver=aspcud')
@@ -241,13 +228,12 @@ class Build:
                                 {'dist': os.path.basename(self.poolpath)}))
         with open(os.devnull, 'w') as fd:
             try:
-                ppath = os.path.join(self.poolpath, 'pool', packageversion)
-                buildlink = os.path.join(ppath, '%s.buildlog' % packageversion)
+                buildlink = os.path.join(
+                    builddir, f'{packageversion}.buildlog')
                 if os.path.exists(buildlink):
                     os.unlink(buildlink)
                 os.symlink(buildlog, buildlink)
-                process = Popen(command, stdout=fd, stderr=fd, cwd=ppath,
-                                preexec_fn=self._demote(),
+                process = Popen(command, stdout=fd, stderr=fd, cwd=builddir,
                                 start_new_session=True)
                 with self.buildtask.set_pid(process.pid):
                     process.wait()
@@ -285,12 +271,6 @@ class Build:
             commands.append('--log-external-command-output')
             commands.append('--log-external-command-error')
         return commands
-
-    def _demote(self):
-        def result():
-            os.setgid(self.gid)
-            os.setuid(self.uid)
-        return result
 
     def _fetch_files(self):
 
@@ -395,19 +375,6 @@ class Build:
                            'mapper': mapper[self.origin]})
                     self.origin = mapper[self.origin]
 
-    def _makedirs(self, directory, change_owner=False):
-        os.makedirs(directory, exist_ok=True)
-        if change_owner:
-            chown(directory, user=self.uid)
-            for root, dirs, files in os.walk(directory):
-                try:
-                    for name in dirs:
-                        chown(os.path.join(root, name), user=self.uid)
-                    for name in files:
-                        chown(os.path.join(root, name), user=self.uid)
-                except FileNotFoundError:
-                    continue
-
     def _parse_distribution(self):
         if not self.distribution:
             try:
@@ -445,18 +412,16 @@ class Build:
     def _setup_chroot(self):
         action = None
         self.buildpath = os.path.join(self.incoming, self.distribution)
-        self._makedirs(self.buildpath)
-        self._makedirs(self.poolpath)
+        os.makedirs(self.buildpath, exist_ok=True)
+        os.makedirs(self.poolpath, exist_ok=True)
         architecture = dom.opts.get('debomatic', 'architecture')
         if architecture == 'system':
             b_arch = check_output(['dpkg-architecture', '-qDEB_BUILD_ARCH'])
             architecture = b_arch.strip().decode('utf-8')
-        debootstrap = dom.opts.get('debomatic', 'debootstrap')
         chrootname = '%s-%s-debomatic' % (self.distribution, architecture)
         self._lock_chroot(chrootname)
-        with open(os.devnull, 'w') as fd:
-            chroots = check_output(['schroot', '-l'], stderr=fd)
-        if not search('chroot:%s' % chrootname, chroots.decode()):
+        chroot = os.path.expanduser(f'~/.cache/sbuild/{chrootname}.tar.zst')
+        if not os.path.isfile(chroot):
             action = 'create'
         mod = Module()
         mod.args.architecture = architecture
@@ -466,46 +431,44 @@ class Build:
         mod.args.dists = dom.dists
         mod.execute_hook('pre_chroot')
         for d in ('logs', 'pool'):
-            self._makedirs(os.path.join(self.buildpath, d))
+            os.makedirs(os.path.join(self.buildpath, d),
+                        exist_ok=True)
         if action:
-            profile = dom.opts.get('chroots', 'profile')
-            if not os.path.isdir(os.path.join('/etc/schroot', profile)):
-                error(_('schroot profile %s not found') % profile)
-                self._unlock_chroot(chrootname)
-                raise DebomaticError
             logfile = ('%s/logs/%s.%s' %
                        (self.buildpath, self.distribution,
                         strftime('%Y%m%d_%H%M%S')))
             target = dom.dists.get(self.distribution, 'suite')
-            if target == self.distribution:
-                pattern = '%s-%s-debomatic' % (self.distribution, architecture)
-            else:
-                pattern = '%s-%s-%s-debomatic' % (target, architecture,
-                                                  self.distribution)
-            if os.path.isdir(os.path.join(self.buildpath, self.distribution)):
-                rmtree(os.path.join(self.buildpath, self.distribution))
             with open(logfile, 'w') as fd:
                 try:
                     debug(_('Creating chroot %(dist)s-%(arch)s-debomatic') %
                           {'dist': self.distribution, 'arch': architecture})
                     components = ','.join(dom.dists.get(self.distribution,
                                                         'components').split())
-                    command = ['sbuild-createchroot',
-                               '--arch=%s' % architecture,
-                               '--chroot-suffix=-debomatic',
-                               '--debootstrap=%s' % debootstrap,
-                               '--components=%s' % components, target,
-                               os.path.join(self.buildpath, self.distribution),
+                    command = ['mmdebstrap',
+                               f'--arch={architecture}',
+                               f'--components={components}',
+                               target, chroot,
                                dom.dists.get(self.distribution, 'mirror')]
-                    if target != self.distribution:
-                        command[2] = ('--chroot-suffix=-%s-debomatic' %
-                                      self.distribution)
                     if dom.dists.has_option(self.distribution,
                                             'extrapackages'):
                         packages = dom.dists.get(self.distribution,
                                                  'extrapackages').split()
                         command.insert(-3, '--include=%s' % ','.join(packages))
                         packages = '--include=%s' % ','.join(packages)
+                    if dom.dists.has_option(self.distribution, 'extramirrors'):
+                        extramirrors = dom.dists.get(
+                            self.distribution, 'extramirrors')
+                        command.append(f'{extramirrors}')
+                        if dom.opts.has_section('repository'):
+                            keyring = dom.opts.get('repository', 'keyring')
+                            keyring_chroot = os.path.dirname(keyring)
+                            command.append('--setup-hook=mkdir -p '
+                                           f'$1/{keyring}')
+                            command.append('--setup-hook=copy-in '
+                                           f'{keyring} {keyring_chroot}')
+                            command.append('--aptopt='
+                                           'Acquire::https::Verify-Peer '
+                                           '"false"')
                     process = Popen(command, stdout=fd, stderr=fd)
                     with self.buildtask.set_pid(process.pid):
                         process.wait()
@@ -514,41 +477,14 @@ class Build:
                               % {'dist': self.distribution,
                                  'arch': architecture})
                         mod.execute_hook('post_chroot')
+                        os.unlink(chroot)
                         self._unlock_chroot(chrootname)
                         raise DebomaticError
                 except OSError:
-                    error(_('Unable to launch sbuild-createchroot'))
+                    error(_('Unable to launch mmdebstrap'))
                     mod.execute_hook('post_chroot')
                     self._unlock_chroot(chrootname)
                     raise DebomaticError
-            if dom.dists.has_option(self.distribution, 'extramirrors'):
-                with open(os.path.join(self.buildpath, self.distribution,
-                                       'etc/apt/sources.list'), 'a') as fd:
-                    fd.write(dom.dists.get(self.distribution, 'extramirrors'))
-            if dom.opts.has_option('repository', 'pubring'):
-                if os.path.isfile(dom.opts.get('repository', 'pubring')):
-                    copy(dom.opts.get('repository', 'pubring'),
-                         os.path.join(self.buildpath, self.distribution,
-                                      'etc/apt/trusted.gpg.d/debomatic.gpg'))
-            chroots = '/etc/schroot/chroot.d'
-            for file in os.listdir(chroots):
-                if file.startswith(pattern):
-                    with NamedTemporaryFile(mode='w+', delete=False) as tmp:
-                        with open(os.path.join(chroots, file)) as fd:
-                            for line in fd:
-                                if line.startswith('['):
-                                    tmp.write('[%s-%s-debomatic]\n' %
-                                              (self.distribution,
-                                               architecture))
-                                elif line.startswith('description'):
-                                    tmp.write(line.replace(target,
-                                              self.distribution))
-                                elif line.startswith('profile'):
-                                    tmp.write('profile=%s\n' % profile)
-                                else:
-                                    tmp.write(line)
-                    copymode(fd.name, tmp.name)
-                    move(tmp.name, fd.name)
             mod.args.success = True
             mod.execute_hook('post_chroot')
         self._unlock_chroot(chrootname)

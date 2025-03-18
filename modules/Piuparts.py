@@ -28,7 +28,7 @@ from subprocess import call
 class DebomaticModule_Piuparts:
 
     def __init__(self):
-        self.piuparts = '/usr/sbin/piuparts'
+        self.piuparts = '/usr/bin/piuparts'
 
     def post_build(self, args):
         if not args.success:
@@ -43,7 +43,6 @@ class DebomaticModule_Piuparts:
             options = []
         distribution = args.distribution
         mirror = args.dists.get(distribution, 'mirror')
-        schroot = '%s-%s-debomatic' % (distribution, args.architecture)
         resultdir = os.path.join(args.directory, 'pool', args.package)
         for filename in os.listdir(resultdir):
             if filename.endswith('.changes'):
@@ -51,9 +50,10 @@ class DebomaticModule_Piuparts:
                 with open(log, 'a') as fd:
                     cmd = [self.piuparts,
                            '-I', '/build/.*',
-                           '-d', '%s' % distribution,
-                           '-D', '%s' % mirror.split('/')[-1],
-                           '--schroot=chroot:%s' % schroot,
+                           '-d', distribution,
+                           '-D', mirror.split('/')[-1],
+                           ('--bootstrapcmd=mmdebstrap --skip=check/empty '
+                            f'--variant=minbase --arch={args.architecture}'),
                            os.path.join(resultdir, filename)]
                     for option in options:
                         cmd.insert(-1, option)

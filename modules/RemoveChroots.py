@@ -22,8 +22,7 @@
 
 import os
 from glob import glob
-from shutil import rmtree
-from subprocess import check_output as call
+from pathlib import Path
 from time import time
 
 
@@ -32,31 +31,11 @@ class DebomaticModule_RemoveChroots:
     def __init__(self):
         pass
 
-    def __purge_chroot(self, distribution, directory):
-        architecture = directory.split('-')[1]
-        chroots = call(['/usr/bin/schroot', '--all-chroots', '-l'])
-        sessions = call(['/usr/bin/schroot', '--all-sessions', '-l'])
-        chroot = '{0}-{1}-debomatic'.format(distribution, architecture)
-        if chroot in chroots.decode('utf-8'):
-            if chroot not in sessions.decode('utf-8'):
-                for directory in ('/etc/schroot/chroot.d',
-                                  '/etc/sbuild/chroot'):
-                    for pattern in ('{0}*'.format(chroot),
-                                    '*-{0}-{1}-debomatic*'.format(
-                                    architecture, distribution)):
-                        for dir in glob(os.path.join(directory, pattern)):
-                            if os.path.islink(dir):
-                                rmtree(os.readlink(dir))
-                            os.unlink(dir)
-
     def periodic(self, args):
         ctime = time()
         if args.opts.has_section('removechroots'):
             delta = args.opts.getint('removechroots', 'days') * 24 * 60 * 60
-            for distribution in os.listdir(args.directory):
-                chroot = os.path.join(args.directory,
-                                      distribution, distribution)
-                if os.path.isdir(chroot):
-                    ptime = os.stat(chroot).st_mtime
-                    if ptime + delta < ctime:
-                        self.__purge_chroot(distribution, args.directory)
+            for chroot in glob(f'{Path.home()}/.cache/sbuild/*-debomatic.*'):
+                ptime = os.stat(chroot).st_mtime
+                if ptime + delta < ctime:
+                    os.unlink(chroot)

@@ -28,17 +28,6 @@ This section is mandatory, Deb-o-Matic refuses to start if one of these
 options is missing from the configuration file. Also, Deb-o-Matic needs to be
 restarted to pick any change to one of these options.
 
-* ``builduser``
-
- This option indicates the user Deb-o-Matic will build packages under.
-
- Suggested value: ``sbuild``
-
-.. CAUTION::
-
- Make sure chosen user exists before launching Deb-o-Matic and is part of
- ``sbuild`` group, otherwise packages will not be built.
-
 * ``incoming``
 
  This option indicates the directory where Deb-o-Matic expects to find source
@@ -51,19 +40,6 @@ restarted to pick any change to one of these options.
 
  Make sure chosen directory exists before launching Deb-o-Matic, otherwise it
  will refuse to start.
-
-* ``debootstrap``
-
- This option indicates which debootstrap tool is required to create the chroot
- to build source packages from. Deb-o-Matic currently supports debootstrap,
- cdebootstrap, and qemu-debootstrap.
-
- Suggested value: ``debootstrap``
-
-.. CAUTION::
-
- Make sure chosen debootstrap utility is installed on your system, otherwise
- Deb-o-Matic will not be able to create chroots and build packages.
 
 * ``architecture``
 
@@ -181,18 +157,6 @@ This section is mandatory, Deb-o-Matic refuses to start if one of these
 options is missing from the configuration file. Also, Deb-o-Matic needs to be
 restarted to pick any change to one of these options.
 
-* ``profile``
-
- This option indicates which schroot profile the chroots must adhere to.
- Profile files must be stored under ``/etc/schroot`` directory.
-
- Suggested value: ``debomatic`
-
-.. CAUTION::
-
- Make sure chosen profile exists before launching Deb-o-Matic, otherwise 
- all chroots will not be created.
-
 * ``commands``
 
  This option indicates the directory where sbuild commands are stored. Commands
@@ -209,8 +173,8 @@ restarted to pick any change to one of these options.
 .. CAUTION::
 
  This directory needs to be bind mounted in the chroot for the scripts to
- be launched correctly. It is possible to do so by adjusting the schroot
- profile linked to the chroots used by Deb-o-Matic.
+ be launched correctly. It is possible to do so by adjusting the sbuild
+ configuration file.
 
 crossbuild section
 ..................

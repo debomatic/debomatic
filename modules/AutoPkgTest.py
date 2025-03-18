@@ -117,10 +117,11 @@ class DebomaticModule_AutoPkgTest:
                         output.write('\n\n')
                 output.flush()
 
+        chrootname = f'{args.distribution}-{args.architecture}-debomatic'
         adt = [self.adt, '--apt-upgrade', '--output-dir', self.resultdir_adt,
                '--summary', os.path.join(self.resultdir_adt, self.summary),
-               self.changesfile, '--', 'schroot',
-               '%s-%s-debomatic' % (args.distribution, args.architecture)]
+               self.changesfile, '--', 'unshare', '-t',
+               os.path.expanduser(f'~/.cache/sbuild/{chrootname}.tar.zst')]
         if self.options:
             adt.insert(-4, self.options)
 

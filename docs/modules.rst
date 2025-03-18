@@ -264,7 +264,7 @@ Parameters
 This option indicates the GPG ID used to sign the Release file of the
 repository.
 
-* ``pubring``
+* ``keyring``
 
 This option indicates the path where to look for the GPG keyring used to
 sign the Release file of the repository.
@@ -274,20 +274,3 @@ SourceUpload
 
 This module allows the creation of a .sourceupload.changes file to be used to
 upload source-only uploads to the Debian archive.
-
-UpdateChroots
--------------
-
-This module allows to update chroots after a certain amount of days.
-
-Parameters
-..........
-
-.. CAUTION::
-
- These parameters must be listed under the ``updatechroots`` section. Make
- sure you create it in your configuration file.
-
-* ``days``
-
-This option indicates the number of days after which chroots are updated.

@@ -22,7 +22,6 @@
 import os
 from glob import glob
 from logging import debug
-from re import findall
 from sys import path
 from graphlib import TopologicalSorter as TS, CycleError
 
@@ -199,7 +198,8 @@ class Module():
                 _afters = self._instances[instance]._after
                 modules[instance] = _deps.union(_afters)
         try:
-            return [m for m in TS(modules).static_order() if m in self._instances]
+            return [m for m in TS(modules).static_order()
+                    if m in self._instances]
         except CycleError as e:
             circular = set(e.args[1])
             for instance in circular:
