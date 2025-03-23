@@ -1,7 +1,7 @@
 # Deb-o-Matic - Package build path cleaner
 #
 # Copyright (C) 2009 Alessio Treglia
-# Copyright (C) 2009-2024 Luca Falavigna
+# Copyright (C) 2009-2025 Luca Falavigna
 #
 # Authors: Alessio Treglia <quadrispro@ubuntu.com>
 #
