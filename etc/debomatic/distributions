@@ -50,12 +50,19 @@ extramirrors: deb http://deb.debian.org/debian-security oldstable/updates main c
 
 # Ubuntu
 
-[oracular]
-suite: oracular
+[plucky]
+suite: plucky
 mirror: http://archive.ubuntu.com/ubuntu
 components: main restricted universe multiverse
 extrapackages: pkgbinarymangler
 
+[oracular]
+suite: oracular
+mirror: http://archive.ubuntu.com/ubuntu
+components: main restricted universe multiverse
+extramirrors: deb http://archive.ubuntu.com/ubuntu oracular-updates main restricted universe multiverse
+              deb http://archive.ubuntu.com/ubuntu oracular-security main restricted universe multiverse
+extrapackages: pkgbinarymangler
 
 [noble]
 suite: noble
@@ -71,12 +78,4 @@ mirror: http://archive.ubuntu.com/ubuntu
 components: main restricted universe multiverse
 extramirrors: deb http://archive.ubuntu.com/ubuntu jammy-updates main restricted universe multiverse
               deb http://archive.ubuntu.com/ubuntu jammy-security main restricted universe multiverse
-extrapackages: pkgbinarymangler
-
-[focal]
-suite: focal
-mirror: http://archive.ubuntu.com/ubuntu
-components: main restricted universe multiverse
-extramirrors: deb http://archive.ubuntu.com/ubuntu focal-updates main restricted universe multiverse
-              deb http://archive.ubuntu.com/ubuntu focal-security main restricted universe multiverse
 extrapackages: pkgbinarymangler
