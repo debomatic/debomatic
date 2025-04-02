@@ -1,3 +1,8 @@
+0.40 "ema" (2025-04-02)
+* mmdebstrap backend instead of schroot
+* Port to setuptools
+* Several bugfixes
+
 0.26 "melting" (2022-07-10)
 * Several bugfixes
 

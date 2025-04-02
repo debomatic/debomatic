@@ -66,7 +66,7 @@ class Install(install, object):
 
 
 setup(name='debomatic',
-      version='0.26',
+      version='0.40',
       author='Luca Falavigna',
       author_email='dktrkranz@debian.org',
       description='Automatic build machine for Debian source packages',
