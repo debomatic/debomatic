@@ -7,157 +7,247 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debomatic\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-08 11:18+0100\n"
+"POT-Creation-Date: 2025-03-28 07:40+0100\n"
 "PO-Revision-Date: 2015-08-30 14:27+0000\n"
 "Last-Translator: Américo Monteiro <Unknown>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2021-01-26 16:43+0000\n"
 "X-Generator: Launchpad (build e00fb96b2e64b75333d0178ec15cb78e5aadb64d)\n"
-"Language: pt\n"
 
-#: Debomatic/build.py:55
+#: Debomatic/build.py:52
 #, python-format
-msgid ""
-"Build already scheduled for package %(package)s_%(version)s in %(dist)s"
+msgid "Build already scheduled for package %(package)s_%(version)s in %(dist)s"
 msgstr ""
 "Compilação já agendada para o pacote %(package)s_%(version)s em %(dist)s"
 
-#: Debomatic/build.py:75
+#: Debomatic/build.py:72
 #, python-format
 msgid "Skipping removal of file %s"
 msgstr "A saltar a remoção do ficheiro %s"
 
-#: Debomatic/build.py:117
+#: Debomatic/build.py:115
 #, python-format
 msgid "Distribution %s is disabled"
 msgstr "Distribuição %s está desabilitada"
 
-#: Debomatic/build.py:161
+#: Debomatic/build.py:158
 #, python-format
 msgid "Building %s"
 msgstr "A compilar %s"
 
-#: Debomatic/build.py:232 Debomatic/build.py:532 Debomatic/build.py:540
-#: Debomatic/build.py:229 Debomatic/build.py:528 Debomatic/build.py:536
+#: Debomatic/build.py:241 Debomatic/build.py:528 Debomatic/build.py:536
 #, python-format
 msgid "Build of %s failed"
 msgstr "Falhou a compilação de %s"
 
-#: Debomatic/build.py:235 Debomatic/build.py:232
+#: Debomatic/build.py:244
 #, python-format
 msgid "Build of %s successful"
 msgstr ""
 
-#: Debomatic/build.py:242 Debomatic/build.py:239
+#: Debomatic/build.py:248
+msgid "Invocation of sbuild failed"
+msgstr ""
+
+#: Debomatic/build.py:251
 #, python-format
 msgid "Build of %s complete"
 msgstr "Compilação de %s completa"
 
-#: Debomatic/build.py:273 Debomatic/build.py:270
+#: Debomatic/build.py:282
 #, python-format
 msgid "Requesting URL %s"
 msgstr "A pedir URL %s"
 
-#: Debomatic/build.py:291 Debomatic/build.py:366 Debomatic/build.py:518
-#: Debomatic/build.py:288 Debomatic/build.py:363 Debomatic/build.py:514
+#: Debomatic/build.py:300 Debomatic/build.py:390 Debomatic/build.py:514
 #, python-format
 msgid "Bad .changes file: %s"
 msgstr "Ficheiro .changes inválido: %s"
 
-#: Debomatic/build.py:298 Debomatic/build.py:370 Debomatic/build.py:374
-#: Debomatic/build.py:295 Debomatic/build.py:367 Debomatic/build.py:371
+#: Debomatic/build.py:307 Debomatic/build.py:395 Debomatic/build.py:399
 #, python-format
 msgid "Distribution %s not configured"
 msgstr "Distribuição %s não configurada"
 
-#: Debomatic/build.py:302 Debomatic/build.py:319 Debomatic/build.py:299
-#: Debomatic/build.py:316
+#: Debomatic/build.py:311 Debomatic/build.py:328
 #, python-format
 msgid "Downloading missing %s"
 msgstr "A descarregar %s em falta"
 
-#: Debomatic/build.py:311 Debomatic/build.py:331 Debomatic/build.py:504
-#: Debomatic/build.py:516 Debomatic/build.py:308 Debomatic/build.py:328
-#: Debomatic/build.py:500 Debomatic/build.py:512
+#: Debomatic/build.py:320 Debomatic/build.py:340 Debomatic/build.py:500
+#: Debomatic/build.py:512
 #, python-format
 msgid "File %s added"
 msgstr "Ficheiro %s adicionado"
 
-#: Debomatic/build.py:313 Debomatic/build.py:333 Debomatic/build.py:310
-#: Debomatic/build.py:330
+#: Debomatic/build.py:322 Debomatic/build.py:342
 #, python-format
 msgid "Unable to fetch %s"
 msgstr "Incapaz de obter %s"
 
-#: Debomatic/build.py:349 Debomatic/build.py:346
+#: Debomatic/build.py:368 Debomatic/build.py:373
 #, python-format
 msgid "%(mapped)s mapped as %(mapper)s"
 msgstr "%(mapped)s mapeado como %(mapper)s"
 
-#: Debomatic/build.py:360 Debomatic/build.py:510 Debomatic/build.py:357
-#: Debomatic/build.py:506
+#: Debomatic/build.py:384 Debomatic/build.py:506
 #, python-format
 msgid "Unable to open %s"
 msgstr "Incapaz de abrir %s"
 
-#: Debomatic/build.py:383 Debomatic/build.py:380
+#: Debomatic/build.py:410
 #, python-format
 msgid "File %s removed"
 msgstr "Removido ficheiro %s"
 
-#: Debomatic/build.py:414 Debomatic/build.py:411
-#, python-format
-msgid "schroot profile %s not found"
-msgstr "Perfil %s de schroot não encontrado"
-
-#: Debomatic/build.py:428 Debomatic/build.py:425
+#: Debomatic/build.py:443
 #, python-format
 msgid "Creating chroot %(dist)s-%(arch)s-debomatic"
 msgstr "A criar chroot %(dist)s-%(arch)s-debomatic"
 
-#: Debomatic/build.py:452 Debomatic/build.py:449
+#: Debomatic/build.py:476
 #, python-format
 msgid "Failed creating %(dist)s-%(arch)s-debomatic"
 msgstr "Falha ao criar %(dist)s-%(arch)s-debomatic"
 
-#: Debomatic/build.py:459 Debomatic/build.py:456
-msgid "Unable to launch sbuild-createchroot"
-msgstr "Incapaz de lançar sbuild-createchroot"
+#: Debomatic/build.py:484
+#, fuzzy
+msgid "Unable to launch mmdebstrap"
+msgstr "Incapaz de lançar mmdebstrap"
 
-#: Debomatic/build.py:505 Debomatic/commands.py:40 Debomatic/build.py:501
+#: Debomatic/build.py:501 Debomatic/commands.py:41
 #, python-format
 msgid "Processing %s"
 msgstr "A processar %s"
 
-#: Debomatic/modules.py:80
+#: Debomatic/commands.py:76
+msgid "Performing a binNMU build"
+msgstr "A executar uma compilação binNMU"
+
+#: Debomatic/commands.py:87 Debomatic/commands.py:98 Debomatic/commands.py:124
+#: Debomatic/commands.py:135 Debomatic/debomatic.py:152
+#, python-format
+msgid "Thread for %s scheduled"
+msgstr "Thread para %s agendada"
+
+#: Debomatic/commands.py:90
+msgid "Performing a package rebuild with extra dependencies"
+msgstr "A executar uma recompilação de pacote com dependências extra"
+
+#: Debomatic/commands.py:101
+msgid "Killing build task"
+msgstr "A matar a tarefa de compilação"
+
+#: Debomatic/commands.py:110
+#, python-format
+msgid "Build killed for %(package)s_%(version)s in %(dist)s"
+msgstr "Morta a compilação para %(package)s_%(version)s em %(dist)s"
+
+#: Debomatic/commands.py:116
+msgid "Performing a porter build"
+msgstr "A executar uma compilação 'porter'"
+
+#: Debomatic/commands.py:127
+msgid "Performing a package rebuild"
+msgstr "A executar uma recompilação de pacote"
+
+#: Debomatic/commands.py:138
+msgid "Removing files"
+msgstr "A remover ficheiros"
+
+#: Debomatic/commands.py:143
+#, python-format
+msgid "Removing %s"
+msgstr "A remover %s"
+
+#: Debomatic/configuration.py:61
+#, python-format
+msgid "Set \"%(option)s\" in section \"%(section)s\" in %(conffile)s"
+msgstr "Definir \"%(option)s\" na secção \"%(section)s\" em %(conffile)s"
+
+#: Debomatic/configuration.py:84
+#, python-format
+msgid "Option \"%(option)s\" in section \"%(section)s\" must be %(type)s"
+msgstr "A opção \"%(option)s\" na secção \"%(section)s\" deve ser %(type)s"
+
+#: Debomatic/configuration.py:92
+msgid "Configuration file has not been specified"
+msgstr "Ficheiro de configuração não foi especificado"
+
+#: Debomatic/configuration.py:95
+#, python-format
+msgid "Configuration file %s does not exist"
+msgstr "Ficheiro de configuração %s não existente"
+
+#: Debomatic/configuration.py:100
+#, python-format
+msgid "Section \"%(section)s\" missing in %(conffile)s"
+msgstr "Secção \"%(section)s\" em falta em %(conffile)s"
+
+#: Debomatic/configuration.py:118
+#, python-format
+msgid "Distribution file %s does not exist"
+msgstr "Ficheiro de distribuição %s não existe"
+
+#: Debomatic/debomatic.py:69 Debomatic/debomatic.py:139
+#, python-format
+msgid "Unable to access %s directory"
+msgstr "Incapaz de aceder ao directório %s"
+
+#: Debomatic/debomatic.py:87 Debomatic/process.py:148
+msgid "Another instance is running, aborting"
+msgstr "Está outra instância a correr, a abortar"
+
+#: Debomatic/debomatic.py:119
+msgid "Inotify loop started"
+msgstr "Ciclo inotify iniciado"
+
+#: Debomatic/debomatic.py:123
+msgid "Timer loop started"
+msgstr "Ciclo temporizador iniciado"
+
+#: Debomatic/debomatic.py:165
+msgid "Log level not valid, defaulting to \"info\""
+msgstr "Nível de relatório não válido, a usar predefinição para \"info\""
+
+#: Debomatic/gpg.py:55
+msgid "Keyring not found"
+msgstr "Chaveiro não encontrado"
+
+#: Debomatic/gpg.py:63
+msgid "No valid signatures found"
+msgstr "Nenhuma assinatura válida encontrada"
+
+#: Debomatic/modules.py:83
 #, python-format
 msgid "Module %s loaded"
 msgstr "Módulo %s carregado"
 
-#: Debomatic/modules.py:86
+#: Debomatic/modules.py:89
 #, python-format
 msgid "Modules will be executed in this order: %s"
 msgstr "Módulos serão executados por esta ordem: %s"
 
-#: Debomatic/modules.py:108
+#: Debomatic/modules.py:111
 #, python-format
 msgid "%(mod)s module disabled, needs %(missing)s"
 msgstr "Modulo %(mod)s desactivado, precisa de %(missing)s"
 
-#: Debomatic/modules.py:116
+#: Debomatic/modules.py:119
 #, python-format
 msgid "Executing hook %(hook)s from module %(mod)s"
 msgstr "A executar hook %(hook)s a partir de módulo %(mod)s"
 
-#: Debomatic/modules.py:128
+#: Debomatic/modules.py:131
 #, python-format
 msgid "Module %s is blacklisted"
 msgstr "O modulo %s está na lista negra"
 
-#: Debomatic/modules.py:160 Debomatic/modules.py:176
+#: Debomatic/modules.py:163 Debomatic/modules.py:179
 #, python-format
 msgid ""
 "Cannot execute %(mod)s as %(order)s module, dependencies found: %(deps)s"
@@ -165,159 +255,47 @@ msgstr ""
 "Incapaz de executar %(mod)s como modulo %(order)s, dependências encontradas: "
 "%(deps)s"
 
-#: Debomatic/modules.py:203
+#: Debomatic/modules.py:207
 #, python-format
 msgid "Circular dependencies found, disabled modules: %s"
 msgstr "Dependências circulares encontradas, módulos desactivados: %s"
 
-#: Debomatic/modules.py:234
+#: Debomatic/modules.py:238
 #, python-format
 msgid "%s hooks launched"
 msgstr "%s hooks lançados"
 
-#: Debomatic/modules.py:239
+#: Debomatic/modules.py:243
 #, python-format
 msgid "%s hooks finished"
 msgstr "%s hooks terminados"
 
-#: Debomatic/debomatic.py:56 Debomatic/debomatic.py:55
-#: Debomatic/debomatic.py:57
-msgid "You must run Deb-o-Matic as root"
-msgstr "Você tem de correr o Deb-o-Matic como root"
-
-#: Debomatic/debomatic.py:68 Debomatic/debomatic.py:137
-#: Debomatic/debomatic.py:67 Debomatic/debomatic.py:126
-#: Debomatic/debomatic.py:71 Debomatic/debomatic.py:139
-#, python-format
-msgid "Unable to access %s directory"
-msgstr "Incapaz de aceder ao directório %s"
-
-#: Debomatic/debomatic.py:83
-msgid "Creating sbuild keys"
-msgstr "A criar chaves de sbuild"
-
-#: Debomatic/debomatic.py:87
-msgid "Failed to create sbuild keys"
-msgstr "Falha ao criar chaves de sbuild"
-
-#: Debomatic/debomatic.py:94 Debomatic/process.py:144
-#: Debomatic/debomatic.py:83 Debomatic/debomatic.py:87
-msgid "Another instance is running, aborting"
-msgstr "Está outra instância a correr, a abortar"
-
-#: Debomatic/debomatic.py:123 Debomatic/debomatic.py:112
-#: Debomatic/debomatic.py:119
-msgid "Inotify loop started"
-msgstr "Ciclo inotify iniciado"
-
-#: Debomatic/debomatic.py:127 Debomatic/debomatic.py:116
-#: Debomatic/debomatic.py:123
-msgid "Timer loop started"
-msgstr "Ciclo temporizador iniciado"
-
-#: Debomatic/debomatic.py:150 Debomatic/commands.py:85
-#: Debomatic/commands.py:96 Debomatic/commands.py:122
-#: Debomatic/commands.py:133 Debomatic/debomatic.py:139
-#: Debomatic/debomatic.py:152
-#, python-format
-msgid "Thread for %s scheduled"
-msgstr "Thread para %s agendada"
-
-#: Debomatic/debomatic.py:161 Debomatic/debomatic.py:150
-#: Debomatic/debomatic.py:165
-msgid "Log level not valid, defaulting to \"info\""
-msgstr "Nível de relatório não válido, a usar predefinição para \"info\""
-
-#: Debomatic/configuration.py:59
-#, python-format
-msgid "Set \"%(option)s\" in section \"%(section)s\" in %(conffile)s"
-msgstr "Definir \"%(option)s\" na secção \"%(section)s\" em %(conffile)s"
-
-#: Debomatic/configuration.py:82
-#, python-format
-msgid "Option \"%(option)s\" in section \"%(section)s\" must be %(type)s"
-msgstr "A opção \"%(option)s\" na secção \"%(section)s\" deve ser %(type)s"
-
-#: Debomatic/configuration.py:90
-msgid "Configuration file has not been specified"
-msgstr "Ficheiro de configuração não foi especificado"
-
-#: Debomatic/configuration.py:93
-#, python-format
-msgid "Configuration file %s does not exist"
-msgstr "Ficheiro de configuração %s não existente"
-
-#: Debomatic/configuration.py:98
-#, python-format
-msgid "Section \"%(section)s\" missing in %(conffile)s"
-msgstr "Secção \"%(section)s\" em falta em %(conffile)s"
-
-#: Debomatic/configuration.py:116
-#, python-format
-msgid "Distribution file %s does not exist"
-msgstr "Ficheiro de distribuição %s não existe"
-
-#: Debomatic/commands.py:74
-msgid "Performing a binNMU build"
-msgstr "A executar uma compilação binNMU"
-
-#: Debomatic/commands.py:88
-msgid "Performing a package rebuild with extra dependencies"
-msgstr "A executar uma recompilação de pacote com dependências extra"
-
-#: Debomatic/commands.py:99
-msgid "Killing build task"
-msgstr "A matar a tarefa de compilação"
-
-#: Debomatic/commands.py:108
-#, python-format
-msgid "Build killed for %(package)s_%(version)s in %(dist)s"
-msgstr "Morta a compilação para %(package)s_%(version)s em %(dist)s"
-
-#: Debomatic/commands.py:114
-msgid "Performing a porter build"
-msgstr "A executar uma compilação 'porter'"
-
-#: Debomatic/commands.py:125
-msgid "Performing a package rebuild"
-msgstr "A executar uma recompilação de pacote"
-
-#: Debomatic/commands.py:136
-msgid "Removing files"
-msgstr "A remover ficheiros"
-
-#: Debomatic/commands.py:141
-#, python-format
-msgid "Removing %s"
-msgstr "A remover %s"
-
-#: Debomatic/process.py:45
+#: Debomatic/process.py:47
 #, python-format
 msgid "Error entering daemon mode: %s"
 msgstr "Erro ao entrar em modo daemon: %s"
 
-#: Debomatic/process.py:97 Debomatic/process.py:128
+#: Debomatic/process.py:99 Debomatic/process.py:131
 msgid "Waiting for threads to complete..."
 msgstr "A aguardar que as threads terminem..."
 
-#: Debomatic/gpg.py:54
-msgid "Keyring not found"
-msgstr "Chaveiro não encontrado"
-
-#: Debomatic/gpg.py:62
-msgid "No valid signatures found"
-msgstr "Nenhuma assinatura válida encontrada"
-
-#: Debomatic/gpg.py:97 Debomatic/gpg.py:107
 #, python-format
-msgid "%s not found"
-msgstr "%s não encontrado"
+#~ msgid "schroot profile %s not found"
+#~ msgstr "Perfil %s de schroot não encontrado"
 
-#: Debomatic/gpg.py:100 Debomatic/gpg.py:110
+#~ msgid "You must run Deb-o-Matic as root"
+#~ msgstr "Você tem de correr o Deb-o-Matic como root"
+
+#~ msgid "Creating sbuild keys"
+#~ msgstr "A criar chaves de sbuild"
+
+#~ msgid "Failed to create sbuild keys"
+#~ msgstr "Falha ao criar chaves de sbuild"
+
 #, python-format
-msgid "%s is not a valid GPG key"
-msgstr "%s não é uma chave GPG válida"
+#~ msgid "%s not found"
+#~ msgstr "%s não encontrado"
 
-#: Debomatic/build.py:236
-msgid "Invocation of sbuild failed"
-msgstr ""
+#, python-format
+#~ msgid "%s is not a valid GPG key"
+#~ msgstr "%s não é uma chave GPG válida"
