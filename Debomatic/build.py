@@ -444,7 +444,7 @@ class Build:
                           {'dist': self.distribution, 'arch': architecture})
                     components = ','.join(dom.dists.get(self.distribution,
                                                         'components').split())
-                    command = ['mmdebstrap',
+                    command = ['mmdebstrap', '--mode=unshare',
                                f'--arch={architecture}',
                                f'--components={components}',
                                target, chroot,
